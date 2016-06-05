@@ -15,10 +15,11 @@
 !/tmp/.keep
 
 # Ignore Byebug command history file.
-.byebug_history
+/.byebug_history
 
 /config/database.yml
 /config/secrets.yml
+/config/application.yml
 
 # Personal settings
 /.irbrc

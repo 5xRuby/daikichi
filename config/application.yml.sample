@@ -1,0 +1,31 @@
+defaults: &defaults
+  metadata:
+    title: ''
+
+  admin_user:
+    name: '系統管理員'
+    login_name: 'admin'
+    email: 'admin@example.com'
+    role: 'manager'
+    password: '12345678'
+
+  user:
+    roles:
+      manager: '主管'
+      employee: '員工'
+      probation: '試用期'
+      contractor: '約聘'
+      vendor: '外包'
+      intern: '實習生'
+      resigned: '離職'
+      pending: '待審'
+
+development:
+  <<: *defaults
+  neat_setting: 800
+
+test:
+  <<: *defaults
+
+production:
+  <<: *defaults
