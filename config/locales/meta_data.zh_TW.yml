@@ -1,0 +1,36 @@
+zh-TW:
+  activerecord:
+    attributes:
+      user:
+        name: '姓名'
+        login_name: '帳號'
+        email: '電子郵件'
+        role: '身份'
+        password: '密碼'
+        password_confirmation: '密碼確認'
+        current_password: '原密碼'
+        join_date: '到職日期'
+        leave_date: '離職日期'
+
+  title:
+    devise/registrations:
+      new: '註冊新帳號'
+      edit: '修改帳號資料'
+    devise/sessions:
+      new: '登入'
+
+    backend/users:
+      index: '員工管理'
+      new: '新增員工'
+      show: '員工資料'
+      edit: '員工資料'
+
+  success:
+    create: '新增成功'
+    update: '修改成功'
+    destroy: '刪除成功'
+
+  warnings:
+    self_manage: '申請人不得自行審核'
+    not_authorized: '無操作權限'
+    restricted_function: '功能限制中'
