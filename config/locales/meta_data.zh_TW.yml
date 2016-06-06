@@ -12,15 +12,19 @@ zh-TW:
         join_date: '到職日期'
         leave_date: '離職日期'
 
+  menu_labels:
+    user: '員工管理'
+
   title:
     devise/registrations:
       new: '註冊新帳號'
       edit: '修改帳號資料'
     devise/sessions:
       new: '登入'
+      destroy: '登出'
 
     backend/users:
-      index: '員工管理'
+      index: '員工列表'
       new: '新增員工'
       show: '員工資料'
       edit: '員工資料'
@@ -34,3 +38,7 @@ zh-TW:
     self_manage: '申請人不得自行審核'
     not_authorized: '無操作權限'
     restricted_function: '功能限制中'
+
+  misc:
+    app_title: '五倍神社'
+    company_name: '五倍紅寶石'
