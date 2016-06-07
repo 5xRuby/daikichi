@@ -5,9 +5,9 @@
   .form-inputs
     = f.input :login_name, required: false
     = f.input :email, required: false
-    = f.input :password, autocomplete: "off", hint: "欲修改密碼才需要填寫", required: false
+    = f.input :password, autocomplete: "off", hint: t('devise.hints.leave_blank'), required: false
     = f.input :password_confirmation, required: false
-    = f.input :current_password, hint: "修改資料需輸入原密碼", required: true
+    = f.input :current_password, hint: t('devise.hints.confirm_password'), required: true
 
   .form-actions
-    = f.button :submit, '送出'
+    = f.button :submit

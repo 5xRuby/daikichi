@@ -140,9 +140,9 @@ zh-TW:
     select:
       prompt: 請選擇
     submit:
-      create: 新增%{model}
-      submit: 儲存%{model}
-      update: 更新%{model}
+      create: 送出
+      submit: 送出
+      update: 送出
   number:
     currency:
       format:

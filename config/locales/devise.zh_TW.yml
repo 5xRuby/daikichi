@@ -47,6 +47,10 @@ zh-TW:
       send_instructions: "您將在幾分鐘後收到一封電子郵件，內有將帳號解除鎖定的步驟說明。"
       send_paranoid_instructions: "如果您的帳號已存在，您的電子信箱將會收到如何解鎖帳號的指示。"
       unlocked: "您的帳號已被解鎖，現在已經登入。"
+    hints:
+      remember_me: "記住我"
+      leave_blank: "欲修改密碼才需要填寫"
+      confirm_password: "修改資料需輸入原密碼"
   errors:
     messages:
       already_confirmed: "已經驗證，請直接登入。"

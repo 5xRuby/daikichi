@@ -2,9 +2,9 @@
   .form-inputs
     = f.input :login_name, required: false, autofocus: true
     = f.input :password, required: false
-    = f.input :remember_me, as: :boolean, label: '記住我' if devise_mapping.rememberable?
+    = f.input :remember_me, as: :boolean, label: t('devise.hints.remember_me') if devise_mapping.rememberable?
 
   .form-actions
-    = f.button :submit, '送出'
+    = f.button :submit
 
 = render 'devise/shared/links'
