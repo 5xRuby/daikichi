@@ -28,6 +28,7 @@ en:
     self_manage: 'You cannot approve your own request.'
     not_authorized: 'Not authorized.'
     restricted_function: 'Restricted.'
+    no_data: 'No data'
 
   misc:
     app_title: '5xDashboard'

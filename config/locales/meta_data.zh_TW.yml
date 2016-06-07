@@ -14,6 +14,7 @@ zh-TW:
 
   menu_labels:
     user: '員工管理'
+    tools: '工具'
 
   title:
     devise/registrations:
@@ -38,7 +39,17 @@ zh-TW:
     self_manage: '申請人不得自行審核'
     not_authorized: '無操作權限'
     restricted_function: '功能限制中'
+    no_data: '尚無資料'
 
   misc:
     app_title: '五倍神社'
     company_name: '五倍紅寶石'
+    user_roles:
+      manager: '主管'
+      employee: '員工'
+      probation: '試用期'
+      contractor: '約聘'
+      vendor: '外包'
+      intern: '實習生'
+      resigned: '離職'
+      pending: '待審'

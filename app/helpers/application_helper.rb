@@ -10,4 +10,9 @@ module ApplicationHelper
       end
     end
   end
+
+  def no_data_alert(message = t('warnings.no_data'))
+    content_tag :div, message, class: 'alert alert-warning'
+  end
+
 end

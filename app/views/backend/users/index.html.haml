@@ -1,0 +1,25 @@
+- if current_collection.any?
+  %table.table
+    %tr
+      %th #
+      %th= t('activerecord.attributes.user.name')
+      %th= t('activerecord.attributes.user.login_name')
+      %th= t('activerecord.attributes.user.email')
+      %th= t('activerecord.attributes.user.role')
+      %th= t('activerecord.attributes.user.join_date')
+      %th= t('menu_labels.tools')
+
+    - current_collection.each do |user|
+      %tr
+        %td= user.id
+        %td= user.name
+        %td= user.login_name
+        %td= user.email
+        %td= t("misc.user_roles.#{user.role}")
+        %td= user.join_date
+        %td= link_to 'edit', edit_backend_user_path(user)
+      
+- else
+  = no_data_alert
+
+= paginate current_collection
