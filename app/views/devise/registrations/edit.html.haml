@@ -1,0 +1,13 @@
+= simple_form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f|
+
+  = f.error_notification
+
+  .form-inputs
+    = f.input :login_name, required: false
+    = f.input :email, required: false
+    = f.input :password, autocomplete: "off", hint: "欲修改密碼才需要填寫", required: false
+    = f.input :password_confirmation, required: false
+    = f.input :current_password, hint: "修改資料需輸入原密碼", required: true
+
+  .form-actions
+    = f.button :submit, '送出'
