@@ -1,0 +1,14 @@
+= simple_form_for [:backend, current_object] do |f|
+  = f.input :name, required: true
+  = f.input :login_name, required: true
+  = f.input :email, required: true
+  = f.input :join_date, include_blank: true
+  = f.input :leave_date, include_blank: true
+  - if action_name == 'new'
+    = f.input :password, required: true, hint: ("#{@minimum_password_length} characters minimum" if @minimum_password_length)
+    = f.input :password_confirmation, required: true
+  //= f.input :role, required: true, collection: Settings.user.roles.to_h.map { |k, v| [v, k] }
+  = f.input :role, required: true, collection: [:manager, :employee]
+  = f.button :submit
+
+

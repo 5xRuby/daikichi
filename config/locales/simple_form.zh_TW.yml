@@ -10,20 +10,14 @@ zh-TW:
       # html: '<abbr title="required">*</abbr>'
     error_notification:
       default_message: "Please review the problems below:"
-    # Examples
-    # labels:
-    #   user:
-    #     new:
-    #       email: 'E-mail to sign in.'
-    #     edit:
-    #       email: 'E-mail.'
-    # hints:
-    #   defaults:
-    #     username: 'User name to sign in.'
-    #     password: 'No special characters, please.'
-    # include_blanks:
-    #   defaults:
-    #     age: 'Rather not say'
-    # prompts:
-    #   defaults:
-    #     age: 'Select your age'
+    options:
+      user:
+        role:
+          manager: '主管'
+          employee: '員工'
+          probation: '試用期'
+          contractor: '約聘'
+          vendor: '外包'
+          intern: '實習生'
+          resigned: '離職'
+          pending: '待審'
