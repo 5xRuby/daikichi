@@ -7,8 +7,7 @@
   - if action_name == 'new'
     = f.input :password, required: true, hint: ("#{@minimum_password_length} characters minimum" if @minimum_password_length)
     = f.input :password_confirmation, required: true
-  //= f.input :role, required: true, collection: Settings.user.roles.to_h.map { |k, v| [v, k] }
-  = f.input :role, required: true, collection: [:manager, :employee]
+  = f.input :role, required: true, collection: User::ROLES
   = f.button :submit
 
 

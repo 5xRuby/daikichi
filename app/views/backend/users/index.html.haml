@@ -15,7 +15,7 @@
         %td= user.name
         %td= user.login_name
         %td= user.email
-        %td= t("misc.user_roles.#{user.role}")
+        %td= t("simple_form.options.user.role.#{user.role}")
         %td= user.join_date
         %td= link_to 'edit', edit_backend_user_path(user)
       
