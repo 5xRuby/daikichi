@@ -19,7 +19,7 @@
         %td= user.join_date
         %td 
           = link_to 'edit', edit_backend_user_path(user)
-          = link_to 'delete', backend_user_path(user), method: :delete, data: { confirm: 'are u sure?' }
+          = link_to 'delete', backend_user_path(user), method: :delete, data: { confirm: t('warnings.confirm_delete') }
 
 - else
   = no_data_alert

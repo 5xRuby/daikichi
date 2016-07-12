@@ -29,6 +29,7 @@ en:
     not_authorized: 'Not authorized.'
     restricted_function: 'Restricted.'
     no_data: 'No data'
+    confirm_delete: 'Are you sure you want to delete this?'
 
   misc:
     app_title: '5xDashboard'

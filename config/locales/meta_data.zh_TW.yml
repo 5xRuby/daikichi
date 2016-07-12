@@ -40,6 +40,7 @@ zh-TW:
     not_authorized: '無操作權限'
     restricted_function: '功能限制中'
     no_data: '尚無資料'
+    confirm_delete: '您確定要刪除嗎？'
 
   misc:
     app_title: '五倍神社'
