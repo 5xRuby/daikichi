@@ -24,3 +24,6 @@
 # Personal settings
 /.irbrc
 /.powenv
+
+# Private data
+/lib/tasks/users.yml
