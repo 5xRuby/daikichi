@@ -1,3 +1,11 @@
+GIT
+  remote: git://github.com/rubysherpas/paranoia.git
+  revision: bd3383729c790bf09e488f84221eaaea27c6597e
+  branch: rails4
+  specs:
+    paranoia (2.2.0.alpha)
+      activerecord (>= 4.0, < 5.1)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -234,6 +242,7 @@ DEPENDENCIES
   jquery-rails
   kaminari
   listen (~> 3.0.5)
+  paranoia!
   pg (~> 0.18)
   puma (~> 3.0)
   rails (>= 5.0.0.rc1, < 5.1)

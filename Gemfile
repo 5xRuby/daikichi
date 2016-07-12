@@ -40,6 +40,7 @@ gem 'haml'
 gem 'date_validator'
 gem 'stateful_enum'
 gem 'kaminari'
+gem 'paranoia', :github => 'rubysherpas/paranoia', :branch => 'rails4' #temp fix
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

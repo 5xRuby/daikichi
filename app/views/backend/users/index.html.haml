@@ -17,8 +17,10 @@
         %td= user.email
         %td= t("simple_form.options.user.role.#{user.role}")
         %td= user.join_date
-        %td= link_to 'edit', edit_backend_user_path(user)
-      
+        %td 
+          = link_to 'edit', edit_backend_user_path(user)
+          = link_to 'delete', backend_user_path(user), method: :delete, data: { confirm: 'are u sure?' }
+
 - else
   = no_data_alert
 
