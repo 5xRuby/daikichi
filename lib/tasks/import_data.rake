@@ -1,5 +1,6 @@
 namespace :import_data do
 
+  #TODO temporary use for development only
   desc 'user data'
   task users: :environment do
     YAML.load_file('lib/tasks/users.yml').each do |user|
