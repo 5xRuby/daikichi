@@ -1,2 +1,3 @@
+# PagesHelper
 module PagesHelper
 end
