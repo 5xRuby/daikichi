@@ -1,12 +1,13 @@
 - if current_collection.any?
   %table.table
     %tr
+      - scope = "#{t_attributes}.user"
       %th #
-      %th= t("#{t_attributes}.user.name")
-      %th= t("#{t_attributes}.user.login_name")
-      %th= t("#{t_attributes}.user.email")
-      %th= t("#{t_attributes}.user.role")
-      %th= t("#{t_attributes}.user.join_date")
+      %th= t('name', scope: scope)
+      %th= t('login_name', scope: scope)
+      %th= t('email', scope: scope)
+      %th= t('role', scope: scope)
+      %th= t('join_date', scope: scope)
       %th= t('menu_labels.tools')
 
     - current_collection.each do |user|

@@ -9,10 +9,11 @@
 %table.table
   %caption= t('menu_labels.annual_leave_time', year: Date.today.year)
   %tr
+    - scope = "#{t_attributes}.leave_time"
     %th
-    %th= t("#{t_attributes}.leave_time.quota")
-    %th= t("#{t_attributes}.leave_time.usable_hours")
-    %th= t("#{t_attributes}.leave_time.used_hours")
+    %th= t('quota', scope: scope)
+    %th= t('usable_hours', scope: scope)
+    %th= t('used_hours', scope: scope)
   - @leave_times.each do |item|
     %tr
       %th= t("#{t_options}.leave_time.leave_type.#{item.leave_type}")
