@@ -11,7 +11,7 @@ class User < ApplicationRecord
 
   ROLES = %i(
     manager employee probation contractor
-    vendor intern resigned pending
+    vendor intern resigned pending admin
   ).freeze
 
   scope :employees, lambda {
@@ -27,6 +27,24 @@ class User < ApplicationRecord
       0
     else
       year - join_date.year + 1
+    end
+  end
+
+  def manage?
+    case role
+    when 'admin', 'manager'
+      true
+    else
+      false
+    end
+  end
+
+  def employee?
+    case role
+    when 'manager', 'employee', 'probation'
+      true
+    else
+      false
     end
   end
 end

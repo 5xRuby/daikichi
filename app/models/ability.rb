@@ -5,7 +5,7 @@ class Ability
   def initialize(user)
     user ||= User.new # guest user (not logged in)
     case user.role
-    when 'manager'
+    when 'manager', 'admin'
       can :manage, :all
     when 'employee', 'probation'
       can :view, LeaveTime

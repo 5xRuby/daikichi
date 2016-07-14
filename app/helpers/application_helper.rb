@@ -1,26 +1,30 @@
 # ApplicationHelper
 module ApplicationHelper
-  def tr_by_object(attribute, object = current_object, is_option = false)
+  def tr_by_object(attribute, object = current_object, key = nil)
     content_tag :tr do
-      concat content_tag :th, t("#{t_attributes}.#{object.model_name.param_key}.#{attribute}")
-      concat content_tag :td, td_value_by_object(object, attribute, is_option)
+      concat content_tag :th, t_attribute(attribute, object)
+      concat content_tag :td, t_value(attribute, object, key)
     end
   end
 
-  def td_value_by_object(object, attribute, is_option)
-    if is_option
-      t("#{t_options}.#{object.model_name.param_key}.#{attribute}.#{object[attribute]}")
-    else
+  def t_attribute(attribute, object = current_object)
+    t(attribute, scope: t_attribute_scope(object))
+  end
+
+  def t_value(attribute, object = current_object, key = nil)
+    if key.nil?
       object[attribute]
+    else
+      t(key, scope: t_options_scope(object, attribute))
     end
   end
 
-  def t_attributes
-    'activerecord.attributes'
+  def t_attribute_scope(object)
+    "activerecord.attributes.#{object.model_name.param_key}"
   end
 
-  def t_options
-    'simple_form.options'
+  def t_options_scope(object, attribute)
+    "simple_form.options.#{object.model_name.param_key}.#{attribute}"
   end
 
   def dropdown_title(label = '')

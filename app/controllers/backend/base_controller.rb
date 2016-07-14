@@ -6,7 +6,7 @@ module Backend
     private
 
     def verify_manager
-      unless current_user.role == 'manager'
+      unless current_user.manage?
         flash[:alert] = t('warnings.not_authorized')
         redirect_to root_url
       end

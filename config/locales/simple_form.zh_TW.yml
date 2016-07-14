@@ -21,6 +21,7 @@ zh-TW:
           intern: '實習生'
           resigned: '離職'
           pending: '待審'
+          admin: '系統管理員'
       leave_time:
         leave_type:
           annual: '特休'

@@ -1,13 +1,12 @@
 - if current_collection.any?
   %table.table
     %tr
-      - scope = "#{t_attributes}.user"
       %th #
-      %th= t('name', scope: scope)
-      %th= t('login_name', scope: scope)
-      %th= t('email', scope: scope)
-      %th= t('role', scope: scope)
-      %th= t('join_date', scope: scope)
+      %th= t_attribute(:name, User)
+      %th= t_attribute(:login_name, User)
+      %th= t_attribute(:email, User)
+      %th= t_attribute(:role, User)
+      %th= t_attribute(:join_date, User)
       %th= t('menu_labels.tools')
 
     - current_collection.each do |user|
@@ -16,7 +15,7 @@
         %td= user.name
         %td= user.login_name
         %td= user.email
-        %td= t("#{t_options}.user.role.#{user.role}")
+        %td= t_value(:role, User, user.role)
         %td= user.join_date
         %td 
           = link_to 'show', backend_user_path(user)
