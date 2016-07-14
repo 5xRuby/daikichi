@@ -8,6 +8,7 @@ class Ability
     when 'manager'
       can :manage, :all
     when 'employee', 'probation'
+      can :view, LeaveTime
     end
   end
 end

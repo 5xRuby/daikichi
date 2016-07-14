@@ -10,10 +10,22 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160712071430) do
+ActiveRecord::Schema.define(version: 20160714034037) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "leave_times", force: :cascade do |t|
+    t.integer  "user_id"
+    t.integer  "year"
+    t.string   "leave_type"
+    t.integer  "quota",        default: 0
+    t.integer  "usable_hours", default: 0
+    t.integer  "used_hours",   default: 0
+    t.datetime "created_at",               null: false
+    t.datetime "updated_at",               null: false
+    t.index ["year"], name: "index_leave_times_on_year", using: :btree
+  end
 
   create_table "users", force: :cascade do |t|
     t.string   "name",                   default: "",        null: false

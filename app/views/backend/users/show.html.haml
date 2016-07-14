@@ -1,0 +1,22 @@
+%table.table
+  = tr_by_object :name
+  = tr_by_object :login_name
+  = tr_by_object :email
+  = tr_by_object :role, current_object, true
+  = tr_by_object :join_date
+  = tr_by_object :leave_date
+
+%table.table
+  %caption= t('menu_labels.annual_leave_time', year: Date.today.year)
+  %tr
+    %th
+    %th= t("#{t_attributes}.leave_time.quota")
+    %th= t("#{t_attributes}.leave_time.usable_hours")
+    %th= t("#{t_attributes}.leave_time.used_hours")
+  - @leave_times.each do |item|
+    %tr
+      %th= t("#{t_options}.leave_time.leave_type.#{item.leave_type}")
+      %td= item.quota
+      %td= item.usable_hours
+      %td= item.used_hours
+

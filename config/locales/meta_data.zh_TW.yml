@@ -11,10 +11,17 @@ zh-TW:
         current_password: '原密碼'
         join_date: '到職日期'
         leave_date: '離職日期'
+      leave_time:
+        year: '年度'
+        leave_type: '假別'
+        quota: '總時數'
+        usable_hours: '可用時數'
+        used_hours: '已用時數'
 
   menu_labels:
     user: '員工管理'
     tools: '工具'
+    annual_leave_time: '%{year} 年度休假使用狀況'
 
   title:
     devise/registrations:

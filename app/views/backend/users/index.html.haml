@@ -2,11 +2,11 @@
   %table.table
     %tr
       %th #
-      %th= t('activerecord.attributes.user.name')
-      %th= t('activerecord.attributes.user.login_name')
-      %th= t('activerecord.attributes.user.email')
-      %th= t('activerecord.attributes.user.role')
-      %th= t('activerecord.attributes.user.join_date')
+      %th= t("#{t_attributes}.user.name")
+      %th= t("#{t_attributes}.user.login_name")
+      %th= t("#{t_attributes}.user.email")
+      %th= t("#{t_attributes}.user.role")
+      %th= t("#{t_attributes}.user.join_date")
       %th= t('menu_labels.tools')
 
     - current_collection.each do |user|
@@ -15,9 +15,10 @@
         %td= user.name
         %td= user.login_name
         %td= user.email
-        %td= t("simple_form.options.user.role.#{user.role}")
+        %td= t("#{t_options}.user.role.#{user.role}")
         %td= user.join_date
         %td 
+          = link_to 'show', backend_user_path(user)
           = link_to 'edit', edit_backend_user_path(user)
           = link_to 'delete', backend_user_path(user), method: :delete, data: { confirm: t('warnings.confirm_delete') }
 

@@ -4,6 +4,7 @@ en:
 
   menu_labels:
     user: 'User Management'
+    annual_leave_time: 'Leave Time of %{year}'
 
   title:
     devise/registrations:

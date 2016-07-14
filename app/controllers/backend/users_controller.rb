@@ -1,6 +1,10 @@
 module Backend
   # Backend::UsersContoller
   class UsersController < Backend::BaseController
+    def show
+      @leave_times = LeaveTime.current_year(params[:id])
+    end
+
     def collection_scope
       if params[:id]
         User
