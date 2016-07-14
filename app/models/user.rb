@@ -2,6 +2,7 @@
 class User < ApplicationRecord
   acts_as_paranoid
   has_many :leave_times
+  has_many :leave_applications
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable

@@ -10,10 +10,26 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160714034037) do
+ActiveRecord::Schema.define(version: 20160714090133) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "leave_applications", force: :cascade do |t|
+    t.integer  "user_id"
+    t.string   "leave_type"
+    t.integer  "hours",       default: 0
+    t.datetime "start_time"
+    t.datetime "end_time"
+    t.text     "description"
+    t.string   "status",      default: "pending"
+    t.datetime "sign_date"
+    t.datetime "deleted_at"
+    t.datetime "created_at",                      null: false
+    t.datetime "updated_at",                      null: false
+    t.integer  "manager_id"
+    t.index ["manager_id"], name: "index_leave_applications_on_manager_id", using: :btree
+  end
 
   create_table "leave_times", force: :cascade do |t|
     t.integer  "user_id"
