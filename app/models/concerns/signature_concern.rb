@@ -1,4 +1,4 @@
-# SignatureConcern
+# frozen_string_literal: true
 module SignatureConcern
   extend ActiveSupport::Concern
 

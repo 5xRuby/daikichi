@@ -1,13 +1,13 @@
-# Ability
+# frozen_string_literal: true
 class Ability
   include CanCan::Ability
 
   def initialize(user)
     user ||= User.new # guest user (not logged in)
     case user.role
-    when 'manager', 'admin'
+    when "manager", "admin"
       can :manage, :all
-    when 'employee', 'probation'
+    when "employee", "probation"
       can :view, LeaveTime
     end
   end

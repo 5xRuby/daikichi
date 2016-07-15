@@ -1,4 +1,4 @@
-# ApplicationHelper
+# frozen_string_literal: true
 module ApplicationHelper
   def tr_by_object(attribute, object = current_object, key = nil)
     content_tag :tr do
@@ -27,19 +27,23 @@ module ApplicationHelper
     "simple_form.options.#{object.model_name.param_key}.#{attribute}"
   end
 
-  def dropdown_title(label = '')
+  def dropdown_title(label = "")
     capture_haml do
-      haml_tag 'a.dropdown-toggle', {'data-toggle': 'dropdown', 
-                                     'role': 'button', 
-                                     'aria-haspopup': 'true',
-                                     'aria-expanded': 'false'} do
+      haml_tag "a.dropdown-toggle", dropdown_hash do
         haml_concat label
-        haml_tag 'span.caret'
+        haml_tag "span.caret"
       end
     end
   end
 
-  def no_data_alert(message = t('warnings.no_data'))
-    content_tag :div, message, class: 'alert alert-warning'
+  def dropdown_hash
+    { "data-toggle": "dropdown",
+      "role": "button",
+      "aria-haspopup": "true",
+      "aria-expanded": "false" }
+  end
+
+  def no_data_alert(message = t("warnings.no_data"))
+    content_tag :div, message, class: "alert alert-warning"
   end
 end

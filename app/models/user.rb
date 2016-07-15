@@ -1,4 +1,4 @@
-# User
+# frozen_string_literal: true
 class User < ApplicationRecord
   acts_as_paranoid
   has_many :leave_times
@@ -14,13 +14,13 @@ class User < ApplicationRecord
     vendor intern resigned pending admin
   ).freeze
 
-  scope :employees, lambda {
-    where('role in (?)', ROLES[0..2].map(&:to_s))
-      .where('join_date < now()')
+  scope :employees, -> {
+    where("role in (?)", ROLES[0..2].map(&:to_s))
+      .where("join_date < now()")
       .order(id: :desc)
   }
 
-  def seniority(year = Date.today.year)
+  def seniority(year = Time.zone.today.year)
     if join_date.year == year
       1
     elsif join_date.year > year
@@ -32,7 +32,7 @@ class User < ApplicationRecord
 
   def manage?
     case role
-    when 'admin', 'manager'
+    when "admin", "manager"
       true
     else
       false
@@ -41,7 +41,7 @@ class User < ApplicationRecord
 
   def employee?
     case role
-    when 'manager', 'employee', 'probation'
+    when "manager", "employee", "probation"
       true
     else
       false

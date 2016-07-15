@@ -1,4 +1,4 @@
-# BaseController
+# frozen_string_literal: true
 class BaseController < ApplicationController
   helper_method :current_collection, :current_object
 
@@ -16,28 +16,13 @@ class BaseController < ApplicationController
 
   def create
     @current_object = collection_scope.new(resource_params)
-    if @current_object.save
-      respond_to do |f|
-        f.html do
-          flash[:success] ||= t('success.create')
-          redirect_to url_after_create
-        end
-        f.json
-      end
-    else
-      return render action: :new
-    end
+    return render action: new unless @current_object.save
+    action_success
   end
 
   def destroy
     current_object.destroy
-    respond_to do |f|
-      f.html do
-        flash[:success] ||= t('success.destroy')
-        redirect_to url_after_destroy
-      end
-      f.json
-    end
+    action_success
   end
 
   def edit
@@ -45,24 +30,26 @@ class BaseController < ApplicationController
 
   def update
     if current_object.update(resource_params)
-      respond_to do |f|
-        f.html do
-          flash[:success] ||= t('success.update')
-          redirect_to url_after_update
-        end
-        f.json
-      end
+      action_success
     else
       respond_to do |f|
-        f.html do |f|
-          return render action: :edit
-        end
+        f.html { return render action: :edit }
         f.json
       end
     end
   end
 
   private
+
+  def action_success
+    respond_to do |f|
+      f.html do
+        flash[:success] ||= t("success.#{action_name}")
+        redirect_to send("url_after_#{action_name}")
+      end
+      f.json
+    end
+  end
 
   # override in controller if needed
   def require_permission
@@ -71,13 +58,13 @@ class BaseController < ApplicationController
 
   def check_permission(object_owner)
     if current_employee != object_owner
-      flash[:alert] = t('warnings.not_authorized')
+      flash[:alert] = t("warnings.not_authorized")
       redirect_to root_path
     end
   end
 
   def url_after_create
-    request.env['HTTP_REFERER'] || url_for(action: :index)
+    request.env["HTTP_REFERER"] || url_for(action: :index)
   end
 
   def url_after_destroy
@@ -88,6 +75,7 @@ class BaseController < ApplicationController
 
   # You should implement these in your controller
   def collection_scope; end
+
   def resource_params; end
 
   def current_collection

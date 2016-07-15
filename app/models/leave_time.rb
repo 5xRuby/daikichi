@@ -1,4 +1,4 @@
-# LeaveTime
+# frozen_string_literal: true
 class LeaveTime < ApplicationRecord
   belongs_to :user
 
@@ -7,13 +7,13 @@ class LeaveTime < ApplicationRecord
   DAILY_HOURS = 8
   DAYS_IN_YEAR = 365.0 # ignore leap year
 
-  scope :current_year, lambda { |user_id|
-    where(year: Date.today.year, user_id: user_id)
+  scope :current_year, ->(user_id) {
+    where(year: Time.zone.today.year, user_id: user_id)
   }
 
   def init_quota
     quota = quota_by_seniority
-    unless leave_type == 'bonus'
+    unless leave_type == "bonus"
       return false if quota <= 0
     end
     self.attributes = {
@@ -37,7 +37,7 @@ class LeaveTime < ApplicationRecord
   end
 
   def normal_rate
-    if leave_type == 'annual'
+    if leave_type == "annual"
       annual_hours_by_seniority
     else
       days_by_leave_type * DAILY_HOURS
@@ -64,10 +64,10 @@ class LeaveTime < ApplicationRecord
 
   def days_by_leave_type
     case leave_type
-    when 'annual' then 7
-    when 'bonus' then 0
-    when 'personal' then 7
-    when 'sick' then 30
+    when "annual" then 7
+    when "bonus" then 0
+    when "personal" then 7
+    when "sick" then 30
     else 0
     end
   end
