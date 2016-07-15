@@ -1,5 +1,5 @@
+# frozen_string_literal: true
 namespace :leave_time do
-
   desc "initialize employee annual leave time"
   task :init, [:year] => [:environment] do |t, args|
     year = args[:year].nil? ? Time.zone.today.year : args[:year].to_i
@@ -10,5 +10,4 @@ namespace :leave_time do
       end
     end
   end
-
 end
