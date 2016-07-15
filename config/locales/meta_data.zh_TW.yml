@@ -30,6 +30,8 @@ zh-TW:
   menu_labels:
     user: '員工管理'
     leave_application: '請假系統'
+
+  captions:
     tools: '工具'
     annual_leave_time: '%{year} 年度休假使用狀況'
 

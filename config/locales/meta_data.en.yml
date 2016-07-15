@@ -4,6 +4,8 @@ en:
 
   menu_labels:
     user: 'User Management'
+
+  captions:
     annual_leave_time: 'Leave Time of %{year}'
 
   title:

@@ -1,0 +1,5 @@
+- flash.each do |flash_type, message|
+  .alert.alert-warning.alert-dismissible{ role: "alert" }
+    %button.close{ type: "button", "data-dismiss": "alert", "aria-label": "Close" }
+      %span{ "aria-hidden": "true" } &times;
+    = message

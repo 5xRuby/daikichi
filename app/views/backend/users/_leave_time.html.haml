@@ -1,5 +1,5 @@
 %table.table
-  %caption= t('menu_labels.annual_leave_time', year: Date.today.year)
+  %caption= t("captions.annual_leave_time", year: Time.zone.today.year)
   %tr
     %th
     %th= t_attribute(:quota, LeaveTime)

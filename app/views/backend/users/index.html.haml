@@ -7,7 +7,7 @@
       %th= t_attribute(:email, User)
       %th= t_attribute(:role, User)
       %th= t_attribute(:join_date, User)
-      %th= t('menu_labels.tools')
+      %th= t("captions.tools")
 
     - current_collection.each do |user|
       %tr
@@ -18,9 +18,9 @@
         %td= t_value(:role, User, user.role)
         %td= user.join_date
         %td 
-          = link_to 'show', backend_user_path(user)
-          = link_to 'edit', edit_backend_user_path(user)
-          = link_to 'delete', backend_user_path(user), method: :delete, data: { confirm: t('warnings.confirm_delete') }
+          = link_to "show", backend_user_path(user)
+          = link_to "edit", edit_backend_user_path(user)
+          = link_to "delete", backend_user_path(user), method: :delete, data: { confirm: t("warnings.confirm_delete") }
 
 - else
   = no_data_alert

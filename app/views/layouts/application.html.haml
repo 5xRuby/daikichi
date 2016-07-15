@@ -3,10 +3,13 @@
   %head
     %title= page_title(true)
     = csrf_meta_tags
-    = stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload'
-    = javascript_include_tag 'application', 'data-turbolinks-track': 'reload'
+    = stylesheet_link_tag "application", media: "all", "data-turbolinks-track": "reload"
+    = javascript_include_tag "application", "data-turbolinks-track": "reload"
 
   %body
-    = render 'shared/navigation'
+    = render "shared/navigation"
+    = render "shared/flash"
     #main= yield
-    = render 'shared/footer'
+    = render "shared/footer"
+
+= debug params if Rails.env == "development"

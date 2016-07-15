@@ -1,29 +1,29 @@
 %nav.navbar.navbar-default
   .container-fluid
     .navbar-header
-      %button.navbar-toggle.collapsed{'type': 'button', 'data-toggle': 'collapse', 'data-target': '#nav-collapse', 'aria-expanded': 'false'}
+      %button.navbar-toggle.collapsed{ "type": "button", "data-toggle": "collapse", "data-target": "#nav-collapse", "aria-expanded": "false" }
         %span.sr-only toggle navigation
         %span.icon-bar
         %span.icon-bar
         %span.icon-bar
-      = link_to t('misc.app_title'), root_path, class: 'navbar-brand'
+      = link_to t("misc.app_title"), root_path, class: "navbar-brand"
 
     #nav-collapse.collapse.navbar-collapse
       %ul.nav.navbar-nav
         - if can? :manage, User
           %li.dropdown
-            = dropdown_title t('menu_labels.user')
+            = dropdown_title t("menu_labels.user")
             %ul.dropdown-menu
-              %li= link_to t('title.backend/users.index'), backend_users_path
-              %li= link_to t('title.backend/users.new'), new_backend_user_path
+              %li= link_to t("title.backend/users.index"), backend_users_path
+              %li= link_to t("title.backend/users.new"), new_backend_user_path
 
       %ul.nav.navbar-nav.navbar-right
         - if user_signed_in?
           %li.dropdown
             = dropdown_title current_user.login_name
             %ul.dropdown-menu
-              %li= link_to t('title.devise/registrations.edit'), edit_user_registration_path
-              %li= link_to t('title.devise/sessions.destroy'), destroy_user_session_path, method: :delete
+              %li= link_to t("title.devise/registrations.edit"), edit_user_registration_path
+              %li= link_to t("title.devise/sessions.destroy"), destroy_user_session_path, method: :delete
         - else
-          %li= link_to t('title.devise/sessions.new'), new_user_session_path
-          %li= link_to t('title.devise/registrations.new'), new_user_registration_path
+          %li= link_to t("title.devise/sessions.new"), new_user_session_path
+          %li= link_to t("title.devise/registrations.new"), new_user_registration_path
