@@ -16,6 +16,8 @@ $ cp config/secrets.yml.sample config/secrets.yml
 # default admin user data
 $ cp config/application.yml.sample config/application.yml  
 
+$ cp config/database.yml.sample config/database.yml
+
 $ bundle install  
 $ bundle exec rake db:create  
 $ bundle exec rake db:migrate  
@@ -31,6 +33,9 @@ $ cp .irbrc.sample .irbrc
 ## pow + byebug
 
 ```
+# install pow
+$ curl get.pow.cx | sh
+
 # http://daikichi.dev
 $ gem install powder
 $ powder link
