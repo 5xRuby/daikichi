@@ -12,6 +12,7 @@ class LeaveTime < ApplicationRecord
   }
 
   def init_quota
+    return false if seniority < 1
     quota = quota_by_seniority
     unless leave_type == "bonus"
       return false if quota <= 0
