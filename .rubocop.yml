@@ -76,6 +76,9 @@ UnusedMethodArgument:
 MultilineOperationIndentation:
   Enabled: false
 
+AbcSize:
+  Max: 20
+
 CyclomaticComplexity:
   Max: 30
 

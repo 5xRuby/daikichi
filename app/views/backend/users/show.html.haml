@@ -6,5 +6,5 @@
   = tr_by_object :join_date
   = tr_by_object :leave_date
 
-- if current_object.employee?
+- if current_object.fulltime?
   = render "leave_time", { leave_times: @leave_times }

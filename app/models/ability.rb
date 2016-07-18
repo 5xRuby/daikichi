@@ -7,7 +7,7 @@ class Ability
     case user.role
     when "manager", "admin"
       can :manage, :all
-    when "employee", "probation"
+    when "employee"
       can :view, LeaveTime
     end
   end

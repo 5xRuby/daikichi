@@ -15,9 +15,7 @@ zh-TW:
         role:
           manager: '主管'
           employee: '員工'
-          probation: '試用期'
           contractor: '約聘'
-          vendor: '外包'
           intern: '實習生'
           resigned: '離職'
           pending: '待審'

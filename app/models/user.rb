@@ -10,38 +10,34 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :trackable, :validatable
 
   ROLES = %i(
-    manager employee probation contractor
-    vendor intern resigned pending admin
+    manager employee contractor intern resigned pending admin
   ).freeze
 
-  scope :employees, -> {
-    where("role in (?)", ROLES[0..2].map(&:to_s))
+  scope :fulltime, -> {
+    where("role in (?)", %w(manager employee))
+      .where("join_date < now()")
+      .order(id: :desc)
+  }
+
+  scope :parttime, -> {
+    where("role in (?)", %w(contractor intern))
       .where("join_date < now()")
       .order(id: :desc)
   }
 
   def seniority(year = Time.zone.today.year)
-    if join_date.year == year
-      1
-    elsif join_date.year > year
+    if join_date.nil? or join_date.year > year
       0
+    elsif join_date.year == year
+      1
     else
       year - join_date.year + 1
     end
   end
 
-  def manage?
+  def fulltime?
     case role
-    when "admin", "manager"
-      true
-    else
-      false
-    end
-  end
-
-  def employee?
-    case role
-    when "manager", "employee", "probation"
+    when "manager", "employee"
       true
     else
       false
