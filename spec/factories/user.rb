@@ -5,32 +5,31 @@ FactoryGirl.define do
     login_name { Faker::Internet.user_name }
     email { Faker::Internet.safe_email }
     password { Faker::Internet.password }
-  end
 
-  trait :admin do
-    role { "admin" }
-  end
+    trait :admin do
+      role { "admin" }
+    end
 
-  trait :manager do
-    role { "manager" }
-  end
+    trait :manager do
+      role { "manager" }
+    end
 
-  trait :employee do
-    role { "employee" }
-  end
+    trait :employee do
+      role { "employee" }
+    end
 
-  trait :contractor do
-    role { "contractor" }
-    join_date { nil }
-  end
+    trait :contractor do
+      role { "contractor" }
+      join_date { nil }
+    end
 
-  trait :freshman do
-    role { "employee" }
-    join_date { Faker::Date.between(Date.new(Time.zone.today.year, 1, 1), Time.zone.today) }
-  end
+    # base year 2016
+    factory :first_year_employee, traits: [:employee] do
+      join_date { "2016-06-01" }
+    end
 
-  trait :senior do
-    role { "employee" }
-    join_date { Faker::Date.between(35.years.ago, 1.year.ago) }
+    factory :third_year_employee, traits: [:employee] do
+      join_date { "2014-04-15" }
+    end
   end
 end
