@@ -1,0 +1,2 @@
+module LeaveApplicationsHelper
+end
