@@ -1,1 +1,31 @@
-%h2 需要實作CRUD
+%h2 假單
+- if current_collection.any?
+  %table.table
+    %thead
+      %tr
+        %th= t_attribute(:leave_type, LeaveApplication)
+        %th= t_attribute(:start_time, LeaveApplication)
+        %th= t_attribute(:end_time, LeaveApplication)
+        %th= t_attribute(:hours, LeaveApplication)
+        %th= t_attribute(:status, LeaveApplication)
+        %th= t("captions.tools")
+    %tbody
+      - current_collection.each do |leave|
+        %tr
+          %td= leave.leave_type
+          %td= leave.start_time
+          %td= leave.end_time
+          %td= leave.hours
+          %td= leave.status
+          %td
+            = link_to "show", leave_application_path(leave)
+            = link_to "edit", edit_leave_application_path(leave)
+            = link_to "delete", leave_application_path(leave), method: :delete, data: { confirm: t("warnings.confirm_delete")}
+
+- else
+  = no_data_alert
+
+= link_to "新增假單", new_leave_application_path
+
+= paginate current_collection
+

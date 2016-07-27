@@ -4,6 +4,8 @@ class LeaveApplication < ApplicationRecord
   belongs_to :manager, class_name: "User", foreign_key: "manager_id"
   acts_as_paranoid
 
+  LEAVE_TYPE = %i(annual bonus personal sick).freeze
+
   include AASM
   include SignatureConcern
 
