@@ -10,6 +10,9 @@ class BaseController < ApplicationController
   def index
   end
 
+  def show
+  end
+
   def new
     @current_object = collection_scope.new
   end

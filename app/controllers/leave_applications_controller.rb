@@ -1,10 +1,4 @@
 class LeaveApplicationsController < BaseController
-  def index
-  end
-
-  def show
-    @leave_application = LeaveApplication.find(params[:id])
-  end
 
   def collection_scope
     if params[:id]
