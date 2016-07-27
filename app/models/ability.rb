@@ -9,6 +9,7 @@ class Ability
       can :manage, :all
     when "employee"
       can :view, LeaveTime
+      can :manage, LeaveApplication
     end
   end
 end

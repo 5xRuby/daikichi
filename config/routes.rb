@@ -7,5 +7,6 @@ Rails.application.routes.draw do
     namespace :backend do
       resources :users
     end
+    resources :leave_applications
   end
 end

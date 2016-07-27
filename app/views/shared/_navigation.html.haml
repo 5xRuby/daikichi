@@ -10,6 +10,8 @@
 
     #nav-collapse.collapse.navbar-collapse
       %ul.nav.navbar-nav
+        - if can? :view, LeaveApplication
+          %li= link_to t("menu_labels.leave_application"), leave_applications_path
         - if can? :manage, User
           %li.dropdown
             = dropdown_title t("menu_labels.user")
