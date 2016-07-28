@@ -13,8 +13,8 @@
       - current_collection.each do |leave|
         %tr
           %td= leave.leave_type
-          %td= leave.start_time
-          %td= leave.end_time
+          %td= convert_time_format leave.start_time, :ordinal
+          %td= convert_time_format leave.end_time, :ordinal
           %td= leave.hours
           %td= leave.status
           %td
