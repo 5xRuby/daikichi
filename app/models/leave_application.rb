@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 class LeaveApplication < ApplicationRecord
+  before_save :calculate_hours
   belongs_to :user
   belongs_to :manager, class_name: "User", foreign_key: "manager_id"
   acts_as_paranoid
@@ -30,5 +31,9 @@ class LeaveApplication < ApplicationRecord
     event :close do
       transitions to: :closed, from: [:pending, :approved, :rejected]
     end
+  end
+
+  def calculate_hours
+    self.hours = ( end_time - start_time ) / 3600.0
   end
 end

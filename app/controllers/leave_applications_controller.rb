@@ -13,6 +13,6 @@ class LeaveApplicationsController < BaseController
   def resource_params
     params.require(:leave_application).permit(
       :leave_type, :start_time, :end_time, :description
-    )
+    ).merge(user_id: current_user.id)
   end
 end
