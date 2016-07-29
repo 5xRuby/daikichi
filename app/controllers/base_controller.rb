@@ -19,7 +19,7 @@ class BaseController < ApplicationController
 
   def create
     @current_object = collection_scope.new(resource_params)
-    return render action: new unless @current_object.save
+    return render action: :new unless @current_object.save
     action_success
   end
 
