@@ -67,7 +67,7 @@ class BaseController < ApplicationController
   end
 
   def url_after_create
-    request.env["HTTP_REFERER"] || url_for(action: :index)
+    url_for(action: :index) || request.env["HTTP_REFERER"]
   end
 
   def url_after_destroy
