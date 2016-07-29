@@ -1,6 +1,6 @@
 = simple_form_for current_object  do |f|
  = f.input :leave_type, required: true, collection: LeaveApplication::LEAVE_TYPE
- = f.input :start_time, required: true
- = f.input :end_time, required: true
+ = f.input :start_time, as: :date_time_picker_start, required: true
+ = f.input :end_time, as: :date_time_picker_end,  required: true
  = f.input :description, required: true
  = f.button :submit

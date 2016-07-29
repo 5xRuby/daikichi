@@ -15,3 +15,5 @@
 //= require bootstrap-sprockets
 //= require_tree .
 //= require cocoon
+//= require moment
+//= require bootstrap-datetimepicker
