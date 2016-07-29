@@ -3,6 +3,7 @@ class LeaveApplication < ApplicationRecord
   before_save :calculate_hours
   belongs_to :user
   belongs_to :manager, class_name: "User", foreign_key: "manager_id"
+  validates_presence_of :leave_type, :description
   acts_as_paranoid
 
   LEAVE_TYPE = %i(annual bonus personal sick).freeze
@@ -35,5 +36,6 @@ class LeaveApplication < ApplicationRecord
 
   def calculate_hours
     self.hours = ( end_time - start_time ) / 3600.0
+    puts end_time
   end
 end

@@ -26,6 +26,14 @@ zh-TW:
         description: '事由'
         manager: '簽核主管'
         sign_date: '簽核時間'
+    errors:
+      models:
+        leave_application:
+          attributes:
+            leave_type:
+              blank: "請選擇請假種類"
+            description:
+              blank: "請簡述原因"
 
   menu_labels:
     user: '員工管理'
