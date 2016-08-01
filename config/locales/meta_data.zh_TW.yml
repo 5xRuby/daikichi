@@ -56,7 +56,10 @@ zh-TW:
       new: '新增員工'
       show: '員工資料'
       edit: '員工資料'
-      verify_leaves: '審核員工假單'
+
+    backend/leave_applications:
+      leave_list: '所有員工假單'
+      verify_leaves: '審核假單'
 
     leave_applications:
       leave_list: '假單'

@@ -1,0 +1,30 @@
+%h2= t("title.backend/leave_applications.leave_list")
+- if current_collection.any?
+  %table.table
+    %thead
+      %tr
+        %th= t_attribute(:user_id, LeaveApplication)
+        %th= t_attribute(:leave_type, LeaveApplication)
+        %th= t_attribute(:start_time, LeaveApplication)
+        %th= t_attribute(:end_time, LeaveApplication)
+        %th= t_attribute(:hours, LeaveApplication)
+        %th= t_attribute(:status, LeaveApplication)
+        %th= t("captions.tools")
+    %tbody
+      - current_collection.each do |leave|
+        %tr
+          %td= leave.user_id
+          %td= leave.leave_type
+          %td= convert_time_format leave.start_time, :ordinal
+          %td= convert_time_format leave.end_time, :ordinal
+          %td= leave.hours
+          %td= leave.status
+          %td
+            - # 路徑需要再改
+            = link_to t("title.backend/leave_applications.verify_leaves"), root_path
+
+- else
+  = no_data_alert
+
+= paginate current_collection
+
