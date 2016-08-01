@@ -4,7 +4,7 @@ class LeaveApplicationsController < BaseController
     if params[:id]
       LeaveApplication
     else
-      LeaveApplication.order(id: :asc)
+      LeaveApplication.get_scope(current_user)
     end
   end
 

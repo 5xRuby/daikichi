@@ -34,6 +34,16 @@ class LeaveApplication < ApplicationRecord
     end
   end
 
+  def self.get_scope(current_user)
+    if current_user == 'manager'
+      self.order(id: :desc)
+    else
+      self.where("user_id = #{current_user.id}").order(id: :desc)
+    end
+  end
+
+  private
+
   def calculate_hours
     self.hours = ( end_time - start_time ) / 3600.0
     puts end_time
