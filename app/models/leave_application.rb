@@ -34,7 +34,7 @@ class LeaveApplication < ApplicationRecord
     end
   end
 
-  scope :get_scope, ->(current_user) { current_user == "manager" ?  all : where(user_id: current_user.id) }
+  scope :is_manager?, ->(current_user) { current_user.role == "manager" ?  all : where(user_id: current_user.id) }
 
   private
 
