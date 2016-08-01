@@ -1,9 +1,9 @@
-class DateTimePickerEndInput < SimpleForm::Inputs::Base
+class DateTimePickerInput < SimpleForm::Inputs::Base
   def input
     template.content_tag(:div, class: 'row') do
       template.content_tag(:div, class: 'col-sm-5') do
         template.content_tag(:div, class: 'form-group') do
-          template.content_tag(:div, class: 'input-group date', id: 'datetimepicker_end') do
+          template.content_tag(:div, class: 'input-group date', id: "datetimepicker_#{options[:time]}") do
             template.concat @builder.text_field(attribute_name, input_html_options)
             template.concat span_remove
           end
@@ -27,3 +27,4 @@ class DateTimePickerEndInput < SimpleForm::Inputs::Base
   end
 
 end
+
