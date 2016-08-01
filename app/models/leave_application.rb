@@ -34,13 +34,7 @@ class LeaveApplication < ApplicationRecord
     end
   end
 
-  def self.get_scope(current_user)
-    if current_user == 'manager'
-      self.order(id: :desc)
-    else
-      self.where("user_id = #{current_user.id}").order(id: :desc)
-    end
-  end
+  scope :get_scope, ->(current_user) { current_user == "manager" ?  all : where(user_id: current_user.id) }
 
   private
 
