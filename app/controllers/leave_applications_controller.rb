@@ -2,9 +2,9 @@ class LeaveApplicationsController < BaseController
 
   def collection_scope
     if params[:id]
-      LeaveApplication
+      current_user.leave_applications
     else
-      LeaveApplication.is_employee(current_user).order(id: :desc)
+      current_user.leave_applications.order(id: :desc)
     end
   end
 
@@ -13,6 +13,6 @@ class LeaveApplicationsController < BaseController
   def resource_params
     params.require(:leave_application).permit(
       :leave_type, :start_time, :end_time, :description
-    ).merge(user_id: current_user.id)
+    )
   end
 end
