@@ -15,27 +15,29 @@ class LeaveApplication < ApplicationRecord
     state :pending, initial: true
     state :approved
     state :rejected
+    state :canceled
     state :closed
 
     event :approve, after: proc { |manager| sign(manager) } do
-      transitions to: :approved, from: [:pending, :rejected]
+      transitions to: :approved, from: [:pending]
     end
 
     event :reject, after: proc { |manager| sign(manager) } do
-      transitions to: :rejected, from: [:pending, :approved]
+      transitions to: :rejected, from: [:pending]
     end
 
     event :revise do
-      transitions to: :pending, from: [:pending, :approved, :rejected]
+      transitions to: :pending, from: [:pending, :rejected]
+    end
+
+    event :cancel do
+      transition to: :canceled, from: [:pending, :approved, :rejected]
     end
 
     event :close do
-      transitions to: :closed, from: [:pending, :approved, :rejected]
+      transitions to: :closed, from: [:canceled, :approved, :rejected]
     end
   end
-
-  scope :is_manager, -> { all }
-  scope :is_employee, ->(current_user) { where(user_id: current_user.id) }
 
   private
 
