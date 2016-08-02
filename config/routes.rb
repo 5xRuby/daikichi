@@ -6,7 +6,13 @@ Rails.application.routes.draw do
 
     namespace :backend do
       resources :users
-      get 'leave_applications', to: "leave_applications#index", as: "leave_applications"
+      resources :leave_applications, only: [:index] do
+        member do
+          get 'verify'
+          put 'approve'
+          put 'reject'
+        end
+      end
     end
     resources :leave_applications
   end

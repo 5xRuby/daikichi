@@ -1,0 +1,12 @@
+%table.table
+  = tr_by_object :leave_type
+  = tr_by_object :start_time
+  = tr_by_object :end_time
+  = tr_by_object :hours
+  = tr_by_object :description
+  = tr_by_object :status
+  = tr_by_object :sign_date
+  = tr_by_object :manager_id
+= button_to t("title.backend/leave_applications.approve"), approve_backend_leave_application_path(current_object), method: :put
+= button_to t("title.backend/leave_applications.reject"), reject_backend_leave_application_path(current_object), method: :put
+

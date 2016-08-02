@@ -21,7 +21,7 @@
           %td= leave.status
           %td
             - # 路徑需要再改
-            = link_to t("title.backend/leave_applications.verify_leaves"), root_path
+            = link_to t("title.backend/leave_applications.verify_leaves"), verify_backend_leave_application_path(leave)
 
 - else
   = no_data_alert

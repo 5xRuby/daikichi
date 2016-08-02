@@ -60,6 +60,8 @@ zh-TW:
     backend/leave_applications:
       leave_list: '所有員工假單'
       verify_leaves: '審核假單'
+      approve: '核准'
+      reject: '駁回'
 
     leave_applications:
       leave_list: '假單'
@@ -69,6 +71,10 @@ zh-TW:
     create: '新增成功'
     update: '修改成功'
     destroy: '刪除成功'
+    approve: '已核准假單'
+    reject: '已駁回假單'
+    revise: '已修改假單'
+    close: '已取消假單'
 
   warnings:
     self_manage: '申請人不得自行審核'

@@ -4,6 +4,8 @@ class Backend::UsersController < Backend::BaseController
     @leave_times = LeaveTime.current_year(params[:id])
   end
 
+  private
+
   def collection_scope
     if params[:id]
       User
@@ -11,8 +13,6 @@ class Backend::UsersController < Backend::BaseController
       User.order(id: :desc)
     end
   end
-
-  private
 
   def resource_params
     params.require(:user).permit(
