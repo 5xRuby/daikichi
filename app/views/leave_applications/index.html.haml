@@ -20,9 +20,9 @@
           %td= leave.hours
           %td= leave.status
           %td
-            = link_to "show", leave_application_path(leave)
-            = link_to "edit", edit_leave_application_path(leave)
-            = link_to "delete", leave_application_path(leave), method: :delete, data: { confirm: t("warnings.confirm_delete")}
+            = link_to t("title.leave_applications.show_leave"), leave_application_path(leave)
+            = link_to t("title.leave_applications.edit_leave"), edit_leave_application_path(leave)
+            = link_to t("title.leave_applications.cancel_leave"), leave_application_path(leave), method: :delete, data: { confirm: t("warnings.confirm_delete")}
 
 - else
   = no_data_alert
