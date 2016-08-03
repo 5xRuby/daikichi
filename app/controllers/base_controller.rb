@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 class BaseController < ApplicationController
+  before_action :set_actions
   helper_method :current_collection, :current_object
 
   load_and_authorize_resource
@@ -44,11 +45,15 @@ class BaseController < ApplicationController
 
   private
 
+  def set_actions
+    @actions = [:create, :update, :destroy]
+  end
+
   def action_success
     respond_to do |f|
       f.html do
         flash[:success] ||= t("success.#{action_name}")
-        redirect_to send("url_after_#{action_name}")
+        redirect_to url_after action_name.to_sym
       end
       f.json
     end
@@ -66,15 +71,13 @@ class BaseController < ApplicationController
     end
   end
 
-  def url_after_create
-    url_for(action: :index)
+  def url_after(action)
+    if @actions.include?(action)
+      url_for(action: :index)
+    else
+      request.env["HTTP_REFERER"]
+    end
   end
-
-  def url_after_destroy
-    url_for(action: :index)
-  end
-
-  alias url_after_update url_after_create
 
   # You should implement these in your controller
   def collection_scope; end
