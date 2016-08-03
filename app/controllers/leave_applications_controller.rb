@@ -1,11 +1,7 @@
 class LeaveApplicationsController < BaseController
 
   def collection_scope
-    if params[:id]
-      current_user.leave_applications
-    else
-      current_user.leave_applications.order(id: :desc)
-    end
+    current_user.leave_applications
   end
 
   private
