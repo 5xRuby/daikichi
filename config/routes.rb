@@ -14,6 +14,6 @@ Rails.application.routes.draw do
         end
       end
     end
-    resources :leave_applications
+    resources :leave_applications, except: [:destroy]
   end
 end

@@ -66,6 +66,9 @@ zh-TW:
     leave_applications:
       leave_list: '假單'
       apply_leave: '新增假單'
+      show_leave: '檢視假單'
+      edit_leave: '修改假單'
+      cancel_leave: '取消假單'
 
   success:
     create: '新增成功'

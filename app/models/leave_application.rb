@@ -16,7 +16,6 @@ class LeaveApplication < ApplicationRecord
     state :approved
     state :rejected
     state :canceled
-    state :closed
 
     event :approve, after: proc { |manager| sign(manager) } do
       transitions to: :approved, from: [:pending]
@@ -31,12 +30,9 @@ class LeaveApplication < ApplicationRecord
     end
 
     event :cancel do
-      transition to: :canceled, from: [:pending, :approved, :rejected]
+      transitions to: :canceled, from: [:pending, :approved, :rejected]
     end
 
-    event :close do
-      transitions to: :closed, from: [:canceled, :approved, :rejected]
-    end
   end
 
   private
