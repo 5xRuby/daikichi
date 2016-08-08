@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 class LeaveApplication < ApplicationRecord
-  before_save :calculate_hours_and_deduct_it_from_leave_time
+  before_save :deduct_user_hours
   belongs_to :user
   belongs_to :manager, class_name: "User", foreign_key: "manager_id"
   validates_presence_of :leave_type, :description
@@ -36,18 +36,14 @@ class LeaveApplication < ApplicationRecord
   end
 
   private
-
-  def calculate_hours_and_deduct_it_from_leave_time
-    leave_time = self.user.leave_times.where("leave_type = ?", self.leave_type).first
-    self.hours = calculate_hours
-    unless self.hours_was == self.hours
-      leave_time.usable_hours += self.hours_was
-      leave_time.usable_hours -= self.hours
-      leave_time.save!
-    end
+  # 找該假單的屬於誰的，扣除他該 leave_type 的時數
+  def deduct_user_hours
+    leave_time = LeaveTime.personal(user_id, leave_type)
+    assign_hours
+    leave_time.deduct_hours(hours_was, hours)
   end
 
-  def calculate_hours
-    ( end_time - start_time ) / 3600.0
+  def assign_hours
+    self.hours = ( end_time - start_time ) / 3600.0
   end
 end
