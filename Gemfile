@@ -15,10 +15,8 @@ gem 'uglifier', '>= 1.3.0'
 gem 'coffee-rails', '~> 4.1.0'
 # See https://github.com/rails/execjs#readme for more supported runtimes
 # gem 'therubyracer', platforms: :ruby
-
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
-
 # Use bootstrap3 datetimepicker library
 gem 'momentjs-rails'
 gem 'bootstrap3-datetimepicker-rails'
@@ -46,6 +44,7 @@ gem 'date_validator'
 gem 'aasm'
 gem 'kaminari'
 gem 'paranoia', :github => 'rubysherpas/paranoia', :branch => 'rails4' #TODO gem update for rails 5
+gem 'business_time'
 
 group :development, :test do
   gem 'byebug', platform: :mri
