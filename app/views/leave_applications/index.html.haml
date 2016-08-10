@@ -15,8 +15,8 @@
         %tr
           %td= leave.user_id
           %td= leave.leave_type
-          %td= convert_time_format leave.start_time, :ordinal
-          %td= convert_time_format leave.end_time, :ordinal
+          %td= convert_time_format leave.start_time, :abbr
+          %td= convert_time_format leave.end_time, :abbr
           %td= leave.hours
           %td= leave.status
           %td
