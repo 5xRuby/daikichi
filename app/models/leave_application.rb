@@ -4,12 +4,14 @@ class LeaveApplication < ApplicationRecord
   belongs_to :user
   belongs_to :manager, class_name: "User", foreign_key: "manager_id"
   validates_presence_of :leave_type, :description
+  validate :validate_hours
   acts_as_paranoid
 
   LEAVE_TYPE = %i(annual bonus personal sick).freeze
 
   include AASM
   include SignatureConcern
+  include HoursValidationConcern
 
   aasm column: :status do
     state :pending, initial: true
@@ -44,6 +46,6 @@ class LeaveApplication < ApplicationRecord
   end
 
   def assign_hours
-    self.hours = ( end_time - start_time ) / 3600.0
+    self.hours = start_time.business_time_until(end_time) / 3600.0
   end
 end

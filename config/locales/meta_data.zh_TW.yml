@@ -34,6 +34,8 @@ zh-TW:
               blank: "請選擇請假種類"
             description:
               blank: "請簡述原因"
+            end_time:
+              not_integer: "請假的最小單位是1小時"
 
   menu_labels:
     user: '員工管理'
