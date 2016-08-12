@@ -1,7 +1,11 @@
 %table.table
   = tr_by_object :leave_type
-  = tr_by_object :start_time
-  = tr_by_object :end_time
+  %tr
+    %th= t_attribute(:start_time, current_object)
+    %td= convert_time_format t_value(:start_time, current_object), :full
+  %tr
+    %th= t_attribute(:end_time, current_object)
+    %td= convert_time_format t_value(:end_time, current_object), :full
   = tr_by_object :hours
   = tr_by_object :description
   = tr_by_object :status

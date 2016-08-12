@@ -13,7 +13,7 @@ module ApplicationHelper
 
   def t_value(attribute, object = current_object, key = nil)
     if key.nil?
-      (object[attribute].is_a? Time ) ? convert_time_format(object[attribute], :full) : object[attribute]
+      object[attribute]
     else
       t(key, scope: t_options_scope(object, attribute))
     end
