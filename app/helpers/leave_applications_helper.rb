@@ -3,30 +3,20 @@ module LeaveApplicationsHelper
     time_object.to_s(key)
   end
 
-  def set_default_time(time_object, key)
-    return time_object if action_name == "edit"
-
-    time_object = Time.zone.now
-    if over? time_object, hour: 18
-      time_object = time_object.change day: next_business_(:day, time_object), hour: 9, min: 30
+  def new_input_hash(key, time_object = Time.zone.now)
+    if key==:start
+      time_object = time_object.change hour: 9, min: 30
     else
-      if over? time_object, min:30
-        time_object = time_object.change hour: next_business_(:hour, time_object), min: 0
-      else
-        time_object = time_object.change min: 30
-      end
+      time_object = time_object.change hour: 10, min: 30
     end
-    byebug
-    (key==:end) ? (time_object = time_object.change hour: next_business_(:hour, time_object), min: 30) : time_object
+    hash(key, time_object)
   end
 
-  def over?(time_object , options={})
-    result = true
-    options.each {|key, val| result = result && time_object.send(key).send(:>, val)}
-    result
+  def edit_input_hash(key, time_object)
+    hash(key, time_object)
   end
 
-  def next_business_(key, time_object)
-    1.send("business_#{key.to_s}").after(time_object).send(key)
+  def hash(key, time_object)
+    {as: :date_time_picker, time: key.to_s, input_html: {value: time_object}, require: true}
   end
 end
