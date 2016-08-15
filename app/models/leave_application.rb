@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 class LeaveApplication < ApplicationRecord
-  before_save :deduct_user_hours
   belongs_to :user
   belongs_to :manager, class_name: "User", foreign_key: "manager_id"
-  validates_presence_of :leave_type, :description
+  before_validation :assign_hours
+  validates :leave_type, :description, presence: true
   validate :validate_hours
+  before_save :deduct_user_hours
   acts_as_paranoid
 
   LEAVE_TYPE = %i(annual bonus personal sick).freeze
@@ -41,7 +42,6 @@ class LeaveApplication < ApplicationRecord
   # 找該假單的屬於誰的，扣除他該 leave_type 的時數
   def deduct_user_hours
     leave_time = LeaveTime.personal(user_id, leave_type)
-    assign_hours
     leave_time.deduct_hours(hours_was, hours)
   end
 
