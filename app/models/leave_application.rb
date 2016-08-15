@@ -4,7 +4,7 @@ class LeaveApplication < ApplicationRecord
   belongs_to :manager, class_name: "User", foreign_key: "manager_id"
   before_validation :assign_hours
   validates :leave_type, :description, presence: true
-  validate :validate_hours
+  validate :hours_should_be_integer
   before_save :deduct_user_hours
   acts_as_paranoid
 
@@ -12,7 +12,6 @@ class LeaveApplication < ApplicationRecord
 
   include AASM
   include SignatureConcern
-  include HoursValidationConcern
 
   aasm column: :status do
     state :pending, initial: true
@@ -47,5 +46,11 @@ class LeaveApplication < ApplicationRecord
 
   def assign_hours
     self.hours = start_time.business_time_until(end_time) / 3600.0
+  end
+
+  def hours_should_be_integer
+    unless ((end_time - start_time) / 3600.0) % 1 == 0
+      errors.add(:end_time, :not_integer)
+    end
   end
 end
