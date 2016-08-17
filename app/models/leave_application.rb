@@ -45,7 +45,7 @@ class LeaveApplication < ApplicationRecord
   end
 
   def assign_hours
-    self.hours = start_time.business_time_until(end_time) / 3600.0
+    self.hours = start_time.working_time_until(end_time) / 3600.0
   end
 
   def hours_should_be_integer

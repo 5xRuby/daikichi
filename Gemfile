@@ -44,7 +44,7 @@ gem 'date_validator'
 gem 'aasm'
 gem 'kaminari'
 gem 'paranoia', :github => 'rubysherpas/paranoia', :branch => 'rails4' #TODO gem update for rails 5
-gem 'business_time'
+gem 'working_hours'
 
 group :development, :test do
   gem 'byebug', platform: :mri
