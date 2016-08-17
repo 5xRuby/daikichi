@@ -22,7 +22,7 @@ class LeaveApplication < ApplicationRecord
       transitions to: :approved, from: [:pending]
     end
 
-    event :reject, after: proc { |manager| sign(manager) } do
+    event :reject, after: [proc { |manager| sign(manager) }, :return_user_hours] do
       transitions to: :rejected, from: [:pending]
     end
 
@@ -37,6 +37,11 @@ class LeaveApplication < ApplicationRecord
   end
 
   private
+
+  def return_user_hours
+    leave_time = LeaveTime.personal(user_id, leave_type)
+    leave_time.return_hours(hours)
+  end
 
   def deduct_user_hours
     leave_time = LeaveTime.personal(user_id, leave_type)
