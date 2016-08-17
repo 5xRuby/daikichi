@@ -34,6 +34,8 @@ zh-TW:
               blank: "請選擇請假種類"
             description:
               blank: "請簡述原因"
+            start_time:
+              should_be_earlier: "開始時間必須早於結束時間"
             end_time:
               not_integer: "請假的最小單位是1小時"
 
