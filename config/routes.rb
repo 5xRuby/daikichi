@@ -14,6 +14,10 @@ Rails.application.routes.draw do
         end
       end
     end
-    resources :leave_applications, except: [:destroy]
+    resources :leave_applications, except: [:destroy] do
+      member do
+        put 'cancel'
+      end
+    end
   end
 end

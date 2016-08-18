@@ -11,6 +11,12 @@ class LeaveApplicationsController < BaseController
     end
   end
 
+  def cancel
+    current_object.cancel!
+    @actions << :cancel
+    action_success
+  end
+
   private
 
   def collection_scope

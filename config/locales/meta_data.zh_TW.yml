@@ -81,7 +81,7 @@ zh-TW:
     approve: '已核准假單'
     reject: '已駁回假單'
     revise: '已修改假單'
-    close: '已取消假單'
+    cancel: '已取消假單'
 
   warnings:
     self_manage: '申請人不得自行審核'
@@ -89,6 +89,7 @@ zh-TW:
     restricted_function: '功能限制中'
     no_data: '尚無資料'
     confirm_delete: '您確定要刪除嗎？'
+    confirm_cancel: '你確定要取消嗎？'
 
   misc:
     app_title: '五倍神社'

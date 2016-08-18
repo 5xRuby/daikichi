@@ -22,7 +22,10 @@
           %td
             = link_to t("title.leave_applications.show_leave"), leave_application_path(leave)
             = link_to t("title.leave_applications.edit_leave"), edit_leave_application_path(leave)
-            = link_to t("title.leave_applications.cancel_leave"), leave_application_path(leave), method: :delete, data: { confirm: t("warnings.confirm_delete")}
+            = link_to t("title.leave_applications.cancel_leave"),
+              cancel_leave_application_path(leave),
+              method: :put,
+              data: { confirm: t("warnings.confirm_cancel")}
 
 - else
   = no_data_alert

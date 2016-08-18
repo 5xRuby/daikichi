@@ -30,7 +30,7 @@ class LeaveApplication < ApplicationRecord
       transitions to: :pending, from: [:pending, :approved, :rejected]
     end
 
-    event :cancel do
+    event :cancel, after: :return_user_hours do
       transitions to: :canceled, from: [:pending, :approved, :rejected]
     end
 
@@ -39,8 +39,10 @@ class LeaveApplication < ApplicationRecord
   private
 
   def return_user_hours
-    leave_time = LeaveTime.personal(user_id, leave_type)
-    leave_time.return_hours(hours)
+    if aasm.from_state != :rejected
+      leave_time = LeaveTime.personal(user_id, leave_type)
+      leave_time.return_hours(hours)
+    end
   end
 
   def deduct_user_hours

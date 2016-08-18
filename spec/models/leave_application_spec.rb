@@ -141,6 +141,7 @@ RSpec.describe LeaveApplication, type: :model do
 
   end
 
+
   describe "主管審核" do
     let(:a_first_year_employee) { FactoryGirl.create(:a_first_year_employee) }
     let(:annual) { FactoryGirl.create(:annual_leave_time, user: a_first_year_employee) }
@@ -247,6 +248,75 @@ RSpec.describe LeaveApplication, type: :model do
 
       leave.revise!
       expect(leave.status).to eq "pending"
+    end
+  end
+
+  describe "取消假單" do
+    let(:a_first_year_employee) { FactoryGirl.create(:a_first_year_employee) }
+    let(:sick) { FactoryGirl.create(:sick_leave_time, user: a_first_year_employee) }
+    let(:start_time) { Time.new(2016, 8, 17, 9, 30, 0, "+08:00") }
+    let(:manager_eddie) { FactoryGirl.create(:manager_eddie) }
+
+    it "有兩張假單，取消了其中一張8/17 09:30 ~ 8/18 10:30 pending假單" do
+      sick.init_quota
+      leave1 = FactoryGirl.create(
+        :sick_leave,
+        start_time: start_time,
+        end_time: Time.new(2016, 8, 18, 10, 30, 00, "+08:00"),
+        user: a_first_year_employee
+      )
+      leave2 = FactoryGirl.create(
+        :sick_leave,
+        start_time: start_time,
+        end_time: Time.new(2016, 8, 19, 9, 30, 00, "+08:00"),
+        user: a_first_year_employee
+      )
+      sick.reload
+      expect(sick.used_hours).to eq 25
+
+      leave1.cancel!
+      sick.reload
+      expect(sick.used_hours).to eq 16
+    end
+
+    it "取消8/17 09:30 ~ 8/18 10:30 approved假單" do
+      sick.init_quota
+      leave = FactoryGirl.create(
+        :sick_leave,
+        start_time: start_time,
+        end_time: Time.new(2016, 8, 18, 10, 30, 00, "+08:00"),
+        user: a_first_year_employee
+      )
+      sick.reload
+      expect(sick.used_hours).to eq 9
+
+      leave.approve!(manager_eddie)
+      expect(leave.status).to eq "approved"
+
+      leave.cancel!
+      sick.reload
+      expect(sick.used_hours).to eq 0
+    end
+
+    it "取消8/17 09:30 ~ 8/18 10:30 rejected假單" do
+      sick.init_quota
+      leave = FactoryGirl.create(
+        :sick_leave,
+        start_time: start_time,
+        end_time: Time.new(2016, 8, 18, 10, 30, 00, "+08:00"),
+        user: a_first_year_employee
+      )
+      sick.reload
+      expect(sick.used_hours).to eq 9
+
+      leave.reject!(manager_eddie)
+      sick.reload
+      expect(sick.used_hours).to eq 0
+      expect(leave.status).to eq "rejected"
+
+      leave.cancel!
+      sick.reload
+      expect(sick.used_hours).to eq 0
     end
   end
 end
