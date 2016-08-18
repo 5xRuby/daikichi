@@ -1,10 +1,21 @@
 class LeaveApplicationsController < BaseController
+  def update
+    if current_object.update(resource_params)
+      current_object.revise!
+      action_success
+    else
+      respond_to do |f|
+        f.html { return render action: :edit }
+        f.json
+      end
+    end
+  end
+
+  private
 
   def collection_scope
     current_user.leave_applications
   end
-
-  private
 
   def resource_params
     params.require(:leave_application).permit(

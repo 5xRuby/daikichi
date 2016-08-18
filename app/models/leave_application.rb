@@ -27,7 +27,7 @@ class LeaveApplication < ApplicationRecord
     end
 
     event :revise do
-      transitions to: :pending, from: [:pending, :rejected]
+      transitions to: :pending, from: [:pending, :approved, :rejected]
     end
 
     event :cancel do
