@@ -121,7 +121,6 @@ RSpec.describe LeaveApplication, type: :model do
     let(:start_time) { Time.new(2016, 8, 17, 9, 30, 0, "+08:00") }
 
     it "結束時間 8/17 11:30 -> 8/17 18:30" do
-      personal = FactoryGirl.create(:personal_leave_time, user: a_first_year_employee)
       personal.init_quota
       quota = personal.quota
 
@@ -139,6 +138,7 @@ RSpec.describe LeaveApplication, type: :model do
       personal.reload
       expect(personal.used_hours).to eq(8)
     end
+
   end
 
   describe "主管審核" do
@@ -189,6 +189,64 @@ RSpec.describe LeaveApplication, type: :model do
       expect(annual.usable_hours).to eq quota
       expect(leave.status).to eq "rejected"
       expect(leave.manager_id).to eq manager_eddie.id
+    end
+  end
+
+  describe "主管審核後員工再次修改, rejected -> pending" do
+    let(:start_time) { Time.new(2016, 8, 17, 9, 30, 0, "+08:00") }
+    let(:a_first_year_employee) { FactoryGirl.create(:a_first_year_employee) }
+    let(:personal) { FactoryGirl.create(:personal_leave_time, user: a_first_year_employee) }
+    let(:manager_eddie) { FactoryGirl.create(:manager_eddie) }
+
+    it "員工修改假單, rejected -> pending" do
+      personal.init_quota
+      leave = FactoryGirl.create(
+        :personal_leave,
+        start_time: start_time,
+        end_time: Time.new(2016, 8, 17, 11, 30, 00, "+08:00"),
+        user: a_first_year_employee
+      )
+      personal.reload
+      expect(leave.status).to eq "pending"
+
+      leave.reject!(manager_eddie)
+      expect(leave.status).to eq "rejected"
+
+      leave.revise!
+      expect(leave.status).to eq "pending"
+    end
+
+    it "員工修改假單, approved -> pending" do
+      personal.init_quota
+      leave = FactoryGirl.create(
+        :personal_leave,
+        start_time: start_time,
+        end_time: Time.new(2016, 8, 17, 11, 30, 00, "+08:00"),
+        user: a_first_year_employee
+      )
+      personal.reload
+      expect(leave.status).to eq "pending"
+
+      leave.approve!(manager_eddie)
+      expect(leave.status).to eq "approved"
+
+      leave.revise!
+      expect(leave.status).to eq "pending"
+    end
+
+    it "員工修改假單, pending -> pending" do
+      personal.init_quota
+      leave = FactoryGirl.create(
+        :personal_leave,
+        start_time: start_time,
+        end_time: Time.new(2016, 8, 17, 11, 30, 00, "+08:00"),
+        user: a_first_year_employee
+      )
+      personal.reload
+      expect(leave.status).to eq "pending"
+
+      leave.revise!
+      expect(leave.status).to eq "pending"
     end
   end
 end
