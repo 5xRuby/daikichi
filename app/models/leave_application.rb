@@ -4,7 +4,7 @@ class LeaveApplication < ApplicationRecord
   belongs_to :manager, class_name: "User", foreign_key: "manager_id"
   validates :leave_type, :description, presence: true
   validate :hours_should_be_positive_integer
-  before_save :deduct_user_hours
+  before_create :deduct_user_hours
   acts_as_paranoid
 
   LEAVE_TYPE = %i(annual bonus personal sick).freeze
@@ -26,7 +26,7 @@ class LeaveApplication < ApplicationRecord
       transitions to: :rejected, from: [:pending]
     end
 
-    event :revise do
+    event :revise, after: :adjust_user_hours do
       transitions to: :pending, from: [:pending, :approved, :rejected]
     end
 
@@ -38,17 +38,31 @@ class LeaveApplication < ApplicationRecord
 
   private
 
-  def return_user_hours
-    if aasm.from_state != :rejected
-      leave_time = LeaveTime.personal(user_id, leave_type)
-      leave_time.return_hours(hours)
-    end
-  end
-
   def deduct_user_hours
     leave_time = LeaveTime.personal(user_id, leave_type)
     assign_hours
-    leave_time.deduct_hours(hours_was, hours)
+    leave_time.adjust_used_hours(hours)
+  end
+
+  def return_user_hours
+    if aasm.from_state != :rejected
+      leave_time = LeaveTime.personal(user_id, leave_type)
+      leave_time.adjust_used_hours(-hours)
+      @return_leave_application_hours = hours
+    end
+  end
+
+  def adjust_user_hours
+    leave_time = LeaveTime.personal(user_id, leave_type)
+    assign_hours
+    leave_time.adjust_used_hours(hours-hours_was)
+
+    if @return_leave_application_hours
+      leave_time.adjust_used_hours(@return_leave_application_hours)
+      @return_leave_application_hours = nil
+    end
+
+    save!
   end
 
   def assign_hours
