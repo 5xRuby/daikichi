@@ -23,6 +23,8 @@
               %li= link_to t("title.backend/users.index"), backend_users_path
               %li= link_to t("title.backend/users.new"), new_backend_user_path
               %li= link_to t("title.backend/leave_applications.verify_leaves"), backend_leave_applications_path
+              %li= link_to t("title.backend/employee_leave_times.index"),
+                backend_employee_leave_times_path
 
       %ul.nav.navbar-nav.navbar-right
         - if user_signed_in?
