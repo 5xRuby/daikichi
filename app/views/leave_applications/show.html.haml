@@ -1,5 +1,7 @@
 %table.table
-  = tr_by_object :leave_type
+  %tr
+    %th= t_attribute(:leave_type, current_object)
+    %td= trans t_value(:leave_type, current_object), :leave_type
   %tr
     %th= t_attribute(:start_time, current_object)
     %td= convert_time_format t_value(:start_time, current_object), :full
@@ -8,9 +10,13 @@
     %td= convert_time_format t_value(:end_time, current_object), :full
   = tr_by_object :hours
   = tr_by_object :description
-  = tr_by_object :status
+  %tr
+    %th= t_attribute(:status, current_object)
+    %td= trans t_value(:status, current_object), :status
   = tr_by_object :sign_date
-  = tr_by_object :manager_id
+  %tr
+    %th= t_attribute(:manager_id, current_object)
+    %td= current_object.manager.name
   - unless current_object.comment.nil?
     = tr_by_object :comment
 

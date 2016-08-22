@@ -15,4 +15,8 @@ module LeaveApplicationsHelper
   def date_time_picker_hash(key, time_object)
     {as: :date_time_picker, time: key.to_s, input_html: {value: time_object}, require: true}
   end
+
+  def trans(value, scope)
+    t("misc.#{scope}.#{value}")
+  end
 end

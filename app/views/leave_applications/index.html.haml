@@ -3,7 +3,6 @@
   %table.table
     %thead
       %tr
-        %th= t_attribute(:user_id, LeaveApplication)
         %th= t_attribute(:leave_type, LeaveApplication)
         %th= t_attribute(:start_time, LeaveApplication)
         %th= t_attribute(:end_time, LeaveApplication)
@@ -13,12 +12,11 @@
     %tbody
       - current_collection.each do |leave|
         %tr
-          %td= leave.user_id
-          %td= leave.leave_type
+          %td= t("misc.leave_type.#{leave.leave_type}")
           %td= convert_time_format leave.start_time, :abbr
           %td= convert_time_format leave.end_time, :abbr
           %td= leave.hours
-          %td= leave.status
+          %td= t("misc.status.#{leave.status}")
           %td
             = link_to t("actions.leave_applications.show"),
               leave_application_path(leave)

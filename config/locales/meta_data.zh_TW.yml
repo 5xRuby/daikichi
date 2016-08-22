@@ -119,4 +119,9 @@ zh-TW:
       pending: '待審'
       approved: '核准'
       rejected: '駁回'
-      closed: '完成'
+      canceled: '取消'
+    leave_type:
+      sick: "病假"
+      personal: '事假'
+      annual: '特休'
+      bonus: '補休'

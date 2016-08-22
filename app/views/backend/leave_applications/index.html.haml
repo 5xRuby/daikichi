@@ -13,12 +13,12 @@
     %tbody
       - current_collection.each do |leave|
         %tr
-          %td= leave.user_id
-          %td= leave.leave_type
+          %td= leave.user.name
+          %td= t("misc.leave_type.#{leave.leave_type}")
           %td= convert_time_format leave.start_time, :ordinal
           %td= convert_time_format leave.end_time, :ordinal
           %td= leave.hours
-          %td= leave.status
+          %td= t("misc.status.#{leave.status}")
           %td
             = link_to t("actions.backend/leave_applications.verify"),
               verify_backend_leave_application_path(leave)
