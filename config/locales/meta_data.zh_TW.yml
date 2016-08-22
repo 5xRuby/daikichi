@@ -18,6 +18,7 @@ zh-TW:
         usable_hours: '可用時數'
         used_hours: '已用時數'
       leave_application:
+        user_id: '員工'
         start_time: '開始時間'
         end_time: '結束時間'
         hours: '時數'
@@ -40,40 +41,61 @@ zh-TW:
             end_time:
               not_integer: "請假的最小單位是1小時"
 
-  menu_labels:
-    user: '員工管理'
-    leave_application: '請假系統'
+  # navbar 選單標題
+  menu:
+    leave_applications: '請假系統'
+    backend: '員工管理'
 
+  # navbar 選單內容
+  menu_options:
+    personal:
+      leave_applications:
+        index: '假單'
+        new: '新增假單'
+    backend:
+      users:
+        index: '員工列表'
+        new: '新增員工'
+      leave_applications:
+        index: '審核員工假單'
+      employee_leave_times:
+        index: '檢視員工休假'
+    devise:
+      registrations:
+        new: '註冊新帳號'
+        edit: '修改帳號資料'
+      sessions:
+        new: '登入'
+        destroy: '登出'
+
+  # 所有頁面標題
   captions:
-    tools: '工具'
-    annual_leave_time: '%{year} 年度休假使用狀況'
+    personal:
+      leaves_list: '所有假單'
+      new_leave: '新增假單'
+    backend:
+      users_list: '所有員工'
+      new_user: '新增員工'
+      leaves_list: '所有員工假單'
+      annual_employee_leave_times_list: '%{year} 年 %{mon} 月請假狀況'
+    tools: "工具"
 
-  title:
-    devise/registrations:
-      new: '註冊新帳號'
-      edit: '修改帳號資料'
-    devise/sessions:
-      new: '登入'
-      destroy: '登出'
-
+  actions:
+    # controller
     backend/users:
-      index: '員工列表'
-      new: '新增員工'
-      show: '員工資料'
-      edit: '員工資料'
+      show: '檢視'
+      edit: '修改'
+      destroy: '刪除'
 
     backend/leave_applications:
-      leave_list: '所有員工假單'
-      verify_leaves: '審核假單'
+      verify: '審核假單'
       approve: '核准'
       reject: '駁回'
 
     leave_applications:
-      leave_list: '假單'
-      apply_leave: '新增假單'
-      show_leave: '檢視'
-      edit_leave: '修改'
-      cancel_leave: '取消'
+      show: '檢視'
+      edit: '修改'
+      cancel: '取消'
 
   success:
     create: '新增成功'
