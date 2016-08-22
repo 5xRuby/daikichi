@@ -6,11 +6,9 @@ Rails.application.routes.draw do
 
     namespace :backend do
       resources :users
-      resources :leave_applications, only: [:index] do
+      resources :leave_applications, only: [:index, :update] do
         member do
           get 'verify'
-          put 'approve'
-          put 'reject'
         end
       end
     end

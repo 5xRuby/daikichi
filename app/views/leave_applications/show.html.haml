@@ -11,4 +11,6 @@
   = tr_by_object :status
   = tr_by_object :sign_date
   = tr_by_object :manager_id
+  - unless current_object.comment.nil?
+    = tr_by_object :comment
 

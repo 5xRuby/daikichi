@@ -24,8 +24,9 @@ zh-TW:
         status: '狀態'
         leave_type: '假別'
         description: '事由'
-        manager: '簽核主管'
+        manager_id: '簽核主管'
         sign_date: '簽核時間'
+        comment: '主管備註'
     errors:
       models:
         leave_application:
@@ -78,8 +79,6 @@ zh-TW:
     create: '新增成功'
     update: '修改成功'
     destroy: '刪除成功'
-    approve: '已核准假單'
-    reject: '已駁回假單'
     revise: '已修改假單'
     cancel: '已取消假單'
 
