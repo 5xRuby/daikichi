@@ -18,14 +18,14 @@ zh-TW:
         usable_hours: '可用時數'
         used_hours: '已用時數'
       leave_application:
-        user_id: '員工'
+        user: '員工'
         start_time: '開始時間'
         end_time: '結束時間'
         hours: '時數'
         status: '狀態'
         leave_type: '假別'
         description: '事由'
-        manager_id: '簽核主管'
+        manager: '簽核主管'
         sign_date: '簽核時間'
         comment: '主管備註'
     errors:
@@ -115,13 +115,3 @@ zh-TW:
   misc:
     app_title: '五倍神社'
     company_name: '五倍紅寶石'
-    status:
-      pending: '待審'
-      approved: '核准'
-      rejected: '駁回'
-      canceled: '取消'
-    leave_type:
-      sick: "病假"
-      personal: '事假'
-      annual: '特休'
-      bonus: '補休'

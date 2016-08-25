@@ -12,11 +12,11 @@
     %tbody
       - current_collection.each do |leave|
         %tr
-          %td= t("misc.leave_type.#{leave.leave_type}")
-          %td= convert_time_format leave.start_time, :abbr
-          %td= convert_time_format leave.end_time, :abbr
-          %td= leave.hours
-          %td= t("misc.status.#{leave.status}")
+          %td= t_value :leave_type, leave, :translate_text_value
+          %td= t_value :start_time, leave, :convert_time_value, :abbr
+          %td= t_value :end_time, leave, :convert_time_value, :abbr
+          %td= t_value :hours, leave
+          %td= t_value :status, leave, :translate_text_value
           %td
             = link_to t("actions.leave_applications.show"),
               leave_application_path(leave)
@@ -26,7 +26,6 @@
               cancel_leave_application_path(leave),
               method: :put,
               data: { confirm: t("warnings.confirm_cancel")}
-
 - else
   = no_data_alert
 

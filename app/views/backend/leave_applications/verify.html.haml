@@ -1,22 +1,10 @@
 %table.table
-  %tr
-    %th= t_attribute(:leave_type, current_object)
-    %td= trans t_value(:leave_type, current_object), :leave_type
-  %tr
-    %th= t_attribute(:start_time, current_object)
-    %td= convert_time_format t_value(:start_time, current_object), :full
-  %tr
-    %th= t_attribute(:end_time, current_object)
-    %td= convert_time_format t_value(:end_time, current_object), :full
+  = tr_by_object :leave_type, :translate_text_value
+  = tr_by_object :start_time, :convert_time_value, :full
+  = tr_by_object :end_time, :convert_time_value, :full
   = tr_by_object :hours
   = tr_by_object :description
-  %tr
-    %th= t_attribute(:status, current_object)
-    %td= trans t_value(:status, current_object), :status
-  %tr
-    %th= t_attribute(:sign_date, current_object)
-    %td= convert_time_format t_value(:sign_date, current_object), :full
-  %tr
-    %th= t_attribute(:manager_id, current_object)
-    %td= current_object.manager.name
+  = tr_by_object :status, :translate_text_value
+  = tr_by_object :sign_date, :convert_time_value, :full
+  = tr_by_object :manager, :convert_user_object_2_name, :name
 = render "form"

@@ -3,26 +3,25 @@
   %table.table
     %thead
       %tr
-        %th= t_attribute(:user_id, LeaveApplication)
-        %th= t_attribute(:leave_type, LeaveApplication)
-        %th= t_attribute(:start_time, LeaveApplication)
-        %th= t_attribute(:end_time, LeaveApplication)
-        %th= t_attribute(:hours, LeaveApplication)
-        %th= t_attribute(:status, LeaveApplication)
+        %th= t_attribute :user, LeaveApplication
+        %th= t_attribute :leave_type, LeaveApplication
+        %th= t_attribute :start_time, LeaveApplication
+        %th= t_attribute :end_time, LeaveApplication
+        %th= t_attribute :hours, LeaveApplication
+        %th= t_attribute :status, LeaveApplication
         %th= t("captions.tools")
     %tbody
       - current_collection.each do |leave|
         %tr
-          %td= leave.user.name
-          %td= t("misc.leave_type.#{leave.leave_type}")
-          %td= convert_time_format leave.start_time, :ordinal
-          %td= convert_time_format leave.end_time, :ordinal
-          %td= leave.hours
-          %td= t("misc.status.#{leave.status}")
+          %td= t_value :user, leave, :convert_user_object_2_name, :name
+          %td= t_value :leave_type, leave, :translate_text_value
+          %td= t_value :start_time, leave, :convert_time_value, :abbr
+          %td= t_value :end_time, leave, :convert_time_value, :abbr
+          %td= t_value :hours, leave
+          %td= t_value :status, leave, :translate_text_value
           %td
             = link_to t("actions.backend/leave_applications.verify"),
               verify_backend_leave_application_path(leave)
-
 - else
   = no_data_alert
 
