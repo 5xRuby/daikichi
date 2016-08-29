@@ -1,1 +1,19 @@
 %h2= t("captions.backend.annual_employee_leave_times_list", year: 2016, mon: 8)
+
+- if current_collection.any?
+  %table.table
+    %tr
+      %th= t_attribute(:name, User)
+      %th= t("simple_form.options.leave_time.leave_type.annual")
+      %th= t("simple_form.options.leave_time.leave_type.bonus")
+      %th= t("simple_form.options.leave_time.leave_type.personal")
+      %th= t("simple_form.options.leave_time.leave_type.sick")
+
+    - current_collection.each do |user|
+      - next if user.role == "admin"
+      %tr
+        %td= t_value :name, user
+        - LeaveTime::BASIC_TYPES.each do |leave_type|
+          %td= t_value :used_hours, LeaveTime.personal(user.id, leave_type)
+- else
+  = no_data_alert
