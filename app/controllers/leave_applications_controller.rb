@@ -1,4 +1,10 @@
 class LeaveApplicationsController < BaseController
+  def index
+    if params[:status]
+      @current_collection = LeaveApplication.where(status: params[:status]).page(params[:page])
+    end
+  end
+
   def update
     if not current_object.canceled? and current_object.update(resource_params)
       current_object.revise!

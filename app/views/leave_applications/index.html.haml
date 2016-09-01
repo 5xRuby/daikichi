@@ -1,4 +1,15 @@
 %h2= t("captions.personal.leaves_list")
+
+.status-selector
+  = button_tag t('simple_form.options.leave_application.status.pending'),
+    class: "btn btn-default col-md-1 col-xs-12 pending"
+  = button_tag t('simple_form.options.leave_application.status.approved'),
+    class: "btn btn-default col-md-1 col-xs-12 approved"
+  = button_tag t('simple_form.options.leave_application.status.rejected'),
+    class: "btn btn-default col-md-1 col-xs-12 rejected"
+  = button_tag t('simple_form.options.leave_application.status.canceled'),
+    class: "btn btn-default col-md-1 col-xs-12 canceled"
+
 - if current_collection.any?
   %table.table
     %thead
@@ -32,6 +43,4 @@
                 data: { confirm: t("warnings.confirm_cancel")}
 - else
   = no_data_alert
-
 = paginate current_collection
-
