@@ -1,8 +1,10 @@
 class LeaveApplicationsController < BaseController
   def update
-    if current_object.update(resource_params)
+    if not current_object.canceled? and current_object.update(resource_params)
       current_object.revise!
       action_success
+    elsif current_object.canceled?
+      action_fail t("warnings.not_cancellable"), :edit
     else
       respond_to do |f|
         f.html { return render action: :edit }
@@ -12,9 +14,13 @@ class LeaveApplicationsController < BaseController
   end
 
   def cancel
-    current_object.cancel!
-    @actions << :cancel
-    action_success
+    unless current_object.canceled?
+      current_object.cancel!
+      @actions << :cancel
+      action_success
+    else
+      action_fail t("warnings.not_cancellable"), :index
+    end
   end
 
   private

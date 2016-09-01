@@ -40,6 +40,10 @@ class LeaveApplication < ApplicationRecord
     return self.status == "pending"
   end
 
+  def canceled?
+    return self.status == "canceled"
+  end
+
   private
 
   def deduct_user_hours
