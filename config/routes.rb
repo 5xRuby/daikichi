@@ -13,7 +13,8 @@ Rails.application.routes.draw do
         end
 
         collection do
-          get '/:status', to: 'leave_applications#index'
+          get '/:status', to: 'leave_applications#index',
+                          constraints: { status: /pending|approved|rejected|canceled/ }
         end
       end
 
@@ -26,7 +27,8 @@ Rails.application.routes.draw do
       end
 
       collection do
-        get '/:status', to: 'leave_applications#index'
+        get '/:status', to: 'leave_applications#index',
+                        constraints: { status: /pending|approved|rejected|canceled/ }
       end
     end
   end
