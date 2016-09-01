@@ -36,6 +36,10 @@ class LeaveApplication < ApplicationRecord
 
   end
 
+  def pending?
+    return self.status == "pending"
+  end
+
   private
 
   def deduct_user_hours

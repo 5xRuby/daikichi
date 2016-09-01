@@ -88,9 +88,10 @@ zh-TW:
       destroy: '刪除'
 
     backend/leave_applications:
-      verify: '審核假單'
+      verify: '審核'
       approve: '核准'
       reject: '駁回'
+      read: '檢視'
 
     leave_applications:
       show: '檢視'
@@ -111,6 +112,7 @@ zh-TW:
     no_data: '尚無資料'
     confirm_delete: '您確定要刪除嗎？'
     confirm_cancel: '你確定要取消嗎？'
+    not_verifiable: '已審核假單無法再次操作'
 
   misc:
     app_title: '五倍神社'

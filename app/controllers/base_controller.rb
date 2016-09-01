@@ -45,6 +45,11 @@ class BaseController < ApplicationController
 
   private
 
+  def action_fail(message, action)
+    flash[:alert] = message
+    redirect_to action: action
+  end
+
   def set_actions
     @actions = [:create, :update, :destroy]
   end

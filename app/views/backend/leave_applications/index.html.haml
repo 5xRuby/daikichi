@@ -20,8 +20,12 @@
           %td= t_value :hours, leave
           %td= t_value :status, leave, :translate_text_value
           %td
-            = link_to t("actions.backend/leave_applications.verify"),
-              verify_backend_leave_application_path(leave)
+            - if leave.pending?
+              = link_to t("actions.backend/leave_applications.verify"),
+                verify_backend_leave_application_path(leave)
+            - else
+              = link_to t("actions.backend/leave_applications.read"),
+                verify_backend_leave_application_path(leave)
 - else
   = no_data_alert
 

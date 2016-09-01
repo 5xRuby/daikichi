@@ -18,13 +18,21 @@ class Backend::LeaveApplicationsController < Backend::BaseController
   private
 
   def approve
-    current_object.approve!(current_user)
-    action_success
+    if current_object.pending?
+      current_object.approve!(current_user)
+      action_success
+    else
+      action_fail t("warnings.not_verifiable"), :verify
+    end
   end
 
   def reject
-    current_object.reject!(current_user)
-    action_success
+    if current_object.pending?
+      current_object.reject!(current_user)
+      action_success
+    else
+      action_fail t("warnings.not_verifiable"), :verify
+    end
   end
 
   def collection_scope
