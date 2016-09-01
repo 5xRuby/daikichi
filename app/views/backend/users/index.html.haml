@@ -18,9 +18,15 @@
         %td= t_value :role, user, :translate_text_value
         %td= t_value :join_date, user, :convert_time_value, :full
         %td
-          = link_to t("actions.backend/users.show"), backend_user_path(user)
-          = link_to t("actions.backend/users.edit"), edit_backend_user_path(user)
-          = link_to t("actions.backend/users.destroy"), backend_user_path(user),
+          = link_to t("actions.backend/users.show"),
+            backend_user_path(user),
+            class: "btn btn-primary"
+          = link_to t("actions.backend/users.edit"),
+            edit_backend_user_path(user),
+            class: "btn btn-warning"
+          = link_to t("actions.backend/users.destroy"),
+            backend_user_path(user),
+            class: "btn btn-danger",
             method: :delete,
             data: { confirm: t("warnings.confirm_delete") }
 

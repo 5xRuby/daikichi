@@ -19,12 +19,15 @@
           %td= t_value :status, leave, :translate_text_value
           %td
             = link_to t("actions.leave_applications.show"),
-              leave_application_path(leave)
+              leave_application_path(leave),
+              class: "btn btn-primary"
             - unless leave.canceled?
               = link_to t("actions.leave_applications.edit"),
-                edit_leave_application_path(leave)
+                edit_leave_application_path(leave),
+                class: "btn btn-warning"
               = link_to t("actions.leave_applications.cancel"),
                 cancel_leave_application_path(leave),
+                class: "btn btn-danger",
                 method: :put,
                 data: { confirm: t("warnings.confirm_cancel")}
 - else

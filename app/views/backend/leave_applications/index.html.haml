@@ -22,10 +22,12 @@
           %td
             - if leave.pending?
               = link_to t("actions.backend/leave_applications.verify"),
-                verify_backend_leave_application_path(leave)
+                verify_backend_leave_application_path(leave),
+                class: "btn btn-warning"
             - else
               = link_to t("actions.backend/leave_applications.read"),
-                verify_backend_leave_application_path(leave)
+                verify_backend_leave_application_path(leave),
+                class: "btn btn-primary"
 - else
   = no_data_alert
 
