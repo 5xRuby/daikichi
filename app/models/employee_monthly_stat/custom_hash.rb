@@ -1,4 +1,4 @@
-class Stat
+class EmployeeMonthlyStat::CustomHash
   attr_accessor :data
 
   def initialize

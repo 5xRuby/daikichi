@@ -3,7 +3,7 @@ class Backend::EmployeeLeaveTimesController < Backend::BaseController
   skip_load_and_authorize_resource
 
   def index
-    @current_collection = Month.leave_application_hours_stat(params[:year], params[:month])
+    @current_collection = EmployeeMonthlyStat.total_leave_times_hours(params[:year], params[:month])
   end
 
   private
