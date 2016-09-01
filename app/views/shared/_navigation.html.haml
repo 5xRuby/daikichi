@@ -25,7 +25,7 @@
               %li= link_to t("menu_options.backend.leave_applications.index"),
                 backend_leave_applications_path
               %li= link_to t("menu_options.backend.employee_leave_times.index"),
-                backend_employee_leave_times_path
+                backend_employee_leave_times_path(Time.zone.now.year, Time.zone.now.mon)
 
       %ul.nav.navbar-nav.navbar-right
         - if user_signed_in?
