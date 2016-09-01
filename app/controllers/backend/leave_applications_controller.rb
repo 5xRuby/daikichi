@@ -1,5 +1,10 @@
 # frozen_string_literal: true
 class Backend::LeaveApplicationsController < Backend::BaseController
+  def index
+    if params[:status]
+      @current_collection = LeaveApplication.where(status: params[:status]).page(params[:page])
+    end
+  end
 
   def verify
   end

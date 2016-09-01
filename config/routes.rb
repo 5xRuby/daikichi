@@ -11,6 +11,10 @@ Rails.application.routes.draw do
         member do
           get 'verify'
         end
+
+        collection do
+          get '/:status', to: 'leave_applications#index'
+        end
       end
 
       get 'employee_leave_times/:year/:month', to: 'employee_leave_times#index', as: "employee_leave_times"
