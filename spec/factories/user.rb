@@ -23,6 +23,16 @@ FactoryGirl.define do
       join_date { nil }
     end
 
+    factory :manager_eddie, traits: [:manager] do
+      id { 1 }
+      name { "eddie" }
+    end
+
+    factory :a_first_year_employee, traits: [:employee] do
+      id { 20 }
+      join_date { "2016-06-01" }
+    end
+
     # base year 2016
     factory :first_year_employee, traits: [:employee] do
       join_date { "2016-06-01" }

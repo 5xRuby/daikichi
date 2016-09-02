@@ -11,16 +11,24 @@
 
     - current_collection.each do |user|
       %tr
-        %td= user.id
-        %td= user.name
-        %td= user.login_name
-        %td= user.email
-        %td= t_value(:role, User, user.role)
-        %td= user.join_date
-        %td 
-          = link_to "show", backend_user_path(user)
-          = link_to "edit", edit_backend_user_path(user)
-          = link_to "delete", backend_user_path(user), method: :delete, data: { confirm: t("warnings.confirm_delete") }
+        %td= t_value :id, user
+        %td= t_value :name, user
+        %td= t_value :login_name, user
+        %td= t_value :email, user
+        %td= t_value :role, user, :translate_text_value
+        %td= t_value :join_date, user, :convert_time_value, :full
+        %td
+          = link_to t("actions.backend/users.show"),
+            backend_user_path(user),
+            class: "btn btn-primary"
+          = link_to t("actions.backend/users.edit"),
+            edit_backend_user_path(user),
+            class: "btn btn-warning"
+          = link_to t("actions.backend/users.destroy"),
+            backend_user_path(user),
+            class: "btn btn-danger",
+            method: :delete,
+            data: { confirm: t("warnings.confirm_delete") }
 
 - else
   = no_data_alert

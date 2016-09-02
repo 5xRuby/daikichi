@@ -1,0 +1,2 @@
+module Backend::LeaveApplicationsHelper
+end

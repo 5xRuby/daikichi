@@ -11,6 +11,10 @@ class LeaveTime < ApplicationRecord
     where(year: Time.zone.today.year, user_id: user_id)
   }
 
+  scope :personal, ->(user_id, leave_type){
+    where(user_id: user_id, leave_type: leave_type).first
+  }
+
   def init_quota
     return false if seniority < 1
     quota = quota_by_seniority
@@ -24,6 +28,26 @@ class LeaveTime < ApplicationRecord
     }
     save!
   end
+
+  def adjust_used_hours(hours_delta)
+    self.used_hours += hours_delta
+    self.usable_hours = self.quota - self.used_hours
+    save!
+  end
+
+  #def return_hours(hours)
+    #self.used_hours -= hours
+    #self.usable_hours = self.quota - self.used_hours
+    #save!
+  #end
+
+  #def deduct_hours(init_hours, hours)
+    ## 這邊一定要寫self.used_hours，只要寫used_hours就抓不到
+    #self.used_hours += hours
+    #self.used_hours -= init_hours if init_hours != 0
+    #self.usable_hours = self.quota - self.used_hours
+    #save!
+  #end
 
   private
 

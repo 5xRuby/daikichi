@@ -18,6 +18,7 @@ zh-TW:
         usable_hours: '可用時數'
         used_hours: '已用時數'
       leave_application:
+        user: '員工'
         start_time: '開始時間'
         end_time: '結束時間'
         hours: '時數'
@@ -26,33 +27,83 @@ zh-TW:
         description: '事由'
         manager: '簽核主管'
         sign_date: '簽核時間'
+        comment: '主管備註'
+    errors:
+      models:
+        leave_application:
+          attributes:
+            leave_type:
+              blank: "請選擇請假種類"
+            description:
+              blank: "請簡述原因"
+            start_time:
+              should_be_earlier: "開始時間必須早於結束時間"
+            end_time:
+              not_integer: "請假的最小單位是1小時"
 
-  menu_labels:
-    user: '員工管理'
-    leave_application: '請假系統'
+  # navbar 選單標題
+  menu:
+    leave_applications: '請假系統'
+    backend: '員工管理'
 
+  # navbar 選單內容
+  menu_options:
+    personal:
+      leave_applications:
+        index: '假單'
+        new: '新增假單'
+    backend:
+      users:
+        index: '員工列表'
+        new: '新增員工'
+      leave_applications:
+        index: '審核員工假單'
+      employee_leave_times:
+        index: '檢視員工休假'
+    devise:
+      registrations:
+        new: '註冊新帳號'
+        edit: '修改帳號資料'
+      sessions:
+        new: '登入'
+        destroy: '登出'
+
+  # 所有頁面標題
   captions:
-    tools: '工具'
-    annual_leave_time: '%{year} 年度休假使用狀況'
+    personal:
+      leaves_list: '所有假單'
+      new_leave: '新增假單'
+    backend:
+      users_list: '所有員工'
+      new_user: '新增員工'
+      leaves_list: '所有員工假單'
+      annual_employee_leave_times_list: '%{year} 年 %{mon} 月請假狀況'
+    tools: "工具"
 
-  title:
-    devise/registrations:
-      new: '註冊新帳號'
-      edit: '修改帳號資料'
-    devise/sessions:
-      new: '登入'
-      destroy: '登出'
-
+  actions:
+    # controller
     backend/users:
-      index: '員工列表'
-      new: '新增員工'
-      show: '員工資料'
-      edit: '員工資料'
+      show: '檢視'
+      edit: '修改'
+      destroy: '刪除'
+
+    backend/leave_applications:
+      verify: '審核'
+      approve: '核准'
+      reject: '駁回'
+      read: '檢視'
+
+    leave_applications:
+      show: '檢視'
+      edit: '修改'
+      cancel: '取消'
 
   success:
     create: '新增成功'
     update: '修改成功'
     destroy: '刪除成功'
+    revise: '已修改假單'
+    cancel: '已取消假單'
 
   warnings:
     self_manage: '申請人不得自行審核'
@@ -60,12 +111,10 @@ zh-TW:
     restricted_function: '功能限制中'
     no_data: '尚無資料'
     confirm_delete: '您確定要刪除嗎？'
+    confirm_cancel: '你確定要取消嗎？'
+    not_verifiable: '已審核假單無法再次操作'
+    not_cancellable: '無法再操作已取消的假單'
 
   misc:
     app_title: '五倍神社'
     company_name: '五倍紅寶石'
-    status:
-      pending: '待審'
-      approved: '核准'
-      rejected: '駁回'
-      closed: '完成'

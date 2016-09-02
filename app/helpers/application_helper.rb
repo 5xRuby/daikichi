@@ -1,31 +1,54 @@
 # frozen_string_literal: true
 module ApplicationHelper
-  def tr_by_object(attribute, object = current_object, key = nil)
+
+  # show 才會用到 tr_by_object，將 object 寫在最後面，可以在呼叫 tr_by_object 時省略不寫
+  def tr_by_object(attribute, conversion = nil, key = nil, object = current_object)
     content_tag :tr do
       concat content_tag :th, t_attribute(attribute, object)
-      concat content_tag :td, t_value(attribute, object, key)
+      concat content_tag :td, t_value(attribute, object, conversion, key)
     end
   end
 
-  def t_attribute(attribute, object = current_object)
+  def t_attribute(attribute, object)
     t(attribute, scope: t_attribute_scope(object))
-  end
-
-  def t_value(attribute, object = current_object, key = nil)
-    if key.nil?
-      object[attribute]
-    else
-      t(key, scope: t_options_scope(object, attribute))
-    end
   end
 
   def t_attribute_scope(object)
     "activerecord.attributes.#{object.model_name.param_key}"
   end
 
-  def t_options_scope(object, attribute)
+  # t_value 可能在 index 裡直接被呼叫，把 obejct 寫在第二個參數比較方便
+  def t_value(attribute, object, conversion = nil, key = nil)
+    value = object.send(attribute)
+    if value.nil? or conversion.nil?
+      object.send(attribute)
+    else
+      self.send(conversion, object.send(attribute), attribute, key, object)
+    end
+  end
+
+  # 轉換類的 function，view template 不要直接引用，請透過 t_value
+  # ------------------------------文字轉換------------------------------
+  def translate_text_value(text_value, attribute, key = nil, object)
+    t(text_value, scope: text_value_translation_scope(attribute, object))
+  end
+
+  def text_value_translation_scope(attribute, object)
     "simple_form.options.#{object.model_name.param_key}.#{attribute}"
   end
+  # --------------------------------------------------------------------
+
+  # ------------------------------時間轉換------------------------------
+  def convert_time_value(time_value, attribute, key = :default, object)
+    time_value.to_s(key)
+  end
+  # --------------------------------------------------------------------
+
+  # --------------------------User_object 轉換--------------------------
+  def convert_user_object_2_name(user_object, attribute, key, object)
+    user_object.send(key)
+  end
+  # --------------------------------------------------------------------
 
   def dropdown_title(label = "")
     capture_haml do

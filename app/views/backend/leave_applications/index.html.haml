@@ -1,6 +1,6 @@
-%h2= t("captions.personal.leaves_list")
+%h2= t("captions.backend.leaves_list")
 
-.status-selector
+.employee-leaves-status-selector
   = button_tag t('simple_form.options.leave_application.status.pending'),
     class: "btn btn-default col-md-1 col-xs-12 pending"
   = button_tag t('simple_form.options.leave_application.status.approved'),
@@ -14,33 +14,33 @@
   %table.table
     %thead
       %tr
-        %th= t_attribute(:leave_type, LeaveApplication)
-        %th= t_attribute(:start_time, LeaveApplication)
-        %th= t_attribute(:end_time, LeaveApplication)
-        %th= t_attribute(:hours, LeaveApplication)
-        %th= t_attribute(:status, LeaveApplication)
+        %th= t_attribute :user, LeaveApplication
+        %th= t_attribute :leave_type, LeaveApplication
+        %th= t_attribute :start_time, LeaveApplication
+        %th= t_attribute :end_time, LeaveApplication
+        %th= t_attribute :hours, LeaveApplication
+        %th= t_attribute :status, LeaveApplication
         %th= t("captions.tools")
     %tbody
       - current_collection.each do |leave|
         %tr
+          %td= t_value :user, leave, :convert_user_object_2_name, :name
           %td= t_value :leave_type, leave, :translate_text_value
           %td= t_value :start_time, leave, :convert_time_value, :abbr
           %td= t_value :end_time, leave, :convert_time_value, :abbr
           %td= t_value :hours, leave
           %td= t_value :status, leave, :translate_text_value
           %td
-            = link_to t("actions.leave_applications.show"),
-              leave_application_path(leave),
-              class: "btn btn-primary"
-            - unless leave.canceled?
-              = link_to t("actions.leave_applications.edit"),
-                edit_leave_application_path(leave),
+            - if leave.pending?
+              = link_to t("actions.backend/leave_applications.verify"),
+                verify_backend_leave_application_path(leave),
                 class: "btn btn-warning"
-              = link_to t("actions.leave_applications.cancel"),
-                cancel_leave_application_path(leave),
-                class: "btn btn-danger",
-                method: :put,
-                data: { confirm: t("warnings.confirm_cancel")}
+            - else
+              = link_to t("actions.backend/leave_applications.read"),
+                verify_backend_leave_application_path(leave),
+                class: "btn btn-primary"
 - else
   = no_data_alert
+
 = paginate current_collection
+

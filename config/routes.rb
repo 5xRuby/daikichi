@@ -6,7 +6,30 @@ Rails.application.routes.draw do
 
     namespace :backend do
       resources :users
+
+      resources :leave_applications, only: [:index, :update] do
+        member do
+          get 'verify'
+        end
+
+        collection do
+          get '/:status', to: 'leave_applications#index',
+                          constraints: { status: /pending|approved|rejected|canceled/ }
+        end
+      end
+
+      get 'employee_leave_times/:year/:month', to: 'employee_leave_times#index', as: "employee_leave_times"
     end
-    resources :leave_applications
+
+    resources :leave_applications, except: [:destroy] do
+      member do
+        put 'cancel'
+      end
+
+      collection do
+        get '/:status', to: 'leave_applications#index',
+                        constraints: { status: /pending|approved|rejected|canceled/ }
+      end
+    end
   end
 end
