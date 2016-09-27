@@ -24,8 +24,8 @@
       - current_collection.each do |leave|
         %tr
           %td= t_value :leave_type, leave, :translate_text_value
-          %td= t_value :start_time, leave, :convert_time_value, :abbr
-          %td= t_value :end_time, leave, :convert_time_value, :abbr
+          %td= t_value :start_time, leave, :convert_time_value
+          %td= t_value :end_time, leave, :convert_time_value
           %td= t_value :hours, leave
           %td= t_value :status, leave, :translate_text_value
           %td

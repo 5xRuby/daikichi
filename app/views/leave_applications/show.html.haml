@@ -1,11 +1,11 @@
 %table.table
   = tr_by_object :leave_type, :translate_text_value
-  = tr_by_object :start_time, :convert_time_value, :full
-  = tr_by_object :end_time, :convert_time_value, :full
+  = tr_by_object :start_time, :convert_time_value
+  = tr_by_object :end_time, :convert_time_value
   = tr_by_object :hours
   = tr_by_object :description
   = tr_by_object :status, :translate_text_value
-  = tr_by_object :sign_date, :convert_time_value, :full
+  = tr_by_object :sign_date, :convert_time_value
   = tr_by_object :manager, :convert_user_object_to_name, :name
   - if current_object[:comment].present?
     = tr_by_object :comment

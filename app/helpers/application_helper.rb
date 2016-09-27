@@ -38,8 +38,8 @@ module ApplicationHelper
   # --------------------------------------------------------------------
 
   # ------------------------------時間轉換------------------------------
-  def convert_time_value(time_value, attribute, object, key = :default)
-    time_value.to_s(key)
+  def convert_time_value(time_value, attribute, object)
+    time_value.strftime('%Y-%m-%d %H:%M')
   end
   # --------------------------------------------------------------------
 

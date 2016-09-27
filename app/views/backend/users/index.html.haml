@@ -16,7 +16,7 @@
         %td= t_value :login_name, user
         %td= t_value :email, user
         %td= t_value :role, user, :translate_text_value
-        %td= t_value :join_date, user, :convert_time_value, :full
+        %td= t_value :join_date, user, :convert_time_value
         %td
           = link_to t("actions.backend/users.show"),
             backend_user_path(user),
