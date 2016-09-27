@@ -93,3 +93,6 @@ SymbolProc:
 
 MultilineMethodCallIndentation:
   EnforcedStyle: indented
+
+ConditionalAssignment:
+  Enabled: false

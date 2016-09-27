@@ -1,5 +1,5 @@
+# frozen_string_literal: true
 require "rails_helper"
-
 RSpec.describe LeaveApplication, type: :model do
   describe "validation" do
     let(:start_time) { Time.new(2016, 8, 17, 9, 30, 0, "+08:00") }
@@ -7,7 +7,7 @@ RSpec.describe LeaveApplication, type: :model do
     it "leave_type必填" do
       leave = LeaveApplication.new(
         start_time: start_time,
-        end_time: start_time + 60*60,
+        end_time: start_time + 60 * 60,
         description: "test"
       )
       expect(leave).to be_invalid
@@ -17,7 +17,7 @@ RSpec.describe LeaveApplication, type: :model do
     it "description必填" do
       leave = LeaveApplication.new(
         start_time: start_time,
-        end_time: start_time + 60*60,
+        end_time: start_time + 60 * 60,
         leave_type: "sick"
       )
       expect(leave).to be_invalid
@@ -41,7 +41,7 @@ RSpec.describe LeaveApplication, type: :model do
       expect(leave.errors.messages[:start_time].first).to eq "開始時間必須早於結束時間"
 
       # 8/17 9:30 ~ 8/17 10:00
-      leave.end_time = Time.new(2016, 8, 17, 10, 00, 0, "+08:00")
+      leave.end_time = Time.new(2016, 8, 17, 10, 0, 0, "+08:00")
       expect(leave).to be_invalid
       expect(leave.errors.messages[:end_time].first).to eq "請假的最小單位是1小時"
     end
@@ -58,7 +58,7 @@ RSpec.describe LeaveApplication, type: :model do
         sick.init_quota
         quota = sick.quota
 
-        leave = FactoryGirl.create(
+        FactoryGirl.create(
           :sick_leave,
           start_time: start_time,
           end_time: Time.new(2016, 8, 17, 17, 30, 0, "+08:00"),
@@ -66,14 +66,14 @@ RSpec.describe LeaveApplication, type: :model do
         )
         sick.reload
         expect(sick.used_hours).to eq 7
-        expect(sick.usable_hours).to eq (quota - sick.used_hours)
+        expect(sick.usable_hours).to eq(quota - sick.used_hours)
       end
 
       it "8/17 09:30 ~ 8/17 23:30, 8hr" do
         sick.init_quota
         quota = sick.quota
 
-        leave = FactoryGirl.create(
+        FactoryGirl.create(
           :sick_leave,
           start_time: start_time,
           end_time: Time.new(2016, 8, 17, 23, 30, 0, "+08:00"),
@@ -88,10 +88,10 @@ RSpec.describe LeaveApplication, type: :model do
         sick.init_quota
         quota = sick.quota
 
-        leave = FactoryGirl.create(
+        FactoryGirl.create(
           :sick_leave,
           start_time: start_time,
-          end_time: Time.new(2016, 8, 21, 18, 30, 00, "+08:00"),
+          end_time: Time.new(2016, 8, 21, 18, 30, 0, "+08:00"),
           user: a_first_year_employee
         )
         sick.reload
@@ -103,10 +103,10 @@ RSpec.describe LeaveApplication, type: :model do
         sick.init_quota
         quota = sick.quota
 
-        leave = FactoryGirl.create(
+        FactoryGirl.create(
           :sick_leave,
-          start_time: Time.new(2016, 8, 21, 9, 30, 00, "+08:00"),
-          end_time: Time.new(2016, 8, 28, 9, 30, 00, "+08:00"),
+          start_time: Time.new(2016, 8, 21, 9, 30, 0, "+08:00"),
+          end_time: Time.new(2016, 8, 28, 9, 30, 0, "+08:00"),
           user: a_first_year_employee
         )
         sick.reload
@@ -120,19 +120,17 @@ RSpec.describe LeaveApplication, type: :model do
 
       it "結束時間 8/17 11:30 -> 8/17 18:30" do
         personal.init_quota
-        quota = personal.quota
-
         leave = FactoryGirl.create(
           :personal_leave,
           start_time: start_time,
-          end_time: Time.new(2016, 8, 17, 11, 30, 00, "+08:00"),
+          end_time: Time.new(2016, 8, 17, 11, 30, 0, "+08:00"),
           user: a_first_year_employee
         )
         personal.reload
         expect(personal.used_hours).to eq 2
         expect(leave.status).to eq "pending"
 
-        leave.update! end_time: Time.new(2016, 8, 17, 18, 30, 00, "+08:00")
+        leave.update! end_time: Time.new(2016, 8, 17, 18, 30, 0, "+08:00")
         leave.revise!
         personal.reload
         expect(personal.used_hours).to eq 8
@@ -145,28 +143,27 @@ RSpec.describe LeaveApplication, type: :model do
 
       it "有兩張假單，取消了其中一張8/17 09:30 ~ 8/18 10:30 pending假單" do
         bonus.init_quota
-        leave1 = FactoryGirl.create(
+        leave = FactoryGirl.create(
           :bonus_leave,
           start_time: start_time,
-          end_time: Time.new(2016, 8, 18, 10, 30, 00, "+08:00"),
+          end_time: Time.new(2016, 8, 18, 10, 30, 0, "+08:00"),
           user: a_first_year_employee
         )
-        leave2 = FactoryGirl.create(
+        FactoryGirl.create(
           :bonus_leave,
           start_time: start_time,
-          end_time: Time.new(2016, 8, 19, 9, 30, 00, "+08:00"),
+          end_time: Time.new(2016, 8, 19, 9, 30, 0, "+08:00"),
           user: a_first_year_employee
         )
         bonus.reload
         expect(bonus.used_hours).to eq 25
 
-        leave1.cancel!
+        leave.cancel!
         bonus.reload
         expect(bonus.used_hours).to eq 16
       end
     end
   end
-
 
   describe "主管操作" do
     let(:a_first_year_employee) { FactoryGirl.create(:a_first_year_employee) }
@@ -180,9 +177,10 @@ RSpec.describe LeaveApplication, type: :model do
 
       leave = FactoryGirl.create(
         :annual_leave,
-        start_time: Time.new(2016, 8, 17, 14, 30, 00, "+08:00"),
-        end_time: Time.new(2016, 8, 19, 18, 30, 00, "+08:00"),
-        user: a_first_year_employee)
+        start_time: Time.new(2016, 8, 17, 14, 30, 0, "+08:00"),
+        end_time: Time.new(2016, 8, 19, 18, 30, 0, "+08:00"),
+        user: a_first_year_employee
+      )
       annual.reload
       expect(annual.used_hours).to eq 20
       expect(annual.usable_hours).to eq(quota - annual.used_hours)
@@ -203,9 +201,10 @@ RSpec.describe LeaveApplication, type: :model do
 
       leave = FactoryGirl.create(
         :annual_leave,
-        start_time: Time.new(2016, 8, 17, 14, 30, 00, "+08:00"),
-        end_time: Time.new(2016, 8, 19, 18, 30, 00, "+08:00"),
-        user: a_first_year_employee)
+        start_time: Time.new(2016, 8, 17, 14, 30, 0, "+08:00"),
+        end_time: Time.new(2016, 8, 19, 18, 30, 0, "+08:00"),
+        user: a_first_year_employee
+      )
       annual.reload
       expect(annual.used_hours).to eq 20
       expect(annual.usable_hours).to eq(quota - annual.used_hours)
@@ -233,7 +232,7 @@ RSpec.describe LeaveApplication, type: :model do
       leave = FactoryGirl.create(
         :personal_leave,
         start_time: start_time,
-        end_time: Time.new(2016, 8, 17, 11, 30, 00, "+08:00"),
+        end_time: Time.new(2016, 8, 17, 11, 30, 0, "+08:00"),
         user: a_first_year_employee
       )
       personal.reload
@@ -245,7 +244,7 @@ RSpec.describe LeaveApplication, type: :model do
       expect(leave.status).to eq "rejected"
       expect(personal.used_hours).to eq 0
 
-      leave.update! end_time: Time.new(2016, 8, 17, 12, 30, 00, "+08:00")
+      leave.update! end_time: Time.new(2016, 8, 17, 12, 30, 0, "+08:00")
       leave.revise!
       personal.reload
       expect(leave.status).to eq "pending"
@@ -258,7 +257,7 @@ RSpec.describe LeaveApplication, type: :model do
       leave = FactoryGirl.create(
         :personal_leave,
         start_time: start_time,
-        end_time: Time.new(2016, 8, 17, 11, 30, 00, "+08:00"),
+        end_time: Time.new(2016, 8, 17, 11, 30, 0, "+08:00"),
         user: a_first_year_employee
       )
       personal.reload
@@ -269,7 +268,7 @@ RSpec.describe LeaveApplication, type: :model do
       expect(leave.status).to eq "approved"
       expect(personal.used_hours).to eq 2
 
-      leave.update! end_time: Time.new(2016, 8, 19, 12, 30, 00, "+08:00")
+      leave.update! end_time: Time.new(2016, 8, 19, 12, 30, 0, "+08:00")
       leave.revise!
       personal.reload
       expect(leave.status).to eq "pending"
@@ -282,7 +281,7 @@ RSpec.describe LeaveApplication, type: :model do
       leave = FactoryGirl.create(
         :personal_leave,
         start_time: start_time,
-        end_time: Time.new(2016, 8, 18, 10, 30, 00, "+08:00"),
+        end_time: Time.new(2016, 8, 18, 10, 30, 0, "+08:00"),
         user: a_first_year_employee
       )
       personal.reload
@@ -302,7 +301,7 @@ RSpec.describe LeaveApplication, type: :model do
       leave = FactoryGirl.create(
         :personal_leave,
         start_time: start_time,
-        end_time: Time.new(2016, 8, 18, 10, 30, 00, "+08:00"),
+        end_time: Time.new(2016, 8, 18, 10, 30, 0, "+08:00"),
         user: a_first_year_employee
       )
       personal.reload

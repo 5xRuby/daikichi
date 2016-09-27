@@ -14,7 +14,7 @@ class Backend::LeaveApplicationsController < Backend::BaseController
       params[:approve] ? approve : reject
     else
       respond_to do |f|
-        f.html {render action: :verify}
+        f.html { render action: :verify }
         f.json
       end
     end

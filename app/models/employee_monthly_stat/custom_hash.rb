@@ -1,10 +1,11 @@
+# frozen_string_literal: true
 class EmployeeMonthlyStat::CustomHash
   attr_accessor :data
 
   def initialize
-    @data = Hash.new
+    @data = {}
 
-    User.all.each do |employee|
+    User.all.find_each do |employee|
       next if employee.role == "admin"
       @data[employee.id] = Hash.new(0)
     end
@@ -18,11 +19,11 @@ class EmployeeMonthlyStat::CustomHash
     @data.values.each do |content|
       return true if content.any?
     end
-    return false
+    false
   end
 
   def each(&block)
-    @data.sort.reverse.each &block
+    @data.sort.reverse.each block
   end
 
   def to_json(*options)

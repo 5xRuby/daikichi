@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 class User < ApplicationRecord
   acts_as_paranoid
-  has_many :leave_times, ->{ order("id DESC") }
-  has_many :leave_applications, ->{ order("id DESC") }
+  has_many :leave_times, -> { order("id DESC") }
+  has_many :leave_applications, -> { order("id DESC") }
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable

@@ -24,7 +24,7 @@
     %tbody
       - current_collection.each do |leave|
         %tr
-          %td= t_value :user, leave, :convert_user_object_2_name, :name
+          %td= t_value :user, leave, :convert_user_object_to_name, :name
           %td= t_value :leave_type, leave, :translate_text_value
           %td= t_value :start_time, leave, :convert_time_value, :abbr
           %td= t_value :end_time, leave, :convert_time_value, :abbr

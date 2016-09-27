@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class LeaveApplicationsController < BaseController
   def index
     if params[:status]
@@ -6,7 +7,7 @@ class LeaveApplicationsController < BaseController
   end
 
   def update
-    if not current_object.canceled? and current_object.update(resource_params)
+    if !current_object.canceled? and current_object.update(resource_params)
       current_object.revise!
       action_success
     elsif current_object.canceled?
@@ -20,12 +21,12 @@ class LeaveApplicationsController < BaseController
   end
 
   def cancel
-    unless current_object.canceled?
+    if current_object.canceled?
+      action_fail t("warnings.not_cancellable"), :index
+    else
       current_object.cancel!
       @actions << :cancel
       action_success
-    else
-      action_fail t("warnings.not_cancellable"), :index
     end
   end
 

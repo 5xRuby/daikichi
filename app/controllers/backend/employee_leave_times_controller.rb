@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class Backend::EmployeeLeaveTimesController < Backend::BaseController
   before_action :custom_authorize
   skip_load_and_authorize_resource

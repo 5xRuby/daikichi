@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 module ApplicationHelper
-
   # show 才會用到 tr_by_object，將 object 寫在最後面，可以在呼叫 tr_by_object 時省略不寫
   def tr_by_object(attribute, conversion = nil, key = nil, object = current_object)
     content_tag :tr do
@@ -17,19 +16,19 @@ module ApplicationHelper
     "activerecord.attributes.#{object.model_name.param_key}"
   end
 
-  # t_value 可能在 index 裡直接被呼叫，把 obejct 寫在第二個參數比較方便
+  # t_value 可能在 index 裡直接被呼叫，把 object 寫在第二個參數比較方便
   def t_value(attribute, object, conversion = nil, key = nil)
     value = object.send(attribute)
     if value.nil? or conversion.nil?
       object.send(attribute)
     else
-      self.send(conversion, object.send(attribute), attribute, key, object)
+      self.send(conversion, object.send(attribute), attribute, object, key)
     end
   end
 
   # 轉換類的 function，view template 不要直接引用，請透過 t_value
   # ------------------------------文字轉換------------------------------
-  def translate_text_value(text_value, attribute, key = nil, object)
+  def translate_text_value(text_value, attribute, object, key = nil)
     t(text_value, scope: text_value_translation_scope(attribute, object))
   end
 
@@ -39,13 +38,13 @@ module ApplicationHelper
   # --------------------------------------------------------------------
 
   # ------------------------------時間轉換------------------------------
-  def convert_time_value(time_value, attribute, key = :default, object)
+  def convert_time_value(time_value, attribute, object, key = :default)
     time_value.to_s(key)
   end
   # --------------------------------------------------------------------
 
   # --------------------------User_object 轉換--------------------------
-  def convert_user_object_2_name(user_object, attribute, key, object)
+  def convert_user_object_to_name(user_object, attribute, object, key)
     user_object.send(key)
   end
   # --------------------------------------------------------------------

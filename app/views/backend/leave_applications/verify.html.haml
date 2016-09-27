@@ -6,7 +6,7 @@
   = tr_by_object :description
   = tr_by_object :status, :translate_text_value
   = tr_by_object :sign_date, :convert_time_value, :full
-  = tr_by_object :manager, :convert_user_object_2_name, :name
+  = tr_by_object :manager, :convert_user_object_to_name, :name
 
 - if current_object.pending?
   = render "form"

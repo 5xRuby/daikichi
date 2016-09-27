@@ -12,7 +12,7 @@ class LeaveTime < ApplicationRecord
   }
 
   scope :personal, ->(user_id, leave_type){
-    where(user_id: user_id, leave_type: leave_type).first
+    find_by(user_id: user_id, leave_type: leave_type)
   }
 
   def init_quota
@@ -34,20 +34,6 @@ class LeaveTime < ApplicationRecord
     self.usable_hours = self.quota - self.used_hours
     save!
   end
-
-  #def return_hours(hours)
-    #self.used_hours -= hours
-    #self.usable_hours = self.quota - self.used_hours
-    #save!
-  #end
-
-  #def deduct_hours(init_hours, hours)
-    ## 這邊一定要寫self.used_hours，只要寫used_hours就抓不到
-    #self.used_hours += hours
-    #self.used_hours -= init_hours if init_hours != 0
-    #self.usable_hours = self.quota - self.used_hours
-    #save!
-  #end
 
   private
 

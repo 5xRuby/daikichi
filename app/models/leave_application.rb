@@ -33,15 +33,14 @@ class LeaveApplication < ApplicationRecord
     event :cancel, after: :return_user_hours do
       transitions to: :canceled, from: [:pending, :approved, :rejected]
     end
-
   end
 
   def pending?
-    return self.status == "pending"
+    self.status == "pending"
   end
 
   def canceled?
-    return self.status == "canceled"
+    self.status == "canceled"
   end
 
   private
@@ -63,7 +62,7 @@ class LeaveApplication < ApplicationRecord
   def adjust_user_hours
     leave_time = LeaveTime.personal(user_id, leave_type)
     assign_hours
-    leave_time.adjust_used_hours(hours-hours_was)
+    leave_time.adjust_used_hours(hours - hours_was)
 
     if @return_leave_application_hours
       leave_time.adjust_used_hours(@return_leave_application_hours)
@@ -78,11 +77,7 @@ class LeaveApplication < ApplicationRecord
   end
 
   def hours_should_be_positive_integer
-    unless  ((end_time - start_time) / 3600.0) % 1 == 0
-      errors.add(:end_time, :not_integer)
-    end
-    unless end_time > start_time
-      errors.add(:start_time, :should_be_earlier)
-    end
+    errors.add(:end_time, :not_integer) unless (((end_time - start_time) / 3600.0) % 1).zero?
+    errors.add(:start_time, :should_be_earlier) unless end_time > start_time
   end
 end
