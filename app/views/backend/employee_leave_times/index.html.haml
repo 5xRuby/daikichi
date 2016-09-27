@@ -5,14 +5,14 @@
     .col-md-1.col-sm-6.col-xs-12
       .form-group
         %label{:for=>"year"} Year
-        = select_tag 'year',
+        = select_tag "year",
           options_for_select(2016 .. Time.zone.now.year, params[:year]),
           class: "form-control"
 
     .col-md-1.col-sm-6.col-xs-12
       .form-group
-        %label{:for=>"mon"} Mon
-        = select_tag 'mon', options_for_select(1..12, params[:month]),
+        %label{:for=>"month"} Month
+        = select_tag "month", options_for_select(1..12, params[:month]),
           class: "form-control"
 
 - if current_collection.any?
