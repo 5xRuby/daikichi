@@ -23,7 +23,7 @@ class EmployeeMonthlyStat::CustomHash
   end
 
   def each(&block)
-    @data.sort.reverse.each block
+    @data.sort.reverse.each(&block)
   end
 
   def to_json(*options)

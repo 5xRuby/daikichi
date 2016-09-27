@@ -16,9 +16,7 @@ class EmployeeMonthlyStat
     result
   end
 
-  private
-
-  def leave_hours(leave)
+  def self.leave_hours(leave)
     if @range.cover?(leave.start_time) and @range.cover?(leave.end_time)
       leave.hours
     elsif @range.cover?(leave.start_time)

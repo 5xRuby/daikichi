@@ -28,5 +28,6 @@
         %td= t_value :name, User.find_by(id: id)
         - LeaveTime::BASIC_TYPES.each do |leave_type|
           %td= content[leave_type]
+
 - else
   = no_data_alert
