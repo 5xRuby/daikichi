@@ -1,9 +1,14 @@
 # frozen_string_literal: true
 class EmployeeMonthlyStat
   def self.total_leave_times_hours(year, month)
-    @year = year
-    @month = month
+    range_start = Time.zone.now.change(year: year, month: month, day: 1, hour: 0)
+    range_end = Time.zone.now.change(year: year, month: month).end_of_month
     @range = range_start..range_end
+
+    leaves_with_start_time_in_range = LeaveApplication.where(start_time: @range, status: "approved")
+    leaves_with_end_time_in_range = LeaveApplication.where(end_time: @range, status: "approved")
+    leaves = leaves_with_start_time_in_range.or(leaves_with_end_time_in_range)
+
     result = CustomHash.new
     leaves.each do |leave|
       result[leave.user_id][leave.leave_type] += leave_hours(leave)
@@ -21,25 +26,5 @@ class EmployeeMonthlyStat
     else
       range_start.working_time_until(leave.end_time) / 3600
     end
-  end
-
-  def range_start
-    Time.zone.now.change(year: @year, month: @month, day: 1, hour: 0)
-  end
-
-  def range_end
-    Time.zone.now.change(year: @year, month: @month).end_of_month
-  end
-
-  def leaves_with_start_time_in_range
-    LeaveApplication.where(start_time: @range, status: "approved")
-  end
-
-  def leaves_with_end_time_in_range
-    LeaveApplication.where(end_time: @range, status: "approved")
-  end
-
-  def leaves
-    leaves_with_start_time_in_range.or(leaves_with_end_time_in_range)
   end
 end
