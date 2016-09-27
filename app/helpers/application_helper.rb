@@ -39,7 +39,7 @@ module ApplicationHelper
 
   # ------------------------------時間轉換------------------------------
   def convert_time_value(time_value, attribute, object, key = nil)
-    time_value.strftime('%Y-%m-%d %H:%M')
+    time_value.strftime("%Y-%m-%d %H:%M")
   end
   # --------------------------------------------------------------------
 
