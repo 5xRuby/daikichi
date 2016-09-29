@@ -2,32 +2,32 @@ Rails.application.routes.draw do
   scope "(:locale)", locale: /en/ do
     devise_for :users
 
-    root 'pages#index'
+    root "pages#index"
 
     namespace :backend do
       resources :users
 
       resources :leave_applications, only: [:index, :update] do
         member do
-          get 'verify'
+          get "verify"
         end
 
         collection do
-          get '/:status', to: 'leave_applications#index',
+          get "/:status", to: "leave_applications#index",
                           constraints: { status: /pending|approved|rejected|canceled/ }
         end
       end
 
-      get 'employee_leave_times/:year/:month', to: 'employee_leave_times#index', as: "employee_leave_times"
+      get "employee_leave_times/:year/:month", to: "employee_leave_times#index", as: "employee_leave_times"
     end
 
     resources :leave_applications, except: [:destroy] do
       member do
-        put 'cancel'
+        put "cancel"
       end
 
       collection do
-        get '/:status', to: 'leave_applications#index',
+        get "/:status", to: "leave_applications#index",
                         constraints: { status: /pending|approved|rejected|canceled/ }
       end
     end

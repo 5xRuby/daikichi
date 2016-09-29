@@ -1,13 +1,13 @@
 document.addEventListener("turbolinks:load", function() {
 
-  var $year = $('select[id=year]')
-  var $month = $('select[id=month]')
+  var $year = $("select[id=year]")
+  var $month = $("select[id=month]")
 
-  $year.on('change', function() {
+  $year.on("change", function() {
     Turbolinks.visit("/backend/employee_leave_times/" + $year.val() + "/" + $month.val());
   });
 
-  $month.on('change', function() {
+  $month.on("change", function() {
     Turbolinks.visit("/backend/employee_leave_times/" + $year.val() + "/" + $month.val());
   });
 });
