@@ -33,5 +33,10 @@ Rails.application.routes.draw do
     end
 
     resources :leave_times, only: [:index]
+
+    get 'leave_time/:type',
+      to: "leave_times#show",
+      constraints: { type: /annual|bonus|personal|sick/ },
+      as: "leave_time"
   end
 end
