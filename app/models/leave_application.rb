@@ -7,7 +7,7 @@ class LeaveApplication < ApplicationRecord
   before_create :deduct_user_hours
   acts_as_paranoid
 
-  LEAVE_TYPE = %i(annual bonus personal sick).freeze
+  LEAVE_TYPE = %i(bonus personal sick).freeze
 
   include AASM
   include SignatureConcern

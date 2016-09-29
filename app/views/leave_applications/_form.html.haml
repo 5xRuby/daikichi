@@ -7,4 +7,21 @@
     = f.input :start_time, date_time_picker_hash(:start, current_object[:start_time])
     = f.input :end_time, date_time_picker_hash(:end, current_object[:end_time])
   = f.input :description, required: true
-  = f.button :submit
+  = f.button :submit, class: "submit"
+
+%button{ style: "display: none;",
+  type: "button",
+  class:"btn_hidden leave_application",
+  data:{ toggle: "modal", target: "#myModal" } }
+
+#myModal.modal.fade{"aria-labelledby" => "myModalLabel", :role => "dialog", :tabindex => "-1"}
+  .modal-dialog{:role => "document"}
+    .modal-content
+      .modal-header
+        %button.close{"aria-label" => "Close", "data-dismiss" => "modal", :type => "button"}
+          %span{"aria-hidden" => "true"} ×
+        %h4#myModalLabel.modal-title 提醒
+      .modal-body
+      .modal-footer
+        %button.no.btn.btn-default{"data-dismiss" => "modal", :type => "button"} 取消
+        %button.yes.btn.btn-primary{:type => "button"} 確認
