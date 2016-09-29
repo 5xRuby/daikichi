@@ -31,5 +31,7 @@ Rails.application.routes.draw do
                         constraints: { status: /pending|approved|rejected|canceled/ }
       end
     end
+
+    resources :leave_times, only: [:index]
   end
 end

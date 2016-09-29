@@ -65,8 +65,10 @@ zh-TW:
   menu_options:
     personal:
       leave_applications:
-        index: "假單"
+        index: "所有假單"
         new: "新增假單"
+      leave_times:
+        index: "請假狀況"
     backend:
       users:
         index: "員工列表"
@@ -87,6 +89,7 @@ zh-TW:
   captions:
     annual_leave_time: "%{year} 年度休假使用狀況"
     personal:
+      leave_times: "%{year} 年度請假狀況"
       leaves_list: "所有假單"
       new_leave: "新增假單"
     backend:
