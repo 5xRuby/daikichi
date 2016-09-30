@@ -29,9 +29,50 @@ class LeaveTime < ApplicationRecord
     save!
   end
 
-  def adjust_used_hours(hours_delta)
-    self.used_hours += hours_delta
-    self.usable_hours = self.quota - self.used_hours
+  def deduct(hours)
+    if leave_type == "personal"
+      self.deduct_personal hours
+    else
+      self.deduct_general hours
+    end
+  end
+
+  def deduct_general(hours)
+    self.used_hours += hours
+    self.usable_hours = quota - used_hours
+    save!
+  end
+
+  def deduct_personal(hours)
+    annual = self.class.find_by(user_id: user_id, leave_type: "annual")
+    delta = ( hours >= 0 ? (hours - annual.usable_hours) : (hours + self.used_hours) )
+    if hours >= 0
+      if delta <= 0
+        annual.deduct_general hours
+      else
+        self.deduct_general delta
+        annual.become_empty!
+      end
+    else
+      if delta >= 0
+        self.deduct_general hours
+      else
+        annual.deduct_general delta
+        self.become_full!
+      end
+    end
+    annual.save!
+  end
+
+  def become_empty!
+    self.used_hours = self.quota
+    self.usable_hours = 0
+    save!
+  end
+
+  def become_full!
+    self.used_hours = 0
+    self.usable_hours = self.quota
     save!
   end
 
@@ -82,4 +123,12 @@ class LeaveTime < ApplicationRecord
     else 0
     end
   end
+
+  #def empty?
+    #self.usable_hours == 0
+  #end
+
+  #def full?
+    #self.used_hours == 0
+  #end
 end
