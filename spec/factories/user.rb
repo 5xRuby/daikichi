@@ -28,13 +28,9 @@ FactoryGirl.define do
       name { "eddie" }
     end
 
-    factory :a_first_year_employee, traits: [:employee] do
-      id { 20 }
-      join_date { "2016-06-01" }
-    end
-
     # base year 2016
     factory :first_year_employee, traits: [:employee] do
+      id { 20 }
       join_date { "2016-06-01" }
     end
 
