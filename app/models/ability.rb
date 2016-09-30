@@ -8,7 +8,7 @@ class Ability
     when "manager", "admin"
       can :manage, :all
     when "employee"
-      can :read, LeaveTime
+      can :read, LeaveTime, user_id: user.id
       can :manage, LeaveApplication, user_id: user.id
     end
   end

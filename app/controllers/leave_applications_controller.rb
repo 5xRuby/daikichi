@@ -2,7 +2,7 @@
 class LeaveApplicationsController < BaseController
   def index
     if params[:status]
-      @current_collection = LeaveApplication.where(status: params[:status]).page(params[:page])
+      @current_collection = current_collection.where(status: params[:status]).page(params[:page])
     end
   end
 
