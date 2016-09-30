@@ -58,9 +58,9 @@ document.addEventListener("turbolinks:load", function() {
         type: "GET",
         success: function(data, textStatus, jqXHR) {
           if (data.usable_hours > 0){
-            text_area.text("您的年假還剩下: " + data.usable_hours + " 小時\n此次請假會扣年假時數");
+            text_area.text("您的特休還剩下: " + data.usable_hours + " 小時\n此次請假會扣「特休」時數");
           } else{
-            text_area.text("您已經沒有年假了QQ\n此次請假會扣事假時數");
+            text_area.text("您已經沒有特休了QQ\n此次請假會扣「事假」時數");
           }
         },
         error: function() {
