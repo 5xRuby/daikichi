@@ -15,6 +15,12 @@ class LeaveTime < ApplicationRecord
     find_by(user_id: user_id, leave_type: leave_type)
   }
 
+  scope :get_general_and_annual, ->(user_id, leave_type){
+    leave_time = find_by user_id: user_id, leave_type: leave_type
+    leave_time_for_annual = find_by user_id: user_id, leave_type: "annual"
+    return leave_time, leave_time_for_annual
+  }
+
   def init_quota
     return false if seniority < 1
     quota = quota_by_seniority
@@ -29,51 +35,21 @@ class LeaveTime < ApplicationRecord
     save!
   end
 
+  # main api
   def deduct(hours)
     if leave_type == "personal"
-      self.deduct_personal hours
+      calculate_personal! hours
     else
-      self.deduct_general hours
+      calculate_general! hours
     end
   end
 
-  def deduct_general(hours)
-    self.used_hours += hours
-    self.usable_hours = quota - used_hours
-    save!
-  end
-
-  def deduct_personal(hours)
-    annual = self.class.find_by(user_id: user_id, leave_type: "annual")
-    delta = ( hours >= 0 ? (hours - annual.usable_hours) : (hours + self.used_hours) )
-    if hours >= 0
-      if delta <= 0
-        annual.deduct_general hours
-      else
-        self.deduct_general delta
-        annual.become_empty!
-      end
-    else
-      if delta >= 0
-        self.deduct_general hours
-      else
-        annual.deduct_general delta
-        self.become_full!
-      end
+  def add_back(hours, annual_hours)
+    calculate_general!(-hours)
+    if annual_hours.positive?
+      annual = LeaveTime.personal(user_id, "annual")
+      annual.send :calculate_general!, -annual_hours
     end
-    annual.save!
-  end
-
-  def become_empty!
-    self.used_hours = self.quota
-    self.usable_hours = 0
-    save!
-  end
-
-  def become_full!
-    self.used_hours = 0
-    self.usable_hours = self.quota
-    save!
   end
 
   private
@@ -124,11 +100,27 @@ class LeaveTime < ApplicationRecord
     end
   end
 
-  #def empty?
-    #self.usable_hours == 0
-  #end
+  def calculate_general!(hours)
+    self.used_hours += hours
+    self.usable_hours = quota - used_hours
+    save!
+  end
 
-  #def full?
-    #self.used_hours == 0
-  #end
+  def calculate_personal!(hours)
+    annual = self.class.find_by user_id: user_id, leave_type: "annual"
+    delta = hours - annual.usable_hours
+    if delta >= 0
+      calculate_general! delta
+      annual.send :become_empty!
+    else
+      annual.send :calculate_general!, hours
+    end
+    annual.save!
+  end
+
+  def become_empty!
+    self.used_hours = self.quota
+    self.usable_hours = 0
+    save!
+  end
 end

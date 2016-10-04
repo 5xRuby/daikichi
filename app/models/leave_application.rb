@@ -2,9 +2,10 @@
 class LeaveApplication < ApplicationRecord
   belongs_to :user
   belongs_to :manager, class_name: "User", foreign_key: "manager_id"
+  has_many :leave_application_logs
   validates :leave_type, :description, presence: true
   validate :hours_should_be_positive_integer
-  before_create :deduct_leave_time_usable_hours
+  after_create :deduct_leave_time_usable_hours
   acts_as_paranoid
 
   LEAVE_TYPE = %i(bonus personal sick).freeze
@@ -26,7 +27,7 @@ class LeaveApplication < ApplicationRecord
       transitions to: :rejected, from: [:pending]
     end
 
-    event :revise, after: :adjust_leave_time_usable_hours do
+    event :revise, after: :deduct_leave_time_usable_hours do
       transitions to: :pending, from: [:pending, :approved, :rejected]
     end
 
@@ -46,29 +47,39 @@ class LeaveApplication < ApplicationRecord
   private
 
   def deduct_leave_time_usable_hours
-    leave_time = LeaveTime.personal user_id, leave_type
+    leave_time, leave_time_for_annual = LeaveTime.get_general_and_annual user_id, leave_type
+    prior_used_hours = leave_time.used_hours
+    prior_annual_used_hours = leave_time_for_annual.used_hours
+
+    if leave_application_logs.any? || (aasm.to_state =~ /rejected|canceled/).present? && aasm.from_state == "rejected"
+      newest_log = leave_application_logs.last
+      leave_time.add_back newest_log.general_hours, newest_log.annual_hours unless newest_log.returning?
+    end
+
     assign_hours
     leave_time.deduct hours
+
+    leave_time.reload
+    leave_time_for_annual.reload
+    leave_application_logs.create!(general_hours: (leave_time.used_hours - prior_used_hours),
+                                   annual_hours: (leave_time_for_annual.used_hours - prior_annual_used_hours))
   end
 
   def return_leave_time_usable_hours
     if aasm.from_state != :rejected
-      leave_time = LeaveTime.personal user_id, leave_type
-      leave_time.deduct -hours
-      @return_leave_application_hours = hours
-    end
-  end
+      leave_time, leave_time_for_annual = LeaveTime.get_general_and_annual user_id, leave_type
+      prior_used_hours = leave_time.used_hours
+      prior_annual_used_hours = leave_time_for_annual.used_hours
 
-  def adjust_leave_time_usable_hours
-    leave_time = LeaveTime.personal user_id, leave_type
-    assign_hours
-    leave_time.deduct(hours - hours_was)
+      newest_log = leave_application_logs.last
+      leave_time.add_back newest_log.general_hours, newest_log.annual_hours
 
-    if @return_leave_application_hours
-      leave_time.deduct(@return_leave_application_hours)
-      @return_leave_application_hours = nil
+      leave_time.reload
+      leave_time_for_annual.reload
+      leave_application_logs.create!(general_hours: (-leave_time.used_hours + prior_used_hours),
+                                     annual_hours: (-leave_time_for_annual.used_hours + prior_annual_used_hours),
+                                     returning?: true)
     end
-    save!
   end
 
   def assign_hours
