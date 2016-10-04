@@ -69,7 +69,10 @@ RSpec.describe LeaveApplication, type: :model do
         annual, personal, sick, bonus = init_quota
         quota = sick.quota
 
-        FactoryGirl.create :sick_leave, start_time: start_time, end_time: one_day_later, user: first_year_employee
+        leave = FactoryGirl.create :sick_leave, start_time: start_time, end_time: one_day_later, user: first_year_employee
+        expect(leave.hours).to eq 8
+        expect(leave.status).to eq "pending"
+
         sick.reload
         expect(sick.used_hours).to eq 8
         expect(sick.usable_hours).to eq(quota - sick.used_hours)
@@ -79,12 +82,15 @@ RSpec.describe LeaveApplication, type: :model do
         annual, personal, sick, bonus = init_quota
         quota = sick.quota
 
-        FactoryGirl.create(
+        leave = FactoryGirl.create(
           :sick_leave,
           start_time: start_time,
           end_time: Time.new(2016, 8, 15, 23, 30, 0, "+08:00"),
           user: first_year_employee
         )
+        expect(leave.hours).to eq 8
+        expect(leave.status).to eq "pending"
+
         sick.reload
         expect(sick.used_hours).to eq 8
         expect(sick.usable_hours).to eq(quota - sick.used_hours)
@@ -94,7 +100,10 @@ RSpec.describe LeaveApplication, type: :model do
         annual, personal, sick, bonus = init_quota
         quota = sick.quota
 
-        FactoryGirl.create :sick_leave, start_time: start_time, end_time: three_day_later, user: first_year_employee
+        leave = FactoryGirl.create :sick_leave, start_time: start_time, end_time: three_day_later, user: first_year_employee
+        expect(leave.hours).to eq 24
+        expect(leave.status).to eq "pending"
+
         sick.reload
         expect(sick.used_hours).to eq 24
         expect(sick.usable_hours).to eq(quota - sick.used_hours)
@@ -104,7 +113,10 @@ RSpec.describe LeaveApplication, type: :model do
         annual, personal, sick, bonus = init_quota
         quota = sick.quota
 
-        FactoryGirl.create :sick_leave, start_time: start_time, end_time: five_day_later, user: first_year_employee
+        leave = FactoryGirl.create :sick_leave, start_time: start_time, end_time: five_day_later, user: first_year_employee
+        expect(leave.hours).to eq 40
+        expect(leave.status).to eq "pending"
+
         sick.reload
         expect(sick.used_hours).to eq 40
         expect(sick.usable_hours).to eq(quota - sick.used_hours)
@@ -115,7 +127,10 @@ RSpec.describe LeaveApplication, type: :model do
       it "24hr < 年假可用的時數" do
         annual, personal, sick, bonus = init_quota
 
-        FactoryGirl.create :personal_leave, start_time: start_time, end_time: three_day_later, user: first_year_employee
+        leave = FactoryGirl.create :personal_leave, start_time: start_time, end_time: three_day_later, user: first_year_employee
+        expect(leave.hours).to eq 24
+        expect(leave.status).to eq "pending"
+
         personal.reload
         annual.reload
         expect(annual.used_hours).to eq 24
@@ -126,7 +141,10 @@ RSpec.describe LeaveApplication, type: :model do
       it "請 32 小時 == 年假可用的時數" do
         annual, personal, sick, bonus = init_quota
 
-        FactoryGirl.create :personal_leave, start_time: start_time, end_time: four_day_later, user: first_year_employee
+        leave = FactoryGirl.create :personal_leave, start_time: start_time, end_time: four_day_later, user: first_year_employee
+        expect(leave.hours).to eq 32
+        expect(leave.status).to eq "pending"
+
         personal.reload
         annual.reload
         expect(annual.used_hours).to eq 32
@@ -137,7 +155,10 @@ RSpec.describe LeaveApplication, type: :model do
       it "請 40 小時 > 年假可用的時數" do
         annual, personal, sick, bonus = init_quota
 
-        FactoryGirl.create :personal_leave, start_time: start_time, end_time: five_day_later, user: first_year_employee
+        leave = FactoryGirl.create :personal_leave, start_time: start_time, end_time: five_day_later, user: first_year_employee
+        expect(leave.hours).to eq 40
+        expect(leave.status).to eq "pending"
+
         personal.reload
         annual.reload
         expect(annual.quota).to eq 32
@@ -150,7 +171,10 @@ RSpec.describe LeaveApplication, type: :model do
         annual, personal, sick, bonus = init_quota
         annual.update! used_hours: 32, usable_hours: annual.quota - 32
 
-        FactoryGirl.create :personal_leave, start_time: start_time, end_time: one_day_later, user: first_year_employee
+        leave = FactoryGirl.create :personal_leave, start_time: start_time, end_time: one_day_later, user: first_year_employee
+        expect(leave.hours).to eq 8
+        expect(leave.status).to eq "pending"
+
         personal.reload
         annual.reload
         expect(annual.used_hours).to eq 32
@@ -165,6 +189,9 @@ RSpec.describe LeaveApplication, type: :model do
       it "2hr -> 8hr" do
         annual, personal, sick, bonus = init_quota
         leave = FactoryGirl.create :sick_leave, start_time: start_time, end_time: two_hour_later, user: first_year_employee
+        expect(leave.hours).to eq 2
+        expect(leave.status).to eq "pending"
+
         sick.reload
         expect(sick.used_hours).to eq 2
         expect(leave.status).to eq "pending"
@@ -179,6 +206,9 @@ RSpec.describe LeaveApplication, type: :model do
       it "8hr -> 2hr" do
         annual, personal, sick, bonus = init_quota
         leave = FactoryGirl.create :sick_leave, start_time: start_time, end_time: one_day_later, user: first_year_employee
+        expect(leave.hours).to eq 8
+        expect(leave.status).to eq "pending"
+
         sick.reload
         expect(sick.used_hours).to eq 8
         expect(leave.status).to eq "pending"
@@ -196,6 +226,9 @@ RSpec.describe LeaveApplication, type: :model do
         annual, personal, sick, bonus = init_quota
 
         leave = FactoryGirl.create :personal_leave, start_time: start_time, end_time: two_day_later, user: first_year_employee
+        expect(leave.hours).to eq 16
+        expect(leave.status).to eq "pending"
+
         personal.reload
         annual.reload
         expect(annual.used_hours).to eq 16
@@ -203,6 +236,9 @@ RSpec.describe LeaveApplication, type: :model do
 
         leave.update! end_time: three_day_later
         leave.revise!
+        leave.reload
+        expect(leave.hours).to eq 24
+
         personal.reload
         annual.reload
         expect(annual.used_hours).to eq 24
@@ -216,6 +252,9 @@ RSpec.describe LeaveApplication, type: :model do
         expect(personal.used_hours).to eq 0
 
         leave = FactoryGirl.create :personal_leave, start_time: start_time, end_time: two_day_later, user: first_year_employee
+        expect(leave.hours).to eq 16
+        expect(leave.status).to eq "pending"
+
         personal.reload
         annual.reload
         expect(annual.used_hours).to eq 30
@@ -223,6 +262,9 @@ RSpec.describe LeaveApplication, type: :model do
 
         leave.update! end_time: three_day_later
         leave.revise!
+        leave.reload
+        expect(leave.hours).to eq 24
+
         personal.reload
         annual.reload
         expect(annual.used_hours).to eq 32
@@ -235,6 +277,9 @@ RSpec.describe LeaveApplication, type: :model do
         expect(annual.used_hours).to eq 32
 
         leave = FactoryGirl.create :personal_leave, start_time: start_time, end_time: two_day_later, user: first_year_employee
+        expect(leave.hours).to eq 16
+        expect(leave.status).to eq "pending"
+
         personal.reload
         annual.reload
         expect(annual.used_hours).to eq 32
@@ -242,6 +287,9 @@ RSpec.describe LeaveApplication, type: :model do
 
         leave.update! end_time: three_day_later
         leave.revise!
+        leave.reload
+        expect(leave.hours).to eq 24
+
         personal.reload
         annual.reload
         expect(annual.used_hours).to eq 32
@@ -255,6 +303,9 @@ RSpec.describe LeaveApplication, type: :model do
         expect(personal.used_hours).to eq 0
 
         leave = FactoryGirl.create :personal_leave, start_time: start_time, end_time: three_day_later, user: first_year_employee
+        expect(leave.hours).to eq 24
+        expect(leave.status).to eq "pending"
+
         personal.reload
         annual.reload
         expect(annual.used_hours).to eq 32
@@ -262,6 +313,9 @@ RSpec.describe LeaveApplication, type: :model do
 
         leave.update! end_time: two_day_later
         leave.revise!
+        leave.reload
+        expect(leave.hours).to eq 16
+
         personal.reload
         annual.reload
         expect(annual.used_hours).to eq 32
@@ -274,6 +328,9 @@ RSpec.describe LeaveApplication, type: :model do
         annual.update! used_hours: 16, usable_hours: annual.quota - 16
 
         leave = FactoryGirl.create :personal_leave, start_time: start_time, end_time: three_day_later, user: first_year_employee
+        expect(leave.hours).to eq 24
+        expect(leave.status).to eq "pending"
+
         personal.reload
         annual.reload
         expect(annual.used_hours).to eq 32
@@ -281,6 +338,9 @@ RSpec.describe LeaveApplication, type: :model do
 
         leave.update! end_time: one_day_later
         leave.revise!
+        leave.reload
+        expect(leave.hours).to eq 8
+
         personal.reload
         annual.reload
         expect(annual.used_hours).to eq 24
@@ -294,6 +354,9 @@ RSpec.describe LeaveApplication, type: :model do
         expect(annual.used_hours).to eq 0
 
         leave = FactoryGirl.create :personal_leave, start_time: start_time, end_time: three_day_later, user: first_year_employee
+        expect(leave.hours).to eq 24
+        expect(leave.status).to eq "pending"
+
         personal.reload
         annual.reload
         expect(personal.used_hours).to eq 16
@@ -301,6 +364,9 @@ RSpec.describe LeaveApplication, type: :model do
 
         leave.update! end_time: one_day_later
         leave.revise!
+        leave.reload
+        expect(leave.hours).to eq 8
+
         personal.reload
         annual.reload
         expect(personal.used_hours).to eq 16
