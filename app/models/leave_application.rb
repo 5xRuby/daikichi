@@ -2,10 +2,11 @@
 class LeaveApplication < ApplicationRecord
   belongs_to :user
   belongs_to :manager, class_name: "User", foreign_key: "manager_id"
-  has_many :leave_application_logs
+  has_many :leave_application_logs, foreign_key: "leave_application_uuid", primary_key: "uuid"
   validates :leave_type, :description, presence: true
   validate :hours_should_be_positive_integer
-  after_create :deduct_leave_time_usable_hours
+  after_initialize :set_primary_id
+  before_create :deduct_leave_time_usable_hours
   acts_as_paranoid
 
   LEAVE_TYPE = %i(bonus personal sick).freeze
@@ -46,6 +47,10 @@ class LeaveApplication < ApplicationRecord
 
   private
 
+  def set_primary_id
+    self.uuid ||= SecureRandom.uuid
+  end
+
   def deduct_leave_time_usable_hours
     leave_time, leave_time_for_annual = LeaveTime.get_general_and_annual user_id, leave_type
     prior_used_hours = leave_time.used_hours
@@ -58,11 +63,13 @@ class LeaveApplication < ApplicationRecord
 
     assign_hours
     leave_time.deduct hours
+    save! if leave_application_logs.any?
 
     leave_time.reload
     leave_time_for_annual.reload
-    leave_application_logs.create!(general_hours: (leave_time.used_hours - prior_used_hours),
-                                   annual_hours: (leave_time_for_annual.used_hours - prior_annual_used_hours))
+    LeaveApplicationLog.create!(leave_application_uuid: self.uuid,
+                                general_hours: (leave_time.used_hours - prior_used_hours),
+                                annual_hours: (leave_time_for_annual.used_hours - prior_annual_used_hours))
   end
 
   def return_leave_time_usable_hours
@@ -76,9 +83,10 @@ class LeaveApplication < ApplicationRecord
 
       leave_time.reload
       leave_time_for_annual.reload
-      leave_application_logs.create!(general_hours: (-leave_time.used_hours + prior_used_hours),
-                                     annual_hours: (-leave_time_for_annual.used_hours + prior_annual_used_hours),
-                                     returning?: true)
+      LeaveApplicationLog.create!(leave_application_uuid: self.uuid,
+                                  general_hours: (-leave_time.used_hours + prior_used_hours),
+                                  annual_hours: (-leave_time_for_annual.used_hours + prior_annual_used_hours),
+                                  returning?: true)
     end
   end
 
