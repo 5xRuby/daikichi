@@ -1,5 +1,8 @@
 = simple_form_for current_object  do |f|
-  = f.input :leave_type, required: true, collection: LeaveApplication::LEAVE_TYPE
+  - if action_name == "edit"
+    = f.input :leave_type, required: true, collection: LeaveApplication::LEAVE_TYPE, disabled: true
+  - else
+    = f.input :leave_type, require: true, collection: LeaveApplication::LEAVE_TYPE
   - if current_object.new_record?
     = f.input :start_time, date_time_picker_hash(:start, time_object_by_hour_min(9, 30))
     = f.input :end_time, date_time_picker_hash(:end, time_object_by_hour_min(10, 30))
