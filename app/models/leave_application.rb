@@ -28,7 +28,7 @@ class LeaveApplication < ApplicationRecord
       transitions to: :rejected, from: [:pending]
     end
 
-    event :revise, after: :deduct_leave_time_usable_hours do
+    event :revise, after: :revise_leave_time_usable_hours do
       transitions to: :pending, from: [:pending, :approved, :rejected]
     end
 
@@ -52,42 +52,45 @@ class LeaveApplication < ApplicationRecord
   end
 
   def deduct_leave_time_usable_hours
-    leave_time, leave_time_for_annual = LeaveTime.get_general_and_annual user_id, leave_type
-    prior_used_hours = leave_time.used_hours
-    prior_annual_used_hours = leave_time_for_annual.used_hours
-
-    if leave_application_logs.any? || (aasm.to_state =~ /rejected|canceled/).present? && aasm.from_state == "rejected"
-      newest_log = leave_application_logs.last
-      leave_time.add_back newest_log.general_hours, newest_log.annual_hours unless newest_log.returning?
-    end
+    general_leave_time, annual_leave_time = LeaveTime.get_general_and_annual user_id, leave_type
+    general_used_hours_base = general_leave_time.used_hours
+    annual_used_hours_base = annual_leave_time.used_hours
 
     assign_hours
-    leave_time.deduct hours
-    save! if leave_application_logs.any?
+    general_leave_time.deduct hours
 
-    leave_time.reload
-    leave_time_for_annual.reload
     LeaveApplicationLog.create!(leave_application_uuid: self.uuid,
-                                general_hours: (leave_time.used_hours - prior_used_hours),
-                                annual_hours: (leave_time_for_annual.used_hours - prior_annual_used_hours))
+                                general_hours: (general_leave_time.reload.used_hours - general_used_hours_base),
+                                annual_hours: (annual_leave_time.reload.used_hours - annual_used_hours_base))
+  end
+
+  def revise_leave_time_usable_hours
+    general_leave_time, annual_leave_time = LeaveTime.get_general_and_annual user_id, leave_type
+    newest_log = leave_application_logs.last
+    general_leave_time.add_back newest_log.general_hours, newest_log.annual_hours unless newest_log.returning?
+    general_used_hours_base = general_leave_time.reload.used_hours
+    annual_used_hours_base = annual_leave_time.reload.used_hours
+
+    assign_hours
+    general_leave_time.deduct hours
+    save!
+
+    LeaveApplicationLog.create!(leave_application_uuid: self.uuid,
+                                general_hours: (general_leave_time.reload.used_hours - general_used_hours_base),
+                                annual_hours: (annual_leave_time.reload.used_hours - annual_used_hours_base))
   end
 
   def return_leave_time_usable_hours
-    if aasm.from_state != :rejected
       leave_time, leave_time_for_annual = LeaveTime.get_general_and_annual user_id, leave_type
-      prior_used_hours = leave_time.used_hours
-      prior_annual_used_hours = leave_time_for_annual.used_hours
-
       newest_log = leave_application_logs.last
       leave_time.add_back newest_log.general_hours, newest_log.annual_hours
+      general_used_hours_base = leave_time.reload.used_hours
+      annual_used_hours_base = leave_time_for_annual.reload.used_hours
 
-      leave_time.reload
-      leave_time_for_annual.reload
       LeaveApplicationLog.create!(leave_application_uuid: self.uuid,
-                                  general_hours: (-leave_time.used_hours + prior_used_hours),
-                                  annual_hours: (-leave_time_for_annual.used_hours + prior_annual_used_hours),
+                                  general_hours: (-leave_time.reload.used_hours + general_used_hours_base),
+                                  annual_hours: (-leave_time_for_annual.reload.used_hours + annual_used_hours_base),
                                   returning?: true)
-    end
   end
 
   def assign_hours

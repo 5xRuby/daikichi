@@ -222,6 +222,8 @@ RSpec.describe LeaveApplication, type: :model do
     end
 
     context "修改事假假單" do
+      let(:one_hour_later) { Time.new(2016, 8, 15, 10, 30, 0, "+08:00") }
+
       it "16hr -> 24hr, 年假時數(16hr)還可以扣" do
         annual, personal, sick, bonus = init_quota
 
@@ -372,6 +374,32 @@ RSpec.describe LeaveApplication, type: :model do
         expect(personal.used_hours).to eq 16
         expect(annual.used_hours).to eq 8
         expect(annual.usable_hours).to eq(annual.quota - annual.used_hours)
+      end
+
+      it "1hr -> 8hr -> 16hr, 年假時數(32hr)還可以扣" do
+        annual, personal, sick, bonus = init_quota
+        leave = FactoryGirl.create :personal_leave, start_time: start_time, end_time: one_hour_later, user: first_year_employee
+        expect(leave.hours).to eq 1
+        expect(leave.status).to eq "pending"
+
+        annual.reload
+        expect(annual.used_hours).to eq 1
+
+        leave.update! end_time: one_day_later
+        leave.revise!
+        leave.reload
+        expect(leave.hours).to eq 8
+
+        annual.reload
+        expect(annual.used_hours).to eq 8
+
+        leave.update! end_time: two_day_later
+        leave.revise!
+        leave.reload
+        expect(leave.hours).to eq 16
+
+        annual.reload
+        expect(annual.used_hours).to eq 16
       end
     end
 
