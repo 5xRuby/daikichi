@@ -58,9 +58,9 @@ document.addEventListener("turbolinks:load", function() {
         type: "GET",
         success: function(data, textStatus, jqXHR) {
           if (data.usable_hours > 0){
-            text_area.text("您的特休還剩下: " + data.usable_hours + " 小時\n此次請假會扣「特休」時數");
+            text_area.text("您的特休還剩下: " + data.usable_hours + " 小時!!");
           } else{
-            text_area.text("您已經沒有特休了QQ\n此次請假會扣「事假」時數");
+            text_area.text("您已經沒有特休了QQ");
           }
         },
         error: function() {
@@ -78,6 +78,11 @@ document.addEventListener("turbolinks:load", function() {
       event.preventDefault();
       click_hidden_button();
       retrieve_leave_time();
+
+      $(document).keyup(function(e){
+        if (e.keyCode === 13) yes_button.click(); // enter
+        if (e.keyCode === 27) no_button.click(); // esc
+      });
 
       yes_button.on("click", function(){
         form.unbind("submit").submit();
