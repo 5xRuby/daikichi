@@ -81,16 +81,16 @@ class LeaveApplication < ApplicationRecord
   end
 
   def return_leave_time_usable_hours
-      leave_time, leave_time_for_annual = LeaveTime.get_general_and_annual user_id, leave_type
-      newest_log = leave_application_logs.last
-      leave_time.add_back newest_log.general_hours, newest_log.annual_hours
-      general_used_hours_base = leave_time.reload.used_hours
-      annual_used_hours_base = leave_time_for_annual.reload.used_hours
+    leave_time, leave_time_for_annual = LeaveTime.get_general_and_annual user_id, leave_type
+    newest_log = leave_application_logs.last
+    leave_time.add_back newest_log.general_hours, newest_log.annual_hours
+    general_used_hours_base = leave_time.reload.used_hours
+    annual_used_hours_base = leave_time_for_annual.reload.used_hours
 
-      LeaveApplicationLog.create!(leave_application_uuid: self.uuid,
-                                  general_hours: (-leave_time.reload.used_hours + general_used_hours_base),
-                                  annual_hours: (-leave_time_for_annual.reload.used_hours + annual_used_hours_base),
-                                  returning?: true)
+    LeaveApplicationLog.create!(leave_application_uuid: self.uuid,
+                                general_hours: (-leave_time.reload.used_hours + general_used_hours_base),
+                                annual_hours: (-leave_time_for_annual.reload.used_hours + annual_used_hours_base),
+                                returning?: true)
   end
 
   def assign_hours

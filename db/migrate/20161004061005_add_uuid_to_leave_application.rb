@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class AddUuidToLeaveApplication < ActiveRecord::Migration[5.0]
   def change
     add_column :leave_applications, :uuid, :string, null: false
