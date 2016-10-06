@@ -20,7 +20,11 @@ Rails.application.routes.draw do
 
       resources :leave_times, only: [:index]
 
-      get "monthly_leave_times/:year/:month", to: "monthly_leave_times#index", as: "monthly_leave_times"
+      resources :bonus_leave_time_logs, only: [:index, :update]
+
+      get "monthly_leave_times/:year/:month",
+        to: "monthly_leave_times#index",
+        as: "monthly_leave_times"
     end
 
     resources :leave_applications, except: [:destroy] do

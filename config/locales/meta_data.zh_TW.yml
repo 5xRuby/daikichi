@@ -114,8 +114,8 @@ zh-TW:
       reject: "駁回"
       read: "檢視"
 
-    backend/leave_times:
-      edit: "增加"
+    backend/bonus_leave_time_logs:
+      index: "增加"
 
     leave_applications:
       show: "檢視"
