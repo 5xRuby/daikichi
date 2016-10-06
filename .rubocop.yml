@@ -8,6 +8,7 @@ AllCops:
   Exclude:
     - bin/**/*
     - db/schema.rb
+    - spec/models/leave_application_spec.rb
     - config/**/*
     - lib/tasks/*.rake
     - lib/nh4_auth/**/*
