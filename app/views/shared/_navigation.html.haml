@@ -27,7 +27,7 @@
                 backend_leave_applications_path
               %li= link_to t("menu_options.backend.monthly_leave_times.index"),
                 backend_monthly_leave_times_path(Time.zone.now.year, Time.zone.now.mon)
-              %li= link_to "增加員工補休時數",
+              %li= link_to t("menu_options.backend.leave_times.index"),
                 backend_leave_times_path
 
       %ul.nav.navbar-nav.navbar-right

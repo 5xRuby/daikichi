@@ -74,9 +74,11 @@ zh-TW:
         index: "員工列表"
         new: "新增員工"
       leave_applications:
-        index: "審核員工假單"
+        index: "審核假單"
       monthly_leave_times:
-        index: "檢視員工休假"
+        index: "檢視每月休假狀況"
+      leave_times:
+        index: "增加員工補休時數"
     devise:
       registrations:
         new: "註冊新帳號"
