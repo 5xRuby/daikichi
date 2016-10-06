@@ -1,0 +1,17 @@
+-#%h2= t("captions.backend.leave_times")
+%h2 增加員工補休時數
+
+%table.table
+  %tr
+    %th= t_attribute(:name, User)
+    %th= "補休" + t("activerecord.attributes.leave_time.quota")
+    %th= "補休" + t("activerecord.attributes.leave_time.usable_hours")
+    %th= t("captions.tools")
+  - current_collection.each do |leave_time|
+    %tr
+      %td= t_value :name, User.find_by(id: leave_time.user_id)
+      %td= t_value :quota, leave_time
+      %td= t_value :usable_hours, leave_time
+      %td= link_to t("actions.backend/leave_times.edit"),
+        edit_backend_leave_time_path(leave_time),
+        class: "btn btn-warning"

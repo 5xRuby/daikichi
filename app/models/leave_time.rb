@@ -21,6 +21,10 @@ class LeaveTime < ApplicationRecord
     return leave_time, leave_time_for_annual
   }
 
+  scope :get_employees_bonus, ->(){
+    where("leave_type = ?", "bonus").order(user_id: :desc)
+  }
+
   def init_quota
     return false if seniority < 1
     quota = quota_by_seniority
