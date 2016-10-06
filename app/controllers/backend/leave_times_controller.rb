@@ -1,5 +1,5 @@
+# frozen_string_literal: true
 class Backend::LeaveTimesController < Backend::BaseController
-
   def index
     @current_collection = @leave_times.get_employees_bonus
   end
