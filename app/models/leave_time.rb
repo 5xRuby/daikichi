@@ -15,7 +15,7 @@ class LeaveTime < ApplicationRecord
     find_by(user_id: user_id, leave_type: leave_type)
   }
 
-  scope :get_general_and_annual, ->(user_id, leave_type){
+  scope :get_employee_general_and_annual, ->(user_id, leave_type){
     leave_time = find_by user_id: user_id, leave_type: leave_type
     leave_time_for_annual = find_by user_id: user_id, leave_type: "annual"
     return leave_time, leave_time_for_annual
