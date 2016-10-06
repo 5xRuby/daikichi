@@ -18,7 +18,7 @@ Rails.application.routes.draw do
         end
       end
 
-      get 'employee_leave_times/:year/:month', to: 'employee_leave_times#index', as: "employee_leave_times"
+      get 'monthly_leave_times/:year/:month', to: 'monthly_leave_times#index', as: "monthly_leave_times"
     end
 
     resources :leave_applications, except: [:destroy] do

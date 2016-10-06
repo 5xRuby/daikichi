@@ -4,10 +4,10 @@ document.addEventListener("turbolinks:load", function() {
   var $month = $('select[id=month]')
 
   $year.on('change', function() {
-    Turbolinks.visit("/backend/employee_leave_times/" + $year.val() + "/" + $month.val());
+    Turbolinks.visit("/backend/monthly_leave_times/" + $year.val() + "/" + $month.val());
   });
 
   $month.on('change', function() {
-    Turbolinks.visit("/backend/employee_leave_times/" + $year.val() + "/" + $month.val());
+    Turbolinks.visit("/backend/monthly_leave_times/" + $year.val() + "/" + $month.val());
   });
 });
