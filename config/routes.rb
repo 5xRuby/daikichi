@@ -18,6 +18,8 @@ Rails.application.routes.draw do
         end
       end
 
+      resources :leave_times, only: [:index, :edit, :update]
+
       get 'monthly_leave_times/:year/:month', to: 'monthly_leave_times#index', as: "monthly_leave_times"
     end
 
