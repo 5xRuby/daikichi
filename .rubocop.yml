@@ -1,8 +1,6 @@
 AllCops:
   TargetRubyVersion: 2.3
   Include:
-    - app/views/**/*.rabl
-    - ./Vagrantfile
     - ./Rakefile
     - ./config.ru
   Exclude:
@@ -10,8 +8,6 @@ AllCops:
     - db/schema.rb
     - config/**/*
     - lib/tasks/*.rake
-    - lib/nh4_auth/**/*
-    - engines/**/*
 
 Rails:
   Enabled: true
