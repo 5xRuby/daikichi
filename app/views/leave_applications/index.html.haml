@@ -2,13 +2,13 @@
 
 .status-selector
   = button_tag t('simple_form.options.leave_application.status.pending'),
-    class: "btn btn-default col-md-1 col-xs-12 pending"
+    class: "btn btn-default col-md-1 col-sm-2 col-xs-8 col-md-offset-0 col-sm-offset-0 col-xs-offset-2 pending"
   = button_tag t('simple_form.options.leave_application.status.approved'),
-    class: "btn btn-default col-md-1 col-xs-12 approved"
+    class: "btn btn-default col-md-1 col-sm-2 col-xs-8 col-md-offset-0 col-sm-offset-0 col-xs-offset-2 approved"
   = button_tag t('simple_form.options.leave_application.status.rejected'),
-    class: "btn btn-default col-md-1 col-xs-12 rejected"
+    class: "btn btn-default col-md-1 col-sm-2 col-xs-8 col-md-offset-0 col-sm-offset-0 col-xs-offset-2 rejected"
   = button_tag t('simple_form.options.leave_application.status.canceled'),
-    class: "btn btn-default col-md-1 col-xs-12 canceled"
+    class: "btn btn-default col-md-1 col-sm-2 col-xs-8 col-md-offset-0 col-sm-offset-0 col-xs-offset-2 canceled"
 
 - if current_collection.any?
   %table.table

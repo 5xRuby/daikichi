@@ -2,12 +2,14 @@
 class LeaveApplication < ApplicationRecord
   belongs_to :user
   belongs_to :manager, class_name: "User", foreign_key: "manager_id"
+  has_many :leave_application_logs, foreign_key: "leave_application_uuid", primary_key: "uuid"
   validates :leave_type, :description, presence: true
   validate :hours_should_be_positive_integer
-  before_create :deduct_user_hours
+  after_initialize :set_primary_id
+  before_create :deduct_leave_time_usable_hours
   acts_as_paranoid
 
-  LEAVE_TYPE = %i(annual bonus personal sick).freeze
+  LEAVE_TYPE = %i(bonus personal sick).freeze
 
   include AASM
   include SignatureConcern
@@ -22,15 +24,15 @@ class LeaveApplication < ApplicationRecord
       transitions to: :approved, from: [:pending]
     end
 
-    event :reject, after: [proc { |manager| sign(manager) }, :return_user_hours] do
+    event :reject, after: [proc { |manager| sign(manager) }, :return_leave_time_usable_hours] do
       transitions to: :rejected, from: [:pending]
     end
 
-    event :revise, after: :adjust_user_hours do
+    event :revise, after: :revise_leave_time_usable_hours do
       transitions to: :pending, from: [:pending, :approved, :rejected]
     end
 
-    event :cancel, after: :return_user_hours do
+    event :cancel, after: :return_leave_time_usable_hours do
       transitions to: :canceled, from: [:pending, :approved, :rejected]
     end
   end
@@ -45,31 +47,50 @@ class LeaveApplication < ApplicationRecord
 
   private
 
-  def deduct_user_hours
-    leave_time = LeaveTime.personal(user_id, leave_type)
-    assign_hours
-    leave_time.adjust_used_hours(hours)
+  def set_primary_id
+    self.uuid ||= SecureRandom.uuid
   end
 
-  def return_user_hours
-    if aasm.from_state != :rejected
-      leave_time = LeaveTime.personal(user_id, leave_type)
-      leave_time.adjust_used_hours(-hours)
-      @return_leave_application_hours = hours
-    end
+  def deduct_leave_time_usable_hours
+    general_leave_time, annual_leave_time = LeaveTime.get_general_and_annual user_id, leave_type
+    general_used_hours_base = general_leave_time.used_hours
+    annual_used_hours_base = annual_leave_time.used_hours
+
+    assign_hours
+    general_leave_time.deduct hours
+
+    LeaveApplicationLog.create!(leave_application_uuid: self.uuid,
+                                general_hours: (general_leave_time.reload.used_hours - general_used_hours_base),
+                                annual_hours: (annual_leave_time.reload.used_hours - annual_used_hours_base))
   end
 
-  def adjust_user_hours
-    leave_time = LeaveTime.personal(user_id, leave_type)
+  def revise_leave_time_usable_hours
+    general_leave_time, annual_leave_time = LeaveTime.get_general_and_annual user_id, leave_type
+    newest_log = leave_application_logs.last
+    general_leave_time.add_back newest_log.general_hours, newest_log.annual_hours unless newest_log.returning?
+    general_used_hours_base = general_leave_time.reload.used_hours
+    annual_used_hours_base = annual_leave_time.reload.used_hours
+
     assign_hours
-    leave_time.adjust_used_hours(hours - hours_was)
-
-    if @return_leave_application_hours
-      leave_time.adjust_used_hours(@return_leave_application_hours)
-      @return_leave_application_hours = nil
-    end
-
+    general_leave_time.deduct hours
     save!
+
+    LeaveApplicationLog.create!(leave_application_uuid: self.uuid,
+                                general_hours: (general_leave_time.reload.used_hours - general_used_hours_base),
+                                annual_hours: (annual_leave_time.reload.used_hours - annual_used_hours_base))
+  end
+
+  def return_leave_time_usable_hours
+    leave_time, leave_time_for_annual = LeaveTime.get_general_and_annual user_id, leave_type
+    newest_log = leave_application_logs.last
+    leave_time.add_back newest_log.general_hours, newest_log.annual_hours
+    general_used_hours_base = leave_time.reload.used_hours
+    annual_used_hours_base = leave_time_for_annual.reload.used_hours
+
+    LeaveApplicationLog.create!(leave_application_uuid: self.uuid,
+                                general_hours: (-leave_time.reload.used_hours + general_used_hours_base),
+                                annual_hours: (-leave_time_for_annual.reload.used_hours + annual_used_hours_base),
+                                returning?: true)
   end
 
   def assign_hours

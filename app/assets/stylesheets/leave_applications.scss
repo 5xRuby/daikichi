@@ -2,9 +2,21 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
-.status-selector {
-  margin-bottom: 60px;
-  .btn.btn-default{
-    margin-right: 10px;
+@media (min-width: 768px) {
+  .status-selector {
+    margin-bottom: 60px;
+    .btn{
+      margin-right: 10px;
+    }
   }
+}
+
+@media (max-width: 767px) {
+  .status-selector .btn {
+    margin-bottom: 10px;
+  }
+}
+
+.modal-body {
+  white-space: pre;
 }
