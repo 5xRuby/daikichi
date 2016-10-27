@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 class LeaveApplication < ApplicationRecord
+  paginates_per 10
+
   belongs_to :user
   belongs_to :manager, class_name: "User", foreign_key: "manager_id"
   has_many :leave_application_logs, foreign_key: "leave_application_uuid", primary_key: "uuid"
