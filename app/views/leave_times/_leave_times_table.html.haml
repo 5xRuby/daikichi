@@ -1,16 +1,15 @@
 %table.table
   %h2= t("captions.personal.leave_times", year: Time.zone.today.year)
-  %tr
-    %th
-    %th= t_attribute :quota, LeaveTime
-    %th= t_attribute :usable_hours, LeaveTime
-    %th= t_attribute :used_hours, LeaveTime
-  - leave_times.each do |item|
-    - if /sick|personal/ === item.leave_type
-      - next
-    - else
-      %tr
-        %th= t_value :leave_type, item, :translate_text_value
-        %td= item.quota
-        %td= item.usable_hours
-        %td= item.used_hours
+  %thead
+    %th.text-center
+    %th.text-center= t_attribute :quota, LeaveTime
+    %th.text-center= t_attribute :usable_hours, LeaveTime
+    %th.text-center= t_attribute :used_hours, LeaveTime
+  %tbody
+    - leave_times.each do |item|
+      - unless item.leave_type =~ /sick/
+        %tr
+          %th.text-center= t_value :leave_type, item, :translate_text_value
+          %td.text-center= item.quota
+          %td.text-center= item.usable_hours
+          %td.text-center= item.used_hours
