@@ -57,12 +57,12 @@ zh-TW:
       edit: "員工資料"
 
   # navbar 選單標題
-  menu:
+  nav:
     leave_applications: "請假系統"
     backend: "員工管理"
 
   # navbar 選單內容
-  menu_options:
+  nav_options:
     personal:
       leave_applications:
         index: "所有假單"
