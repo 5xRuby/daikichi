@@ -71,7 +71,10 @@ zh-TW:
       index: "員工補休時數"
     leave_applications:
       index: "所有假單"
+      show: "檢視"
       new: "新增假單"
+      edit: "修改"
+      cancel: "取消"
     leave_times:
       index: "請假狀況"
 

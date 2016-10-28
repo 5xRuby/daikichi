@@ -26,14 +26,14 @@
           %td._11= t_value :hours, leave
           %td._11= t_value :status, leave, :translate_text_value
           %td._27
-            = link_to t("actions.leave_applications.show"),
+            = link_to t("title.leave_applications.show"),
               leave_application_path(leave),
               class: "btn btn-primary"
             - unless leave.canceled?
-              = link_to t("actions.leave_applications.edit"),
+              = link_to t("title.leave_applications.edit"),
                 edit_leave_application_path(leave),
                 class: "btn btn-warning"
-              = link_to t("actions.leave_applications.cancel"),
+              = link_to t("title.leave_applications.cancel"),
                 cancel_leave_application_path(leave),
                 class: "btn btn-danger",
                 method: :put,
