@@ -84,22 +84,24 @@ zh-TW:
   captions:
     annual_leave_time: "%{year} 年度休假使用狀況"
     leave_times:
-      index: "%{year} 年請假狀況"
+      index: "%{year} 年 請假狀況"
     leave_applications:
-      index: "%{year} 年所有假單"
+      index: "%{year} 年 所有假單"
       show: "%{day} 假單"
       new: "新增假單"
       edit: "編輯假單"
     backend/users:
-      index: "所有員工"
+      index: "員工列表"
       show: "%{name}"
       new: "新增員工"
       edit: "修正員工資料"
     backend/leave_applications:
-      index: "員工假單"
+      index: "審核假單"
       verify: "審核假單"
     backend/monthly_leave_times:
-      index: "%{year} 年 %{month} 月請假狀況"
+      index: "%{year} 年 %{month} 月 員工休假狀況"
+    backend/leave_times:
+      index: "員工補休時數"
     tools: "工具"
 
   actions:
