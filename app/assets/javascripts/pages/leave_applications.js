@@ -1,4 +1,5 @@
 document.addEventListener("turbolinks:load", function() {
+  // datetimepicker
   $('#datetimepicker_start').datetimepicker( {
     format: 'YYYY-MM-DD HH:mm',
     enabledHours: [9, 10, 11, 12, 13, 14, 15, 16, 17, 18],
@@ -22,22 +23,26 @@ document.addEventListener("turbolinks:load", function() {
     $('#datetimepicker_start').data('DateTimePicker').maxDate( e.date.subtract(1, 'hours'));
   });
 
-  $('.status-selector > .pending').on('click', function(){
-    Turbolinks.visit("/leave_applications/pending" );
-  });
+  // 選擇假單狀態
+  $leaveStatus = $("#status");
+  $leaveStatus.on('change', function(e){
+    value = $(this).val();
+    switch(value) {
+      case "approved":
+        Turbolinks.visit("/leave_applications?status=approved" );
+        break;
+      case "rejected":
+        Turbolinks.visit("/leave_applications?status=rejected" );
+        break;
+      case "canceled":
+        Turbolinks.visit("/leave_applications?status=canceled" );
+        break;
+      default:
+        Turbolinks.visit("/leave_applications?status=pending" );
+    }
+  })
 
-  $('.status-selector > .approved').on('click', function(){
-    Turbolinks.visit("/leave_applications/approved" );
-  });
-
-  $('.status-selector > .rejected').on('click', function(){
-    Turbolinks.visit("/leave_applications/rejected" );
-  });
-
-  $('.status-selector > .canceled').on('click', function(){
-    Turbolinks.visit("/leave_applications/canceled" );
-  });
-
+  // ajax calling for personal 剩餘時數
   var form = $("form[class*='leave_application'].simple_form");
   var submit_button = form.find(".submit");
 

@@ -46,7 +46,6 @@ zh-TW:
     leave_applications: "請假系統"
     backend: "員工管理"
 
-  # CRUD 操作
   title:
     devise/registrations:
       new: "註冊新帳號"
@@ -64,6 +63,8 @@ zh-TW:
       new: "新增員工"
     backend/leave_applications:
       index: "審核假單"
+      show: "檢視"
+      verify: "審核"
     backend/monthly_leave_times:
       index: "員工休假狀況"
     backend/leave_times:
@@ -74,22 +75,28 @@ zh-TW:
     leave_times:
       index: "請假狀況"
 
-  # each page's title
   captions:
     annual_leave_time: "%{year} 年度休假使用狀況"
-    personal:
-      leave_times: "%{year} 年度請假狀況"
-      leaves_list: "所有假單"
-      new_leave: "新增假單"
-    backend:
-      users_list: "所有員工"
-      new_user: "新增員工"
-      leaves_list: "所有員工假單"
-      annual_employee_leave_times_list: "%{year} 年 %{month} 月請假狀況"
+    leave_times:
+      index: "%{year} 年請假狀況"
+    leave_applications:
+      index: "%{year} 年所有假單"
+      show: "%{day} 假單"
+      new: "新增假單"
+      edit: "編輯假單"
+    backend/users:
+      index: "所有員工"
+      show: "%{name}"
+      new: "新增員工"
+      edit: "修正員工資料"
+    backend/leave_applications:
+      index: "員工假單"
+      verify: "審核假單"
+    backend/monthly_leave_times:
+      index: "%{year} 年 %{month} 月請假狀況"
     tools: "工具"
 
   actions:
-    # controller
     backend/users:
       show: "檢視"
       edit: "修改"

@@ -11,11 +11,6 @@ Rails.application.routes.draw do
         member do
           get "verify"
         end
-
-        collection do
-          get "/:status", to: "leave_applications#index",
-                          constraints: { status: /pending|approved|rejected|canceled/ }
-        end
       end
 
       resources :leave_times, only: [:index]

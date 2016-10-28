@@ -1,3 +1,5 @@
+%h2= t("captions.backend/users.#{action_name}")
+
 = simple_form_for [:backend, current_object] do |f|
   = f.input :name, required: true
   = f.input :login_name, required: true

@@ -1,17 +1,20 @@
 document.addEventListener("turbolinks:load", function() {
-  $('.employee-leaves-status-selector > .pending').on('click', function(){
-    Turbolinks.visit("/backend/leave_applications/pending" );
-  });
-
-  $('.employee-leaves-status-selector > .approved').on('click', function(){
-    Turbolinks.visit("/backend/leave_applications/approved" );
-  });
-
-  $('.employee-leaves-status-selector > .rejected').on('click', function(){
-    Turbolinks.visit("/backend/leave_applications/rejected" );
-  });
-
-  $('.employee-leaves-status-selector > .canceled').on('click', function(){
-    Turbolinks.visit("/backend/leave_applications/canceled" );
-  });
-});
+  // 選擇假單狀態
+  $leaveStatus = $("#status");
+  $leaveStatus.on('change', function(e){
+    value = $(this).val();
+    switch(value) {
+      case "approved":
+        Turbolinks.visit("/backend/leave_applications?status=approved" );
+        break;
+      case "rejected":
+        Turbolinks.visit("/backend/leave_applications?status=rejected" );
+        break;
+      case "canceled":
+        Turbolinks.visit("/backend/leave_applications?status=canceled" );
+        break;
+      default:
+        Turbolinks.visit("/backend/leave_applications?status=pending" );
+    }
+  })
+})

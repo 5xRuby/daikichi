@@ -1,34 +1,31 @@
-%h2= t("captions.personal.leaves_list")
+%h2= t("captions.leave_applications.index", year: Time.now.year)
 
-.status-selector
-  = button_tag t('simple_form.options.leave_application.status.pending'),
-    class: "btn btn-default col-md-1 col-sm-2 col-xs-8 col-md-offset-0 col-sm-offset-0 col-xs-offset-2 pending"
-  = button_tag t('simple_form.options.leave_application.status.approved'),
-    class: "btn btn-default col-md-1 col-sm-2 col-xs-8 col-md-offset-0 col-sm-offset-0 col-xs-offset-2 approved"
-  = button_tag t('simple_form.options.leave_application.status.rejected'),
-    class: "btn btn-default col-md-1 col-sm-2 col-xs-8 col-md-offset-0 col-sm-offset-0 col-xs-offset-2 rejected"
-  = button_tag t('simple_form.options.leave_application.status.canceled'),
-    class: "btn btn-default col-md-1 col-sm-2 col-xs-8 col-md-offset-0 col-sm-offset-0 col-xs-offset-2 canceled"
+.status-selector.row
+  .col-md-3.col-sm-3.col-xs-6
+    .form-group
+      %label{:for=>"status"} 假別
+      = select_tag "status",
+        options_for_select( LeaveApplication::STATUS.map{ |type|  [I18n.t("simple_form.options.leave_application.status.#{type}"), type]}.to_h, params[:status]), class: "form-control"
 
 - if current_collection.any?
   %table.table
     %thead
       %tr
-        %th.text-center= t_attribute(:leave_type, LeaveApplication)
-        %th.text-center= t_attribute(:start_time, LeaveApplication)
-        %th.text-center= t_attribute(:end_time, LeaveApplication)
-        %th.text-center= t_attribute(:hours, LeaveApplication)
-        %th.text-center= t_attribute(:status, LeaveApplication)
-        %th.text-center= t("captions.tools")
+        %th._11= t_attribute(:leave_type, LeaveApplication)
+        %th._20= t_attribute(:start_time, LeaveApplication)
+        %th._20= t_attribute(:end_time, LeaveApplication)
+        %th._11= t_attribute(:hours, LeaveApplication)
+        %th._11= t_attribute(:status, LeaveApplication)
+        %th._27= t("captions.tools")
     %tbody
       - current_collection.each do |leave|
         %tr
-          %td.text-center= t_value :leave_type, leave, :translate_text_value
-          %td.text-center= t_value :start_time, leave, :convert_time_value
-          %td.text-center= t_value :end_time, leave, :convert_time_value
-          %td.text-center= t_value :hours, leave
-          %td.text-center= t_value :status, leave, :translate_text_value
-          %td.text-center
+          %td._11= t_value :leave_type, leave, :translate_text_value
+          %td._20= t_value :start_time, leave, :convert_time_value, :full
+          %td._20= t_value :end_time, leave, :convert_time_value, :full
+          %td._11= t_value :hours, leave
+          %td._11= t_value :status, leave, :translate_text_value
+          %td._27
             = link_to t("actions.leave_applications.show"),
               leave_application_path(leave),
               class: "btn btn-primary"

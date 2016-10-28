@@ -3,8 +3,8 @@ module ApplicationHelper
   # show 才會用到 tr_by_object，將 object 寫在最後面，可以在呼叫 tr_by_object 時省略不寫
   def tr_by_object(attribute, conversion = nil, key = nil, object = current_object)
     content_tag :tr do
-      concat content_tag :th, t_attribute(attribute, object)
-      concat content_tag :td, t_value(attribute, object, conversion, key)
+      concat content_tag :th, t_attribute(attribute, object), class: "col-md-3"
+      concat content_tag :td, t_value(attribute, object, conversion, key), class: "col-md-9"
     end
   end
 
@@ -39,7 +39,7 @@ module ApplicationHelper
 
   # ------------------------------時間轉換------------------------------
   def convert_time_value(time_value, attribute, object, key = nil)
-    time_value.strftime("%Y-%m-%d %H:%M")
+    time_value.to_formatted_s(key)
   end
   # --------------------------------------------------------------------
 

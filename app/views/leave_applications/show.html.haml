@@ -1,7 +1,9 @@
+%h2= t( "captions.leave_applications.show", day: Time.now.to_formatted_s(:month_date))
+
 %table.table
   = tr_by_object :leave_type, :translate_text_value
-  = tr_by_object :start_time, :convert_time_value
-  = tr_by_object :end_time, :convert_time_value
+  = tr_by_object :start_time, :convert_time_value, :full
+  = tr_by_object :end_time, :convert_time_value, :full
   = tr_by_object :hours
   = tr_by_object :description
   = tr_by_object :status, :translate_text_value
