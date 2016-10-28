@@ -277,7 +277,7 @@ RSpec.describe LeaveApplication, type: :model do
 
       leave = leave(three_day_later, :sick_leave)
       expect(leave.hours).to eq 24
-      expect(leae.status).to eq "pending"
+      expect(leave.status).to eq "pending"
 
       sick.reload
       expect(sick.used_hours).to eq 24

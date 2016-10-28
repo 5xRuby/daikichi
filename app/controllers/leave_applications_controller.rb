@@ -2,7 +2,9 @@
 class LeaveApplicationsController < BaseController
   def index
     if params[:status]
-      @current_collection = current_collection.where(status: params[:status]).page(params[:page])
+      @current_collection = collection_scope.where(status: params[:status]).page(params[:page])
+    else
+      @current_collection = collection_scope.page(params[:page])
     end
   end
 
@@ -33,7 +35,11 @@ class LeaveApplicationsController < BaseController
   private
 
   def collection_scope
-    current_user.leave_applications
+    if params[:id]
+      LeaveApplication.where(user_id: current_user.id)
+    else
+      LeaveApplication.where(user_id: current_user.id).order(id: :desc)
+    end
   end
 
   def resource_params
