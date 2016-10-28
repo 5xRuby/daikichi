@@ -15,12 +15,6 @@ class LeaveTime < ApplicationRecord
     find_by(user_id: user_id, leave_type: leave_type)
   }
 
-  scope :get_employee_general_and_annual, ->(user_id, leave_type){
-    leave_time = find_by user_id: user_id, leave_type: leave_type
-    leave_time_for_annual = find_by user_id: user_id, leave_type: "annual"
-    return leave_time, leave_time_for_annual
-  }
-
   scope :get_employees_bonus, ->(){
     where("leave_type = ?", "bonus").order(user_id: :desc)
   }
@@ -39,21 +33,10 @@ class LeaveTime < ApplicationRecord
     save!
   end
 
-  # main api
   def deduct(hours)
-    if leave_type == "personal"
-      calculate_personal! hours
-    else
-      calculate_general! hours
-    end
-  end
-
-  def add_back(hours, annual_hours)
-    calculate_general!(-hours)
-    if annual_hours.positive?
-      annual = LeaveTime.personal(user_id, "annual")
-      annual.send :calculate_general!, -annual_hours
-    end
+    self.used_hours += hours
+    self.usable_hours = quota - used_hours
+    save!
   end
 
   private
@@ -102,29 +85,5 @@ class LeaveTime < ApplicationRecord
     when "sick" then 30
     else 0
     end
-  end
-
-  def calculate_general!(hours)
-    self.used_hours += hours
-    self.usable_hours = quota - used_hours
-    save!
-  end
-
-  def calculate_personal!(hours)
-    annual = self.class.find_by user_id: user_id, leave_type: "annual"
-    delta = hours - annual.usable_hours
-    if delta >= 0
-      calculate_general! delta
-      annual.send :become_empty!
-    else
-      annual.send :calculate_general!, hours
-    end
-    annual.save!
-  end
-
-  def become_empty!
-    self.used_hours = self.quota
-    self.usable_hours = 0
-    save!
   end
 end

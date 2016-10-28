@@ -8,11 +8,17 @@ RSpec.describe LeaveApplication, type: :model do
   let(:annual) { FactoryGirl.create(:annual_leave_time, user: first_year_employee) }
   # Monday
   let(:start_time) { Time.new(2016, 8, 15, 9, 30, 0, "+08:00") }
+  let(:one_hour_ago) { Time.new(2016, 8, 15, 8, 30, 0, "+08:00") }
+  let(:half_hour_later) { Time.new(2016, 8, 15, 10, 0, 0, "+08:00") }
+  let(:one_hour_later) { Time.new(2016, 8, 15, 10, 30, 0, "+08:00") }
+  let(:two_hour_later) { Time.new(2016, 8, 15, 11, 30, 0, "+08:00") }
   let(:one_day_later) { Time.new(2016, 8, 16, 9, 30, 0, "+08:00") }
   let(:two_day_later) { Time.new(2016, 8, 17, 9, 30, 0, "+08:00") }
   let(:three_day_later) { Time.new(2016, 8, 18, 9, 30, 0, "+08:00") }
   let(:four_day_later) { Time.new(2016, 8, 19, 9, 30, 0, "+08:00") }
   let(:five_day_later) { Time.new(2016, 8, 20, 9, 30, 0, "+08:00") }
+  # 主管
+  let(:manager_eddie) { FactoryGirl.create(:manager_eddie) }
 
   def init_quota
     annual.init_quota
@@ -22,11 +28,11 @@ RSpec.describe LeaveApplication, type: :model do
     return annual, personal, sick, bonus
   end
 
-  describe "validation" do
-    let(:one_hour_ago) { Time.new(2016, 8, 15, 8, 30, 0, "+08:00") }
-    let(:half_hour_later) { Time.new(2016, 8, 15, 10, 0, 0, "+08:00") }
-    let(:one_hour_later) { Time.new(2016, 8, 15, 10, 30, 0, "+08:00") }
+  def leave(end_time, leave_type = :sick_leave )
+    FactoryGirl.create leave_type, start_time: start_time, end_time: end_time, user: first_year_employee
+  end
 
+  describe "validation" do
     it "leave_type必填" do
       leave = LeaveApplication.new(
         start_time: start_time,
@@ -69,7 +75,7 @@ RSpec.describe LeaveApplication, type: :model do
         annual, personal, sick, bonus = init_quota
         quota = sick.quota
 
-        leave = FactoryGirl.create :sick_leave, start_time: start_time, end_time: one_day_later, user: first_year_employee
+        leave = leave(one_day_later, :sick_leave)
         expect(leave.hours).to eq 8
         expect(leave.status).to eq "pending"
 
@@ -82,12 +88,7 @@ RSpec.describe LeaveApplication, type: :model do
         annual, personal, sick, bonus = init_quota
         quota = sick.quota
 
-        leave = FactoryGirl.create(
-          :sick_leave,
-          start_time: start_time,
-          end_time: Time.new(2016, 8, 15, 23, 30, 0, "+08:00"),
-          user: first_year_employee
-        )
+        leave = leave(Time.new(2016, 8, 15, 23, 30, 0, "+08:00"), :sick_leave)
         expect(leave.hours).to eq 8
         expect(leave.status).to eq "pending"
 
@@ -100,7 +101,7 @@ RSpec.describe LeaveApplication, type: :model do
         annual, personal, sick, bonus = init_quota
         quota = sick.quota
 
-        leave = FactoryGirl.create :sick_leave, start_time: start_time, end_time: three_day_later, user: first_year_employee
+        leave = leave(three_day_later, :sick_leave)
         expect(leave.hours).to eq 24
         expect(leave.status).to eq "pending"
 
@@ -108,372 +109,50 @@ RSpec.describe LeaveApplication, type: :model do
         expect(sick.used_hours).to eq 24
         expect(sick.usable_hours).to eq(quota - sick.used_hours)
       end
-
-      it "40hr" do
-        annual, personal, sick, bonus = init_quota
-        quota = sick.quota
-
-        leave = FactoryGirl.create :sick_leave, start_time: start_time, end_time: five_day_later, user: first_year_employee
-        expect(leave.hours).to eq 40
-        expect(leave.status).to eq "pending"
-
-        sick.reload
-        expect(sick.used_hours).to eq 40
-        expect(sick.usable_hours).to eq(quota - sick.used_hours)
-      end
-    end
-
-    context "新增事假假單" do
-      it "24hr < 年假可用的時數" do
-        annual, personal, sick, bonus = init_quota
-
-        leave = FactoryGirl.create :personal_leave, start_time: start_time, end_time: three_day_later, user: first_year_employee
-        expect(leave.hours).to eq 24
-        expect(leave.status).to eq "pending"
-
-        personal.reload
-        annual.reload
-        expect(annual.used_hours).to eq 24
-        expect(personal.used_hours).not_to eq 24
-        expect(personal.used_hours).to eq 0
-      end
-
-      it "請 32 小時 == 年假可用的時數" do
-        annual, personal, sick, bonus = init_quota
-
-        leave = FactoryGirl.create :personal_leave, start_time: start_time, end_time: four_day_later, user: first_year_employee
-        expect(leave.hours).to eq 32
-        expect(leave.status).to eq "pending"
-
-        personal.reload
-        annual.reload
-        expect(annual.used_hours).to eq 32
-        expect(personal.used_hours).not_to eq 32
-        expect(personal.used_hours).to eq 0
-      end
-
-      it "請 40 小時 > 年假可用的時數" do
-        annual, personal, sick, bonus = init_quota
-
-        leave = FactoryGirl.create :personal_leave, start_time: start_time, end_time: five_day_later, user: first_year_employee
-        expect(leave.hours).to eq 40
-        expect(leave.status).to eq "pending"
-
-        personal.reload
-        annual.reload
-        expect(annual.quota).to eq 32
-        expect(annual.used_hours).to eq 32
-        expect(personal.used_hours).not_to eq 32
-        expect(personal.used_hours).to eq 8
-      end
-
-      it "沒有年假時數, 請 8 小時" do
-        annual, personal, sick, bonus = init_quota
-        annual.update! used_hours: 32, usable_hours: annual.quota - 32
-
-        leave = FactoryGirl.create :personal_leave, start_time: start_time, end_time: one_day_later, user: first_year_employee
-        expect(leave.hours).to eq 8
-        expect(leave.status).to eq "pending"
-
-        personal.reload
-        annual.reload
-        expect(annual.used_hours).to eq 32
-        expect(personal.used_hours).not_to eq 32
-        expect(personal.used_hours).to eq 8
-      end
     end
 
     context "修改病假假單" do
-      let(:two_hour_later) { Time.new(2016, 8, 15, 11, 30, 0, "+08:00") }
-
       it "2hr -> 8hr" do
         annual, personal, sick, bonus = init_quota
-        leave = FactoryGirl.create :sick_leave, start_time: start_time, end_time: two_hour_later, user: first_year_employee
+
+        leave = leave(two_hour_later, :sick_leave)
         expect(leave.hours).to eq 2
         expect(leave.status).to eq "pending"
 
         sick.reload
         expect(sick.used_hours).to eq 2
-        expect(leave.status).to eq "pending"
 
         leave.update! end_time: one_day_later
         leave.revise!
         sick.reload
         expect(sick.used_hours).to eq 8
+        expect(sick.usable_hours).to eq (sick.quota - sick.used_hours)
         expect(leave.status).to eq "pending"
       end
 
       it "8hr -> 2hr" do
         annual, personal, sick, bonus = init_quota
-        leave = FactoryGirl.create :sick_leave, start_time: start_time, end_time: one_day_later, user: first_year_employee
+
+        leave = leave(one_day_later, :sick_leave)
         expect(leave.hours).to eq 8
         expect(leave.status).to eq "pending"
 
         sick.reload
         expect(sick.used_hours).to eq 8
-        expect(leave.status).to eq "pending"
 
         leave.update! end_time: two_hour_later
         leave.revise!
         sick.reload
         expect(sick.used_hours).to eq 2
+        expect(sick.usable_hours).to eq (sick.quota - sick.used_hours)
         expect(leave.status).to eq "pending"
       end
     end
 
-    context "修改事假假單" do
-      let(:one_hour_later) { Time.new(2016, 8, 15, 10, 30, 0, "+08:00") }
-
-      it "16hr -> 24hr, 年假時數(16hr)還可以扣" do
-        annual, personal, sick, bonus = init_quota
-
-        leave = FactoryGirl.create :personal_leave, start_time: start_time, end_time: two_day_later, user: first_year_employee
-        expect(leave.hours).to eq 16
-        expect(leave.status).to eq "pending"
-
-        personal.reload
-        annual.reload
-        expect(annual.used_hours).to eq 16
-        expect(personal.used_hours).to eq 0
-
-        leave.update! end_time: three_day_later
-        leave.revise!
-        leave.reload
-        expect(leave.hours).to eq 24
-
-        personal.reload
-        annual.reload
-        expect(annual.used_hours).to eq 24
-        expect(personal.used_hours).to eq 0
-      end
-
-      it "16hr -> 24hr, 年假時數(2hr)不夠, 開始扣事假" do
-        annual, personal, sick, bonus = init_quota
-        annual.update! used_hours: 14, usable_hours: annual.quota - 14
-        expect(annual.used_hours).to eq 14
-        expect(personal.used_hours).to eq 0
-
-        leave = FactoryGirl.create :personal_leave, start_time: start_time, end_time: two_day_later, user: first_year_employee
-        expect(leave.hours).to eq 16
-        expect(leave.status).to eq "pending"
-
-        personal.reload
-        annual.reload
-        expect(annual.used_hours).to eq 30
-        expect(personal.used_hours).to eq 0
-
-        leave.update! end_time: three_day_later
-        leave.revise!
-        leave.reload
-        expect(leave.hours).to eq 24
-
-        personal.reload
-        annual.reload
-        expect(annual.used_hours).to eq 32
-        expect(personal.used_hours).to eq 6
-      end
-
-      it "16 小時 -> 24 小時, 年假時數(0hr)早沒了, 直接扣事假 " do
-        annual, personal, sick, bonus = init_quota
-        annual.update! used_hours: 32, usable_hours: annual.quota - 32
-        expect(annual.used_hours).to eq 32
-
-        leave = FactoryGirl.create :personal_leave, start_time: start_time, end_time: two_day_later, user: first_year_employee
-        expect(leave.hours).to eq 16
-        expect(leave.status).to eq "pending"
-
-        personal.reload
-        annual.reload
-        expect(annual.used_hours).to eq 32
-        expect(personal.used_hours).to eq 16
-
-        leave.update! end_time: three_day_later
-        leave.revise!
-        leave.reload
-        expect(leave.hours).to eq 24
-
-        personal.reload
-        annual.reload
-        expect(annual.used_hours).to eq 32
-        expect(personal.used_hours).to eq 24
-      end
-
-      it "24hr -> 16hr, 沒有涵括年假, 補回事假時數" do
-        annual, personal, sick, bonus = init_quota
-        annual.update! used_hours: 32, usable_hours: annual.quota - 32
-        expect(annual.used_hours).to eq 32
-        expect(personal.used_hours).to eq 0
-
-        leave = FactoryGirl.create :personal_leave, start_time: start_time, end_time: three_day_later, user: first_year_employee
-        expect(leave.hours).to eq 24
-        expect(leave.status).to eq "pending"
-
-        personal.reload
-        annual.reload
-        expect(annual.used_hours).to eq 32
-        expect(personal.used_hours).to eq 24
-
-        leave.update! end_time: two_day_later
-        leave.revise!
-        leave.reload
-        expect(leave.hours).to eq 16
-
-        personal.reload
-        annual.reload
-        expect(annual.used_hours).to eq 32
-        expect(personal.used_hours).to eq 16
-        expect(personal.usable_hours).to eq(personal.quota - 16)
-      end
-
-      it "24hr -> 8hr, 涵括了一些年假(16hr), 補回事假再補年假" do
-        annual, personal, sick, bonus = init_quota
-        annual.update! used_hours: 16, usable_hours: annual.quota - 16
-
-        leave = FactoryGirl.create :personal_leave, start_time: start_time, end_time: three_day_later, user: first_year_employee
-        expect(leave.hours).to eq 24
-        expect(leave.status).to eq "pending"
-
-        personal.reload
-        annual.reload
-        expect(annual.used_hours).to eq 32
-        expect(personal.used_hours).to eq 8
-
-        leave.update! end_time: one_day_later
-        leave.revise!
-        leave.reload
-        expect(leave.hours).to eq 8
-
-        personal.reload
-        annual.reload
-        expect(annual.used_hours).to eq 24
-        expect(personal.used_hours).to eq 0
-      end
-
-      it "24hr -> 8hr, 全部都是年假, 直接補回年假" do
-        annual, personal, sick, bonus = init_quota
-        personal.update! used_hours: 16, usable_hours: personal.quota - 16
-        expect(personal.used_hours).to eq 16
-        expect(annual.used_hours).to eq 0
-
-        leave = FactoryGirl.create :personal_leave, start_time: start_time, end_time: three_day_later, user: first_year_employee
-        expect(leave.hours).to eq 24
-        expect(leave.status).to eq "pending"
-
-        personal.reload
-        annual.reload
-        expect(personal.used_hours).to eq 16
-        expect(annual.used_hours).to eq 24
-
-        leave.update! end_time: one_day_later
-        leave.revise!
-        leave.reload
-        expect(leave.hours).to eq 8
-
-        personal.reload
-        annual.reload
-        expect(personal.used_hours).to eq 16
-        expect(annual.used_hours).to eq 8
-        expect(annual.usable_hours).to eq(annual.quota - annual.used_hours)
-      end
-
-      it "1hr -> 8hr -> 16hr, 年假時數(32hr)還可以扣" do
-        annual, personal, sick, bonus = init_quota
-        leave = FactoryGirl.create :personal_leave, start_time: start_time, end_time: one_hour_later, user: first_year_employee
-        expect(leave.hours).to eq 1
-        expect(leave.status).to eq "pending"
-
-        annual.reload
-        expect(annual.used_hours).to eq 1
-
-        leave.update! end_time: one_day_later
-        leave.revise!
-        leave.reload
-        expect(leave.hours).to eq 8
-
-        annual.reload
-        expect(annual.used_hours).to eq 8
-
-        leave.update! end_time: two_day_later
-        leave.revise!
-        leave.reload
-        expect(leave.hours).to eq 16
-
-        annual.reload
-        expect(annual.used_hours).to eq 16
-      end
-    end
-
-    context "取消事假假單" do
-      it "24hr, 先還事假時數" do
-        annual, personal, sick, bonus = init_quota
-        annual.update! used_hours: 32, usable_hours: annual.quota - 32
-        expect(annual.used_hours).to eq 32
-        expect(personal.used_hours).to eq 0
-
-        leave = FactoryGirl.create :personal_leave, start_time: start_time, end_time: three_day_later, user: first_year_employee
-        personal.reload
-        annual.reload
-        expect(annual.used_hours).to eq 32
-        expect(personal.used_hours).to eq 24
-
-        leave.cancel!
-        personal.reload
-        annual.reload
-        expect(annual.used_hours).to eq 32
-        expect(personal.used_hours).to eq 0
-      end
-
-      it "24hr, 還一些事假時數, 剩餘還給年假時數" do
-        annual, personal, sick, bonus = init_quota
-        annual.update! used_hours: 24, usable_hours: annual.quota - 24
-        expect(annual.used_hours).to eq 24
-        expect(personal.used_hours).to eq 0
-
-        leave = FactoryGirl.create :personal_leave, start_time: start_time, end_time: three_day_later, user: first_year_employee
-        personal.reload
-        annual.reload
-        expect(annual.used_hours).to eq 32
-        expect(personal.used_hours).to eq 16
-
-        leave.cancel!
-        personal.reload
-        annual.reload
-        expect(annual.used_hours).to eq 24
-        expect(personal.used_hours).to eq 0
-      end
-
-      it "24hr, 全部還給年假時數" do
-        annual, personal, sick, bonus = init_quota
-
-        leave = FactoryGirl.create :personal_leave, start_time: start_time, end_time: three_day_later, user: first_year_employee
-        annual.reload
-        expect(annual.used_hours).to eq 24
-
-        leave.cancel!
-        annual.reload
-        expect(annual.used_hours).to eq 0
-      end
-    end
-
-    context "取消特休假單" do
-      it "有兩張假單，取消了其中一張" do
-        annual, personal, sick, bonus = init_quota
-        leave = FactoryGirl.create :bonus_leave, start_time: start_time, end_time: one_day_later, user: first_year_employee
-        FactoryGirl.create :bonus_leave, start_time: start_time, end_time: two_day_later, user: first_year_employee
-        bonus.reload
-        expect(bonus.used_hours).to eq 24
-
-        leave.cancel!
-        bonus.reload
-        expect(bonus.used_hours).to eq 16
-      end
-    end
   end
 
-  describe "主管操作" do
-    let(:manager_eddie) { FactoryGirl.create(:manager_eddie) }
-
-    it "主管核可假單" do
+  describe "aasm狀態" do
+    it "核可假單" do
       annual, personal, sick, bonus = init_quota
 
       leave = FactoryGirl.create :sick_leave, start_time: start_time, end_time: one_day_later, user: first_year_employee
@@ -490,7 +169,7 @@ RSpec.describe LeaveApplication, type: :model do
       expect(leave.manager_id).to eq manager_eddie.id
     end
 
-    it "主管否決假單" do
+    it "否決假單" do
       annual, personal, sick, bonus = init_quota
 
       leave = FactoryGirl.create :sick_leave, start_time: start_time, end_time: two_day_later, user: first_year_employee
@@ -507,55 +186,99 @@ RSpec.describe LeaveApplication, type: :model do
       expect(leave.status).to eq "rejected"
       expect(leave.manager_id).to eq manager_eddie.id
     end
+
+    context "取消特休假單" do
+      it "24hr" do
+        annual, personal, sick, bonus = init_quota
+
+        leave = leave(three_day_later, :bonus_leave)
+        expect(leave.hours).to eq 24
+        expect(leave.status).to eq "pending"
+
+        bonus.reload
+        expect(bonus.used_hours).to eq 24
+
+        leave.cancel!
+        annual.reload
+        expect(annual.used_hours).to eq 0
+        expect(leave.status).to eq "canceled"
+      end
+
+      it "有兩張假單，取消了其中一張" do
+        annual, personal, sick, bonus = init_quota
+
+        leave = leave(one_day_later, :bonus_leave)
+        leave2 = leave(two_day_later, :bonus_leave)
+        expect(leave.hours).to eq 8
+        expect(leave.status).to eq "pending"
+        expect(leave2.hours).to eq 16
+        expect(leave2.status).to eq "pending"
+
+        bonus.reload
+        expect(bonus.used_hours).to eq 24
+
+        leave.cancel!
+        bonus.reload
+        expect(bonus.used_hours).to eq 16
+        expect(leave.status).to eq "canceled"
+      end
+    end
   end
 
-  describe "綜合操作，主管審核後員工再次操作" do
-    let(:manager_eddie) { FactoryGirl.create(:manager_eddie) }
-    let(:two_hour_later) { Time.new(2016, 8, 15, 11, 30, 0, "+08:00") }
-
-    it "狀態rejected -> pending" do
+  describe "aasm 綜合" do
+    it "rejected -> pending" do
       annual, personal, sick, bonus = init_quota
 
-      leave = FactoryGirl.create :sick_leave, start_time: start_time, end_time: two_hour_later, user: first_year_employee
-      sick.reload
+      leave = leave(two_hour_later, :sick_leave)
+      expect(leave.hours).to eq 2
       expect(leave.status).to eq "pending"
+
+      sick.reload
       expect(sick.used_hours).to eq 2
 
       leave.reject!(manager_eddie)
-      sick.reload
       expect(leave.status).to eq "rejected"
+
+      sick.reload
       expect(sick.used_hours).to eq 0
 
       leave.update! end_time: one_day_later
       leave.revise!
       sick.reload
-      expect(leave.status).to eq "pending"
       expect(sick.used_hours).to eq 8
+      expect(leave.status).to eq "pending"
     end
 
-    it "狀態approved -> pending" do
+    it "approved -> pending" do
       annual, personal, sick, bonus = init_quota
 
-      leave = FactoryGirl.create :sick_leave, start_time: start_time, end_time: two_hour_later, user: first_year_employee
-      sick.reload
+      leave = leave(two_hour_later, :sick_leave)
+      expect(leave.hours).to eq 2
       expect(leave.status).to eq "pending"
+
+      sick.reload
       expect(sick.used_hours).to eq 2
 
       leave.approve!(manager_eddie)
       expect(leave.status).to eq "approved"
+
+      sick.reload
       expect(sick.used_hours).to eq 2
 
       leave.update! end_time: two_day_later
       leave.revise!
       sick.reload
-      expect(leave.status).to eq "pending"
       expect(sick.used_hours).to eq 16
+      expect(leave.status).to eq "pending"
     end
 
-    it "取消approved假單" do
+    it "approved -> canceled" do
       annual, personal, sick, bonus = init_quota
 
-      leave = FactoryGirl.create :sick_leave, start_time: start_time, end_time: three_day_later, user: first_year_employee
+      leave = leave(three_day_later, :sick_leave)
+      expect(leave.hours).to eq 24
+      expect(leae.status).to eq "pending"
+
       sick.reload
       expect(sick.used_hours).to eq 24
 
@@ -568,9 +291,12 @@ RSpec.describe LeaveApplication, type: :model do
       expect(leave.status).to eq "canceled"
     end
 
-    it "取消rejected假單" do
+    it "rejected -> canceled" do
       annual, personal, sick, bonus = init_quota
-      leave = FactoryGirl.create :sick_leave, start_time: start_time, end_time: three_day_later, user: first_year_employee
+      leave = leave(three_day_later, :sick_leave)
+      expect(leave.hours).to eq 24
+      expect(leave.status).to eq "pending"
+
       sick.reload
       expect(sick.used_hours).to eq 24
 

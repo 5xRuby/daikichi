@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161028075940) do
+ActiveRecord::Schema.define(version: 20161028101130) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -27,11 +27,10 @@ ActiveRecord::Schema.define(version: 20161028075940) do
 
   create_table "leave_application_logs", force: :cascade do |t|
     t.string   "leave_application_uuid"
-    t.integer  "general_hours",          default: 0
-    t.integer  "annual_hours",           default: 0
     t.boolean  "returning?",             default: false
     t.datetime "created_at",                             null: false
     t.datetime "updated_at",                             null: false
+    t.integer  "amount",                 default: 0
     t.index ["leave_application_uuid"], name: "index_leave_application_logs_on_leave_application_uuid", using: :btree
   end
 
