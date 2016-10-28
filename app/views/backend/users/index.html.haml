@@ -22,13 +22,13 @@
           %td.text-center= t_value :role, user, :translate_text_value
           %td.text-center= t_value :join_date, user, :convert_time_value, :year_date
           %td.text-center
-            = link_to t("actions.backend/users.show"),
+            = link_to t("title.backend/users.show"),
               backend_user_path(user),
               class: "btn btn-primary"
-            = link_to t("actions.backend/users.edit"),
+            = link_to t("title.backend/users.edit"),
               edit_backend_user_path(user),
               class: "btn btn-warning"
-            = link_to t("actions.backend/users.destroy"),
+            = link_to t("title.backend/users.destroy"),
               backend_user_path(user),
               class: "btn btn-danger",
               method: :delete,

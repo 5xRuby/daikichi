@@ -61,6 +61,9 @@ zh-TW:
     backend/users:
       index: "員工列表"
       new: "新增員工"
+      show: "檢視"
+      edit: "編輯"
+      destroy: "刪除"
     backend/leave_applications:
       index: "審核假單"
       show: "檢視"
