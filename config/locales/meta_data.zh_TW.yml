@@ -82,7 +82,12 @@ zh-TW:
       index: "請假狀況"
 
   captions:
-    annual_leave_time: "%{year} 年度休假使用狀況"
+    devise/registrations:
+      new: "註冊新帳號"
+      edit: "修改帳號資料"
+    devise/sessions:
+      new: "登入"
+      destroy: "登出"
     leave_times:
       index: "%{year} 年 請假狀況"
     leave_applications:
@@ -103,26 +108,6 @@ zh-TW:
     backend/leave_times:
       index: "員工補休時數"
     tools: "工具"
-
-  actions:
-    backend/users:
-      show: "檢視"
-      edit: "修改"
-      destroy: "刪除"
-
-    backend/leave_applications:
-      verify: "審核"
-      approve: "核准"
-      reject: "駁回"
-      read: "檢視"
-
-    backend/bonus_leave_time_logs:
-      index: "增加"
-
-    leave_applications:
-      show: "檢視"
-      edit: "修改"
-      cancel: "取消"
 
   success:
     create: "新增成功"
