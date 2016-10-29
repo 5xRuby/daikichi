@@ -1,26 +1,55 @@
 document.addEventListener("turbolinks:load", function() {
   // datetimepicker
-  $('#datetimepicker_start').datetimepicker( {
+  var $dateTimePickerStart = $('#datetimepicker_start');
+  var $dateTimePickerEnd = $('#datetimepicker_end');
+
+  $dateTimePickerStart.datetimepicker( {
     format: 'YYYY-MM-DD HH:mm',
     enabledHours: [9, 10, 11, 12, 13, 14, 15, 16, 17, 18],
     stepping: 30,
     useCurrent: false,
+    sideBySide: true,
+    viewDate: moment(new Date()).format('YYYY-MM-DD') + " 09:30",
   });
 
-  $('#datetimepicker_end').datetimepicker( {
+  $dateTimePickerEnd.datetimepicker( {
     format: 'YYYY-MM-DD HH:mm',
     enabledHours: [9, 10, 11, 12, 13, 14, 15, 16, 17, 18],
     stepping: 30,
     useCurrent: false,
+    sideBySide: true,
+    viewDate: moment(new Date()).format('YYYY-MM-DD') + " 10:30",
   });
 
-  $('#datetimepicker_start').on( 'dp.change', function(e){
-    $('#datetimepicker_end').data('DateTimePicker').minDate( e.date.add(1, 'hours'));
-    var m = moment(new Date(e.date))
-    $('#datetimepicker_end').data('DateTimePicker').date(m);
+  var startTimeChangeFirst = false;
+  var $startTimeInput = $dateTimePickerStart.find("#leave_application_start_time");
+  var $endTimeInput = $dateTimePickerEnd.find("#leave_application_end_time");
+
+  $dateTimePickerStart.on( 'dp.change', function(e){
+    if ( startTimeChangeFirst == false) {
+      startTimeChangeFirst = true;
+    }
+
+    if (startTimeChangeFirst) {
+      var startTime = moment( $startTimeInput.val() );
+      var endTime = moment( $endTimeInput.val() );
+      var m = startTime.clone().add(1, 'hours');
+
+      $dateTimePickerEnd.data('DateTimePicker').minDate(m);
+
+      if (startTime > endTime) {
+        $dateTimePickerEnd.data('DateTimePicker').date(m);
+      }
+    }
   });
-  $('#datetimepicker_end').on( 'dp.change', function(e){
-    $('#datetimepicker_start').data('DateTimePicker').maxDate( e.date.subtract(1, 'hours'));
+
+  $dateTimePickerEnd.on( 'dp.change', function(e){
+    if (startTimeChangeFirst) {
+      var endTime = moment( $endTimeInput.val() );
+      var m = endTime.clone().subtract(1, 'hours');
+
+      $dateTimePickerStart.data('DateTimePicker').maxDate( m );
+    }
   });
 
   // 選擇假單狀態
