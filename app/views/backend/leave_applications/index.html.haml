@@ -5,7 +5,7 @@
     .form-group
       %label{:for=>"status"} 假別
       = select_tag "status",
-        options_for_select( LeaveApplication::STATUS.map{ |type|  [I18n.t("simple_form.options.leave_application.status.#{type}"), type]}.to_h, params[:status]), class: "form-control"
+        options_for_select( status_select_option, params[:status]), class: "form-control"
 
 - if current_collection.any?
   %table.table

@@ -68,4 +68,8 @@ module ApplicationHelper
   def no_data_alert(message = t("warnings.no_data"))
     content_tag :div, message, class: "alert alert-warning"
   end
+
+  def status_select_option
+    ([:all]+ LeaveApplication::STATUS).map{ |type|  [I18n.t("simple_form.options.leave_application.status.#{type}"), type]}.to_h
+  end
 end

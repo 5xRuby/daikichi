@@ -1,9 +1,5 @@
 # frozen_string_literal: true
 class LeaveApplicationsController < BaseController
-  helper_method :status_select_option
-
-  STATUS_SELECT_OPTION = ([:all] + LeaveApplication::STATUS).freeze
-
   def index
     if params[:status]
       @current_collection = collection_scope.where(status: params[:status]).page(params[:page])
@@ -50,9 +46,5 @@ class LeaveApplicationsController < BaseController
     params.require(:leave_application).permit(
       :leave_type, :start_time, :end_time, :description
     )
-  end
-
-  def status_select_option
-    STATUS_SELECT_OPTION.map{ |type|  [I18n.t("simple_form.options.leave_application.status.#{type}"), type]}.to_h
   end
 end

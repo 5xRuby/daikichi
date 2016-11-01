@@ -13,8 +13,11 @@ document.addEventListener("turbolinks:load", function() {
       case "canceled":
         Turbolinks.visit("/backend/leave_applications?status=canceled" );
         break;
-      default:
+      case "pending":
         Turbolinks.visit("/backend/leave_applications?status=pending" );
+        break;
+      default:
+        Turbolinks.visit("/backend/leave_applications" );
     }
   })
 })
