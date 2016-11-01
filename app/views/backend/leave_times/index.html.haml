@@ -13,6 +13,6 @@
         %td._25= t_value :name, User.find_by(id: leave_time.user_id)
         %td._25= t_value :quota, leave_time
         %td._25= t_value :usable_hours, leave_time
-        %td._25= link_to t("actions.backend/bonus_leave_time_logs.index"),
-          backend_bonus_leave_time_logs_path,
+        %td._25= link_to t("title.backend/bonus_leave_time_logs.new"),
+          "#",
           class: "btn btn-warning"

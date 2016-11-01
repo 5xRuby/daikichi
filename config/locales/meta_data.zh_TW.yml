@@ -68,10 +68,14 @@ zh-TW:
       index: "審核假單"
       show: "檢視"
       verify: "審核"
+      approve: "核准"
+      reject: "駁回"
     backend/monthly_leave_times:
       index: "員工休假狀況"
     backend/leave_times:
-      index: "員工補休時數"
+      index: "員工補休"
+    backend/bonus_leave_time_logs:
+      new: "增加"
     leave_applications:
       index: "所有假單"
       show: "檢視"
@@ -106,7 +110,7 @@ zh-TW:
     backend/monthly_leave_times:
       index: "%{year} 年 %{month} 月 員工休假狀況"
     backend/leave_times:
-      index: "員工補休時數"
+      index: "員工補休"
     tools: "工具"
 
   success:
