@@ -20,9 +20,9 @@ class EmployeeMonthlyStat
     if @range.cover?(leave.start_time) and @range.cover?(leave.end_time)
       leave.hours
     elsif @range.cover?(leave.start_time)
-      leave.start_time.working_time_until(range_end) / 3600
+      leave.start_time.working_time_until(@range.end) / 3600
     else
-      range_start.working_time_until(leave.end_time) / 3600
+      @range.begin.working_time_until(leave.end_time) / 3600
     end
   end
 end
