@@ -66,6 +66,7 @@ class LeaveApplication < ApplicationRecord
 
   def revise_leave_time_usable_hours
     assign_hours
+    save!
 
     leave_time = LeaveTime.personal(user_id, leave_type)
     log = leave_application_logs.last
