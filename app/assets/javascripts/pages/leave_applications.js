@@ -66,8 +66,11 @@ document.addEventListener("turbolinks:load", function() {
       case "canceled":
         Turbolinks.visit("/leave_applications?status=canceled" );
         break;
-      default:
+      case "pending":
         Turbolinks.visit("/leave_applications?status=pending" );
+        break;
+      default:
+        Turbolinks.visit("/leave_applications" );
     }
   })
 
