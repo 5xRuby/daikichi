@@ -5,8 +5,8 @@ class User < ApplicationRecord
   has_many :leave_applications, -> { order("id DESC") }
   has_many :bonus_leave_time_logs, -> { order("id DESC") }
 
-  validates :login_name, uniqueness: { case_sensitive: false, scope: :deleted_at}
-  validates :email, uniqueness: { case_sensitive: false, scope: :deleted_at}
+  validates :login_name, uniqueness: { case_sensitive: false, scope: :deleted_at }
+  validates :email, uniqueness: { case_sensitive: false, scope: :deleted_at }
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable

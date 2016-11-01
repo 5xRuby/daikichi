@@ -70,7 +70,7 @@ class LeaveApplication < ApplicationRecord
 
     leave_time = LeaveTime.personal(user_id, leave_type)
     log = leave_application_logs.last
-    delta = log.returning? ? hours : (hours-log.amount)
+    delta = log.returning? ? hours : (hours - log.amount)
 
     leave_time.deduct delta
     LeaveApplicationLog.create!(leave_application_uuid: uuid,
@@ -81,7 +81,7 @@ class LeaveApplication < ApplicationRecord
     leave_time = LeaveTime.personal(user_id, leave_type)
 
     log = leave_application_logs.last
-    leave_time.deduct -log.amount unless log.returning?
+    leave_time.deduct(-log.amount) unless log.returning?
 
     LeaveApplicationLog.create!(leave_application_uuid: uuid,
                                 amount: log.amount,

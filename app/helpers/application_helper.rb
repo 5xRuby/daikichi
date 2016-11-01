@@ -70,6 +70,6 @@ module ApplicationHelper
   end
 
   def status_select_option
-    ([:all]+ LeaveApplication::STATUS).map{ |type|  [I18n.t("simple_form.options.leave_application.status.#{type}"), type]}.to_h
+    ([:all] + LeaveApplication::STATUS).map { |type| [I18n.t("simple_form.options.leave_application.status.#{type}"), type] }.to_h
   end
 end
