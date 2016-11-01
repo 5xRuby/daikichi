@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 class LeaveApplication < ApplicationRecord
   acts_as_paranoid
-  paginates_per 12
+  paginates_per 8
 
   belongs_to :user
   belongs_to :manager, class_name: "User", foreign_key: "manager_id"
@@ -11,7 +11,7 @@ class LeaveApplication < ApplicationRecord
   after_initialize :set_primary_id
   before_create :deduct_leave_time_usable_hours
 
-  LEAVE_TYPE = %i(personal bonus personal sick).freeze
+  LEAVE_TYPE = %i(annual bonus personal sick).freeze
   STATUS = %i(pending approved rejected canceled).freeze
 
   include AASM

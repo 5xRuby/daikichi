@@ -47,4 +47,12 @@ class LeaveApplicationsController < BaseController
       :leave_type, :start_time, :end_time, :description
     )
   end
+
+  def url_after(action)
+    if @actions.include?(action)
+      url_for(action: :index, status: :pending)
+    else
+      request.env["HTTP_REFERER"]
+    end
+  end
 end
