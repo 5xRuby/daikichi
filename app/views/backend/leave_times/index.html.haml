@@ -3,16 +3,16 @@
 %table.table
   %thead
     %tr
-      %th._25= t_attribute(:name, User)
-      %th._25= "補休" + t("activerecord.attributes.leave_time.quota")
-      %th._25= "補休" + t("activerecord.attributes.leave_time.usable_hours")
-      %th._25= t("captions.tools")
+      %th.name= t_attribute(:name, User)
+      %th.hours= "補休" + t("activerecord.attributes.leave_time.quota")
+      %th.hours= "補休" + t("activerecord.attributes.leave_time.usable_hours")
+      %th.tools= t("captions.tools")
   %tbody
     - current_collection.each do |leave_time|
       %tr
-        %td._25= t_value :name, User.find_by(id: leave_time.user_id)
-        %td._25= t_value :quota, leave_time
-        %td._25= t_value :usable_hours, leave_time
-        %td._25= link_to t("title.backend/bonus_leave_time_logs.new"),
+        %td.name= t_value :name, User.find_by(id: leave_time.user_id)
+        %td.hours= t_value :quota, leave_time
+        %td.hours= t_value :usable_hours, leave_time
+        %td.tools= link_to t("title.backend/bonus_leave_time_logs.new"),
           "#",
           class: "btn btn-warning"
