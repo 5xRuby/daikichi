@@ -1,4 +1,11 @@
-.table ._25 {
-  width: 25%;
-  text-align: center;
+.table {
+  .type {
+    width: 25%;
+    text-align: center;
+  }
+
+  .hours {
+    width: 25%;
+    text-align: center;
+  }
 }

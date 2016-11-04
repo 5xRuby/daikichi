@@ -2,15 +2,15 @@
 
 %table.table
   %thead
-    %th._25 假別
-    %th._25= t_attribute :quota, LeaveTime
-    %th._25= t_attribute :usable_hours, LeaveTime
-    %th._25= t_attribute :used_hours, LeaveTime
+    %th.type 假別
+    %th.hours= t_attribute :quota, LeaveTime
+    %th.hours= t_attribute :usable_hours, LeaveTime
+    %th.hours= t_attribute :used_hours, LeaveTime
   %tbody
     - leave_times.each do |item|
       - unless item.leave_type =~ /sick/
         %tr
-          %th._25= t_value :leave_type, item, :translate_text_value
-          %td._25= item.quota
-          %td._25= item.usable_hours
-          %td._25= item.used_hours
+          %th.type= t_value :leave_type, item, :translate_text_value
+          %td.hours= item.quota
+          %td.hours= item.usable_hours
+          %td.hours= item.used_hours
