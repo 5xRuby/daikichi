@@ -1,15 +1,11 @@
-._12 {
-  text-align: center;
-
-  @media (min-width: 992px) {
+.table {
+  .name {
+    text-align: center;
     width: 12%;
   }
-}
 
-._22 {
-  text-align: center;
-
-  @media (min-width: 992px) {
+  .hours {
+    text-align: center;
     width: 22%;
   }
 }

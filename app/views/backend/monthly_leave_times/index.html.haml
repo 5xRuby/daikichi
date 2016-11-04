@@ -19,17 +19,17 @@
   %table.table
     %thead
       %tr
-        %th._12= t_attribute(:name, User)
-        %th._22= t("simple_form.options.leave_time.leave_type.annual")
-        %th._22= t("simple_form.options.leave_time.leave_type.bonus")
-        %th._22= t("simple_form.options.leave_time.leave_type.personal")
-        %th._22= t("simple_form.options.leave_time.leave_type.sick")
+        %th.name= t_attribute(:name, User)
+        %th.hours= t("simple_form.options.leave_time.leave_type.annual")
+        %th.hours= t("simple_form.options.leave_time.leave_type.bonus")
+        %th.hours= t("simple_form.options.leave_time.leave_type.personal")
+        %th.hours= t("simple_form.options.leave_time.leave_type.sick")
     %tbody
       - current_collection.each do |id, content|
         %tr
-          %td._12= t_value :name, User.find_by(id: id)
+          %td.name= t_value :name, User.find_by(id: id)
           - LeaveTime::BASIC_TYPES.each do |leave_type|
-            %td._22= content[leave_type]
+            %td.hours= content[leave_type]
 
 - else
   = no_data_alert
