@@ -1,3 +1,5 @@
+%h2= t("captions.devise/sessions.new")
+
 = simple_form_for(resource, as: resource_name, url: session_path(resource_name)) do |f|
   .form-inputs
     = f.input :login_name, required: false, autofocus: true

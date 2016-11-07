@@ -3,15 +3,17 @@ class User < ApplicationRecord
   acts_as_paranoid
   has_many :leave_times, -> { order("id DESC") }
   has_many :leave_applications, -> { order("id DESC") }
+  has_many :bonus_leave_time_logs, -> { order("id DESC") }
+
+  validates :login_name, uniqueness: { case_sensitive: false, scope: :deleted_at }
+  validates :email, uniqueness: { case_sensitive: false, scope: :deleted_at }
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
 
-  ROLES = %i(
-    manager employee contractor intern resigned pending admin
-  ).freeze
+  ROLES = %i(manager employee contractor intern resigned pending admin).freeze
 
   scope :fulltime, -> {
     where("role in (?)", %w(manager employee))

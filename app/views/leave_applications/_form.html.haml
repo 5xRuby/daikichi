@@ -1,5 +1,10 @@
+%h2= t("captions.leave_applications.#{action_name}")
+
 = simple_form_for current_object  do |f|
-  = f.input :leave_type, required: true, collection: LeaveApplication::LEAVE_TYPE
+  - if action_name == "edit"
+    = f.input :leave_type, required: true, collection: LeaveApplication::LEAVE_TYPE, disabled: true
+  - else
+    = f.input :leave_type, require: true, collection: LeaveApplication::LEAVE_TYPE
   - if current_object.new_record?
     = f.input :start_time, date_time_picker_hash(:start, time_object_by_hour_min(9, 30))
     = f.input :end_time, date_time_picker_hash(:end, time_object_by_hour_min(10, 30))
@@ -7,4 +12,21 @@
     = f.input :start_time, date_time_picker_hash(:start, current_object[:start_time])
     = f.input :end_time, date_time_picker_hash(:end, current_object[:end_time])
   = f.input :description, required: true
-  = f.button :submit
+  = f.button :submit, class: "submit"
+
+%button{ style: "display: none;",
+  type: "button",
+  class:"btn_hidden leave_application",
+  data:{ toggle: "modal", target: "#myModal" } }
+
+#myModal.modal.fade{"aria-labelledby" => "myModalLabel", :role => "dialog", :tabindex => "-1"}
+  .modal-dialog{:role => "document"}
+    .modal-content
+      .modal-header
+        %button.close{"aria-label" => "Close", "data-dismiss" => "modal", :type => "button"}
+          %span{"aria-hidden" => "true"} ×
+        %h4#myModalLabel.modal-title 提醒
+      .modal-body
+      .modal-footer
+        %button.no.btn.btn-default{"data-dismiss" => "modal", :type => "button"} 取消
+        %button.yes.btn.btn-primary{:type => "button"} 確認

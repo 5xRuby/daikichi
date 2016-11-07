@@ -1,10 +1,12 @@
+%h2= t("captions.backend/users.show", name: current_object[:name])
+
 %table.table
   = tr_by_object :name
   = tr_by_object :login_name
   = tr_by_object :email
   = tr_by_object :role, :translate_text_value
-  = tr_by_object :join_date, :convert_time_value
-  = tr_by_object :leave_date, :convert_time_value
+  = tr_by_object :join_date, :convert_time_value, :year_date
+  = tr_by_object :leave_date, :convert_time_value, :year_date
 
 - if current_object.fulltime?
-  = render "leave_time", { leave_times: @leave_times }
+  = render "backend/leave_times/table", { leave_times: @leave_times }

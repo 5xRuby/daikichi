@@ -1,0 +1,35 @@
+%h2= t("captions.backend/monthly_leave_times.index", year: params[:year], month: params[:month])
+
+.year-mon-selector
+  .row
+    .col-md-6.col-sm-6.col-xs-12
+      .form-group
+        %label{:for=>"year"} Year
+        = select_tag "year",
+          options_for_select(2016 .. Time.zone.now.year, params[:year]),
+          class: "form-control"
+
+    .col-md-6.col-sm-6.col-xs-12
+      .form-group
+        %label{:for=>"month"} Month
+        = select_tag "month", options_for_select(1..12, params[:month]),
+          class: "form-control"
+
+- if current_collection.any?
+  %table.table
+    %thead
+      %tr
+        %th.name= t_attribute(:name, User)
+        %th.hours= t("simple_form.options.leave_time.leave_type.annual")
+        %th.hours= t("simple_form.options.leave_time.leave_type.bonus")
+        %th.hours= t("simple_form.options.leave_time.leave_type.personal")
+        %th.hours= t("simple_form.options.leave_time.leave_type.sick")
+    %tbody
+      - current_collection.each do |id, content|
+        %tr
+          %td.name= t_value :name, User.find_by(id: id)
+          - LeaveTime::BASIC_TYPES.each do |leave_type|
+            %td.hours= content[leave_type]
+
+- else
+  = no_data_alert

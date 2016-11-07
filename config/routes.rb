@@ -11,14 +11,15 @@ Rails.application.routes.draw do
         member do
           get "verify"
         end
-
-        collection do
-          get "/:status", to: "leave_applications#index",
-                          constraints: { status: /pending|approved|rejected|canceled/ }
-        end
       end
 
-      get "employee_leave_times/:year/:month", to: "employee_leave_times#index", as: "employee_leave_times"
+      resources :leave_times, only: [:index]
+
+      resources :bonus_leave_time_logs, only: [:index, :update]
+
+      get "monthly_leave_times/:year/:month",
+        to: "monthly_leave_times#index",
+        as: "monthly_leave_times"
     end
 
     resources :leave_applications, except: [:destroy] do
@@ -31,5 +32,12 @@ Rails.application.routes.draw do
                         constraints: { status: /pending|approved|rejected|canceled/ }
       end
     end
+
+    resources :leave_times, only: [:index]
+
+    get "leave_time/:type",
+      to: "leave_times#show",
+      constraints: { type: /annual|bonus|personal|sick/ },
+      as: "leave_time"
   end
 end

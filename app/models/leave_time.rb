@@ -15,6 +15,10 @@ class LeaveTime < ApplicationRecord
     find_by(user_id: user_id, leave_type: leave_type)
   }
 
+  scope :get_employees_bonus, ->(){
+    where("leave_type = ?", "bonus").order(user_id: :desc)
+  }
+
   def init_quota
     return false if seniority < 1
     quota = quota_by_seniority
@@ -29,9 +33,9 @@ class LeaveTime < ApplicationRecord
     save!
   end
 
-  def adjust_used_hours(hours_delta)
-    self.used_hours += hours_delta
-    self.usable_hours = self.quota - self.used_hours
+  def deduct(hours)
+    self.used_hours += hours
+    self.usable_hours = quota - used_hours
     save!
   end
 

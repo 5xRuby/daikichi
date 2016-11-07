@@ -51,4 +51,12 @@ class Backend::LeaveApplicationsController < Backend::BaseController
   def resource_params
     params.require(:leave_application).permit(:comment)
   end
+
+  def url_after(action)
+    if @actions.include?(action)
+      url_for(action: :index, controller: controller_path, params: { status: :pending })
+    else
+      request.env["HTTP_REFERER"]
+    end
+  end
 end

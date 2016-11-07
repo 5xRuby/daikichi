@@ -2,7 +2,9 @@
 class LeaveApplicationsController < BaseController
   def index
     if params[:status]
-      @current_collection = LeaveApplication.where(status: params[:status]).page(params[:page])
+      @current_collection = collection_scope.where(status: params[:status]).page(params[:page])
+    else
+      @current_collection = collection_scope.page(params[:page])
     end
   end
 
@@ -33,12 +35,24 @@ class LeaveApplicationsController < BaseController
   private
 
   def collection_scope
-    current_user.leave_applications
+    if params[:id]
+      LeaveApplication.where(user_id: current_user.id)
+    else
+      LeaveApplication.where(user_id: current_user.id).order(id: :desc)
+    end
   end
 
   def resource_params
     params.require(:leave_application).permit(
       :leave_type, :start_time, :end_time, :description
     )
+  end
+
+  def url_after(action)
+    if @actions.include?(action)
+      url_for(action: :index, controller: controller_path, params: { status: :pending })
+    else
+      request.env["HTTP_REFERER"]
+    end
   end
 end
