@@ -3,13 +3,16 @@ class LeaveApplication < ApplicationRecord
   acts_as_paranoid
   paginates_per 8
 
-  belongs_to :user
-  belongs_to :manager, class_name: "User", foreign_key: "manager_id"
-  has_many :leave_application_logs, foreign_key: "leave_application_uuid", primary_key: "uuid"
-  validates :leave_type, :description, presence: true
-  validate :hours_should_be_positive_integer
   after_initialize :set_primary_id
   before_create :deduct_leave_time_usable_hours
+  before_destroy :return_leave_time_usable_hours
+
+  belongs_to :user
+  belongs_to :manager, class_name: "User", foreign_key: "manager_id"
+  has_many :leave_application_logs, foreign_key: "leave_application_uuid", primary_key: "uuid", dependent: :destroy
+
+  validates :leave_type, :description, presence: true
+  validate :hours_should_be_positive_integer
 
   LEAVE_TYPE = %i(annual bonus personal sick).freeze
   STATUS = %i(pending approved rejected canceled).freeze
