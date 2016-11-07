@@ -1,28 +1,38 @@
+%h2= t("captions.backend/users.index")
+
 - if current_collection.any?
   %table.table
-    %tr
-      %th #
-      %th= t_attribute(:name, User)
-      %th= t_attribute(:login_name, User)
-      %th= t_attribute(:email, User)
-      %th= t_attribute(:role, User)
-      %th= t_attribute(:join_date, User)
-      %th= t("captions.tools")
-
-    - current_collection.each do |user|
+    %thead
       %tr
-        %td= user.id
-        %td= user.name
-        %td= user.login_name
-        %td= user.email
-        %td= t_value(:role, User, user.role)
-        %td= user.join_date
-        %td 
-          = link_to "show", backend_user_path(user)
-          = link_to "edit", edit_backend_user_path(user)
-          = link_to "delete", backend_user_path(user), method: :delete, data: { confirm: t("warnings.confirm_delete") }
+        %th.text-center #
+        %th.text-center= t_attribute(:name, User)
+        %th.text-center= t_attribute(:login_name, User)
+        %th.text-center= t_attribute(:email, User)
+        %th.text-center= t_attribute(:role, User)
+        %th.text-center= t_attribute(:join_date, User)
+        %th.text-center= t("captions.tools")
+
+    %tbody
+      - current_collection.each do |user|
+        %tr
+          %td.text-center= t_value :id, user
+          %td.text-center= t_value :name, user
+          %td.text-center= t_value :login_name, user
+          %td.text-center= t_value :email, user
+          %td.text-center= t_value :role, user, :translate_text_value
+          %td.text-center= t_value :join_date, user, :convert_time_value, :year_date
+          %td.text-center
+            = link_to t("title.backend/users.show"),
+              backend_user_path(user),
+              class: "btn btn-primary"
+            = link_to t("title.backend/users.edit"),
+              edit_backend_user_path(user),
+              class: "btn btn-warning"
+            = link_to t("title.backend/users.destroy"),
+              backend_user_path(user),
+              class: "btn btn-danger",
+              method: :delete,
+              data: { confirm: t("warnings.confirm_delete") }
 
 - else
   = no_data_alert
-
-= paginate current_collection

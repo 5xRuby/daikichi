@@ -1,0 +1,44 @@
+%h2= t("captions.leave_applications.index", year: Time.now.year)
+
+.status-selector.row
+  .col-md-3.col-sm-3.col-xs-6
+    .form-group
+      %label{:for=>"status"} 假別
+      = select_tag :status,
+        options_for_select(status_select_option, params[:status]), class: "form-control"
+
+- if current_collection.any?
+  %table.table
+    %thead
+      %tr
+        %th.type= t_attribute(:leave_type, LeaveApplication)
+        %th.date= t_attribute(:start_time, LeaveApplication)
+        %th.date= t_attribute(:end_time, LeaveApplication)
+        %th.hours= t_attribute(:hours, LeaveApplication)
+        %th.status= t_attribute(:status, LeaveApplication)
+        %th.tools= t("captions.tools")
+    %tbody
+      - current_collection.each do |leave|
+        %tr
+          %td.type= t_value :leave_type, leave, :translate_text_value
+          %td.date= t_value :start_time, leave, :convert_time_value, :full
+          %td.date= t_value :end_time, leave, :convert_time_value, :full
+          %td.date= t_value :hours, leave
+          %td.status= t_value :status, leave, :translate_text_value
+          %td.tools
+            = link_to t("title.leave_applications.show"),
+              leave_application_path(leave),
+              class: "btn btn-primary"
+            - unless leave.canceled?
+              = link_to t("title.leave_applications.edit"),
+                edit_leave_application_path(leave),
+                class: "btn btn-warning"
+              = link_to t("title.leave_applications.cancel"),
+                cancel_leave_application_path(leave),
+                class: "btn btn-danger",
+                method: :put,
+                data: { confirm: t("warnings.confirm_cancel")}
+- else
+  = no_data_alert
+.paginate
+  = paginate current_collection

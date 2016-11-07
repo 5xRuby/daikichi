@@ -1,15 +1,16 @@
 !!! 5
 %html
   %head
-    %title= page_title(true)
+    %title= page_title
     = csrf_meta_tags
-    = stylesheet_link_tag "application", media: "all", "data-turbolinks-track": "reload"
-    = javascript_include_tag "application", "data-turbolinks-track": "reload"
+    = stylesheet_link_tag "application", "pages/#{controller_path}", "data-turbolinks-track": "reload", media: "all"
+    = javascript_include_tag "application", "pages/#{controller_path}", "data-turbolinks-track": "reload"
 
   %body
-    = render "shared/navigation"
-    = render "shared/flash"
-    #main= yield
+    #nav
+      = render "shared/navigation"
+    #wrap
+      = render "shared/flash"
+      .container
+        = yield
     = render "shared/footer"
-
-= debug params if Rails.env == "development"

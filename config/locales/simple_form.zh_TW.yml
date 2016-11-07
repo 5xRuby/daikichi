@@ -33,3 +33,15 @@ zh-TW:
           menstrual: '生理假'
           family_care: '家庭照護假'
           funeral: '喪假'
+      leave_application:
+        leave_type:
+          annual: '特休'
+          bonus: '補休'
+          personal: '事假'
+          sick: '病假'
+        status:
+          approved: '核准'
+          rejected: '駁回'
+          pending: '待審'
+          canceled: '取消'
+          all: '全部'

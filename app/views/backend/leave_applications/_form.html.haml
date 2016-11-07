@@ -1,0 +1,4 @@
+= simple_form_for current_object, url: backend_leave_application_path(current_object), method: :put do |f|
+  = f.input :comment
+  = f.button :submit, t("title.backend/leave_applications.approve"), name: "approve"
+  = f.button :submit, t("title.backend/leave_applications.reject"), name: "reject"
