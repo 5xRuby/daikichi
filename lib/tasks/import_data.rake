@@ -28,4 +28,24 @@ namespace :import_data do
       User.create(attributes)
     end
   end
+
+  # 匯入過去所有請的假
+  desc "users' leaves"
+  task leaves: :environment do
+    YAML.load_file("lib/tasks/leaves.yml").each do |leave|
+      data = leave.split(",")
+      attributes = {
+        leave_type: data[1],
+        start_time: Time.parse(data[2]),
+        end_time: Time.parse(data[3]),
+        description: "系統匯入"
+      }
+
+      id = User.find_by(name: data[0]).leave_applications.create!(attributes).id
+      manager = User.find_by(name: "趙子皓")
+      LeaveApplication.find(id).approve!(manager)
+
+      puts "#{data[0]}匯入#{data[1]}假單"
+    end
+  end
 end
