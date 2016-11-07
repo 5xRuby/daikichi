@@ -2,7 +2,7 @@
 lock '3.6.1'
 
 set :application, 'daikichi'
-set :repo_url, 'git@github.com:5xruby/daikichi.git'
+set :repo_url, 'https://github.com/5xruby/daikichi'
 
 # Default branch is :master
 #
