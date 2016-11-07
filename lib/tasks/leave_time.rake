@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 namespace :leave_time do
-  desc "initialize employee annual leave time"
+  desc "initialize employee leave time"
   task :init, [:year] => [:environment] do |t, args|
     year = args[:year].nil? ? Time.zone.today.year : args[:year].to_i
     User.fulltime.each do |user|
