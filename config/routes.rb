@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
   scope "(:locale)", locale: /en/ do
-    devise_for :users
+    devise_for :users, controllers: { registrations: "users/registrations" }
 
     root "pages#index"
 
