@@ -13,7 +13,7 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
 
-  ROLES = %i(manager employee contractor intern resigned pending admin).freeze
+  ROLES = %i(manager hr employee contractor intern resigned pending admin).freeze
 
   scope :fulltime, -> {
     where("role in (?)", %w(manager employee))
