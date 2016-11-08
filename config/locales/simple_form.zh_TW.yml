@@ -20,6 +20,7 @@ zh-TW:
           resigned: '離職'
           pending: '待審'
           admin: '系統管理員'
+          hr: '人資'
       leave_time:
         leave_type:
           annual: '特休'

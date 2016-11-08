@@ -6,6 +6,15 @@ class Backend::UsersController < Backend::BaseController
     @leave_times = LeaveTime.current_year(params[:id])
   end
 
+  def update
+    if password_blank?
+      params[:user].delete(:password)
+      params[:user].delete(:password_confirmation)
+    end
+
+    super
+  end
+
   private
 
   def collection_scope
@@ -26,5 +35,9 @@ class Backend::UsersController < Backend::BaseController
 
   def set_minimum_password_length
     @minimum_password_length = 6
+  end
+
+  def password_blank?
+    params[:user][:password].blank? && params[:user][:password_confirmation].blank?
   end
 end
