@@ -41,11 +41,26 @@ namespace :import_data do
         description: "系統匯入"
       }
 
-      id = User.find_by(name: data[0]).leave_applications.create!(attributes).id
+      leave_id = User.find_by(name: data[0]).leave_applications.create!(attributes).id
       manager = User.find_by(name: "趙子皓")
-      LeaveApplication.find(id).approve!(manager)
+      LeaveApplication.find(leave_id).approve!(manager)
 
       puts "#{data[0]}匯入#{data[1]}假單"
+    end
+  end
+
+  # 匯入過去補修時數
+  desc "users' bonus leave times"
+  task bonus_leave_times: :environment do
+    YAML.load_file("lib/tasks/bonus_leave_times.yml").each do |bonus_leave_time|
+      data = bonus_leave_time.split(",")
+      user_id = User.find_by(name: data[0]).id
+      attributes = {
+        quota: data[1],
+        usable_hours: data[1]
+      }
+      LeaveTime.personal(user_id, "bonus").update!(attributes)
+      puts "#{data[0]} 補修增加 #{data[1]} 時數"
     end
   end
 end
