@@ -39,7 +39,7 @@ class User < ApplicationRecord
 
   def fulltime?
     case role
-    when "manager", "employee"
+    when "manager", "hr", "employee"
       true
     else
       false
