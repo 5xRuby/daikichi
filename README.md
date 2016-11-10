@@ -7,7 +7,7 @@
 # Installation
 
 ```
-$ git clone git@github.com:jodeci/daikichi.git  
+$ git clone git@github.com:5xruby/daikichi.git  
 $ cd daikichi
   
 # generate key with rake secret
