@@ -34,4 +34,13 @@ namespace :leave_time do
       puts "#{user.name} 修正時數"
     end
   end
+
+  desc "refill employee annual leave time if needed"
+  task refill: :environment do
+    User.fulltime.each do |user|
+      user.get_refilled_annual
+    end
+
+    puts "給予任職滿一年的 8hrs 特休"
+  end
 end

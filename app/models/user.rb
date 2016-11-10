@@ -45,4 +45,12 @@ class User < ApplicationRecord
       false
     end
   end
+
+  def employed_over_a_year?(time = Time.now)
+    (time - 1.year) >= join_date
+  end
+
+  def get_refilled_annual
+    leave_times.find_by(leave_type: "annual").refill
+  end
 end
