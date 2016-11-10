@@ -45,6 +45,7 @@ gem 'aasm'
 gem 'kaminari'
 gem 'paranoia', :github => 'rubysherpas/paranoia', :branch => 'rails4' #TODO gem update for rails 5
 gem 'working_hours'
+gem 'whenever', :require => false
 
 group :development, :test do
   gem 'byebug', platform: :mri
@@ -58,7 +59,7 @@ group :development do
   gem 'hirb-unicode'
   gem 'capistrano', '~> 3.1'
   gem 'capistrano-rails', '~> 1.1'
-  gem 'capistrano-upload-config' 
+  gem 'capistrano-upload-config'
 end
 
 group :test do
