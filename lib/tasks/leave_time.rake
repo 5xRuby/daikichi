@@ -1,12 +1,19 @@
 # frozen_string_literal: true
 namespace :leave_time do
   desc "initialize employee leave time"
-  task :init, [:year] => [:environment] do |t, args|
-    year = args[:year].nil? ? Time.zone.today.year : args[:year].to_i
-    User.fulltime.each do |user|
-      LeaveTime::BASIC_TYPES.each do |leave_type|
-        leave_time = user.leave_times.build(year: year, leave_type: leave_type)
-        leave_time.init_quota
+  task :init, [:year, :skip] => [:environment] do |t, args|
+    def beginning_of_year?
+      (Time.now.beginning_of_year .. Time.now.beginning_of_year.end_of_day).cover? Time.now
+    end
+
+    skip = (!args[:skip].nil? && args[:skip] == "force") ? true : false
+    if skip || beginning_of_year?
+      year = args[:year].nil? ? Time.zone.today.year : args[:year].to_i
+      User.fulltime.each do |user|
+        LeaveTime::BASIC_TYPES.each do |leave_type|
+          leave_time = user.leave_times.build(year: year, leave_type: leave_type)
+          leave_time.init_quota
+        end
       end
     end
   end
