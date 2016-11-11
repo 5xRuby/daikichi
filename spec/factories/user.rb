@@ -34,6 +34,10 @@ FactoryGirl.define do
       join_date { Time.new(Time.now.year, 6, 1) }
     end
 
+    factory :second_year_employee, traits: [:employee] do
+      join_date { Time.new(Time.now.year - 1, 4, 15) }
+    end
+
     factory :third_year_employee, traits: [:employee] do
       join_date { Time.new(Time.now.year - 2, 4, 15) }
     end

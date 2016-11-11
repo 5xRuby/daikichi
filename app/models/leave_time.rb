@@ -34,12 +34,12 @@ class LeaveTime < ApplicationRecord
   end
 
   def refill
-    return false if leave_type != "annual" || refill? || seniority > 2 || !employed_over_a_year?
+    return false if seniority != 2 || refilled
 
     self.attributes = {
       quota: quota + DAILY_HOURS,
       usable_hours: usable_hours + DAILY_HOURS,
-      refill?: true
+      refilled: true
     }
     save!
   end
@@ -55,7 +55,7 @@ class LeaveTime < ApplicationRecord
   def quota_by_seniority
     if seniority < 1
       0
-    elsif seniority == 1
+    elsif seniority == 1 && employed_for_the_first_year?
       first_year_rate
     else
       normal_rate
@@ -82,13 +82,12 @@ class LeaveTime < ApplicationRecord
     user.seniority
   end
 
-  def employed_over_a_year?
-    user.employed_over_a_year?
+  def employed_for_the_first_year?
+    user.employed_for_the_first_year?
   end
 
   def annual_hours_by_seniority
-    addend = employed_over_a_year? ? (seniority - 1) : 0
-    days = days_by_leave_type + addend
+    days = days_by_leave_type + (seniority - 1)
     days = MAX_ANNUAL_DAYS if days > MAX_ANNUAL_DAYS
     days * DAILY_HOURS
   end
