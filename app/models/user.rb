@@ -27,10 +27,10 @@ class User < ApplicationRecord
       .order(id: :desc)
   }
 
-  def seniority(year = Time.zone.today.year)
+  def seniority(year = Time.now.year)
     if join_date.nil? or join_date.year > year
       0
-    elsif join_date.year == year
+    elsif employed_for_the_first_year? || employed_within_a_year?
       1
     else
       year - join_date.year + 1
@@ -44,5 +44,18 @@ class User < ApplicationRecord
     else
       false
     end
+  end
+
+  # 未滿第一年的年度
+  def employed_for_the_first_year?(time = Time.now)
+    join_date.year == time.year
+  end
+
+  def employed_within_a_year?(time = Time.now)
+    time < (join_date + 1.year)
+  end
+
+  def get_refilled_annual
+    leave_times.find_by(leave_type: "annual").refill
   end
 end

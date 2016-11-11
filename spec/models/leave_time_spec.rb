@@ -31,6 +31,7 @@ RSpec.describe LeaveTime, type: :model do
         annual = FactoryGirl.create(:annual_leave_time, user: contractor)
         expect(annual.init_quota).to be_falsey
       end
+
     end
 
     context "sick leave" do
@@ -82,6 +83,53 @@ RSpec.describe LeaveTime, type: :model do
         bonus = FactoryGirl.create(:bonus_leave_time, user: contractor)
         expect(bonus.init_quota).to be_falsey
       end
+    end
+  end
+
+  describe "refill" do
+    let(:this_year) { Time.now.year }
+
+    it "employee not employed for a year shouldn't get 8 hour plus" do
+      annual = FactoryGirl.create(:annual_leave_time, user: first_year_employee)
+      Timecop.travel Time.local(this_year + 1, 1, 1, 0, 0, 0)
+      annual.init_quota
+      expect(annual.quota).to eq 56
+      Timecop.return
+
+      Timecop.travel Time.local(this_year + 1, 5, 1, 0, 0, 0)
+      annual.refill
+      expect(annual.quota).to eq 56
+      Timecop.return
+    end
+
+    it "employee employed for a year shouldn get 8 hours plus" do
+      annual = FactoryGirl.create(:annual_leave_time, user: first_year_employee)
+      Timecop.travel Time.local(this_year + 1, 1, 1, 0, 0, 0)
+      annual.init_quota
+      expect(annual.quota).to eq 56
+      Timecop.return
+
+      Timecop.travel Time.local(this_year + 1, 7, 1, 0, 0, 0)
+      annual.refill
+      expect(annual.quota).to eq 64
+
+      annual.refill
+      expect(annual.quota).not_to eq 72
+      expect(annual.quota).to eq 64
+      Timecop.return
+    end
+
+    it "third_year_employee won't get 8 hours plus" do
+      annual = FactoryGirl.create(:annual_leave_time, user: third_year_employee)
+      Timecop.travel Time.local(this_year + 1, 1, 1, 0, 0, 0)
+      annual.init_quota
+      expect(annual.quota).to eq 80
+      Timecop.return
+
+      Timecop.travel Time.local(this_year + 1, 7, 1, 0, 0, 0)
+      annual.refill
+      expect(annual.quota).to eq 80
+      Timecop.return
     end
   end
 end
