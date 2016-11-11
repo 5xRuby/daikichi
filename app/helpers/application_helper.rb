@@ -72,4 +72,8 @@ module ApplicationHelper
   def status_select_option
     ([:all] + LeaveApplication::STATUS).map { |type| [I18n.t("simple_form.options.leave_application.status.#{type}"), type] }.to_h
   end
+
+  def this_year
+    params[:year] || Time.now.year
+  end
 end
