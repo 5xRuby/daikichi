@@ -62,7 +62,7 @@ ActiveRecord::Schema.define(version: 20161110095706) do
     t.integer  "used_hours",   default: 0
     t.datetime "created_at",                   null: false
     t.datetime "updated_at",                   null: false
-    t.boolean  "refill?",      default: false
+    t.boolean  "refilled",     default: false
     t.index ["year"], name: "index_leave_times_on_year", using: :btree
   end
 
