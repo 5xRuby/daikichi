@@ -1,11 +1,8 @@
 # frozen_string_literal: true
 class LeaveApplicationsController < BaseController
   def index
-    if params[:status]
-      @current_collection = collection_scope.where(status: params[:status]).page(params[:page])
-    else
-      @current_collection = collection_scope.page(params[:page])
-    end
+    @current_collection = collection_scope.with_year(specific_year).page(params[:page])
+    @current_collection = @current_collection.with_status(params[:status]) if status_selected?
   end
 
   def update
@@ -54,5 +51,13 @@ class LeaveApplicationsController < BaseController
     else
       request.env["HTTP_REFERER"]
     end
+  end
+
+  def status_selected?
+    LeaveApplication.aasm.states.map(&:name).include? params[:status]&.to_sym
+  end
+
+  def specific_year
+    params[:year] || Time.now.year
   end
 end

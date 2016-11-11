@@ -43,6 +43,19 @@ class LeaveApplication < ApplicationRecord
     end
   end
 
+  scope :with_status, -> (status) { where(status: status) }
+
+  # class method
+  class << self
+    def with_year(year = Time.now.year)
+      t = Time.new(year)
+      range = (t.beginning_of_year .. t.end_of_year)
+      leaves_start_time_included = where(start_time: range )
+      leaves_end_time_included = where(end_time: range )
+      leaves_start_time_included.or(leaves_end_time_included)
+    end
+  end
+
   def pending?
     self.status == "pending"
   end

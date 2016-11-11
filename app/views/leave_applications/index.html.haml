@@ -1,7 +1,12 @@
 %h2= t("captions.leave_applications.index", year: this_year)
 
-.status-selector.row
-  .col-md-3.col-sm-3.col-xs-6
+.row
+  .col-md-6.col-sm-6.col-xs-6
+    .form-group
+      %label{:for=>"year"} 年度
+      = select_tag :year,
+        options_for_select( (2016 .. 2017), this_year), class: "form-control"
+  .col-md-6.col-sm-6.col-xs-6
     .form-group
       %label{:for=>"status"} 假別
       = select_tag :status,
@@ -38,7 +43,7 @@
                 class: "btn btn-danger",
                 method: :put,
                 data: { confirm: t("warnings.confirm_cancel")}
+  .paginate
+    = paginate current_collection
 - else
   = no_data_alert
-.paginate
-  = paginate current_collection
