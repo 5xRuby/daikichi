@@ -1,11 +1,3 @@
-GIT
-  remote: git://github.com/rubysherpas/paranoia.git
-  revision: bd3383729c790bf09e488f84221eaaea27c6597e
-  branch: rails4
-  specs:
-    paranoia (2.2.0.alpha)
-      activerecord (>= 4.0, < 5.1)
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -150,6 +142,8 @@ GEM
     nokogiri (1.6.8.1)
       mini_portile2 (~> 2.1.0)
     orm_adapter (0.5.0)
+    paranoia (2.2.0)
+      activerecord (>= 4.0, < 5.1)
     pg (0.19.0)
     puma (3.6.0)
     rack (2.0.1)
@@ -283,7 +277,7 @@ DEPENDENCIES
   kaminari
   listen (~> 3.0.5)
   momentjs-rails
-  paranoia!
+  paranoia (~> 2.2)
   pg (~> 0.18)
   puma (~> 3.0)
   rails (>= 5.0.0.rc1, < 5.1)
@@ -303,4 +297,4 @@ DEPENDENCIES
   working_hours
 
 BUNDLED WITH
-   1.13.0
+   1.13.2

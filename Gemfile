@@ -40,10 +40,9 @@ gem 'settingslogic'
 gem 'bootstrap-sass'
 gem 'haml'
 gem 'date_validator'
-# gem 'stateful_enum'
 gem 'aasm'
 gem 'kaminari'
-gem 'paranoia', :github => 'rubysherpas/paranoia', :branch => 'rails4' #TODO gem update for rails 5
+gem "paranoia", "~> 2.2"
 gem 'working_hours'
 gem 'whenever', :require => false
 
