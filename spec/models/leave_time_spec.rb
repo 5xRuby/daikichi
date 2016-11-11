@@ -87,15 +87,16 @@ RSpec.describe LeaveTime, type: :model do
   end
 
   describe "refill" do
+    let(:this_year) { Time.now.year }
+
     it "employee not employed for a year shouldn't get 8 hour plus" do
       annual = FactoryGirl.create(:annual_leave_time, user: first_year_employee)
-      t = Time.local(2017, 1, 1, 0, 0, 0)
-      Timecop.travel(t)
+      Timecop.travel Time.local(this_year + 1, 1, 1, 0, 0, 0)
       annual.init_quota
       expect(annual.quota).to eq 56
+      Timecop.return
 
-      t = Time.local(2017, 5, 1, 0, 0, 0)
-      Timecop.travel(t)
+      Timecop.travel Time.local(this_year + 1, 5, 1, 0, 0, 0)
       annual.refill
       expect(annual.quota).to eq 56
       Timecop.return
@@ -103,13 +104,12 @@ RSpec.describe LeaveTime, type: :model do
 
     it "employee employed for a year shouldn get 8 hours plus" do
       annual = FactoryGirl.create(:annual_leave_time, user: first_year_employee)
-      t = Time.local(2017, 1, 1, 0, 0, 0)
-      Timecop.travel(t)
+      Timecop.travel Time.local(this_year + 1, 1, 1, 0, 0, 0)
       annual.init_quota
       expect(annual.quota).to eq 56
+      Timecop.return
 
-      t = Time.local(2017, 7, 1, 0, 0, 0)
-      Timecop.travel(t)
+      Timecop.travel Time.local(this_year + 1, 7, 1, 0, 0, 0)
       annual.refill
       expect(annual.quota).to eq 64
 
@@ -119,15 +119,14 @@ RSpec.describe LeaveTime, type: :model do
       Timecop.return
     end
 
-    it "employee employed over 2 years won't get 8 hours plus" do
+    it "third_year_employee won't get 8 hours plus" do
       annual = FactoryGirl.create(:annual_leave_time, user: third_year_employee)
-      t = Time.local(2017, 1, 1, 0, 0, 0)
-      Timecop.travel(t)
+      Timecop.travel Time.local(this_year + 1, 1, 1, 0, 0, 0)
       annual.init_quota
       expect(annual.quota).to eq 80
+      Timecop.return
 
-      t = Time.local(2017, 7, 1, 0, 0, 0)
-      Timecop.travel(t)
+      Timecop.travel Time.local(this_year + 1, 7, 1, 0, 0, 0)
       annual.refill
       expect(annual.quota).to eq 80
       Timecop.return
