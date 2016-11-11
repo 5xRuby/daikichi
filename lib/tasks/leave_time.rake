@@ -6,8 +6,8 @@ namespace :leave_time do
       (Time.now.beginning_of_year .. Time.now.beginning_of_year.end_of_day).cover? Time.now
     end
 
-    skip = (!args[:skip].nil? && args[:skip] == "force") ? true : false
-    if skip || beginning_of_year?
+    skip_validate = (!args[:skip].nil? && args[:skip] == "force") ? true : false
+    if skip_validate || beginning_of_year?
       year = args[:year].nil? ? Time.zone.today.year : args[:year].to_i
       User.fulltime.each do |user|
         LeaveTime::BASIC_TYPES.each do |leave_type|
