@@ -52,9 +52,10 @@ document.addEventListener("turbolinks:load", function() {
     }
   });
 
-  // 選擇假單狀態
   $year = $("#year");
   $leaveStatus = $("#status");
+
+  // 選擇假單狀態
   $leaveStatus.on('change', function(e){
     status = $(this).val();
     year = $year.val();
