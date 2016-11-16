@@ -1,4 +1,4 @@
-%h2= t("captions.backend/monthly_leave_times.index", year: params[:year], month: params[:month])
+%h2= t("captions.backend/monthly_leave_times.index", year: specific_year, month: specific_month)
 
 .year-mon-selector
   .row
@@ -6,13 +6,13 @@
       .form-group
         %label{:for=>"year"} Year
         = select_tag "year",
-          options_for_select(2016 .. Time.zone.now.year, params[:year]),
+          options_for_select(2016 .. Time.now.year, specific_year),
           class: "form-control"
 
     .col-md-6.col-sm-6.col-xs-12
       .form-group
         %label{:for=>"month"} Month
-        = select_tag "month", options_for_select(1..12, params[:month]),
+        = select_tag "month", options_for_select(1..12, specific_month),
           class: "form-control"
 
 - if current_collection.any?

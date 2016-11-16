@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 class LeaveApplicationsController < BaseController
+  include Selectable
+
   def index
-    if params[:status]
-      @current_collection = collection_scope.where(status: params[:status]).page(params[:page])
-    else
-      @current_collection = collection_scope.page(params[:page])
-    end
+    @current_collection = collection_scope.with_year(specific_year)
+    @current_collection = @current_collection.with_status(params[:status]) if status_selected?
+    @current_collection = @current_collection.page(params[:page])
   end
 
   def update

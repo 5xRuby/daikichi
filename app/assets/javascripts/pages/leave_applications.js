@@ -52,26 +52,21 @@ document.addEventListener("turbolinks:load", function() {
     }
   });
 
-  // 選擇假單狀態
+  $year = $("#year");
   $leaveStatus = $("#status");
+
+  // 選擇假單狀態
   $leaveStatus.on('change', function(e){
-    value = $(this).val();
-    switch(value) {
-      case "approved":
-        Turbolinks.visit("/leave_applications?status=approved" );
-        break;
-      case "rejected":
-        Turbolinks.visit("/leave_applications?status=rejected" );
-        break;
-      case "canceled":
-        Turbolinks.visit("/leave_applications?status=canceled" );
-        break;
-      case "pending":
-        Turbolinks.visit("/leave_applications?status=pending" );
-        break;
-      default:
-        Turbolinks.visit("/leave_applications" );
-    }
+    status = $(this).val();
+    year = $year.val();
+    Turbolinks.visit("/leave_applications?status=" + status + "&year=" + year );
+  })
+
+  //選擇年度
+  $year.on('change', function(e){
+    year = $(this).val();
+    status = $leaveStatus.val();
+    Turbolinks.visit("/leave_applications?status=" + status + "&year=" + year );
   })
 
   // ajax calling for personal 剩餘時數

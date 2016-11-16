@@ -7,8 +7,8 @@ class LeaveTime < ApplicationRecord
   DAILY_HOURS = 8
   DAYS_IN_YEAR = 365.0 # ignore leap year
 
-  scope :current_year, ->(user_id) {
-    where(year: Time.zone.today.year, user_id: user_id)
+  scope :current_year, ->(user_id, year=Time.now.year) {
+    where(year: year, user_id: user_id)
   }
 
   scope :personal, ->(user_id, leave_type){

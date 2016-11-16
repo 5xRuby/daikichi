@@ -16,7 +16,7 @@ class User < ApplicationRecord
   ROLES = %i(manager hr employee contractor intern resigned pending).freeze
 
   scope :fulltime, -> {
-    where("role in (?)", %w(manager employee))
+    where("role in (?)", %w(manager employee hr))
       .where("join_date < now()")
       .order(id: :desc)
   }

@@ -1,11 +1,6 @@
-%h2= t("captions.leave_applications.index", year: Time.now.year)
+%h2= t("captions.leave_applications.index", year: specific_year)
 
-.status-selector.row
-  .col-md-3.col-sm-3.col-xs-6
-    .form-group
-      %label{:for=>"status"} 假別
-      = select_tag :status,
-        options_for_select(status_select_option, params[:status]), class: "form-control"
+= render "shared/year_type_selector"
 
 - if current_collection.any?
   %table.table
@@ -38,7 +33,7 @@
                 class: "btn btn-danger",
                 method: :put,
                 data: { confirm: t("warnings.confirm_cancel")}
+  .paginate
+    = paginate current_collection
 - else
   = no_data_alert
-.paginate
-  = paginate current_collection

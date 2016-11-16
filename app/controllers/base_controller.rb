@@ -96,4 +96,12 @@ class BaseController < ApplicationController
   def current_object
     @current_object ||= collection_scope.find(params[:id])
   end
+
+  def specific_year
+    params[:year] || Time.now.year
+  end
+
+  def specific_month
+    params[:month] || Time.now.month
+  end
 end
