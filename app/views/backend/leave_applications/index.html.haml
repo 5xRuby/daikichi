@@ -1,11 +1,6 @@
 %h2= t("captions.backend/leave_applications.index")
 
-.status-selector.row
-  .col-md-3.col-sm-3.col-xs-6
-    .form-group
-      %label{:for=>"status"} 假別
-      = select_tag "status",
-        options_for_select( status_select_option, params[:status]), class: "form-control"
+= render "shared/year_type_selector"
 
 - if current_collection.any?
   %table.table

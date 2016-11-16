@@ -1,16 +1,6 @@
 %h2= t("captions.leave_applications.index", year: specific_year)
 
-.row
-  .col-md-6.col-sm-6.col-xs-6
-    .form-group
-      %label{:for=>"year"} 年度
-      = select_tag :year,
-        options_for_select( (2016 .. 2017), specific_year), class: "form-control"
-  .col-md-6.col-sm-6.col-xs-6
-    .form-group
-      %label{:for=>"status"} 假別
-      = select_tag :status,
-        options_for_select(status_select_option, params[:status]), class: "form-control"
+= render "shared/year_type_selector"
 
 - if current_collection.any?
   %table.table
