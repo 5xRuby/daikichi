@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 class LeaveTimesController < BaseController
   def index
-    unless params[:year].nil?
-      @current_collection = LeaveTime.current_year(current_user.id, params[:year])
-    end
+    @current_collection = collection_scope.current_year(current_user.id, specific_year).page(params[:page])
   end
 
   def show

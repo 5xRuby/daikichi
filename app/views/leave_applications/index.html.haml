@@ -1,11 +1,11 @@
-%h2= t("captions.leave_applications.index", year: this_year)
+%h2= t("captions.leave_applications.index", year: specific_year)
 
 .row
   .col-md-6.col-sm-6.col-xs-6
     .form-group
       %label{:for=>"year"} 年度
       = select_tag :year,
-        options_for_select( (2016 .. 2017), this_year), class: "form-control"
+        options_for_select( (2016 .. 2017), specific_year), class: "form-control"
   .col-md-6.col-sm-6.col-xs-6
     .form-group
       %label{:for=>"status"} 假別

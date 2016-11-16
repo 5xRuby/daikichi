@@ -1,10 +1,10 @@
-%h2= t("captions.leave_times.index", year: this_year)
+%h2= t("captions.leave_times.index", year: specific_year)
 
-.status-selector.row
+.row
   .col-md-3.col-sm-3.col-xs-6
     .form-group
       %label{:for=>"year"} 年度
       = select_tag :year,
-        options_for_select( (2016 .. Time.now.year), this_year), class: "form-control"
+        options_for_select( (2016 .. Time.now.year), specific_year), class: "form-control"
 
 = render "table", { leave_times: current_collection }

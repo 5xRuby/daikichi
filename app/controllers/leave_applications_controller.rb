@@ -56,8 +56,4 @@ class LeaveApplicationsController < BaseController
   def status_selected?
     LeaveApplication.aasm.states.map(&:name).include? params[:status]&.to_sym
   end
-
-  def specific_year
-    params[:year] || Time.now.year
-  end
 end
