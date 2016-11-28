@@ -29,3 +29,5 @@
 /lib/tasks/users.yml
 /lib/tasks/leaves.yml
 /lib/tasks/bonus_leave_times.yml
+
+docker-compose.yml
