@@ -19,6 +19,7 @@
 
 # Ignore Byebug command history file.
 /.byebug_history
+/docker-compose.yml
 
 /config/database.yml
 /config/secrets.yml
