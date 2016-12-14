@@ -16,6 +16,8 @@
 
 # Ignore Byebug command history file.
 /.byebug_history
+/vendor/bundle/*
+/public/assets
 
 /config/database.yml
 /config/secrets.yml

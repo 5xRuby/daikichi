@@ -28,9 +28,9 @@ ADD Gemfile $APP_HOME/Gemfile
 ADD Gemfile.lock $APP_HOME/Gemfile.lock
 
 # Install Dependency
-RUN cd $APP_HOME && \
-    gem install puma && \
-    bundle install --without development test --path $BUNDLE_PATH
+#RUN cd $APP_HOME && \
+#    gem install puma && \
+#    bundle install --without development test --path $BUNDLE_PATH
 
 # Add Application Source Code
 ADD . $APP_HOME
