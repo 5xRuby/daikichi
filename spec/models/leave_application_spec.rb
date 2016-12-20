@@ -29,7 +29,7 @@ RSpec.describe LeaveApplication, type: :model do
   end
 
   def leave(end_time, leave_type = :sick_leave )
-    FactoryGirl.create leave_type, start_time: start_time, end_time: end_time, user: first_year_employee
+    FactoryGirl.create :leave_application, leave_type, start_time: start_time, end_time: end_time, user: first_year_employee
   end
 
   describe "validation" do
@@ -155,7 +155,7 @@ RSpec.describe LeaveApplication, type: :model do
     it "核可假單" do
       annual, personal, sick, bonus = init_quota
 
-      leave = FactoryGirl.create :sick_leave, start_time: start_time, end_time: one_day_later, user: first_year_employee
+      leave = FactoryGirl.create :leave_application, :sick_leave, start_time: start_time, end_time: one_day_later, user: first_year_employee
       sick.reload
       expect(sick.used_hours).to eq 8
       expect(sick.usable_hours).to eq(sick.quota - sick.used_hours)
@@ -172,7 +172,7 @@ RSpec.describe LeaveApplication, type: :model do
     it "否決假單" do
       annual, personal, sick, bonus = init_quota
 
-      leave = FactoryGirl.create :sick_leave, start_time: start_time, end_time: two_day_later, user: first_year_employee
+      leave = FactoryGirl.create :leave_application, :sick_leave, start_time: start_time, end_time: two_day_later, user: first_year_employee
       sick.reload
       expect(sick.used_hours).to eq 16
       expect(sick.usable_hours).to eq(sick.quota - sick.used_hours)
@@ -225,7 +225,7 @@ RSpec.describe LeaveApplication, type: :model do
     end
   end
 
-  describe "aasm 綜合" do
+  describe "aasm 狀態變更" do
     it "rejected -> pending" do
       annual, personal, sick, bonus = init_quota
 
@@ -272,23 +272,34 @@ RSpec.describe LeaveApplication, type: :model do
       expect(leave.status).to eq "pending"
     end
 
-    it "approved -> canceled" do
-      annual, personal, sick, bonus = init_quota
+    context "approved -> canceled" do
+      let(:approved_leave_application) {
+        FactoryGirl.create(
+          :leave_application, start_time: 3.days.since.beginning_of_hour, end_time: 5.days.since.beginning_of_hour ,
+          status: 'approved', manager: manager_eddie, user: first_year_employee,
+          leave_type: :sick)
+      }
 
-      leave = leave(three_day_later, :sick_leave)
-      expect(leave.hours).to eq 24
-      expect(leave.status).to eq "pending"
+      before do
+        init_quota
+      end
 
-      sick.reload
-      expect(sick.used_hours).to eq 24
+      context "canceled before happened" do
+        it "should canceled successfully" do
+          expect(approved_leave_application).to transition_from(:approved).to(:canceled).on_event(:cancel)
+        end
+      end
 
-      leave.approve!(manager_eddie)
-      expect(leave.status).to eq "approved"
-
-      leave.cancel!
-      sick.reload
-      expect(sick.used_hours).to eq 0
-      expect(leave.status).to eq "canceled"
+      context "cancel after happened" do
+        let(:approved_leave_application) {
+          FactoryGirl.create(
+            :leave_application, :sick_leave, :happened, :approved,
+            manager: manager_eddie, user: first_year_employee)
+        }
+        it "should reject change of status" do
+          expect { approved_leave_application.cancel }.to raise_error AASM::InvalidTransition
+        end
+      end
     end
 
     it "rejected -> canceled" do
