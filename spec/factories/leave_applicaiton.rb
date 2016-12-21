@@ -2,21 +2,32 @@
 FactoryGirl.define do
   factory :leave_application do
     description { Faker::Lorem.characters(30) }
+    start_time  { 3.days.since.beginning_of_hour }
+    end_time    { 5.days.since.beginning_of_hour }
 
-    factory :sick_leave do
-      leave_type { "sick" }
+    trait :sick_leave do
+      leave_type "sick"
     end
 
-    factory :personal_leave do
-      leave_type { "personal" }
+    trait :personal_leave do
+      leave_type "personal"
     end
 
-    factory :bonus_leave do
-      leave_type { "bonus" }
+    trait :bonus_leave do
+      leave_type "bonus"
     end
 
-    factory :annual_leave do
-      leave_type { "annual" }
+    trait :annual_leave do
+      leave_type "annual"
+    end
+
+    trait :approved do
+      status 'approved'
+    end
+
+    trait :happened do
+      start_time { 1.minutes.ago.beginning_of_hour }
+      end_time   { 1.days.since.beginning_of_hour }
     end
   end
 end

@@ -40,6 +40,8 @@ zh-TW:
               should_be_earlier: "開始時間必須早於結束時間"
             end_time:
               not_integer: "請假的最小單位是1小時"
+            status:
+              cannot_cancel_after_happened: "已核准之休假不得於發生後取消"
 
   # navbar 選單標題
   nav:

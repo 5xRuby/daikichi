@@ -39,7 +39,8 @@ class LeaveApplication < ApplicationRecord
     end
 
     event :cancel, after: :return_leave_time_usable_hours do
-      transitions to: :canceled, from: [:pending, :approved, :rejected]
+      transitions to: :canceled, from: [:pending, :rejected]
+      transitions to: :canceled, from: :approved, unless: :happened?
     end
   end
 
@@ -56,12 +57,8 @@ class LeaveApplication < ApplicationRecord
     end
   end
 
-  def pending?
-    self.status == "pending"
-  end
-
-  def canceled?
-    self.status == "canceled"
+  def happened?
+    Time.current > self.start_time
   end
 
   private
@@ -74,7 +71,6 @@ class LeaveApplication < ApplicationRecord
     assign_hours
 
     leave_time = LeaveTime.personal(user_id, leave_type)
-
     leave_time.deduct hours
     LeaveApplicationLog.create!(leave_application_uuid: uuid,
                                 amount: hours)

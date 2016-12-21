@@ -23,7 +23,7 @@ class LeaveApplicationsController < BaseController
   end
 
   def cancel
-    if current_object.canceled?
+    if current_object.may_cancel?
       action_fail t("warnings.not_cancellable"), :index
     else
       current_object.cancel!
