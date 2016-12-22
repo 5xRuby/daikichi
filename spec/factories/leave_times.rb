@@ -1,22 +1,24 @@
 # frozen_string_literal: true
 FactoryGirl.define do
   factory :leave_time do
-    year { 2016 }
+    user
+    year { Time.current.year }
+    leave_type "annual"
 
-    factory :annual_leave_time do
-      leave_type { "annual" }
+    trait :annual do
+      leave_type "annual"
     end
 
-    factory :sick_leave_time do
-      leave_type { "sick" }
+    trait :sick do
+      leave_type "sick"
     end
 
-    factory :personal_leave_time do
-      leave_type { "personal" }
+    trait :personal do
+      leave_type "personal"
     end
 
-    factory :bonus_leave_time do
-      leave_type { "bonus" }
+    trait :bonus do
+      leave_type "bonus"
     end
   end
 end

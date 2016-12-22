@@ -7,25 +7,29 @@ FactoryGirl.define do
     password { Faker::Internet.password }
 
     trait :admin do
-      role { "admin" }
+      role "admin"
     end
 
     trait :manager do
-      role { "manager" }
+      role "manager"
+    end
+
+    trait :hr do
+      role "hr"
     end
 
     trait :employee do
-      role { "employee" }
+      role "employee"
     end
 
     trait :contractor do
-      role { "contractor" }
+      role "contractor"
       join_date { nil }
     end
 
     factory :manager_eddie, traits: [:manager] do
-      id { 1 }
-      name { "eddie" }
+      id 1
+      name "eddie"
     end
 
     # base year is as same as the year of time when the code is running

@@ -2,10 +2,10 @@
 require "rails_helper"
 RSpec.describe LeaveApplication, type: :model do
   let(:first_year_employee) { FactoryGirl.create(:first_year_employee) }
-  let(:sick) { FactoryGirl.create(:sick_leave_time, user: first_year_employee) }
-  let(:personal) { FactoryGirl.create(:personal_leave_time, user: first_year_employee) }
-  let(:bonus) { FactoryGirl.create(:bonus_leave_time, user: first_year_employee) }
-  let(:annual) { FactoryGirl.create(:annual_leave_time, user: first_year_employee) }
+  let(:sick)     { FactoryGirl.create(:leave_time, :sick,     user: first_year_employee) }
+  let(:personal) { FactoryGirl.create(:leave_time, :personal, user: first_year_employee) }
+  let(:bonus)    { FactoryGirl.create(:leave_time, :bonus,    user: first_year_employee) }
+  let(:annual)   { FactoryGirl.create(:leave_time, :annual,   user: first_year_employee) }
   # Monday
   let(:start_time) { Time.new(2016, 8, 15, 9, 30, 0, "+08:00") }
   let(:one_hour_ago) { Time.new(2016, 8, 15, 8, 30, 0, "+08:00") }
