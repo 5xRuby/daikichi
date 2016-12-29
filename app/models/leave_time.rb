@@ -11,13 +11,16 @@ class LeaveTime < ApplicationRecord
     where(year: year, user_id: user_id)
   }
 
-  scope :personal, ->(user_id, leave_type){
-    find_by(user_id: user_id, leave_type: leave_type)
+  scope :personal, ->(user_id, leave_type, year = Time.current.year){
+    find_by(user_id: user_id, leave_type: leave_type, year: year)
   }
 
   scope :get_employees_bonus, ->(){
     where("leave_type = ?", "bonus").order(user_id: :desc)
   }
+
+  validates :leave_type,
+            uniqueness: { scope: [:user_id, :year], message: '已存在該假別' }
 
   def init_quota
     return false if seniority < 1

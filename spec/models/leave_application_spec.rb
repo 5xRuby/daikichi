@@ -28,11 +28,19 @@ RSpec.describe LeaveApplication, type: :model do
     return annual, personal, sick, bonus
   end
 
-  def leave(end_time, leave_type = :sick_leave )
+  def leave(end_time, leave_type = :sick)
     FactoryGirl.create :leave_application, leave_type, start_time: start_time, end_time: end_time, user: first_year_employee
   end
 
   describe "validation" do
+    let(:params) { FactotyGirl.attributes_for(:leave_application) }
+    subject { described_class.new(params) }
+
+    context "has a valid factory" do
+      subject { FactoryGirl.build_stubbed(:leave_application, :with_leave_time, :annual) }
+      it { expect(subject).to be_valid }
+    end
+
     it "leave_type必填" do
       leave = LeaveApplication.new(
         start_time: start_time,
@@ -67,6 +75,44 @@ RSpec.describe LeaveApplication, type: :model do
       expect(leave).to be_invalid
       expect(leave.errors.messages[:end_time].first).to eq "請假的最小單位是1小時"
     end
+
+    context "has_enough_leave_time" do
+      subject { FactoryGirl.build(:leave_application) }
+
+      it "is invalid without leave_time intialize" do
+        expect(subject).not_to be_valid
+        expect(subject.errors.messages[:end_time]).to include I18n.t("activerecord.errors.models.leave_application.attributes.end_time.not_enough_leave_time")
+      end
+
+      context "leave_time intialize" do
+        before do
+          FactoryGirl.create(:leave_time, :annual, user: subject.user, quota: 3)
+        end
+        it "is invalid without enough leave_time" do
+          expect(subject).not_to be_valid
+          expect(subject.errors.messages[:end_time]).to include I18n.t("activerecord.errors.models.leave_application.attributes.end_time.not_enough_leave_time")
+        end
+      end
+    end
+
+    context "valid_advanced_leave_type?" do
+      context "creating a next_year leave_application" do
+        context "leave_type is annual" do
+          subject { FactoryGirl.build_stubbed(:leave_application, :with_leave_time, :annual, :next_year) }
+          it "should be valid" do
+            expect(subject).to be_valid
+          end
+        end
+
+        context "leave_type is not annual" do
+          subject { FactoryGirl.build_stubbed(:leave_application, :with_leave_time, :personal, :next_year) }
+          it "should not be valid" do
+            expect(subject).not_to be_valid
+            expect(subject.errors.messages[:leave_type]).to include I18n.t("activerecord.errors.models.leave_application.attributes.leave_type.only_take_annual_leave_year_before")
+          end
+        end
+      end
+    end
   end
 
   describe "使用者操作" do
@@ -75,7 +121,7 @@ RSpec.describe LeaveApplication, type: :model do
         annual, personal, sick, bonus = init_quota
         quota = sick.quota
 
-        leave = leave(one_day_later, :sick_leave)
+        leave = leave(one_day_later)
         expect(leave.hours).to eq 8
         expect(leave.status).to eq "pending"
 
@@ -88,7 +134,7 @@ RSpec.describe LeaveApplication, type: :model do
         annual, personal, sick, bonus = init_quota
         quota = sick.quota
 
-        leave = leave(Time.new(2016, 8, 15, 23, 30, 0, "+08:00"), :sick_leave)
+        leave = leave(Time.new(2016, 8, 15, 23, 30, 0, "+08:00"))
         expect(leave.hours).to eq 8
         expect(leave.status).to eq "pending"
 
@@ -101,7 +147,7 @@ RSpec.describe LeaveApplication, type: :model do
         annual, personal, sick, bonus = init_quota
         quota = sick.quota
 
-        leave = leave(three_day_later, :sick_leave)
+        leave = leave(three_day_later)
         expect(leave.hours).to eq 24
         expect(leave.status).to eq "pending"
 
@@ -115,7 +161,7 @@ RSpec.describe LeaveApplication, type: :model do
       it "2hr -> 8hr" do
         annual, personal, sick, bonus = init_quota
 
-        leave = leave(two_hour_later, :sick_leave)
+        leave = leave(two_hour_later)
         expect(leave.hours).to eq 2
         expect(leave.status).to eq "pending"
 
@@ -133,7 +179,7 @@ RSpec.describe LeaveApplication, type: :model do
       it "8hr -> 2hr" do
         annual, personal, sick, bonus = init_quota
 
-        leave = leave(one_day_later, :sick_leave)
+        leave = leave(one_day_later)
         expect(leave.hours).to eq 8
         expect(leave.status).to eq "pending"
 
@@ -155,7 +201,7 @@ RSpec.describe LeaveApplication, type: :model do
     it "核可假單" do
       annual, personal, sick, bonus = init_quota
 
-      leave = FactoryGirl.create :leave_application, :sick_leave, start_time: start_time, end_time: one_day_later, user: first_year_employee
+      leave = FactoryGirl.create :leave_application, :sick, start_time: start_time, end_time: one_day_later, user: first_year_employee
       sick.reload
       expect(sick.used_hours).to eq 8
       expect(sick.usable_hours).to eq(sick.quota - sick.used_hours)
@@ -172,7 +218,7 @@ RSpec.describe LeaveApplication, type: :model do
     it "否決假單" do
       annual, personal, sick, bonus = init_quota
 
-      leave = FactoryGirl.create :leave_application, :sick_leave, start_time: start_time, end_time: two_day_later, user: first_year_employee
+      leave = FactoryGirl.create :leave_application, :sick, start_time: start_time, end_time: two_day_later, user: first_year_employee
       sick.reload
       expect(sick.used_hours).to eq 16
       expect(sick.usable_hours).to eq(sick.quota - sick.used_hours)
@@ -186,41 +232,44 @@ RSpec.describe LeaveApplication, type: :model do
       expect(leave.status).to eq "rejected"
       expect(leave.manager_id).to eq manager_eddie.id
     end
+  end
 
-    context "取消特休假單" do
-      it "24hr" do
-        annual, personal, sick, bonus = init_quota
+  describe "LeaveTime corresponding change" do
+    let!(:leave_application) {
+      FactoryGirl.create(
+        :leave_application, :with_leave_time, :annual,
+        start_time: 3.working.day.from_now.beginning_of_day + 9.hours  + 30.minutes,
+        end_time:   3.working.day.from_now.beginning_of_day + 18.hours + 30.minutes
+      )
+    }
 
-        leave = leave(three_day_later, :bonus_leave)
-        expect(leave.hours).to eq 24
-        expect(leave.status).to eq "pending"
+    context "leave application canceled" do
+      before do
+        expect(leave_application.leave_time.used_hours).to eq 8
+        leave_application.cancel!
+      end
+      it "corresponding used_hours should return to user" do
+        expect(leave_application.reload.status).to eq "canceled"
+        expect(leave_application.leave_time.used_hours).to eq 0
+      end
+    end
 
-        bonus.reload
-        expect(bonus.used_hours).to eq 24
-
-        leave.cancel!
-        annual.reload
-        expect(annual.used_hours).to eq 0
-        expect(leave.status).to eq "canceled"
+    context "canceled one of multiple leave_application" do
+      let!(:leave_application2) {
+        FactoryGirl.create(
+          :leave_application, :annual, user: leave_application.user,
+          start_time: 5.working.day.from_now.beginning_of_day + 9.hours  + 30.minutes,
+          end_time:   5.working.day.from_now.beginning_of_day + 18.hours + 30.minutes
+        )
+      }
+      before do
+        expect(leave_application2.reload.leave_time.used_hours).to eq 16
+        leave_application2.cancel!
       end
 
-      it "有兩張假單，取消了其中一張" do
-        annual, personal, sick, bonus = init_quota
-
-        leave = leave(one_day_later, :bonus_leave)
-        leave2 = leave(two_day_later, :bonus_leave)
-        expect(leave.hours).to eq 8
-        expect(leave.status).to eq "pending"
-        expect(leave2.hours).to eq 16
-        expect(leave2.status).to eq "pending"
-
-        bonus.reload
-        expect(bonus.used_hours).to eq 24
-
-        leave.cancel!
-        bonus.reload
-        expect(bonus.used_hours).to eq 16
-        expect(leave.status).to eq "canceled"
+      it "corresponding used_hours should return to user" do
+        expect(leave_application2.reload.status).to eq "canceled"
+        expect(leave_application.leave_time.used_hours).to eq 8
       end
     end
   end
@@ -229,7 +278,7 @@ RSpec.describe LeaveApplication, type: :model do
     it "rejected -> pending" do
       annual, personal, sick, bonus = init_quota
 
-      leave = leave(two_hour_later, :sick_leave)
+      leave = leave(two_hour_later, :sick)
       expect(leave.hours).to eq 2
       expect(leave.status).to eq "pending"
 
@@ -252,7 +301,7 @@ RSpec.describe LeaveApplication, type: :model do
     it "approved -> pending" do
       annual, personal, sick, bonus = init_quota
 
-      leave = leave(two_hour_later, :sick_leave)
+      leave = leave(two_hour_later, :sick)
       expect(leave.hours).to eq 2
       expect(leave.status).to eq "pending"
 
@@ -275,14 +324,9 @@ RSpec.describe LeaveApplication, type: :model do
     context "approved -> canceled" do
       let(:approved_leave_application) {
         FactoryGirl.create(
-          :leave_application, start_time: 3.days.since.beginning_of_hour, end_time: 5.days.since.beginning_of_hour ,
-          status: 'approved', manager: manager_eddie, user: first_year_employee,
-          leave_type: :sick)
+          :leave_application, :approved, :annual, :with_leave_time,
+          manager: manager_eddie, user: first_year_employee)
       }
-
-      before do
-        init_quota
-      end
 
       context "canceled before happened" do
         it "should canceled successfully" do
@@ -293,7 +337,7 @@ RSpec.describe LeaveApplication, type: :model do
       context "cancel after happened" do
         let(:approved_leave_application) {
           FactoryGirl.create(
-            :leave_application, :sick_leave, :happened, :approved,
+            :leave_application, :sick, :happened, :approved, :with_leave_time,
             manager: manager_eddie, user: first_year_employee)
         }
         it "should reject change of status" do
@@ -304,7 +348,7 @@ RSpec.describe LeaveApplication, type: :model do
 
     it "rejected -> canceled" do
       annual, personal, sick, bonus = init_quota
-      leave = leave(three_day_later, :sick_leave)
+      leave = leave(three_day_later, :sick)
       expect(leave.hours).to eq 24
       expect(leave.status).to eq "pending"
 

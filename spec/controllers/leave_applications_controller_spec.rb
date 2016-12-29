@@ -2,7 +2,7 @@
 require "rails_helper"
 RSpec.describe LeaveApplicationsController, type: :controller do
   describe "#cancel" do
-    let(:leave_application) { FactoryGirl.create(:leave_application, :approved, :with_leave_time) }
+    let(:leave_application) { FactoryGirl.create(:leave_application, :approved, :annual, :with_leave_time) }
     let(:params) { { id: leave_application.id } }
     subject { post :cancel, params: params }
 
@@ -26,7 +26,7 @@ RSpec.describe LeaveApplicationsController, type: :controller do
 
     shared_examples "cancel owned leave_application" do
       context "canceling owned leave_application" do
-        let(:leave_application) { FactoryGirl.create(:leave_application, :approved, :with_leave_time, user: controller.current_user) }
+        let(:leave_application) { FactoryGirl.create(:leave_application, :approved, :annual, :with_leave_time, user: controller.current_user) }
 
         context "approved but already passed" do
           include_examples "cancel rejected"

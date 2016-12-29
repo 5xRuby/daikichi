@@ -4,22 +4,22 @@ FactoryGirl.define do
     user
     leave_type  "personal"
     description { Faker::Lorem.characters(30) }
-    start_time  { 3.days.since.beginning_of_hour }
-    end_time    { 5.days.since.beginning_of_hour }
+    start_time  { 3.working.day.from_now.beginning_of_day + 9.hours + 30.minutes }
+    end_time    { 5.working.day.from_now.beginning_of_day + 18.hours + 30.minutes }
 
-    trait :sick_leave do
+    trait :sick do
       leave_type "sick"
     end
 
-    trait :personal_leave do
+    trait :personal do
       leave_type "personal"
     end
 
-    trait :bonus_leave do
+    trait :bonus do
       leave_type "bonus"
     end
 
-    trait :annual_leave do
+    trait :annual do
       leave_type "annual"
     end
 
@@ -33,9 +33,17 @@ FactoryGirl.define do
       end_time   { 1.days.since.beginning_of_hour }
     end
 
+    trait :next_year do
+      start_time { WorkingHours.next_working_time(1.year.since) }
+      end_time   { WorkingHours.next_working_time(1.year.since) + 9.hours }
+    end
+
     trait :with_leave_time do
       before(:create) do |la|
-        create(:leave_time, la.leave_type.to_sym, user: la.user)
+        create(:leave_time, la.leave_type.to_sym, user: la.user, quota: 56, usable_hours: 56, year: la.start_time.year)
+      end
+      after(:stub) do |la|
+        create(:leave_time, la.leave_type.to_sym, user: la.user, quota: 56, usable_hours: 56, year: la.start_time.year)
       end
     end
   end

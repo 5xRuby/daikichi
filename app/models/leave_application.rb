@@ -4,6 +4,7 @@ class LeaveApplication < ApplicationRecord
   paginates_per 8
 
   after_initialize :set_primary_id
+  # FIXME: Checkif working when update duration of leave application
   before_create :deduct_leave_time_usable_hours
   before_destroy :return_leave_time_usable_hours
 
@@ -12,7 +13,11 @@ class LeaveApplication < ApplicationRecord
   has_many :leave_application_logs, foreign_key: "leave_application_uuid", primary_key: "uuid", dependent: :destroy
 
   validates :leave_type, :description, presence: true
+
   validate :hours_should_be_positive_integer
+  # FIXME: Not working when update duration of leave application
+  validate :has_enough_leave_time, on: :create
+  validate :valid_advanced_leave_type?
 
   LEAVE_TYPE = %i(annual bonus personal sick).freeze
   STATUS = %i(pending approved rejected canceled).freeze
@@ -61,6 +66,10 @@ class LeaveApplication < ApplicationRecord
     Time.current > self.start_time
   end
 
+  def leave_time
+    @leave_time ||= LeaveTime.personal(self.user_id, self.leave_type, self.start_time.year)
+  end
+
   private
 
   def set_primary_id
@@ -70,7 +79,7 @@ class LeaveApplication < ApplicationRecord
   def deduct_leave_time_usable_hours
     assign_hours
 
-    leave_time = LeaveTime.personal(user_id, leave_type)
+    # leave_time = self.leave_time
     leave_time.deduct hours
     LeaveApplicationLog.create!(leave_application_uuid: uuid,
                                 amount: hours)
@@ -90,7 +99,7 @@ class LeaveApplication < ApplicationRecord
   end
 
   def return_leave_time_usable_hours
-    leave_time = LeaveTime.personal(user_id, leave_type)
+    leave_time = self.leave_time
 
     log = leave_application_logs.last
     leave_time.deduct(-log.amount) unless log.returning?
@@ -107,5 +116,17 @@ class LeaveApplication < ApplicationRecord
   def hours_should_be_positive_integer
     errors.add(:end_time, :not_integer) unless (((end_time - start_time) / 3600.0) % 1).zero?
     errors.add(:start_time, :should_be_earlier) unless end_time > start_time
+  end
+
+  def valid_advanced_leave_type?
+    if start_time.year > Time.current.year && leave_type != 'annual'
+      errors.add(:leave_type, :only_take_annual_leave_year_before)
+    end
+  end
+
+  def has_enough_leave_time
+    unless self.leave_time.present? && assign_hours < (self.leave_time.try(:usable_hours) || 0)
+      errors.add(:end_time, :not_enough_leave_time)
+    end
   end
 end
