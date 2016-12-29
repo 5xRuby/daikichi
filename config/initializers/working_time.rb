@@ -9,4 +9,3 @@ WorkingHours::Config.working_hours = {
 
 # Configure timezone (uses activesupport, defaults to UTC)
 WorkingHours::Config.time_zone = 'Taipei'
-
