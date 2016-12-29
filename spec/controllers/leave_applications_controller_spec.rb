@@ -11,7 +11,7 @@ RSpec.describe LeaveApplicationsController, type: :controller do
     end
 
     shared_examples "cancel rejected" do
-      it "leave_application status shoud remain approved" do
+      it "leave_application status should remain approved" do
         expect(leave_application.status).to eq "approved"
       end
     end
@@ -29,6 +29,7 @@ RSpec.describe LeaveApplicationsController, type: :controller do
         let(:leave_application) { FactoryGirl.create(:leave_application, :approved, :annual, :with_leave_time, user: controller.current_user) }
 
         context "approved but already passed" do
+          let(:leave_application) { FactoryGirl.create(:leave_application, :approved, :annual, :with_leave_time, :happened, user: controller.current_user) }
           include_examples "cancel rejected"
         end
 
