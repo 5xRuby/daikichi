@@ -66,7 +66,7 @@ group :test do
   gem 'factory_girl_rails'
   gem 'faker'
   gem 'shoulda-matchers'
-  gem 'database_cleaner'
+  gem 'database_rewinder'
   gem 'timecop'
 end
 

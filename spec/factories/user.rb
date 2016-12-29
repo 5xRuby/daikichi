@@ -28,13 +28,11 @@ FactoryGirl.define do
     end
 
     factory :manager_eddie, traits: [:manager] do
-      id 1
       name "eddie"
     end
 
     # base year is as same as the year of time when the code is running
     factory :first_year_employee, traits: [:employee] do
-      id { 20 }
       join_date { Time.new(Time.now.year, 6, 1) }
     end
 
