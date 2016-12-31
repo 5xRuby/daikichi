@@ -52,4 +52,112 @@ RSpec.describe User, type: :model do
       expect(contractor.fulltime?).to be_falsey
     end
   end
+
+  describe "scope" do
+    describe "with_leave_application_statistics" do
+      let(:year)  { Time.current.year }
+      let(:month) { Time.current.month }
+      let(:start_time) { WorkingHours.advance_to_working_time(Time.new(year, month, 1)) }
+      let(:end_time)   { WorkingHours.return_to_working_time(start_time + 1.working.day) }
+      let!(:leave_application) { FactoryGirl.create(:leave_application, :with_leave_time, start_time: start_time, end_time: end_time) }
+      subject { described_class.with_leave_application_statistics(year, month) }
+
+      shared_examples "not included in returned results" do
+        it "is not included in returned results" do
+          expect(subject).not_to exist
+        end
+      end
+
+      context "approved leave_applications" do
+        let!(:leave_application) { FactoryGirl.create(:leave_application, :approved, :with_leave_time, :annual, start_time: start_time, end_time: end_time) }
+
+        context "within range" do
+          it "is include in returned results" do
+            expect(subject).to include leave_application.user
+            expect(subject.first.leave_applications).to include leave_application
+          end
+
+          context "all leave_hours_within_month" do
+            before do
+              FactoryGirl.create(
+                :leave_application, :approved, :annual,
+                user: leave_application.user,
+                start_time: start_time + 3.working.day,
+                end_time: WorkingHours.return_to_working_time(start_time + 4.working.day)
+              )
+            end
+
+            it "should all be sum up" do
+              expect(subject.first.leave_applications.leave_hours_within_month(year: year, month: month)).to eq 16
+            end
+          end
+
+          context "specific leave_hours_within_month" do
+            before do
+              FactoryGirl.create(
+                :leave_application, :approved, :personal, :with_leave_time,
+                user: leave_application.user,
+                start_time: start_time + 3.working.day,
+                end_time: WorkingHours.return_to_working_time(start_time + 4.working.day)
+              )
+            end
+
+            it "only with specific leave_type will be sum up" do
+              expect(subject.first.leave_applications.leave_hours_within_month(year: year, month: month, type: 'personal')).to eq 8
+            end
+          end
+        end
+
+        context "partially overlaps given range" do
+          let(:start_time) { WorkingHours.advance_to_working_time(Time.new(year, month, 1) - 1.working.day) }
+          let(:end_time)   { WorkingHours.return_to_working_time(Time.new(year, month, 1) + 3.working.day) }
+
+          it "is include in returned results" do
+            expect(subject).to include leave_application.user
+            expect(subject.first.leave_applications).to include leave_application
+          end
+
+          context "all leave_hours_within_month" do
+            before do
+              FactoryGirl.create(
+                :leave_application, :approved, :annual,
+                user: leave_application.user,
+                start_time: start_time + 3.working.day,
+                end_time: WorkingHours.return_to_working_time(start_time + 4.working.day)
+              )
+            end
+            it "only those overlaps will be sum up" do
+              expect(subject.first.leave_applications.leave_hours_within_month(year: year, month: month)).to eq 24
+            end
+          end
+
+          context "specific leave_hours_within_month" do
+            before do
+              FactoryGirl.create(
+                :leave_application, :approved, :personal, :with_leave_time,
+                user: leave_application.user,
+                start_time: start_time + 3.working.day,
+                end_time: WorkingHours.return_to_working_time(start_time + 4.working.day)
+              )
+            end
+            it "only with specific leave_type will be sum up" do
+              expect(subject.first.leave_applications.leave_hours_within_month(year: year, month: month, type: 'annual')).to eq 16
+            end
+          end
+        end
+
+        context "out of range" do
+          let(:start_time) { WorkingHours.advance_to_working_time(Time.new(year, month, 1) - 2.working.day) }
+          let(:end_time)   { WorkingHours.return_to_working_time(Time.new(year, month, 1) - 1.working.day) }
+
+          include_examples "not included in returned results"
+        end
+      end
+
+      context "not approved leave_applications" do
+        let!(:leave_application) { FactoryGirl.create(:leave_application, :with_leave_time, start_time: start_time, end_time: end_time) }
+        include_examples "not included in returned results"
+      end
+    end
+  end
 end

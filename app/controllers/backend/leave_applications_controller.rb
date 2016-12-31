@@ -22,6 +22,10 @@ class Backend::LeaveApplicationsController < Backend::BaseController
     end
   end
 
+  def statistics
+    @users = User.with_leave_application_statistics(specific_year, specific_month).all
+  end
+
   private
 
   def approve

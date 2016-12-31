@@ -80,4 +80,9 @@ module ApplicationHelper
   def specific_month
     params[:month] || Time.now.month
   end
+
+  def hours_to_humanize(hours)
+    return "-" if hours == 0
+    I18n.t("time.humanize_working_hour", days: hours.to_i/8, hours: hours%8, total: hours)
+  end
 end

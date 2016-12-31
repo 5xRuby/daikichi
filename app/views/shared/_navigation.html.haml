@@ -27,6 +27,8 @@
                 backend_leave_applications_path(status: :pending)
               %li= link_to t("title.backend/monthly_leave_times.index"),
                 backend_monthly_leave_times_path(year: specific_year, month: specific_month)
+              %li= link_to t("captions.backend/leave_applications.statistics"),
+                statistics_backend_leave_applications_path(year: specific_year, month: specific_month)
               %li= link_to t("title.backend/leave_times.index"),
                 backend_leave_times_path
 

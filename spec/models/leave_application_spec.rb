@@ -366,4 +366,149 @@ RSpec.describe LeaveApplication, type: :model do
       expect(leave.status).to eq "canceled"
     end
   end
+
+  describe "scope" do
+    let(:beginning)  { WorkingHours.advance_to_working_time(1.month.ago.beginning_of_month) }
+    let(:closing)    { WorkingHours.return_to_working_time(1.month.ago.end_of_month) }
+    describe ".leave_within_range" do
+      let(:start_time) { beginning + 3.working.day }
+      let(:end_time)   { beginning + 5.working.day }
+      subject { described_class.leave_within_range(beginning, closing) }
+      let!(:leave_application) {
+        FactoryGirl.create(
+          :leave_application, :with_leave_time,
+          start_time: start_time,
+          end_time:   end_time
+        )
+      }
+
+      context "LeaveApplication is in specific range" do
+        it "should be included in returned results" do
+          expect(subject).to include(leave_application)
+        end
+      end
+
+      context "LeaveApplication overlaps specific range" do
+        let(:start_time) { beginning - 1.working.day }
+        let(:end_time)   { beginning + 1.working.day }
+
+        it "should be included in returned results" do
+          expect(subject).to include(leave_application)
+        end
+      end
+
+      context "LeaveApplication happened before specific range" do
+        let(:start_time) { beginning - 2.working.day }
+        let(:end_time)   { beginning - 1.working.day }
+        it "should not be included in returned results" do
+          expect(subject).not_to include(leave_application)
+        end
+      end
+
+      context "LeaveApplication happened after specific range" do
+        let(:start_time) { WorkingHours.advance_to_working_time(closing) }
+        let(:end_time)   { start_time + 1.working.day }
+        it "should not be included in returned results" do
+          expect(subject).not_to include(leave_application)
+        end
+      end
+    end
+  end
+
+  describe "helper method" do
+    let(:beginning)  { WorkingHours.advance_to_working_time(1.month.ago.beginning_of_month) }
+    let(:closing)    { WorkingHours.return_to_working_time(1.month.ago.end_of_month) }
+    describe ".leave_hours_within" do
+      let(:start_time) { beginning + 3.working.day }
+      let(:end_time)   { beginning + 5.working.day }
+      subject { described_class.leave_hours_within(beginning, closing) }
+
+      context "within_range" do
+        before do
+          FactoryGirl.create(:leave_application, :with_leave_time, start_time: start_time, end_time: end_time)
+        end
+
+        it "should be sum up" do
+          expect(subject).to eq 16
+        end
+      end
+
+      context "partially overlaps with given range" do
+        let(:start_time) { beginning - 1.working.day  }
+        let(:end_time)   { WorkingHours.return_to_working_time(beginning + 1.working.day)  }
+
+        before do
+          FactoryGirl.create(:leave_application, :with_leave_time, start_time: start_time, end_time: end_time)
+        end
+
+        it "only hours in range will be sum up" do
+          expect(subject).to eq 8
+        end
+      end
+
+      context "out of range" do
+        let(:start_time) { beginning - 2.working.day  }
+        let(:end_time)   { WorkingHours.return_to_working_time(beginning - 1.working.day)  }
+
+        before do
+          FactoryGirl.create(:leave_application, :with_leave_time, start_time: start_time, end_time: end_time)
+        end
+
+        it "should be ignored" do
+          expect(subject).to eq 0
+        end
+      end
+    end
+
+    describe "#range_exceeded?" do
+      let(:start_time) { beginning + 3.working.day }
+      let(:end_time)   { WorkingHours.return_to_working_time(beginning + 5.working.day) }
+      let(:leave_application) {
+        FactoryGirl.build_stubbed(
+          :leave_application,
+          start_time: start_time,
+          end_time:   end_time
+        )
+      }
+      subject { leave_application.range_exceeded?(beginning, closing) }
+      context "start_time exceeds given range" do
+        let(:start_time) { beginning - 1.hour }
+        it { expect(subject).to be_truthy }
+      end
+
+      context "end_time exceeds given range" do
+        let(:end_time) { closing + 1.hour }
+        it { expect(subject).to be_truthy }
+      end
+
+      context "start_time and end_time within_range" do
+        let(:start_time) { beginning }
+        let(:end_time)   { closing }
+        it { expect(subject).to be_falsy }
+      end
+    end
+
+    describe "#is_leave_type?" do
+      let(:type) { 'all' }
+      let(:leave_application) { FactoryGirl.build_stubbed(:leave_application) }
+      subject { leave_application.is_leave_type?(type) }
+      context "all" do
+        it "is true with all leave_type" do
+          expect(subject).to be_truthy
+        end
+      end
+
+      context "specific" do
+        let(:type) { 'annual' }
+        let(:leave_application) { FactoryGirl.build_stubbed(:leave_application, leave_type: type) }
+        it "is true if given leave_type equals to object's leave_type" do
+          expect(subject).to be_truthy
+        end
+
+        it "is false if given leave_type not equals to object's leave_type" do
+          expect(leave_application.is_leave_type?('unknown')).to be_falsy
+        end
+      end
+    end
+  end
 end
