@@ -7,16 +7,16 @@ RSpec.describe LeaveApplication, type: :model do
   let(:bonus)    { FactoryGirl.create(:leave_time, :bonus,    user: first_year_employee) }
   let(:annual)   { FactoryGirl.create(:leave_time, :annual,   user: first_year_employee) }
   # Monday
-  let(:start_time) { Time.new(2016, 8, 15, 9, 30, 0, "+08:00") }
-  let(:one_hour_ago) { Time.new(2016, 8, 15, 8, 30, 0, "+08:00") }
-  let(:half_hour_later) { Time.new(2016, 8, 15, 10, 0, 0, "+08:00") }
-  let(:one_hour_later) { Time.new(2016, 8, 15, 10, 30, 0, "+08:00") }
-  let(:two_hour_later) { Time.new(2016, 8, 15, 11, 30, 0, "+08:00") }
-  let(:one_day_later) { Time.new(2016, 8, 16, 9, 30, 0, "+08:00") }
-  let(:two_day_later) { Time.new(2016, 8, 17, 9, 30, 0, "+08:00") }
-  let(:three_day_later) { Time.new(2016, 8, 18, 9, 30, 0, "+08:00") }
-  let(:four_day_later) { Time.new(2016, 8, 19, 9, 30, 0, "+08:00") }
-  let(:five_day_later) { Time.new(2016, 8, 20, 9, 30, 0, "+08:00") }
+  let(:start_time)      { Time.new(Time.current.year, 8, 15, 9, 30, 0, "+08:00") }
+  let(:one_hour_ago)    { Time.new(Time.current.year, 8, 15, 8, 30, 0, "+08:00") }
+  let(:half_hour_later) { Time.new(Time.current.year, 8, 15, 10, 0, 0, "+08:00") }
+  let(:one_hour_later)  { Time.new(Time.current.year, 8, 15, 10, 30, 0, "+08:00") }
+  let(:two_hour_later)  { Time.new(Time.current.year, 8, 15, 11, 30, 0, "+08:00") }
+  let(:one_day_later)   { Time.new(Time.current.year, 8, 16, 9, 30, 0, "+08:00") }
+  let(:two_day_later)   { Time.new(Time.current.year, 8, 17, 9, 30, 0, "+08:00") }
+  let(:three_day_later) { Time.new(Time.current.year, 8, 18, 9, 30, 0, "+08:00") }
+  let(:four_day_later)  { Time.new(Time.current.year, 8, 19, 9, 30, 0, "+08:00") }
+  let(:five_day_later)  { Time.new(Time.current.year, 8, 20, 9, 30, 0, "+08:00") }
   # 主管
   let(:manager_eddie) { FactoryGirl.create(:manager_eddie) }
 
@@ -134,7 +134,7 @@ RSpec.describe LeaveApplication, type: :model do
         annual, personal, sick, bonus = init_quota
         quota = sick.quota
 
-        leave = leave(Time.new(2016, 8, 15, 23, 30, 0, "+08:00"))
+        leave = leave(Time.new(Time.current.year, 8, 15, 23, 30, 0, "+08:00"))
         expect(leave.hours).to eq 8
         expect(leave.status).to eq "pending"
 
