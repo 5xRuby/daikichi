@@ -12,6 +12,11 @@ RSpec.describe Backend::LeaveApplicationsController, type: :controller do
     end
 
     context "logged in" do
+      context "as employee" do
+        login_employee
+        include_examples "authorization failed"
+      end
+
       context "as manager" do
         login_manager
 
