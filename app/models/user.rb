@@ -27,6 +27,17 @@ class User < ApplicationRecord
       .order(id: :desc)
   }
 
+  scope :with_leave_application_statistics, ->(year, month) {
+    joins(:leave_applications, :leave_times)
+    .includes(:leave_applications, :leave_times)
+    .merge(LeaveApplication.leave_within_range(
+      WorkingHours.advance_to_working_time(Time.new(year, month, 1)),
+      WorkingHours.return_to_working_time(Time.new(year, month, 1).end_of_month))
+      .approved
+    )
+    .merge(LeaveTime.where(year: year)).distinct
+  }
+
   def seniority(year = Time.now.year)
     if join_date.nil? or join_date.year > year
       0

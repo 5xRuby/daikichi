@@ -72,6 +72,7 @@ zh-TW:
       verify: "審核"
       approve: "核准"
       reject: "駁回"
+      statistics: "員工休假狀況"
     backend/monthly_leave_times:
       index: "員工休假狀況"
     backend/leave_times:
@@ -109,6 +110,7 @@ zh-TW:
     backend/leave_applications:
       index: "審核假單"
       verify: "審核假單"
+      statistics: "員工休假統計 v.2"
     backend/monthly_leave_times:
       index: "%{year} 年 %{month} 月 員工休假狀況"
     backend/leave_times:

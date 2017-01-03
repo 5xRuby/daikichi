@@ -25,6 +25,14 @@ class LeaveApplication < ApplicationRecord
   include AASM
   include SignatureConcern
 
+  scope :leave_within_range, ->(beginning = WorkingHours.advance_to_working_time(1.month.ago.beginning_of_month),
+                                closing   = WorkingHours.return_to_working_time(1.month.ago.end_of_month)) {
+    where(
+      '(leave_applications.start_time, leave_applications.end_time) OVERLAPS (timestamp :beginning, timestamp :closing)',
+      beginning: beginning, closing: closing
+    )
+  }
+
   aasm column: :status do
     state :pending, initial: true
     state :approved
@@ -68,6 +76,26 @@ class LeaveApplication < ApplicationRecord
 
   def leave_time
     @leave_time ||= LeaveTime.personal(self.user_id, self.leave_type, self.start_time.year)
+  end
+
+  def range_exceeded?(beginning = WorkingHours.advance_to_working_time(1.month.ago.beginning_of_month), closing = WorkingHours.return_to_working_time(1.month.ago.end_of_month))
+    beginning > self.start_time || closing < self.end_time
+  end
+
+  def self.leave_hours_within(beginning = WorkingHours.advance_to_working_time(1.month.ago.beginning_of_month), closing = WorkingHours.return_to_working_time(1.month.ago.end_of_month))
+    self.leave_within_range(beginning, closing).reduce(0) do |result, la|
+      if la.range_exceeded?(beginning, closing)
+        @valid_range = [la.start_time, beginning].max..[la.end_time, closing].min
+        result + @valid_range.min.working_time_until(@valid_range.max) / 3600.0
+      else
+        result + la.hours
+      end
+    end
+  end
+
+  def is_leave_type?(type = :all)
+    return true if type.to_sym == :all
+    self.leave_type.to_sym == type.to_sym
   end
 
   private
@@ -127,6 +155,21 @@ class LeaveApplication < ApplicationRecord
   def has_enough_leave_time
     unless self.leave_time.present? && assign_hours < (self.leave_time.try(:usable_hours) || 0)
       errors.add(:end_time, :not_enough_leave_time)
+    end
+  end
+end
+
+class LeaveApplication::ActiveRecord_Associations_CollectionProxy
+  def leave_hours_within_month(type: 'all', year: Time.current.year, month: Time.current.month)
+    beginning = WorkingHours.advance_to_working_time(Time.new(year, month, 1))
+    closing   = WorkingHours.return_to_working_time(Time.new(year, month, 1).end_of_month)
+    records.select { |r| r.is_leave_type?(type) }.reduce(0) do |result, la|
+      if la.range_exceeded?(beginning, closing)
+        valid_range = [la.start_time, beginning].max..[la.end_time, closing].min
+        result + valid_range.min.working_time_until(valid_range.max) / 3600.0
+      else
+        result + la.hours
+      end
     end
   end
 end

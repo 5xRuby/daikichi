@@ -8,9 +8,8 @@ Rails.application.routes.draw do
       resources :users
 
       resources :leave_applications, only: [:index, :update] do
-        member do
-          get "verify"
-        end
+        get :verify, on: :member
+        get :statistics, on: :collection
       end
 
       resources :leave_times, only: [:index]
