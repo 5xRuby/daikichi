@@ -38,6 +38,12 @@ class User < ApplicationRecord
     .merge(LeaveTime.where(year: year)).distinct
   }
 
+  ROLES.each do |role|
+    define_method "is_#{role}?" do
+      self.role.to_sym == role
+    end
+  end
+
   def seniority(year = Time.now.year)
     if join_date.nil? or join_date.year > year
       0

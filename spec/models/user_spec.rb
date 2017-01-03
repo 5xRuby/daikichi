@@ -160,4 +160,34 @@ RSpec.describe User, type: :model do
       end
     end
   end
+
+  describe "helper_method" do
+    describe "role identification" do
+      let(:employee) { FactoryGirl.create(:user, :employee) }
+      let(:manager)  { FactoryGirl.create(:user, :manager) }
+      let(:hr)  { FactoryGirl.create(:user, :hr) }
+
+      context "is_manager?" do
+        it "is true if user is manager" do
+          expect(manager.is_manager?).to be_truthy
+        end
+
+        it "is false if user is not manager" do
+          expect(hr.is_manager?).to be_falsey
+          expect(employee.is_manager?).to be_falsey
+        end
+      end
+
+      context "is_hr?" do
+        it "is true if user is hr" do
+          expect(hr.is_hr?).to be_truthy
+        end
+
+        it "is false if user is not hr" do
+          expect(employee.is_hr?).to be_falsey
+          expect(manager.is_hr?).to be_falsey
+        end
+      end
+    end
+  end
 end
