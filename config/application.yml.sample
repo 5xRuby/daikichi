@@ -9,6 +9,11 @@ defaults: &defaults
     role: 'admin'
     password: '12345678'
 
+  leave_time:
+    max_annual_days: 30
+    daily_hour: 8
+    days_in_a_year: 365.0
+
 development:
   <<: *defaults
   neat_setting: 800

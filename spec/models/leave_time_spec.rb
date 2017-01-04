@@ -4,21 +4,65 @@ require "rails_helper"
 RSpec.describe LeaveTime, type: :model do
   let(:first_year_employee) { FactoryGirl.create(:first_year_employee) }
   let(:third_year_employee) { FactoryGirl.create(:third_year_employee) }
-  let(:senior_employee) { FactoryGirl.create(:user, :employee, join_date: "1980-10-01") }
+  let(:senior_employee) { FactoryGirl.create(:user, :employee, join_date: 30.years.ago) }
   let(:contractor)      { FactoryGirl.create(:user, :contractor) }
 
   describe "init_quota" do
     context "annual leave" do
-      it "first year employee should have 32 hours" do
+      it "first year employee should have 56 hours" do
         annual = FactoryGirl.create(:leave_time, :annual, user: first_year_employee)
         annual.init_quota
-        expect(annual.quota).to eq 32
+        expect(annual.quota).to eq 56 
       end
 
-      it "third year employee should have 72 hours" do
+      it "third year employee should have 80 hours" do
         annual = FactoryGirl.create(:leave_time, :annual, user: third_year_employee)
         annual.init_quota
-        expect(annual.quota).to eq 72
+        expect(annual.quota).to eq 80 
+      end
+
+      it "employee with 3-year employee tenure should have 112 hours" do 
+        annual = FactoryGirl.create(:leave_time, :annual, user: FactoryGirl.build(:employee, join_date: 3.years.ago))
+        annual.init_quota
+        expect(annual.quota).to eq 112 
+      end
+
+      it "employee with 4-year employee tenure should have 112 hours" do 
+        annual = FactoryGirl.create(:leave_time, :annual, user: FactoryGirl.build(:employee, join_date: 4.years.ago))
+        annual.init_quota
+        expect(annual.quota).to eq 112 
+      end
+
+      it "employee with 5-year employee tenure should have 120 hours" do 
+        annual = FactoryGirl.create(:leave_time, :annual, user: FactoryGirl.build(:employee, join_date: 5.years.ago))
+        annual.init_quota
+        expect(annual.quota).to eq 120
+      end
+      
+      it "employee with 9-year employee tenure should have 120 hours" do 
+        annual = FactoryGirl.create(:leave_time, :annual, user: FactoryGirl.build(:employee, join_date: 9.years.ago))
+        annual.init_quota
+        expect(annual.quota).to eq 120
+      end
+
+      context "employee with more than 10-year employee tenure should have extra 8 hours for each additional year" do 
+        it "employee with 10-year employee tenure should have 128 hours" do 
+          annual = FactoryGirl.create(:leave_time, :annual, user: FactoryGirl.build(:employee, join_date: 10.years.ago))
+          annual.init_quota
+          expect(annual.quota).to eq 128
+        end
+
+        it "employee with 11-year employee tenure should have 136 hours" do 
+          annual = FactoryGirl.create(:leave_time, :annual, user: FactoryGirl.build(:employee, join_date: 11.years.ago))
+          annual.init_quota
+          expect(annual.quota).to eq 136
+        end
+
+        it "employee with 23-year employee tenure should have 232 hours" do 
+          annual = FactoryGirl.create(:leave_time, :annual, user: FactoryGirl.build(:employee, join_date: 23.years.ago))
+          annual.init_quota
+          expect(annual.quota).to eq 232
+        end
       end
 
       it "senior employee should have no more than 240 hours" do
@@ -31,7 +75,6 @@ RSpec.describe LeaveTime, type: :model do
         annual = FactoryGirl.create(:leave_time, :annual, user: contractor)
         expect(annual.init_quota).to be_falsey
       end
-
     end
 
     context "sick leave" do

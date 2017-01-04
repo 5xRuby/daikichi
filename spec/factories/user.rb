@@ -33,15 +33,17 @@ FactoryGirl.define do
 
     # base year is as same as the year of time when the code is running
     factory :first_year_employee, traits: [:employee] do
-      join_date { Time.new(Time.now.year, 6, 1) }
+      join_date { 6.month.ago }
     end
 
     factory :second_year_employee, traits: [:employee] do
-      join_date { Time.new(Time.now.year - 1, 4, 15) }
+      join_date { 18.month.ago }
     end
 
     factory :third_year_employee, traits: [:employee] do
-      join_date { Time.new(Time.now.year - 2, 4, 15) }
+      join_date { 30.month.ago }
     end
+
+    factory :employee, traits: [:employee] 
   end
 end
