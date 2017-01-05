@@ -33,3 +33,5 @@
 /lib/tasks/bonus_leave_times.yml
 
 docker-compose.yml
+
+/coverage
