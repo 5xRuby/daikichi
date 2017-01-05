@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/5xRuby/daikichi.svg?branch=development)](https://travis-ci.org/5xRuby/daikichi) [![Code Climate](https://codeclimate.com/github/5xRuby/daikichi/badges/gpa.svg)](https://codeclimate.com/github/5xRuby/daikichi) [![Test Coverage](https://codeclimate.com/github/5xRuby/daikichi/badges/coverage.svg)](https://codeclimate.com/github/5xRuby/daikichi/coverage)
 # Requirements
 
 * Ruby 2.3.1
@@ -9,7 +10,7 @@
 ```
 $ git clone git@github.com:5xruby/daikichi.git  
 $ cd daikichi
-  
+
 # generate key with rake secret
 $ cp config/secrets.yml.sample config/secrets.yml  
 
@@ -41,7 +42,7 @@ $ gem install powder
 $ powder link
 
 # export BYEBUGPORT={port}
-$ cp .powenv.sample .powenv 
+$ cp .powenv.sample .powenv
 $ bundle exec byebug -R localhost:{port}
 ```
 
