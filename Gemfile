@@ -48,6 +48,10 @@ gem 'whenever', :require => false
 
 group :development, :test do
   gem 'byebug', platform: :mri
+  gem 'factory_girl_rails'
+  gem 'faker'
+  gem 'timecop'
+  gem 'pry'
 end
 
 group :development do
@@ -64,8 +68,6 @@ end
 
 group :test do
   gem 'rspec-rails'
-  gem 'factory_girl_rails'
-  gem 'faker'
   gem 'shoulda-matchers'
   gem 'database_rewinder'
   gem 'timecop'

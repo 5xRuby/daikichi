@@ -5,6 +5,8 @@ class User < ApplicationRecord
   has_many :leave_applications, -> { order("id DESC") }
   has_many :bonus_leave_time_logs, -> { order("id DESC") }
 
+  DAYS_IN_YEAR = Settings.leave_time.days_in_a_year
+
   validates :login_name, uniqueness: { case_sensitive: false, scope: :deleted_at }
   validates :email, uniqueness: { case_sensitive: false, scope: :deleted_at }
 
@@ -44,25 +46,18 @@ class User < ApplicationRecord
     end
   end
 
-  def seniority(year = Time.now.year)
-    if join_date.nil? or join_date.year > year
-      0
-    elsif employed_for_the_first_year? || employed_within_a_year?
-      1
-    else
-      year - join_date.year + 1
-    end
+  def seniority(time = Time.now)
+    return 0 if join_date.nil?
+    
+    seniority = ((time.to_date - join_date.to_date) / DAYS_IN_YEAR).to_i
+    seniority == 0 ? seniority + 1 : seniority
   end
 
   def fulltime?
-    case role
-    when "manager", "hr", "employee"
-      true
-    else
-      false
-    end
+    %w(manager hr employee).include?(role)
   end
 
+  # TODO might be unnecessary
   # 未滿第一年的年度
   def employed_for_the_first_year?(time = Time.now)
     join_date.year == time.year
