@@ -36,17 +36,6 @@ class LeaveTime < ApplicationRecord
     save!
   end
 
-  def refill
-    return false if seniority != 2 || refilled
-
-    self.attributes = {
-      quota: quota + DAILY_HOURS,
-      usable_hours: usable_hours + DAILY_HOURS,
-      refilled: true
-    }
-    save!
-  end
-
   def deduct(hours)
     self.used_hours += hours
     self.usable_hours = quota - used_hours
@@ -63,7 +52,7 @@ class LeaveTime < ApplicationRecord
     end
   end
 
-  ## Only if the employee resigned within a year 
+  ## Only calcualte when employees resign within a year 
 
   def first_year_rate
     (days_by_leave_type * first_year_adjustment).round * DAILY_HOURS
@@ -73,14 +62,14 @@ class LeaveTime < ApplicationRecord
     (Time.zone.now - user.join_date).to_i / 1.day / DAYS_IN_YEAR
   end
 
+  def employed_for_the_first_year?
+    user.employed_for_the_first_year?
+  end
+
   #---------------------------
 
   def seniority
     user.seniority
-  end
-
-  def employed_for_the_first_year?
-    user.employed_for_the_first_year?
   end
 
   def annual_hours_by_seniority

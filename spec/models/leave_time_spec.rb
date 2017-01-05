@@ -78,11 +78,11 @@ RSpec.describe LeaveTime, type: :model do
     end
 
     context "sick leave" do
-      it "first year employee should have 136 hours" do
+      it "first year employee should have 240 hours (30 days)" do
         #FIXME: Test will failed when encountered leap year
         sick = FactoryGirl.create(:leave_time, :sick, user: first_year_employee)
         sick.init_quota
-        expect(sick.quota).to eq 144
+        expect(sick.quota).to eq 240
       end
 
       it "regular employee should have 240 hours" do
@@ -98,10 +98,10 @@ RSpec.describe LeaveTime, type: :model do
     end
 
     context "personal leave" do
-      it "first year employee should have 32 hours" do
+      it "first year employee should have 56 hours (7 days)" do
         personal = FactoryGirl.create(:leave_time, :personal, user: first_year_employee)
         personal.init_quota
-        expect(personal.quota).to eq 32
+        expect(personal.quota).to eq 56 
       end
 
       it "regular employee should have 56 hours" do
@@ -127,53 +127,6 @@ RSpec.describe LeaveTime, type: :model do
         bonus = FactoryGirl.create(:leave_time, :bonus, user: contractor)
         expect(bonus.init_quota).to be_falsey
       end
-    end
-  end
-
-  describe "refill" do
-    let(:this_year) { Time.now.year }
-
-    it "employee not employed for a year shouldn't get 8 hour plus" do
-      annual = FactoryGirl.create(:leave_time, :annual, user: first_year_employee)
-      Timecop.travel Time.local(this_year + 1, 1, 1, 0, 0, 0)
-      annual.init_quota
-      expect(annual.quota).to eq 56
-      Timecop.return
-
-      Timecop.travel Time.local(this_year + 1, 5, 1, 0, 0, 0)
-      annual.refill
-      expect(annual.quota).to eq 56
-      Timecop.return
-    end
-
-    it "employee employed for a year shouldn get 8 hours plus" do
-      annual = FactoryGirl.create(:leave_time, :annual, user: first_year_employee)
-      Timecop.travel Time.local(this_year + 1, 1, 1, 0, 0, 0)
-      annual.init_quota
-      expect(annual.quota).to eq 56
-      Timecop.return
-
-      Timecop.travel Time.local(this_year + 1, 7, 1, 0, 0, 0)
-      annual.refill
-      expect(annual.quota).to eq 64
-
-      annual.refill
-      expect(annual.quota).not_to eq 72
-      expect(annual.quota).to eq 64
-      Timecop.return
-    end
-
-    it "third_year_employee won't get 8 hours plus" do
-      annual = FactoryGirl.create(:leave_time, :annual, user: third_year_employee)
-      Timecop.travel Time.local(this_year + 1, 1, 1, 0, 0, 0)
-      annual.init_quota
-      expect(annual.quota).to eq 80
-      Timecop.return
-
-      Timecop.travel Time.local(this_year + 1, 7, 1, 0, 0, 0)
-      annual.refill
-      expect(annual.quota).to eq 80
-      Timecop.return
     end
   end
 end
