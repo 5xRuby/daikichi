@@ -32,6 +32,7 @@ gem 'jbuilder', '~> 2.0'
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 
+gem 'active_hash'
 gem 'devise'
 gem 'cancancan'
 gem 'simple_form'
@@ -55,6 +56,7 @@ group :development, :test do
 end
 
 group :development do
+  gem 'rubocop'
   gem 'web-console'
   gem 'listen', '~> 3.0.5'
   gem 'spring'
