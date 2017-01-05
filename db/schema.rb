@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161110095706) do
+ActiveRecord::Schema.define(version: 20170105042400) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -54,16 +54,16 @@ ActiveRecord::Schema.define(version: 20161110095706) do
   end
 
   create_table "leave_times", force: :cascade do |t|
-    t.integer  "user_id"
-    t.integer  "year"
+    t.integer  "user_id",                                  null: false
     t.string   "leave_type"
-    t.integer  "quota",        default: 0
-    t.integer  "usable_hours", default: 0
-    t.integer  "used_hours",   default: 0
-    t.datetime "created_at",                   null: false
-    t.datetime "updated_at",                   null: false
-    t.boolean  "refilled",     default: false
-    t.index ["year"], name: "index_leave_times_on_year", using: :btree
+    t.integer  "quota",           default: 0
+    t.integer  "usable_hours",    default: 0
+    t.integer  "used_hours",      default: 0
+    t.datetime "created_at",                               null: false
+    t.datetime "updated_at",                               null: false
+    t.boolean  "refilled",        default: false
+    t.date     "effective_date",  default: -> { "now()" }, null: false
+    t.date     "expiration_date", default: -> { "now()" }, null: false
   end
 
   create_table "users", force: :cascade do |t|

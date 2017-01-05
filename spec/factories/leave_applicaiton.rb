@@ -40,20 +40,14 @@ FactoryGirl.define do
 
     trait :with_leave_time do
       before(:create) do |la|
-        if la.start_time.year == la.end_time.year
-          create(:leave_time, la.leave_type.to_sym, user: la.user, quota: 56, usable_hours: 56, year: la.start_time.year)
-        else
-          create(:leave_time, la.leave_type.to_sym, user: la.user, quota: 56, usable_hours: 56, year: la.start_time.year)
-          create(:leave_time, la.leave_type.to_sym, user: la.user, quota: 56, usable_hours: 56, year: la.end_time.year)
-        end
+        create(:leave_time, la.leave_type.to_sym, user: la.user, quota: 56, usable_hours: 56,
+               effective_date:  la.start_time - 50.days,
+               expiration_date: la.start_time + 1.year )
       end
       after(:stub) do |la|
-        if la.start_time.year == la.end_time.year
-          create(:leave_time, la.leave_type.to_sym, user: la.user, quota: 56, usable_hours: 56, year: la.start_time.year)
-        else
-          create(:leave_time, la.leave_type.to_sym, user: la.user, quota: 56, usable_hours: 56, year: la.start_time.year)
-          create(:leave_time, la.leave_type.to_sym, user: la.user, quota: 56, usable_hours: 56, year: la.end_time.year)
-        end
+        create(:leave_time, la.leave_type.to_sym, user: la.user, quota: 56, usable_hours: 56,
+               effective_date:  la.start_time - 50.days,
+               expiration_date: la.start_time + 1.year )
       end
     end
   end

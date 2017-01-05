@@ -3,7 +3,7 @@ class Backend::UsersController < Backend::BaseController
   before_action :set_minimum_password_length, only: [:new, :edit]
 
   def show
-    @leave_times = LeaveTime.current_year(params[:id])
+    @leave_times = LeaveTime.effective
   end
 
   def update
