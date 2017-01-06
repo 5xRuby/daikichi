@@ -10,6 +10,7 @@ defaults: &defaults
     password: '12345678'
 
   leave_time:
+    leave_for_new_employees: true
     max_annual_days: 30
     daily_hour: 8
     days_in_a_year: 365.0

@@ -3,7 +3,6 @@ class LeaveTime < ApplicationRecord
   delegate :seniority, to: :user
   belongs_to :user, optional: false
 
-
   BASIC_TYPES = %w(annual bonus personal sick).freeze
   MAX_ANNUAL_DAYS = Settings.leave_time.max_annual_days
   DAILY_HOURS = Settings.leave_time.daily_hour
@@ -20,7 +19,7 @@ class LeaveTime < ApplicationRecord
 
   scope :overlaps, ->(beginning, closing) {
     where(
-      '(leave_times.effective_date, leave_times.expiration_date) OVERLAPS (timestamp :beginning, timestamp :closing)',
+      "(leave_times.effective_date, leave_times.expiration_date) OVERLAPS (timestamp :beginning, timestamp :closing)",
       beginning: beginning, closing: closing
     )
   }
@@ -36,10 +35,8 @@ class LeaveTime < ApplicationRecord
   validate  :range_not_overlaps
 
   def init_quota
-    return false unless (LEAVE_FOR_NEW_EMPLOYEES && user.fulltime?) || seniority > 1
-
     quota = quota_by_seniority
-    return false unless leave_type == "bonus" || quota >= 0
+    return false unless (leave_type == "bonus" && user.fulltime?) || quota > 0
     self.attributes = {
       leave_type: leave_type,
       quota: quota,
@@ -58,8 +55,10 @@ class LeaveTime < ApplicationRecord
 
   def quota_by_seniority
     if leave_type == "annual"
+      return 0 unless (LEAVE_FOR_NEW_EMPLOYEES && user.fulltime?) || seniority > 0
       annual_leave_days * DAILY_HOURS
     else
+      return 0 unless user.fulltime?
       days_by_leave_type * DAILY_HOURS
     end
   end
@@ -101,8 +100,8 @@ class LeaveTime < ApplicationRecord
 
   def overlaps?
     LeaveTime.overlaps(effective_date, expiration_date)
-             .where(user_id: user_id, leave_type: leave_type)
-             .where.not(id: self.id).any?
+      .where(user_id: user_id, leave_type: leave_type)
+      .where.not(id: self.id).any?
   end
 
   def positive_range
@@ -112,8 +111,8 @@ class LeaveTime < ApplicationRecord
   end
 
   def range_not_overlaps
-     if self.expiration_date && self.effective_date && overlaps?
-       errors.add(:effective_date, :range_should_not_overlaps)
-     end
+    if self.expiration_date && self.effective_date && overlaps?
+      errors.add(:effective_date, :range_should_not_overlaps)
+    end
   end
 end
