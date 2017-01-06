@@ -1,11 +1,13 @@
 # frozen_string_literal: true
 class LeaveTime < ApplicationRecord
+  delegate :seniority, to: :user
   belongs_to :user, optional: false
 
   BASIC_TYPES = %w(annual bonus personal sick).freeze
   MAX_ANNUAL_DAYS = Settings.leave_time.max_annual_days
   DAILY_HOURS = Settings.leave_time.daily_hour
   DAYS_IN_YEAR = Settings.leave_time.days_in_a_year # ignore leap year
+  LEAVE_FOR_NEW_EMPLOYEES = Settings.leave_time.leave_for_new_employees
 
   scope :personal, ->(user_id, leave_type, beginning, closing){
     overlaps(beginning, closing).find_by(user_id: user_id, leave_type: leave_type)
@@ -17,7 +19,7 @@ class LeaveTime < ApplicationRecord
 
   scope :overlaps, ->(beginning, closing) {
     where(
-      '(leave_times.effective_date, leave_times.expiration_date) OVERLAPS (timestamp :beginning, timestamp :closing)',
+      "(leave_times.effective_date, leave_times.expiration_date) OVERLAPS (timestamp :beginning, timestamp :closing)",
       beginning: beginning, closing: closing
     )
   }
@@ -33,11 +35,8 @@ class LeaveTime < ApplicationRecord
   validate  :range_not_overlaps
 
   def init_quota
-    return false if seniority < 1
     quota = quota_by_seniority
-    unless leave_type == "bonus"
-      return false if quota <= 0
-    end
+    return false unless (leave_type == "bonus" && user.fulltime?) || quota > 0
     self.attributes = {
       leave_type: leave_type,
       quota: quota,
@@ -56,8 +55,10 @@ class LeaveTime < ApplicationRecord
 
   def quota_by_seniority
     if leave_type == "annual"
-      annual_hours_by_seniority
+      return 0 unless (LEAVE_FOR_NEW_EMPLOYEES && user.fulltime?) || seniority > 0
+      annual_leave_days * DAILY_HOURS
     else
+      return 0 unless user.fulltime?
       days_by_leave_type * DAILY_HOURS
     end
   end
@@ -78,19 +79,8 @@ class LeaveTime < ApplicationRecord
 
   #---------------------------
 
-  def seniority
-    user.seniority
-  end
-
-  def annual_hours_by_seniority
-    days = annual_hour_index
-    days = MAX_ANNUAL_DAYS if days > MAX_ANNUAL_DAYS
-    days * DAILY_HOURS
-  end
-
   def days_by_leave_type
     case leave_type
-    when "annual" then 7
     when "bonus" then 0
     when "personal" then 7
     when "sick" then 30
@@ -98,23 +88,20 @@ class LeaveTime < ApplicationRecord
     end
   end
 
-  def annual_hour_index
-    base_day = 6.freeze
-
-    case seniority
-    when 0 then 0
-    when 1 then 7
-    when 2 then 10
-    when (3..4) then 14
-    when (5..9) then 15
-    else seniority + base_day
+  def annual_leave_days
+    if LEAVE_FOR_NEW_EMPLOYEES == true && seniority == 0
+      ::AnnualLeaveIndex.find_by_tenure(seniority + 1).annual_leave_days
+    elsif seniority > 25
+      MAX_ANNUAL_DAYS
+    else
+      ::AnnualLeaveIndex.find_by_tenure(seniority).annual_leave_days
     end
   end
 
   def overlaps?
     LeaveTime.overlaps(effective_date, expiration_date)
-             .where(user_id: user_id, leave_type: leave_type)
-             .where.not(id: self.id).any?
+      .where(user_id: user_id, leave_type: leave_type)
+      .where.not(id: self.id).any?
   end
 
   def positive_range
@@ -124,8 +111,8 @@ class LeaveTime < ApplicationRecord
   end
 
   def range_not_overlaps
-     if self.expiration_date && self.effective_date && overlaps?
-       errors.add(:effective_date, :range_should_not_overlaps)
-     end
+    if self.expiration_date && self.effective_date && overlaps?
+      errors.add(:effective_date, :range_should_not_overlaps)
+    end
   end
 end

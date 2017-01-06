@@ -22,8 +22,8 @@ RSpec.describe User, type: :model do
       expect(contractor.seniority).to eq 0
     end
 
-    it "user is a second year employee employed within a year" do
-      travel_check(Time.now, first_year_employee, 1)
+    it "user is an employee employed within a year" do
+      travel_check(Time.now, first_year_employee, 0)
     end
 
     it "user is a second year employee employed over a year" do

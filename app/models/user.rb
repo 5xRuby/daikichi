@@ -49,7 +49,6 @@ class User < ApplicationRecord
     return 0 if join_date.nil?
 
     seniority = ((time.to_date - join_date.to_date) / DAYS_IN_YEAR).to_i
-    seniority == 0 ? seniority + 1 : seniority
   end
 
   def fulltime?

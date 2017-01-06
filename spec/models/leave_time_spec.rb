@@ -187,13 +187,7 @@ RSpec.describe LeaveTime, type: :model do
   end
 
   describe "init_quota" do
-    context "annual leave" do
-      it "first year employee should have 56 hours" do
-        annual = FactoryGirl.create(:leave_time, :annual, user: first_year_employee)
-        annual.init_quota
-        expect(annual.quota).to eq 56
-      end
-
+    shared_examples "annual_leave" do 
       it "third year employee should have 80 hours" do
         annual = FactoryGirl.create(:leave_time, :annual, user: third_year_employee)
         annual.init_quota
@@ -253,6 +247,25 @@ RSpec.describe LeaveTime, type: :model do
       it "non-employee have no leave time" do
         annual = FactoryGirl.create(:leave_time, :annual, user: contractor)
         expect(annual.init_quota).to be_falsey
+      end
+    end
+
+    context "new employees have annual leave" do
+      it_behaves_like "annual_leave"
+      it "first year employee should have 56 hours" do
+        annual = FactoryGirl.create(:leave_time, :annual, user: first_year_employee)
+        annual.init_quota
+        expect(annual.quota).to eq 56 
+      end
+    end
+
+    context "new employees have no annual leave" do 
+      before { stub_const("LeaveTime::LEAVE_FOR_NEW_EMPLOYEES", false) }
+      it_behaves_like "annual_leave"
+      it "first year employee should have no annual leave" do
+        annual = FactoryGirl.create(:leave_time, :annual, user: first_year_employee)
+        annual.init_quota
+        expect(annual.quota).to eq 0 
       end
     end
 
