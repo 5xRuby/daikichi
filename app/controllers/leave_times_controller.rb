@@ -1,7 +1,10 @@
 # frozen_string_literal: true
 class LeaveTimesController < BaseController
   def index
-    @current_collection = collection_scope.current_year(current_user.id, specific_year).page(params[:page])
+    # FIXME: This won't work since LeaveTime's structure has changed
+    @current_collection = collection_scope.overlaps(
+      Date.new(specific_year.to_i, 1, 1), Date.new(specific_year.to_i, 12, 1)
+    ).page(params[:page])
   end
 
   def show

@@ -59,7 +59,7 @@ namespace :import_data do
         quota: data[1],
         usable_hours: data[1]
       }
-      LeaveTime.personal(user_id, "bonus").update!(attributes)
+      LeaveTime.personal(user_id, "bonus", 2016).update!(attributes)
       puts "#{data[0]} 補修增加 #{data[1]} 時數"
     end
   end

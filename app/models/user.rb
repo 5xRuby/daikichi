@@ -37,7 +37,6 @@ class User < ApplicationRecord
       WorkingHours.return_to_working_time(Time.new(year, month, 1).end_of_month))
       .approved
     )
-    .merge(LeaveTime.where(year: year)).distinct
   }
 
   ROLES.each do |role|
@@ -48,7 +47,7 @@ class User < ApplicationRecord
 
   def seniority(time = Time.now)
     return 0 if join_date.nil?
-    
+
     seniority = ((time.to_date - join_date.to_date) / DAYS_IN_YEAR).to_i
     seniority == 0 ? seniority + 1 : seniority
   end

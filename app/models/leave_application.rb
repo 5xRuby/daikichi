@@ -75,7 +75,7 @@ class LeaveApplication < ApplicationRecord
   end
 
   def leave_time
-    @leave_time ||= LeaveTime.personal(self.user_id, self.leave_type, self.start_time.year)
+    @leave_time ||= LeaveTime.personal(self.user_id, self.leave_type, self.start_time, self.end_time)
   end
 
   def range_exceeded?(beginning = WorkingHours.advance_to_working_time(1.month.ago.beginning_of_month), closing = WorkingHours.return_to_working_time(1.month.ago.end_of_month))
@@ -107,7 +107,6 @@ class LeaveApplication < ApplicationRecord
   def deduct_leave_time_usable_hours
     assign_hours
 
-    # leave_time = self.leave_time
     leave_time.deduct hours
     LeaveApplicationLog.create!(leave_application_uuid: uuid,
                                 amount: hours)
@@ -117,7 +116,6 @@ class LeaveApplication < ApplicationRecord
     assign_hours
     save!
 
-    leave_time = LeaveTime.personal(user_id, leave_type)
     log = leave_application_logs.last
     delta = log.returning? ? hours : (hours - log.amount)
 
