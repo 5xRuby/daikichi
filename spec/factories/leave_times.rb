@@ -6,20 +6,13 @@ FactoryGirl.define do
     effective_date  { Time.current.beginning_of_year }
     expiration_date { Time.current.end_of_year }
 
-    trait :annual do
-      leave_type "annual"
-    end
+    # leave_types include:
+    # "annual", "bonus", "marriage", "funeral", "maternity", "personal", "official", "work_related_injury", "sick"
 
-    trait :sick do
-      leave_type "sick"
-    end
-
-    trait :personal do
-      leave_type "personal"
-    end
-
-    trait :bonus do
-      leave_type "bonus"
+    Settings.leave_types.each do |type|
+      trait type.to_sym do
+        leave_type type
+      end
     end
   end
 end

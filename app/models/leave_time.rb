@@ -3,7 +3,7 @@ class LeaveTime < ApplicationRecord
   delegate :seniority, to: :user
   belongs_to :user, optional: false
 
-  BASIC_TYPES = %w(annual bonus personal sick).freeze
+  BASIC_TYPES = Settings.leave_types.freeze
   MAX_ANNUAL_DAYS = Settings.leave_time.max_annual_days
   DAILY_HOURS = Settings.leave_time.daily_hour
   DAYS_IN_YEAR = Settings.leave_time.days_in_a_year # ignore leap year
@@ -37,12 +37,11 @@ class LeaveTime < ApplicationRecord
   def init_quota
     quota = quota_by_seniority
     return false unless (leave_type == "bonus" && user.fulltime?) || quota > 0
-    self.attributes = {
+    update_attributes!(
       leave_type: leave_type,
       quota: quota,
       usable_hours: quota
-    }
-    save!
+    )
   end
 
   def deduct(hours)
@@ -80,12 +79,9 @@ class LeaveTime < ApplicationRecord
   #---------------------------
 
   def days_by_leave_type
-    case leave_type
-    when "bonus" then 0
-    when "personal" then 7
-    when "sick" then 30
-    else 0
-    end
+    return 0 if leave_type == "bonus"
+
+    Settings.leaves.send(leave_type)
   end
 
   def annual_leave_days
@@ -105,13 +101,13 @@ class LeaveTime < ApplicationRecord
   end
 
   def positive_range
-    unless self.expiration_date && self.effective_date && self.expiration_date >= self.effective_date
+    unless expiration_date && effective_date && expiration_date >= effective_date
       errors.add(:effective_date, :range_should_be_positive)
     end
   end
 
   def range_not_overlaps
-    if self.expiration_date && self.effective_date && overlaps?
+    if expiration_date && effective_date && overlaps?
       errors.add(:effective_date, :range_should_not_overlaps)
     end
   end

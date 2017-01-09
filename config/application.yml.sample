@@ -9,11 +9,31 @@ defaults: &defaults
     role: 'admin'
     password: '12345678'
 
+  leave_types:
+    - annual
+    - bonus
+    - marriage
+    - funeral
+    - maternity
+    - personal
+    - official
+    - work_related_injury
+    - sick
+
   leave_time:
     leave_for_new_employees: true
     max_annual_days: 30
     daily_hour: 8
     days_in_a_year: 365.0
+
+  leaves:
+    marriage: 8
+    funeral: 365
+    maternity: 56
+    personal: 14
+    official: 365
+    work_related_injury: 365
+    sick: 30
 
 development:
   <<: *defaults
