@@ -9,31 +9,197 @@ defaults: &defaults
     role: 'admin'
     password: '12345678'
 
-  leave_types:
-    - annual
-    - bonus
-    - marriage
-    - funeral
-    - maternity
-    - personal
-    - official
-    - work_related_injury
-    - sick
+  leave_application_types:
+    remote: 
+      pool:
+        - remote
+      applicable: immediate
+      empty_pool_using: remote
+    late:
+      pool:
+        - annual
+        - personal
+      applicable: immediate
+    absent:
+      pool:
+        - absent
+      # no applicable means not applicable
+    annual:
+      pool:
+        - annual
+      applicable: normal
+    personal:
+      pool:
+        - annual
+        - personal
+      applicable: normal
+    sick:
+      pool:
+        - sick_1
+        - sick_2
+      applicable: immediate
+      auto_permit: true
+    official:
+      pool:
+        - official
+      applicable: normal
+    marriage:
+      pool:
+        - marriage
+      applicable: normal
+    maternity:
+      pool:
+        - maternity
+      applicable: normal
+    funeral:
+      pool:
+        - funeral
+      applicable: normal
+    bonus:
+      pool:
+        - bonus
+      # no applicable means not applicable
 
-  leave_time:
-    leave_for_new_employees: true
-    max_annual_days: 30
+  leave_pools:
+    remote:
+      created_when: prev_not_effective
+      quota: 
+        type: fixed
+        value: 2 # days
+      effective:
+        type: fixed
+        value: '1.month'
+      # no penalty means no penalty
+      display: usable
+    annual:
+      created_when: prev_not_effective
+      quota: 
+        type: annual
+        value:
+          - ' ~ 2.years : 7' # days, ( + 1 bonus, manually )
+          - '2.years ~ 3.years : 10'
+          - '3.years ~ 5.years : 14'
+          - '5.years ~ 10.years : 15'
+          - '10.years ~ 11.years : 16'
+          - '11.years ~ 12.years : 17'
+          - '12.years ~ 13.years : 18'
+          - '13.years ~ 14.years : 19'
+          - '14.years ~ 15.years : 20'
+          - '15.years ~ 16.years : 21'
+          - '16.years ~ 17.years : 22'
+          - '17.years ~ 18.years : 23'
+          - '18.years ~ 19.years : 24'
+          - '19.years ~ 20.years : 25'
+          - '20.years ~ 21.years : 26'
+          - '21.years ~ 22.years : 27'
+          - '22.years ~ 23.years : 28'
+          - '23.years ~ 24.years : 29'
+          - '24.years ~ : 30'
+      effective:
+        type: fixed
+        value: '1.year'
+      # no penalty means no penalty
+      display: usable
+    personal:
+      created_when: occurrence
+      quota: 
+        type: infinity
+      effective:
+        type: fixed
+        value: '1.month'
+      penalty: 0
+      display: used
+    absent:
+      created_when: occurrence
+      quota: 
+        type: infinity
+      effective:
+        type: fixed
+        value: '1.year'
+      penalty: -2
+      display: used 
+    sick_1:
+      created_when: occurrence
+      quota: 
+        type: fixed
+        value: 7 # days
+      effective:
+        type: fixed
+        value: '1.year'
+      # no penalty means no penalty
+      display: used 
+    sick_2:
+      created_when: occurrence
+      quota: 
+        type: fixed
+        value: 21 # days
+      effective:
+        type: fixed
+        value: '1.year'
+      penalty: 0.5
+      display: used 
+    official:
+      created_when: occurrence
+      quota:
+        type: admin_decide
+        value: 1 # days, the default
+      effective:
+        type: fixed
+        value: '1.month'
+      # no penalty means no penalty
+      display: usable
+    marriage:
+      created_when: occurrence
+      quota:
+        type: admin
+        value: 8 # days, the default
+      effective:
+        type: fixed
+        value: '1.year'
+      # no penalty means no penalty
+      display: usable
+    maternity:
+      created_when: occurrence
+      quota:
+        type: admin
+        value: 56 # days, the default
+      effective:
+        type: as_quota
+      # no penalty means no penalty
+      display: usable
+    funeral:
+      created_when: occurrence
+      quota:
+        type: admin
+        value: 8 # days, the default
+      effective:
+        type: fixed
+        value: '49.days'
+      # no penalty means no penalty
+      display: usable
+    bonus:
+      # no created_when means can only be given by admin
+      quota:
+        type: admin
+        value: 1 # days, the default
+      quota: 'AdminDecide'
+      effective:
+        type: admin
+        value: '1.days'
+      # no penalty means no penalty
+      display: usable
+
+  max_leave_to_applicable_before:
+    normal:
+      - '~ 1.day : 1.day'
+      - '2.days ~ 5.days : 1.week'
+      - '6.days ~ 10.days : 1.month'
+      - '10.days ~ : 2.months'
+    immediate: []
+  
+  misc:
     daily_hour: 8
-    days_in_a_year: 365.0
-
-  leaves:
-    marriage: 8
-    funeral: 365
-    maternity: 56
-    personal: 14
-    official: 365
-    work_related_injury: 365
-    sick: 30
+    days_in_a_year: 365
 
 development:
   <<: *defaults

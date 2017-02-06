@@ -36,10 +36,18 @@ zh-TW:
           funeral: '喪假'
       leave_application:
         leave_type:
+          remote: '在家上班'
+          late: '遲到'
+          absent: '曠職'
           annual: '特休'
-          bonus: '補休'
           personal: '事假'
           sick: '病假'
+          official: '公假'
+          marriage: '婚假'
+          maternity: '產假'
+          funeral: '喪假'
+          bonus: '補休'
+
         status:
           approved: '核准'
           rejected: '駁回'

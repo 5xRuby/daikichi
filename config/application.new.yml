@@ -1,14 +1,14 @@
 defaults: &defaults
-  force_ssl: <%= ENV['FORCE_SSL'] || "false" %>
+  force_ssl: false
   metadata:
-    title: <%= ENV['METADATA_TITLE'] %>
+    title: 
 
   admin_user:
-    name: <%= ENV['ADMIN_USER_NAME'] %>
-    login_name: <%= ENV['ADMIN_USER_LOGIN_NAME'] %>
-    email: <%= ENV['ADMIN_USER_EMAIL'] %>
-    role: <%= ENV['ADMIN_USER_ROLE'] %>
-    password: <%= ENV['ADMIN_USER_PASSWORD'] %>
+    name: 
+    login_name: 
+    email: 
+    role: 
+    password: 
 
   leave_application_types:
     remote: 
@@ -198,9 +198,8 @@ defaults: &defaults
       - '10.days ~ : 2.months'
     immediate: []
   
-  misc:
+  leave_settings:
     daily_hour: 8
-    days_in_a_year: 365
 
 development:
   <<: *defaults
