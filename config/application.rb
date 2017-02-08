@@ -13,5 +13,6 @@ module Daikichi
     # -- all .rb files in that directory are automatically loaded.
     config.time_zone = 'Taipei'
     config.i18n.default_locale = 'zh-TW'
+    config.autoload_paths << Rails.root.join('lib')
   end
 end

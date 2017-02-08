@@ -39,6 +39,7 @@ zh-TW:
               blank: "請簡述原因"
             start_time:
               should_be_earlier: "開始時間必須早於結束時間"
+              not_within_applicable_time: "距離申請時間小於規定"
             end_time:
               not_integer: "請假的最小單位是1小時"
               not_enough_leave_time: "剩餘休假時間不足"

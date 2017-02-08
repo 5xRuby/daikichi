@@ -1,30 +1,44 @@
 # frozen_string_literal: true
 class LeaveApplication < ApplicationRecord
+
+  include AASM
+  include SignatureConcern
+  
+  LEAVE_APPLICATION_TYPES_CONFIG =
+    DataHelper.each_keys_freeze Settings.leave_application_types do |v|
+      DataHelper.each_keys_to_sym v
+    end
+  LEAVE_APPLICATION_TYPES = LEAVE_APPLICATION_TYPES_CONFIG.keys
+  LEAVE_APPLICATION_TYPES_SELECTABLE = LEAVE_APPLICATION_TYPES.delete_if do |x|
+    LEAVE_APPLICATION_TYPES_CONFIG[x][:applicable].nil?
+  end
+  LEAVE_APPLICATION_TYPES_SYM = DataHelper.each_to_sym LEAVE_APPLICATION_TYPES
+  LEAVE_APPLICATION_TYPES_SELECTABLE_SYM = DataHelper.each_to_sym LEAVE_APPLICATION_TYPES_SELECTABLE
+
+  STATUS = %i(pending approved rejected canceled).freeze
+
+  MAX_LEAVE_TO_APPLICABLE_BEFORE = DataHelper.each_keys_freeze(Settings.max_leave_to_applicable_before) {|v| DurationRangeToValue.new(v)}
+
   acts_as_paranoid
   paginates_per 8
 
   after_initialize :set_primary_id
-  # FIXME: Checkif working when update duration of leave application
-  before_create :deduct_leave_time_usable_hours
-  before_destroy :return_leave_time_usable_hours
+  before_validation :assign_hours
+  before_validation :set_leave_time, on: :create
+  before_save :ensure_leave_time_hours_correct
+  before_save :auto_approve_if_allow
 
   belongs_to :user
   belongs_to :manager, class_name: "User", foreign_key: "manager_id"
+  belongs_to :leave_time
   has_many :leave_application_logs, foreign_key: "leave_application_uuid", primary_key: "uuid", dependent: :destroy
 
-  validates :leave_type, :description, presence: true
-
+  validates :leave_type, :description, :start_time, :end_time, presence: true
+  
   validate :hours_should_be_positive_integer
-  # FIXME: Not working when update duration of leave application
-  validate :has_enough_leave_time, on: :create
-  validate :valid_advanced_leave_type?
-
-  LEAVE_TYPE = %i(annual bonus personal sick).freeze
-  STATUS = %i(pending approved rejected canceled).freeze
-
-  include AASM
-  include SignatureConcern
-
+  validate :within_applicable_time, on: :create
+  validate :has_enough_leave_time
+  
   scope :leave_within_range, ->(beginning = WorkingHours.advance_to_working_time(1.month.ago.beginning_of_month),
                                 closing   = WorkingHours.return_to_working_time(1.month.ago.end_of_month)) {
     where(
@@ -32,6 +46,7 @@ class LeaveApplication < ApplicationRecord
       beginning: beginning, closing: closing
     )
   }
+  scope :with_status, -> (status) { where(status: status) }
 
   aasm column: :status do
     state :pending, initial: true
@@ -39,27 +54,24 @@ class LeaveApplication < ApplicationRecord
     state :rejected
     state :canceled
 
-    event :approve, after: proc { |manager| sign(manager) } do
+    event :approve, after: [proc { |manager| sign(manager) }, :bind_leave_time] do
       transitions to: :approved, from: [:pending]
     end
 
-    event :reject, after: [proc { |manager| sign(manager) }, :return_leave_time_usable_hours] do
+    event :reject, after: proc { |manager| sign(manager) } do
       transitions to: :rejected, from: [:pending]
     end
 
-    event :revise, after: :revise_leave_time_usable_hours do
+    event :revise do
       transitions to: :pending, from: [:pending, :approved, :rejected]
     end
 
-    event :cancel, after: :return_leave_time_usable_hours do
+    event :cancel do
       transitions to: :canceled, from: [:pending, :rejected]
       transitions to: :canceled, from: :approved, unless: :happened?
     end
   end
 
-  scope :with_status, -> (status) { where(status: status) }
-
-  # class method
   class << self
     def with_year(year = Time.now.year)
       t = Time.new(year)
@@ -68,29 +80,25 @@ class LeaveApplication < ApplicationRecord
       leaves_end_time_included = where(end_time: range )
       leaves_start_time_included.or(leaves_end_time_included)
     end
+
+    def leave_hours_within(beginning = WorkingHours.advance_to_working_time(1.month.ago.beginning_of_month), closing = WorkingHours.return_to_working_time(1.month.ago.end_of_month))
+      self.leave_within_range(beginning, closing).reduce(0) do |result, la|
+        if la.range_exceeded?(beginning, closing)
+          @valid_range = [la.start_time, beginning].max..[la.end_time, closing].min
+          result + @valid_range.min.working_time_until(@valid_range.max) / 3600.0
+        else
+          result + la.hours
+        end
+      end
+    end
   end
 
   def happened?
     Time.current > self.start_time
   end
 
-  def leave_time
-    @leave_time ||= LeaveTime.personal(self.user_id, self.leave_type, self.start_time, self.end_time)
-  end
-
   def range_exceeded?(beginning = WorkingHours.advance_to_working_time(1.month.ago.beginning_of_month), closing = WorkingHours.return_to_working_time(1.month.ago.end_of_month))
     beginning > self.start_time || closing < self.end_time
-  end
-
-  def self.leave_hours_within(beginning = WorkingHours.advance_to_working_time(1.month.ago.beginning_of_month), closing = WorkingHours.return_to_working_time(1.month.ago.end_of_month))
-    self.leave_within_range(beginning, closing).reduce(0) do |result, la|
-      if la.range_exceeded?(beginning, closing)
-        @valid_range = [la.start_time, beginning].max..[la.end_time, closing].min
-        result + @valid_range.min.working_time_until(@valid_range.max) / 3600.0
-      else
-        result + la.hours
-      end
-    end
   end
 
   def is_leave_type?(type = :all)
@@ -100,43 +108,85 @@ class LeaveApplication < ApplicationRecord
 
   private
 
+  def config
+    @config ||= LEAVE_APPLICATION_TYPES_CONFIG[leave_type]
+  end
+
   def set_primary_id
     self.uuid ||= SecureRandom.uuid
   end
+  
+  def assign_hours
+    hours = start_time.working_time_until(end_time) / 3600.0
+  end
 
-  def deduct_leave_time_usable_hours
-    assign_hours
+  def set_leave_time(create_leave_time = false)
+    leave_time_tmp = get_leave_time
+    new_record = leave_time_tmp.new_record?
+    leave_time = unless new_record && !create_leave_time
+      if new_record
+        leave_time_tmp.save!
+      end
+      leave_time_tmp
+    end
+  end
 
-    leave_time.deduct hours
+  def bind_leave_time
+    set_leave_time true
+  end
+  
+  def get_leave_time
+    config[:pool].each do |pool_type|
+      leave_time_candidate =
+        LeaveTime.personal(self.user_id, pool_type, self.start_time, self.end_time).first ||
+        LeaveTime.new(user: user, leave_type: pool_type)
+      if leave_time_candidate.available? hours
+        return leave_time_candidate
+      end
+    end
+  end
+
+  def ensure_leave_time_hours_correct
+    if leave_time_id_changed? || hours_changed? || status_changed?
+      deduct_leave_time_usable_hours
+      return_leave_time_usable_hours
+    end
+  end
+
+  def deduct_leave_time_usable_hours(
+    leave_time_instance = self.leave_time,
+    hours_to_deduct = hours,
+    state = status
+  )
+    
+    if leave_time_instance.presence? && (state != 'rejected'.freeze)
+      leave_time_instance.deduct hours
+    end
     LeaveApplicationLog.create!(leave_application_uuid: uuid,
                                 amount: hours)
   end
 
-  def revise_leave_time_usable_hours
-    assign_hours
-    save!
+  def return_leave_time_usable_hours(
+    leave_time_instance = LeaveTime.find_by_id(leave_time_id_was),
+    hours_to_return = hours_was,
+    state = status_was
+  )
 
-    log = leave_application_logs.last
-    delta = log.returning? ? hours : (hours - log.amount)
-
-    leave_time.deduct delta
+    if leave_time_instance.presence? && (state != 'rejected'.freeze)
+      leave_time_instance.deduct hours
+    end
+    leave_time_instance.deduct -hours_to_return if leave_time_instance.present?
     LeaveApplicationLog.create!(leave_application_uuid: uuid,
                                 amount: hours)
-  end
-
-  def return_leave_time_usable_hours
-    leave_time = self.leave_time
-
-    log = leave_application_logs.last
-    leave_time.deduct(-log.amount) unless log.returning?
-
     LeaveApplicationLog.create!(leave_application_uuid: uuid,
-                                amount: log.amount,
+                                amount: hours_to_return,
                                 returning?: true)
   end
 
-  def assign_hours
-    self.hours = start_time.working_time_until(end_time) / 3600.0
+  def auto_approve_if_allow
+    if config[:auto_approve]
+      approve!
+    end
   end
 
   def hours_should_be_positive_integer
@@ -144,17 +194,22 @@ class LeaveApplication < ApplicationRecord
     errors.add(:start_time, :should_be_earlier) unless end_time > start_time
   end
 
-  def valid_advanced_leave_type?
-    if start_time.year > Time.current.year && leave_type != 'annual'
-      errors.add(:leave_type, :only_take_annual_leave_year_before)
+  def within_applicable_time
+    unless applicable = config[:applicable]
+      errors.add(:leave_type, :leave_type_not_applicable)
+    end
+    max_leave = MAX_LEAVE_TO_APPLICABLE_BEFORE[config[:applicable]].get_from_time_diff(start_time, end_time)
+    if max_leave.nil? ? false : (start_time - Time.now) < max_leave.to_i
+      errors.add(:start_time, :not_within_applicable_time)
     end
   end
 
   def has_enough_leave_time
-    unless self.leave_time.present? && assign_hours < (self.leave_time.try(:usable_hours) || 0)
+    unless leave_time.present? && leave_time.available?(hours)
       errors.add(:end_time, :not_enough_leave_time)
     end
   end
+
 end
 
 class LeaveApplication::ActiveRecord_Associations_CollectionProxy
@@ -171,3 +226,4 @@ class LeaveApplication::ActiveRecord_Associations_CollectionProxy
     end
   end
 end
+
