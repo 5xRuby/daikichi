@@ -72,7 +72,6 @@ group :test do
   gem 'rspec-rails'
   gem 'shoulda-matchers'
   gem 'database_rewinder'
-  gem 'timecop'
   gem 'rails-controller-testing'
   gem 'simplecov'
   gem 'codeclimate-test-reporter', '~> 1.0.0'

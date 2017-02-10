@@ -85,4 +85,16 @@ module ApplicationHelper
     return "-" if hours == 0
     I18n.t("time.humanize_working_hour", days: hours.to_i/8, hours: hours%8, total: hours)
   end
+
+  def type_selector(name, label, options, default)
+    render 'shared/type_selector', name: name, label: label, options: options, default: default
+  end
+
+  def leave_times_table(leave_times, exclude_columns, &tools)
+    render 'shared/leave_times_table',
+      leave_times: leave_times,
+      show_leave_type: !exclude_columns.include?(:leave_type),
+      columns: [:name, :quota, :usable_hours_if_allow, :used_hours_if_allow, :effective_date, :expiration_date] - exclude_columns,
+      tools: tools
+  end
 end

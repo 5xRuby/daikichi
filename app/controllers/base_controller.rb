@@ -15,7 +15,7 @@ class BaseController < ApplicationController
   end
 
   def new
-    @current_object = collection_scope.new
+    @current_object = collection_scope.new(new_resource_params)
   end
 
   def create
@@ -54,11 +54,11 @@ class BaseController < ApplicationController
     @actions = [:create, :update, :destroy]
   end
 
-  def action_success
+  def action_success(url = nil)
     respond_to do |f|
       f.html do
         flash[:success] ||= t("success.#{action_name}")
-        redirect_to url_after action_name.to_sym
+        redirect_to url || url_after(action_name.to_sym)
       end
       f.json
     end
@@ -88,6 +88,8 @@ class BaseController < ApplicationController
   def collection_scope; end
 
   def resource_params; end
+  
+  def new_resource_params; end
 
   def current_collection
     @current_collection ||= collection_scope.page(params[:page])

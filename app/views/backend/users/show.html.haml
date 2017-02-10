@@ -1,5 +1,14 @@
 %h2= t("captions.backend/users.show", name: current_object[:name])
 
+= link_to t("title.backend/users.edit"),
+  edit_backend_user_path(current_object),
+  class: "btn btn-warning"
+= link_to t("title.backend/users.destroy"),
+  backend_user_path(current_object),
+  class: "btn btn-danger",
+  method: :delete,
+  data: { confirm: t("warnings.confirm_delete") }
+
 %table.table
   = tr_by_object :name
   = tr_by_object :login_name
@@ -8,5 +17,10 @@
   = tr_by_object :join_date, :convert_time_value, :year_date
   = tr_by_object :leave_date, :convert_time_value, :year_date
 
-- if current_object.fulltime?
-  = render "backend/leave_times/table", { leave_times: @leave_times }
+= link_to t("title.backend/leave_times.new"),
+  new_backend_leave_time_path(user_id: current_object.id),
+  class: "btn btn-primary"
+
+= leave_times_table current_object.leave_times.effective, [:name] do |lt|
+  - link_to t("title.backend/leave_times.edit"), edit_backend_leave_time_path(lt), class: "btn btn-warning"
+

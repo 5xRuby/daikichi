@@ -23,17 +23,17 @@ zh-TW:
           hr: '人資'
       leave_time:
         leave_type:
+          remote: '在家上班'
           annual: '特休'
           bonus: '補休'
           personal: '事假'
-          sick: '病假'
-          business: '公假'
-          maritial: '婚假'
+          sick_1: '病假'
+          sick_2: '半薪病假'
+          official: '公假'
+          marriage: '婚假'
           maternity: '產假'
-          paternity: '陪產假'
-          menstrual: '生理假'
-          family_care: '家庭照護假'
           funeral: '喪假'
+          absent: '曠職'
       leave_application:
         leave_type:
           remote: '在家上班'

@@ -3,30 +3,42 @@ class LeaveTime < ApplicationRecord
   
   LEAVE_POOLS_CONFIG =
     DataHelper.each_keys_freeze Settings.leave_pools do |v|
-      DataHelper.each_keys_to_sym v
+      v = DataHelper.each_keys_to_sym v
+      [:quota, :effective].each do |k|
+        v[k] = DataHelper.each_keys_to_sym v[k]
+      end
+      v
     end
   LEAVE_POOLS_TYPES = LEAVE_POOLS_CONFIG.keys
   LEAVE_POOLS_TYPES_SYM = DataHelper.each_to_sym LEAVE_POOLS_TYPES
   LEAVE_POOLS_ALLOW_PRE_CREATION =
     Settings.leave_pools_misc.allow_pre_creation
+  LEAVE_POOLS_AUTO_CREATION =
+    Settings.leave_pools_misc.auto_creation
   INFINITY_VALUE = Settings.leave_pools_misc.infinity_value
 
+  attr_accessor :new_by
+
   after_initialize :init_from_type
+  before_save :init_from_type, on: :create
   
   belongs_to :user, optional: false
-  delegate :seniority, to: :user
+  delegate :seniority, :name, to: :user
   has_many :leave_applications
 
-  validates :leave_type, :effective_date, :expiration_date, presence: true
+  validates :leave_type, :effective_date, :expiration_date, :quota, :usable_hours, :user, presence: true
   validate  :positive_range
-  validate  :range_not_overlaps
+
+  scope :get_from_pool, -> (user, pool_type, start_time, end_time) {
+    belong_to(user).where(leave_type: pool_type).overlaps(start_time, end_time)
+  }
+
+  scope :belong_to, -> (user) {
+    where(user: user)
+  }
 
   scope :personal, ->(user_id, leave_type, beginning, closing){
     overlaps(beginning, closing).find_by(user_id: user_id, leave_type: leave_type)
-  }
-
-  scope :get_employees_bonus, ->() {
-    where("leave_type = ?", "bonus").order(user_id: :desc)
   }
 
   scope :overlaps, ->(beginning, closing) {
@@ -47,59 +59,90 @@ class LeaveTime < ApplicationRecord
   end
 
   def available?(requested_hours = 1)
-    (new_record? ? LEAVE_POOLS_ALLOW_PRE_CREATION.include?(leave_type) : true) &&
-      ((usable_hours > requested_hours) || config[:allow_overspend])
+    (new_record? ? self.auto_creation? : true) &&
+      (((usable_hours >= requested_hours) && (used_hours >= -requested_hours)) || config(:allow_overspend))
+  end
+
+  def allow_pre_creation?
+    LEAVE_POOLS_ALLOW_PRE_CREATION.include? config(:creation)
+  end
+  
+  def auto_creation?
+    LEAVE_POOLS_AUTO_CREATION.include?(config(:creation))
+  end
+
+  def used_hours_if_allow
+    display_used? ? used_hours : ''
+  end
+
+  def usable_hours_if_allow
+    display_usable? ? usable_hours : ''
   end
 
   def display_used?
-    config[:display] == 'used'.freeze
+    config(:display) == 'used'.freeze
   end
 
   def display_usable?
-    config[:display] == 'usable'.freeze
+    config(:display) == 'usable'.freeze
   end
 
   def leave_times_in_the_same_pool
-    LeaveTime.where(leave_type: leave_type, user: user)
+    LeaveTime.where(leave_type: self.leave_type, user: user)
   end
 
   def previous
     leave_times_in_the_same_pool.order(expiration_date: :desc).first
   end
 
+  def leave_type_valid?
+    LEAVE_POOLS_TYPES.include? self.leave_type
+  end
+
   private
 
-  def config
-    @config ||= LEAVE_POOLS_CONFIG[leave_type]
+  def config(key = nil, default = nil)
+    @config ||= LEAVE_POOLS_CONFIG[self.leave_type]
+    if key.nil?
+      @config
+    else
+      config.nil? ? default : config[key]
+    end
   end
   
   def init_from_type
-    if new_record?
-      quota = usable_hours = generate_init_value_from_config(config[:quota])
-      effective_date = generate_effective_date if effective_date.nil?
-      expiration_date = effective_date + generate_init_value_from_config(config[:effective])
+    if new_record? && leave_type_valid? && !@inited_from_type
+      self.usable_hours ||= self.quota ||= generate_init_value_from_config(config(:quota))
+      self.effective_date ||= @start_time || generate_effective_date
+      if (effective = generate_init_value_from_config(config[:effective])) && effective_date.present?
+        self.expiration_date ||= self.effective_date + effective
+      end
+      @inited_from_type = true
     end
   end
 
   def generate_effective_date
-    case config[:creation]
+    case config(:creation)
     when 'occurrence'
-      leave_applications.first.start_time
+      new_by.start_time
     when 'prev_not_effective'
-      previous.expiration_date
+      previous.present? ? previous.expiration_date : Time.now
     end
   end
 
-  def generate_init_value_from_config(config)
-    case config[:type]
+  def generate_init_value_from_config(c)
+    case c[:type]
     when 'hours'
-      config[:value]
+      c[:value]
     when 'duration'
-      eval config[:value]
+      eval c[:value]
     when 'as_quota'
       quota
     when 'annual'
-      DurationRangeToValue.new(config[:value]).get_from_duration(user.seniority(effective_date))
+      if user.present?
+        seniority = self.effective_date.present? ? self.user.seniority(self.effective_date) : 1.day
+        DurationRangeToValue.new(c[:value]).get_from_duration(seniority)
+      end
     when 'infinity'
       INFINITY_VALUE
     end
@@ -111,15 +154,9 @@ class LeaveTime < ApplicationRecord
     end
   end
 
-  def range_not_overlaps
-    if expiration_date && effective_date && overlaps?
-      errors.add(:effective_date, :range_should_not_overlaps)
-    end
-  end
-  
   def overlaps?
     LeaveTime.overlaps(effective_date, expiration_date)
-      .where(user_id: user_id, leave_type: leave_type)
+      .where(user_id: user_id, leave_type: self.leave_type)
       .where.not(id: self.id).any?
   end
 

@@ -38,7 +38,6 @@ defaults: &defaults
         - sick_1
         - sick_2
       applicable: immediate
-      auto_approve: true
     official:
       pool:
         - official
@@ -58,15 +57,17 @@ defaults: &defaults
     bonus:
       pool:
         - bonus
-      # no applicable means not applicable
+      applicable: normal
 
-  max_leave_to_applicable_before:
-    normal:
-      - '~ 1.day : 1.day'
-      - '1.days ~ 5.days : 1.week'
-      - '5.days ~ 10.days : 1.month'
-      - '10.days ~ : 2.months'
-    immediate: []
+  leave_application_misc:
+    max_pre_application: '1.year'
+    max_leave_to_applicable_before:
+      normal:
+        - '~ 1.day : 1.day'
+        - '1.days ~ 5.days : 1.week'
+        - '5.days ~ 10.days : 1.month'
+        - '10.days ~ : 2.months'
+      immediate: []
 
   leave_pools:
     remote:
@@ -116,7 +117,7 @@ defaults: &defaults
       effective:
         type: duration
         value: '1.month'
-      penalty: 0
+      penalty: 0 # TODO: not implemented
       display: used
     absent:
       creation: occurrence
@@ -125,7 +126,7 @@ defaults: &defaults
       effective:
         type: duration
         value: '1.year'
-      penalty: -2
+      penalty: -2 # TODO: not implemented
       display: used 
     sick_1:
       creation: occurrence
@@ -145,7 +146,7 @@ defaults: &defaults
       effective:
         type: duration
         value: '1.year'
-      penalty: 0.5
+      penalty: 0.5 # TODO: not implemented
       display: used 
     official:
       creation: occurrence
@@ -199,9 +200,17 @@ defaults: &defaults
 
   leave_pools_misc:
     allow_pre_creation:
+      - prev_not_effective
+    auto_creation:
       - occurrence
       - prev_not_effective
     infinity_value: 2920 # 365 * 8
+
+  backend:
+    default_leave_pool_type: bonus
+
+  misc:
+    starting_year: 2016
 
 development:
   <<: *defaults
