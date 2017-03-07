@@ -5,8 +5,12 @@ class User < ApplicationRecord
   has_many :leave_applications, -> { order("id DESC") }
   has_many :bonus_leave_time_logs, -> { order("id DESC") }
 
-  validates :login_name, uniqueness: { case_sensitive: false, scope: :deleted_at }
-  validates :email, uniqueness: { case_sensitive: false, scope: :deleted_at }
+  validates :name,       presence: true
+  validates :login_name, presence: true,
+                         uniqueness: { case_sensitive: false, scope: :deleted_at }
+  validates :email,      presence: true,
+                         uniqueness: { case_sensitive: false, scope: :deleted_at }
+  validates :join_date,  presence: true
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
@@ -15,6 +19,12 @@ class User < ApplicationRecord
 
   ROLES = %i(manager hr employee contractor intern resigned pending).freeze
 
+  scope :filter_by_join_date, ->(month, date) {
+    where(
+      '(EXTRACT(MONTH FROM join_date), EXTRACT(DAY FROM join_date)) = (:month, :date)',
+      month: month, date: date
+    )
+  }
   scope :fulltime, -> {
     where("role in (?)", %w(manager employee hr))
       .where("join_date < now()")

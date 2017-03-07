@@ -10,6 +10,32 @@ RSpec.describe User, type: :model do
   let(:third_year_employee) { FactoryGirl.create(:third_year_employee) }
   let(:contractor) { FactoryGirl.create(:user, :contractor) }
 
+  describe 'associations' do
+    it { is_expected.to have_many(:leave_times) }
+    it { is_expected.to have_many(:leave_applications) }
+    it { is_expected.to have_many(:bonus_leave_time_logs) }
+  end
+
+  describe '#validations' do
+    subject { FactoryGirl.build(:user) }
+    it { is_expected.to validate_presence_of(:name) }
+    it { is_expected.to validate_presence_of(:login_name) }
+    it { is_expected.to validate_uniqueness_of(:login_name).case_insensitive.scoped_to(:deleted_at) }
+    it { is_expected.to validate_presence_of(:email) }
+    it { is_expected.to validate_presence_of(:join_date) }
+
+    context 'should validate that :email' do
+      it 'is case-insensitively unique within the scope of :deleted_at' do
+        email = Faker::Internet.email
+        old_user = FactoryGirl.create(:user, email: email)
+        user = FactoryGirl.build(:user, email: email)
+        expect(user).to be_invalid
+        expect(user.errors.messages[:email]).to include I18n.t('errors.messages.taken')
+        old_user.destroy
+        expect(user).to be_valid
+      end
+    end
+  end
 
   describe "employee seniority in years" do
     def travel_check(time, target, value)
@@ -49,8 +75,24 @@ RSpec.describe User, type: :model do
     end
   end
 
-  describe "scope" do
-    describe "with_leave_application_statistics" do
+  describe 'scope' do
+    describe '.filter_by_join_date' do
+      let!(:fulltime) { FactoryGirl.create(:user, :fulltime, join_date: Date.current - 2.years) }
+      let!(:parttime) { FactoryGirl.create(:user, :parttime, join_date: Date.current - 1.year) }
+      subject { User.filter_by_join_date(Date.current.month, Date.current.day) }
+
+      before do
+        FactoryGirl.create(:user, :fulltime, join_date: Date.current - 3.days)
+      end
+
+      it 'should get all users that join_date match with given month and day' do
+        expect(subject.size).to eq 2
+        expect(subject).to include fulltime
+        expect(subject).to include parttime
+      end
+    end
+
+    describe '.with_leave_application_statistics' do
       let(:year)  { Time.current.year }
       let(:month) { Time.current.month }
       let(:start_time) { WorkingHours.advance_to_working_time(Time.new(year, month, 1)) }

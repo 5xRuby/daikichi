@@ -5,45 +5,55 @@ FactoryGirl.define do
     login_name { Faker::Internet.user_name }
     email { Faker::Internet.safe_email }
     password { Faker::Internet.password }
+    join_date { Time.zone.today }
+    role 'employee'
 
     trait :admin do
-      role "admin"
+      role 'admin'
     end
 
     trait :manager do
-      role "manager"
+      role 'manager'
     end
 
     trait :hr do
-      role "hr"
+      role 'hr'
     end
 
     trait :employee do
-      role "employee"
+      role 'employee'
     end
 
     trait :contractor do
-      role "contractor"
+      role 'contractor'
       join_date { nil }
     end
 
+    trait :fulltime do
+      role { %i(manager hr employee).sample }
+    end
+
+    trait :parttime do
+      role { %i(parttime contractor intern).sample }
+    end
+
     factory :manager_eddie, traits: [:manager] do
-      name "eddie"
+      name 'eddie'
     end
 
     # base year is as same as the year of time when the code is running
     factory :first_year_employee, traits: [:employee] do
-      join_date { 6.month.ago }
+      join_date { 6.months.ago }
     end
 
     factory :second_year_employee, traits: [:employee] do
-      join_date { 18.month.ago }
+      join_date { 18.months.ago }
     end
 
     factory :third_year_employee, traits: [:employee] do
-      join_date { 30.month.ago }
+      join_date { 30.months.ago }
     end
 
-    factory :employee, traits: [:employee] 
+    factory :employee, traits: [:employee]
   end
 end

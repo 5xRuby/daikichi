@@ -47,6 +47,7 @@ GEM
     ast (2.3.0)
     autoprefixer-rails (6.5.2)
       execjs
+    awesome_print (1.7.0)
     bcrypt (3.1.11)
     bootstrap-sass (3.3.7)
       autoprefixer-rails (>= 5.2.1)
@@ -160,6 +161,9 @@ GEM
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
       slop (~> 3.4)
+    pry-byebug (3.4.2)
+      byebug (~> 9.0)
+      pry (~> 0.10)
     puma (3.6.0)
     rack (2.0.1)
     rack-mini-profiler (0.10.1)
@@ -291,6 +295,7 @@ PLATFORMS
 DEPENDENCIES
   aasm
   active_hash
+  awesome_print
   bootstrap-sass
   bootstrap3-datetimepicker-rails
   byebug
@@ -315,7 +320,7 @@ DEPENDENCIES
   momentjs-rails
   paranoia (~> 2.2)
   pg (~> 0.18)
-  pry
+  pry-byebug
   puma (~> 3.0)
   rack-mini-profiler (~> 0.10.1)
   rails (>= 5.0.0.rc1, < 5.1)
@@ -338,4 +343,4 @@ DEPENDENCIES
   working_hours
 
 BUNDLED WITH
-   1.14.3
+   1.14.5

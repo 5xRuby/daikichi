@@ -21,12 +21,15 @@ class LeaveTime < ApplicationRecord
 
   after_initialize :init_from_type
   before_save :init_from_type, on: :create
-  
+
   belongs_to :user, optional: false
   delegate :seniority, :name, to: :user
   has_many :leave_applications
 
-  validates :leave_type, :effective_date, :expiration_date, :quota, :usable_hours, :user, presence: true
+  validates :leave_type, :effective_date, :expiration_date, :quota, :usable_hours, :used_hours, :user, presence: true
+  validates :quota,        numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+  validates :usable_hours, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+  validates :used_hours,   numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validate  :positive_range
 
   scope :get_from_pool, -> (user, pool_type, start_time, end_time) {
