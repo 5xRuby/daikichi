@@ -14,50 +14,56 @@ defaults: &defaults
     remote:
       pool:
         - remote
-      applicable: immediate
+      applicable:
+        immediate: &all [manager, hr, employee, contractor, intern]
     late:
       pool:
         - annual
         - personal
-      applicable: immediate
-    absent:
-      pool:
-        - absent
-      # no applicable means not applicable
+      applicable:
+        immediate: *all
     annual:
       pool:
         - annual
-      applicable: normal
+      applicable:
+        normal: &full_time [manager, hr, employee]
     personal:
       pool:
         - annual
         - personal
-      applicable: normal
+      applicable:
+        normal: *all
     sick:
       pool:
         - sick_1
         - sick_2
-      applicable: immediate
+      applicable:
+        immediate: *all
     official:
       pool:
         - official
-      applicable: normal
+      applicable:
+        normal: *all
     marriage:
       pool:
         - marriage
-      applicable: normal
+      applicable:
+        normal: *all
     maternity:
       pool:
         - maternity
-      applicable: normal
+      applicable:
+        normal: *all
     funeral:
       pool:
         - funeral
-      applicable: normal
+      applicable:
+        normal: *all
     bonus:
       pool:
         - bonus
-      applicable: normal
+      applicable:
+        normal: *all
 
   leave_application_misc:
     max_pre_application: '1.year'

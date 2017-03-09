@@ -32,35 +32,67 @@ namespace :import_data do
   # 匯入過去所有請的假
   desc "users' leaves"
   task leaves: :environment do
-    YAML.load_file("lib/tasks/leaves.yml").each do |leave|
-      data = leave.split(",")
-      attributes = {
-        leave_type: data[1],
-        start_time: Time.parse(data[2]),
-        end_time: Time.parse(data[3]),
-        description: "系統匯入"
-      }
+    puts "Usage: file=path_to_file approver=approver_name [description=description] rake import_data:leaves"
+    puts "csv file format in each row (line):"
+    puts "name,type,start_,expiration_date"
+    description = ENV['description'] || 'from rake import_data:leaves'
+    interactive = ENV['interactive'].present?
 
-      leave_id = User.find_by(name: data[0]).leave_applications.create!(attributes).id
-      manager = User.find_by(name: "趙子皓")
-      LeaveApplication.find(leave_id).approve!(manager)
+    approver = User.find_by(name: ENV['approver'])
+    raise "User '#{ENV['approver']}' not found" if approver.nil?
 
-      puts "#{data[0]}匯入#{data[1]}假單"
+    require 'csv'
+    puts "Working..."
+    CSV.foreach(ENV['file'] || "tmp/leaves.csv") do |row|
+      begin
+        user = User.find_by(name: row[0])
+        raise "User '#{row[0]}' not found" if user.nil?
+        #raise 'ha' if user.name != j
+        la = LeaveApplication.new(user: user, leave_type: row[1], start_time: row[2], end_time: row[3], description: description, import_mode: true)
+        while interactive and not la.valid?
+          puts "LeaveApplication not valid:"
+          p la
+          puts "User:"
+          p user
+          puts "Errors:"
+          p la.errors
+          puts "\nPlease input a hash to reasign attrs: "
+          la.assign_attributes(eval(STDIN.gets))
+        end
+        la.approve! approver
+        puts ">> OK!" if la.save!
+      rescue => e
+        puts "!! Error:"
+        pp e
+        puts "...on row:"
+        pp row
+      end
     end
   end
 
   # 匯入過去補修時數
-  desc "users' bonus leave times"
-  task bonus_leave_times: :environment do
-    YAML.load_file("lib/tasks/bonus_leave_times.yml").each do |bonus_leave_time|
-      data = bonus_leave_time.split(",")
-      user_id = User.find_by(name: data[0]).id
-      attributes = {
-        quota: data[1],
-        usable_hours: data[1]
-      }
-      LeaveTime.personal(user_id, "bonus", 2016).update!(attributes)
-      puts "#{data[0]} 補修增加 #{data[1]} 時數"
+  desc "leave times (quota)"
+  task leave_times: :environment do
+    puts "Usage: file=path_to_file type=leave_type rake import_data:leave_times"
+    puts "csv file format in each row (line):"
+    puts "name,quota,effective_date,expiration_date"
+    leave_type = ENV['type'] || 'bonus'
+    
+    require 'csv'
+    puts "Working..."
+    CSV.foreach(ENV['file'] || "tmp/leave_times.csv") do |row|
+      begin
+        user = User.find_by(name: row[0])
+        raise "User '#{row[0]}' not found" if user.nil?
+        lt = LeaveTime.new(user: user, quota: row[1], leave_type: leave_type, effective_date: row[2], expiration_date: row[3])
+        pp lt
+        puts ">> OK!" if lt.save!
+      rescue => e
+        puts "!! Error:"
+        pp e
+        puts "...on row:"
+        pp row
+      end
     end
   end
 end

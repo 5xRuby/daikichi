@@ -37,7 +37,7 @@ class LeaveApplication < ApplicationRecord
   validates :leave_type, :description, :start_time, :end_time, presence: true
   
   validate :hours_should_be_positive_integer
-  validate :within_applicable_time, on: :create
+  validate :applicable, on: :create
   validate :has_enough_leave_time
   
   scope :leave_within_range, ->(beginning = WorkingHours.advance_to_working_time(1.month.ago.beginning_of_month),
@@ -94,6 +94,8 @@ class LeaveApplication < ApplicationRecord
     end
   end
 
+  attr_accessor :import_mode
+
   def happened?
     Time.current > self.start_time
   end
@@ -127,7 +129,11 @@ class LeaveApplication < ApplicationRecord
   end
   
   def assign_hours
-    self.hours = start_time.working_time_until(end_time) / 3600.0
+    self.hours = auto_calculated_hours if self.hours.nil? or self.hours == 0
+  end
+
+  def auto_calculated_hours
+    start_time.working_time_until(end_time) / 3600.0
   end
 
   def pre_create_leave_time_if_allowed
@@ -204,16 +210,22 @@ class LeaveApplication < ApplicationRecord
     errors.add(:start_time, :should_be_earlier) unless self.end_time > self.start_time
   end
 
-  def within_applicable_time
-    unless applicable = config(:applicable)
+  def applicable
+    unless applicable_type
       errors.add(:leave_type, :leave_type_not_applicable)
     else
-      max_leave = MAX_LEAVE_TO_APPLICABLE_BEFORE[applicable].get_from_time_diff(start_time, end_time)
-      time_before_leave = start_time - Time.now
-      if (max_leave.nil? ? false : (time_before_leave < max_leave.to_i)) || (time_before_leave > MAX_PRE_APPLICATION)
-        errors.add(:start_time, :not_within_applicable_time)
+      unless self.import_mode
+        max_leave = MAX_LEAVE_TO_APPLICABLE_BEFORE[applicable_type].get_from_time_diff(start_time, end_time)
+        time_before_leave = start_time - Time.now
+        if (max_leave.nil? ? false : (time_before_leave < max_leave.to_i)) || (time_before_leave > MAX_PRE_APPLICATION)
+          errors.add(:start_time, :not_within_applicable_time)
+        end
       end
     end
+  end
+
+  def applicable_type
+    @applicable_type ||= config(:applicable).to_a.keep_if {|_, applicable_roles| applicable_roles.include?(user.role) }.first.try(:first)
   end
 
   def has_enough_leave_time
