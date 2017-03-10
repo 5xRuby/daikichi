@@ -8,10 +8,6 @@ FactoryGirl.define do
     join_date { Time.zone.today }
     role 'employee'
 
-    trait :admin do
-      role 'admin'
-    end
-
     trait :manager do
       role 'manager'
     end
@@ -34,7 +30,7 @@ FactoryGirl.define do
     end
 
     trait :parttime do
-      role { %i(parttime contractor intern).sample }
+      role { %i(contractor intern).sample }
     end
 
     factory :manager_eddie, traits: [:manager] do

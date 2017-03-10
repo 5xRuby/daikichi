@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 class User < ApplicationRecord
   acts_as_paranoid
-  has_many :leave_times, -> { order("id DESC") }
-  has_many :leave_applications, -> { order("id DESC") }
-  has_many :bonus_leave_time_logs, -> { order("id DESC") }
+  has_many :leave_times, -> { order(id: :desc) }
+  has_many :leave_applications, -> { order(id: :desc) }
+  has_many :bonus_leave_time_logs, -> { order(id: :desc) }
 
   validates :name,       presence: true
   validates :login_name, presence: true,
@@ -25,26 +25,32 @@ class User < ApplicationRecord
       month: month, date: date
     )
   }
+
+  scope :valid, -> {
+    where('join_date <= :now', now: Date.current)
+      .where.not(role: %w(pending resigned))
+  }
+
   scope :fulltime, -> {
-    where("role in (?)", %w(manager employee hr))
-      .where("join_date < now()")
+    where('role in (?)', %w(manager employee hr))
+      .valid
       .order(id: :desc)
   }
 
   scope :parttime, -> {
-    where("role in (?)", %w(contractor intern))
-      .where("join_date < now()")
+    where('role in (?)', %w(contractor intern))
+      .valid
       .order(id: :desc)
   }
 
   scope :with_leave_application_statistics, ->(year, month) {
     joins(:leave_applications, :leave_times)
-    .includes(:leave_applications, :leave_times)
-    .merge(LeaveApplication.leave_within_range(
-      WorkingHours.advance_to_working_time(Time.new(year, month, 1)),
-      WorkingHours.return_to_working_time(Time.new(year, month, 1).end_of_month))
-      .approved
-    )
+      .includes(:leave_applications, :leave_times)
+      .merge(LeaveApplication.leave_within_range(
+        WorkingHours.advance_to_working_time(Time.zone.local(year, month, 1)),
+        WorkingHours.return_to_working_time(Time.zone.local(year, month, 1).end_of_month)
+      )
+      .approved)
   }
 
   ROLES.each do |role|
@@ -76,6 +82,6 @@ class User < ApplicationRecord
 
   # TODO: change to pre-gen prev_not_effective
   def get_refilled_annual
-    leave_times.find_by(leave_type: "annual").refill
+    leave_times.find_by(leave_type: 'annual').refill
   end
 end
