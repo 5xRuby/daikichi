@@ -11,7 +11,7 @@ defaults: &defaults
     password: '12345678'
 
   leave_application_types:
-    remote: 
+    remote:
       pool:
         - remote
       applicable: immediate
@@ -68,11 +68,69 @@ defaults: &defaults
         - '5.days ~ 10.days : 1.month'
         - '10.days ~ : 2.months'
       immediate: []
+  leed_days:
+    monthly: 5 # working.days
+    join_date_based: 40 # days
+
+  leave_types:
+    annual:
+      creation: join_date_based
+      quota:
+        type: seniority_based
+        maximum_seniority: 25
+        maximum_quota: 30
+        values:
+          :0:  7
+          :1:  7
+          :2:  10
+          :3:  14
+          :4:  14
+          :5:  15
+          :6:  15
+          :7:  15
+          :8:  15
+          :9:  15
+          :10: 16
+          :11: 17
+          :12: 18
+          :13: 19
+          :14: 20
+          :15: 21
+          :16: 22
+          :17: 23
+          :18: 24
+          :19: 25
+          :20: 26
+          :21: 27
+          :22: 28
+          :23: 29
+          :24: 30
+          :25: 30
+    personal:
+      creation: join_date_based
+      quota: 14 # days
+    sick:
+      creation: join_date_based
+      quota: 30 # days
+    remote:
+      creation: monthly
+      quota: 2 # days
+    marriage:
+      creation: manually
+      quota: 8 # days
+    bereavement:
+      creation: manually
+      quota: 3
+      effective: 49 # days
+    official:
+      creation: none
+    maternity:
+      creation: none
 
   leave_pools:
     remote:
       creation: prev_not_effective
-      quota: 
+      quota:
         type: hours
         value: 16 # hours
       effective:
@@ -83,7 +141,7 @@ defaults: &defaults
       allow_overspend: true
     annual:
       creation: prev_not_effective
-      quota: 
+      quota:
         type: annual
         value:
           - ' ~ 2.years : 56' # hours, ( + 1 bonus, manually )
@@ -112,7 +170,7 @@ defaults: &defaults
       display: usable
     personal:
       creation: occurrence
-      quota: 
+      quota:
         type: infinity
       effective:
         type: duration
@@ -121,33 +179,33 @@ defaults: &defaults
       display: used
     absent:
       creation: occurrence
-      quota: 
+      quota:
         type: infinity
       effective:
         type: duration
         value: '1.year'
       penalty: -2 # TODO: not implemented
-      display: used 
+      display: used
     sick_1:
       creation: occurrence
       quota:
         type: hours
         value: 56 # hours
       effective:
-        type: duration 
+        type: duration
         value: '1.year'
       # no penalty means no penalty
-      display: used 
+      display: used
     sick_2:
       creation: occurrence
-      quota: 
+      quota:
         type: hours
         value: 168 # hours
       effective:
         type: duration
         value: '1.year'
       penalty: 0.5 # TODO: not implemented
-      display: used 
+      display: used
     official:
       creation: occurrence
       quota:

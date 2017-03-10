@@ -53,12 +53,25 @@ class User < ApplicationRecord
     end
   end
 
-  def seniority(time = Time.now)
-    @seniority ||= (join_date.nil? ? 0 : (time - join_date).to_i)
+  def seniority(time = Date.current)
+    return 0 if !fulltime? || join_date >= Date.current
+    @seniority ||= (join_date.nil? ? 0 : (time - join_date).to_i / 365)
   end
 
   def fulltime?
     %w(manager hr employee).include?(role)
+  end
+
+  def this_year_join_anniversary
+    @this_year_join_anniversary ||= Time.zone.local(Date.current.year, join_date.month, join_date.day).to_date
+  end
+
+  def next_join_anniversary
+    @next_join_anniversary ||= if this_year_join_anniversary < Time.current.to_date
+                                 this_year_join_anniversary + 1.year
+                               else
+                                 this_year_join_anniversary
+                               end
   end
 
   # TODO: change to pre-gen prev_not_effective

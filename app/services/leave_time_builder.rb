@@ -12,9 +12,9 @@ class LeaveTimeBuilder
     join_date_based_import
   end
 
-  def join_date_based_import
+  def join_date_based_import(prebuild: false)
     JOIN_DATE_BASED_LEAVE_TYPES.each do |leave_type, config|
-      build_join_date_based_leave_types(leave_type, config)
+      build_join_date_based_leave_types(leave_type, config, prebuild)
     end
   end
 
@@ -26,10 +26,10 @@ class LeaveTimeBuilder
 
   private
 
-  def build_join_date_based_leave_types(leave_type, config)
+  def build_join_date_based_leave_types(leave_type, config, prebuild)
     return unless user_can_have_leave_type?(@user, config)
-    quota = extract_quota(config, @user)
-    join_anniversary = Time.zone.local(Time.current.year, @user.join_date.month, @user.join_date.day)
+    quota = extract_quota(config, @user, prebuild: prebuild)
+    join_anniversary = @user.next_join_anniversary
     @user.leave_times.create(
       leave_type: leave_type,
       quota: quota,
@@ -43,7 +43,7 @@ class LeaveTimeBuilder
   def build_monthly_leave_types(leave_type, config, prebuild)
     @effective_date  = prebuild ? Time.zone.today.next_month.beginning_of_month : Time.zone.today
     @expiration_date = prebuild ? Time.zone.today.next_month.end_of_month : Time.zone.today.end_of_month
-    quota = extract_quota(config, @user)
+    quota = extract_quota(config, @user, prebuild: prebuild)
     @user.leave_times.create(
       leave_type: leave_type,
       quota: quota,
@@ -54,9 +54,9 @@ class LeaveTimeBuilder
     )
   end
 
-  def extract_quota(config, user)
+  def extract_quota(config, user, prebuild: false)
     return config['quota'] if config['quota'].is_a? Integer
-    seniority = user.seniority
+    seniority = prebuild ? user.seniority(user.next_join_anniversary) : user.seniority
     return config['quota']['maximum_quota'] if seniority >= config['quota']['maximum_seniority']
     config['quota']['values'][seniority.to_s.to_sym] * 8
   end

@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-require "rails_helper"
+require 'rails_helper'
 
 RSpec.describe User, type: :model do
   let(:base_year) { Time.now.year }
@@ -10,7 +10,7 @@ RSpec.describe User, type: :model do
   let(:third_year_employee) { FactoryGirl.create(:third_year_employee) }
   let(:contractor) { FactoryGirl.create(:user, :contractor) }
 
-  describe 'associations' do
+  describe '#associations' do
     it { is_expected.to have_many(:leave_times) }
     it { is_expected.to have_many(:leave_applications) }
     it { is_expected.to have_many(:bonus_leave_time_logs) }
@@ -34,44 +34,6 @@ RSpec.describe User, type: :model do
         old_user.destroy
         expect(user).to be_valid
       end
-    end
-  end
-
-  describe "employee seniority in years" do
-    def travel_check(time, target, value)
-      Timecop.travel(time)
-      expect(target.seniority).to eq value
-      Timecop.return
-    end
-
-    it "user is not an employee" do
-      expect(contractor.seniority).to eq 0
-    end
-
-    it "user is an employee employed within a year" do
-      travel_check(Time.now, first_year_employee, 0)
-    end
-
-    it "user is a second year employee employed over a year" do
-      travel_check(Time.now, second_year_employee, 1) 
-    end
-
-    it "user is a third year employee" do
-      travel_check(Time.now, third_year_employee, 2)
-    end
-  end
-
-  describe "role check: fulltime?" do
-    it "user is an employee" do
-      expect(third_year_employee.fulltime?).to be_truthy
-    end
-
-    it "user is a manager" do
-      expect(manager.fulltime?).to be_truthy
-    end
-
-    it "user is not an employee" do
-      expect(contractor.fulltime?).to be_falsey
     end
   end
 
@@ -199,32 +161,118 @@ RSpec.describe User, type: :model do
     end
   end
 
-  describe "helper_method" do
-    describe "role identification" do
-      let(:employee) { FactoryGirl.create(:user, :employee) }
-      let(:manager)  { FactoryGirl.create(:user, :manager) }
-      let(:hr)  { FactoryGirl.create(:user, :hr) }
+  describe '#seniority' do
+    let(:base_date) { Date.current }
+    subject { user.seniority(base_date) }
 
-      context "is_manager?" do
-        it "is true if user is manager" do
-          expect(manager.is_manager?).to be_truthy
-        end
+    context 'parttime user' do
+      let(:user) { FactoryGirl.build(:user, :parttime, join_date: Date.current - 2.years) }
 
-        it "is false if user is not manager" do
-          expect(hr.is_manager?).to be_falsey
-          expect(employee.is_manager?).to be_falsey
-        end
+      it { expect(subject).to eq 0 }
+    end
+
+    context 'fulltime user' do
+      let(:join_date) { Date.current - 1.year }
+      let(:user) { FactoryGirl.build(:user, :fulltime, join_date: join_date) }
+
+      context 'joined less than a year' do
+        let(:join_date) { Date.current - 1.year + 1.day }
+
+        it { expect(subject).to eq 0 }
       end
 
-      context "is_hr?" do
-        it "is true if user is hr" do
-          expect(hr.is_hr?).to be_truthy
-        end
+      context 'on first joined anniversary' do
+        it { expect(subject).to eq 1 }
+      end
 
-        it "is false if user is not hr" do
-          expect(employee.is_hr?).to be_falsey
-          expect(manager.is_hr?).to be_falsey
-        end
+      context 'a comparison date (2 years after join date) specified' do
+        let(:join_date) { Date.current - 2.years + 5.days }
+        let(:base_date) { Date.current + 5.days }
+
+        it { expect(subject).to eq 2 }
+      end
+    end
+  end
+
+  describe '#fulltime?' do
+    subject { user.fulltime? }
+    context 'parttime user' do
+      let(:user) { FactoryGirl.create(:user, :parttime) }
+
+      it { expect(subject).to be_falsey }
+    end
+
+    context 'fulltime user' do
+      let(:user) { FactoryGirl.create(:user, :fulltime) }
+
+      it { expect(subject).to be_truthy }
+    end
+  end
+
+  describe '#this_year_join_anniversary' do
+    let(:user) { FactoryGirl.create(:user, :fulltime, join_date: join_date) }
+    subject { user.this_year_join_anniversary }
+
+    context "this year's join anniversary not passed" do
+      let(:join_date) { Date.current - 1.year + 1.day }
+      it { expect(subject).to eq Date.current + 1.day }
+    end
+
+    context 'today is join_anniversary' do
+      let(:join_date) { Date.current - 2.years }
+      it { expect(subject).to eq Date.current }
+    end
+
+    context "this year's join anniversary passed" do
+      let(:join_date) { Date.current - 3.years - 1.day }
+      it { expect(subject).to eq Date.current - 1.day }
+    end
+  end
+
+  describe '#next_join_anniversary' do
+    let(:user) { FactoryGirl.create(:user, :fulltime, join_date: join_date) }
+    subject { user.next_join_anniversary }
+
+    context "this year's join anniversary not passed" do
+      let(:join_date) { Date.current - 1.year + 1.day }
+      it { expect(subject).to eq Date.current + 1.day }
+    end
+
+    context 'today is join_anniversary' do
+      let(:join_date) { Date.current - 1.year }
+      it { expect(subject).to eq Date.current }
+    end
+
+    context "this year's join anniversary passed" do
+      let(:join_date) { Date.current - 2.years - 1.day }
+      it { expect(subject).to eq Date.current + 1.year - 1.day }
+    end
+  end
+
+  describe 'is_{role}?' do
+    let(:employee) { FactoryGirl.create(:user, :employee) }
+    let(:manager)  { FactoryGirl.create(:user, :manager) }
+    let(:hr)       { FactoryGirl.create(:user, :hr) }
+
+    context 'is_manager?' do
+      it 'is true if user is manager' do
+        expect(manager.is_manager?).to be_truthy
+      end
+
+      it 'is false if user is not manager' do
+        expect(hr.is_manager?).to be_falsey
+        expect(employee.is_manager?).to be_falsey
+      end
+    end
+
+    context 'is_hr?' do
+      it 'is true if user is hr' do
+        expect(hr.is_hr?).to be_truthy
+      end
+
+      it 'is false if user is not hr' do
+        expect(employee.is_hr?).to be_falsey
+        expect(manager.is_hr?).to be_falsey
       end
     end
   end
