@@ -74,7 +74,7 @@ describe LeaveTimeBuilder do
         leave_times = user.leave_times.reload
         expect(leave_times.size).to eq join_date_based_leave_types.size - seniority_based_leave_types.size
         leave_time = leave_times.first
-        initial_quota = join_date_based_leave_types.select { |lt| lt.first == leave_time.leave_type }.first.second['quota']
+        initial_quota = join_date_based_leave_types.select { |lt| lt.first == leave_time.leave_type }.first.second['quota'] * 8
         expect(leave_time.quota).to eq initial_quota
         expect(leave_time.usable_hours).to eq initial_quota
         expect(leave_time.used_hours).to eq 0
@@ -94,7 +94,7 @@ describe LeaveTimeBuilder do
         leave_times = user.leave_times.reload
         expect(leave_times.size).to eq monthly_leave_types.size
         leave_time = leave_times.first
-        initial_quota = monthly_leave_types.select { |lt| lt.first == leave_time.leave_type }.first.second['quota']
+        initial_quota = monthly_leave_types.select { |lt| lt.first == leave_time.leave_type }.first.second['quota'] * 8
         expect(leave_time.quota).to eq initial_quota
         expect(leave_time.usable_hours).to eq initial_quota
         expect(leave_time.used_hours).to eq 0
@@ -112,7 +112,7 @@ describe LeaveTimeBuilder do
         leave_times = user.leave_times.reload
         expect(leave_times.size).to eq monthly_leave_types.size
         leave_time = leave_times.first
-        initial_quota = monthly_leave_types.select { |lt| lt.first == leave_time.leave_type }.first.second['quota']
+        initial_quota = monthly_leave_types.select { |lt| lt.first == leave_time.leave_type }.first.second['quota'] * 8
         expect(leave_time.quota).to eq initial_quota
         expect(leave_time.usable_hours).to eq initial_quota
         expect(leave_time.used_hours).to eq 0

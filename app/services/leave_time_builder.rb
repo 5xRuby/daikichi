@@ -55,7 +55,7 @@ class LeaveTimeBuilder
   end
 
   def extract_quota(config, user, prebuild: false)
-    return config['quota'] if config['quota'].is_a? Integer
+    return config['quota'] * 8 if config['quota'].is_a? Integer
     seniority = prebuild ? user.seniority(user.next_join_anniversary) : user.seniority
     return config['quota']['maximum_quota'] if seniority >= config['quota']['maximum_seniority']
     config['quota']['values'][seniority.to_s.to_sym] * 8
