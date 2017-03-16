@@ -1,4 +1,6 @@
 # frozen_string_literal: true
+require 'csv'
+
 namespace :import_data do
   desc "create default admin user"
   task default_admin: :environment do
@@ -14,18 +16,19 @@ namespace :import_data do
   # TODO: temporary use for development only
   desc "user data"
   task users: :environment do
-    YAML.load_file("lib/tasks/users.yml").each do |user|
-      data = user.split(",")
-      attributes = {
-        login_name: data[0],
-        name: data[1],
-        email: data[2],
-        role: data[3],
-        password: Settings.admin_user.password,
-        password_confirmation: Settings.admin_user.password,
-        join_date: data[4]
-      }
-      User.create(attributes)
+    CSV.foreach(ENV['PATH_FOR_USERS'], headers: true, header_converters: :symbol, converters: :date) do |row|
+      temp_password = SecureRandom.hex(12)
+      user = User.new(
+        login_name: row[:username],
+        name: row[:fullname],
+        email: row[:email],
+        role: row[:role],
+        join_date: row[:join_date],
+        leave_date: row[:leave_date],
+        password: temp_password,
+        password_confirmation: temp_password
+      )
+      puts "Import Failed: L#{$.} \n\t #{row.to_h} \n\t #{user.errors.messages} \n" unless user.save
     end
   end
 
@@ -41,7 +44,6 @@ namespace :import_data do
     approver = User.find_by(name: ENV['approver'])
     raise "User '#{ENV['approver']}' not found" if approver.nil?
 
-    require 'csv'
     puts "Working..."
     CSV.foreach(ENV['file'] || "tmp/leaves.csv") do |row|
       begin
@@ -70,29 +72,21 @@ namespace :import_data do
     end
   end
 
-  # 匯入過去補修時數
-  desc "leave times (quota)"
+  desc 'Leave Time import from csv'
   task leave_times: :environment do
-    puts "Usage: file=path_to_file type=leave_type rake import_data:leave_times"
-    puts "csv file format in each row (line):"
-    puts "name,quota,effective_date,expiration_date"
-    leave_type = ENV['type'] || 'bonus'
-    
-    require 'csv'
-    puts "Working..."
-    CSV.foreach(ENV['file'] || "tmp/leave_times.csv") do |row|
-      begin
-        user = User.find_by(name: row[0])
-        raise "User '#{row[0]}' not found" if user.nil?
-        lt = LeaveTime.new(user: user, quota: row[1], leave_type: leave_type, effective_date: row[2], expiration_date: row[3])
-        pp lt
-        puts ">> OK!" if lt.save!
-      rescue => e
-        puts "!! Error:"
-        pp e
-        puts "...on row:"
-        pp row
-      end
+    CSV.foreach(ENV['PATH_FOR_LEAVE_TIMES'], headers: true, header_converters: :symbol) do |row|
+      user = User.find_by(login_name: row[:login_name])
+      puts row.to_h unless user
+      leave_time = LeaveTime.new(
+        user: user,
+        leave_type: row[:leave_type],
+        quota: row[:quota],
+        usable_hours: row[:quota],
+        used_hours: 0,
+        effective_date:  row[:effective_date],
+        expiration_date: row[:expiration_date]
+      )
+      puts "Import Failed: L#{$.} \n\t #{row.to_h} \n\t #{leave_time.errors.messages} \n" unless leave_time.save
     end
   end
 end

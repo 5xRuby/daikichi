@@ -3,7 +3,7 @@ class LeaveApplication < ApplicationRecord
 
   include AASM
   include SignatureConcern
-  
+
   STATUS = %i(pending approved rejected canceled).freeze
 
   LEAVE_APPLICATION_TYPES_CONFIG =
@@ -25,9 +25,9 @@ class LeaveApplication < ApplicationRecord
 
   after_initialize :set_primary_id
   before_validation :assign_hours
-  before_validation :pre_create_leave_time_if_allowed, on: :create
-  before_validation :bind_leave_time_if_exist, on: :create
-  before_save :ensure_leave_time_hours_correct
+  # before_validation :pre_create_leave_time_if_allowed, on: :create
+  # before_validation :bind_leave_time_if_exist, on: :create
+  # before_save :ensure_leave_time_hours_correct
 
   belongs_to :user
   belongs_to :manager, class_name: "User", foreign_key: "manager_id"
@@ -35,11 +35,9 @@ class LeaveApplication < ApplicationRecord
   has_many :leave_application_logs, foreign_key: "leave_application_uuid", primary_key: "uuid", dependent: :destroy
 
   validates :leave_type, :description, :start_time, :end_time, presence: true
-  
+
   validate :hours_should_be_positive_integer
-  validate :applicable, on: :create
-  validate :has_enough_leave_time
-  
+
   scope :leave_within_range, ->(beginning = WorkingHours.advance_to_working_time(1.month.ago.beginning_of_month),
                                 closing   = WorkingHours.return_to_working_time(1.month.ago.end_of_month)) {
     where(
@@ -127,7 +125,7 @@ class LeaveApplication < ApplicationRecord
   def set_primary_id
     self.uuid ||= SecureRandom.uuid
   end
-  
+
   def assign_hours
     self.hours = auto_calculated_hours if self.hours.nil? or self.hours == 0
   end
@@ -151,16 +149,16 @@ class LeaveApplication < ApplicationRecord
       self.save!
     end
   end
-  
+
   def leave_time_tmp
     @leave_time_tmp ||= self.leave_time || pick_or_gen_leave_time
   end
-  
+
   def pick_or_gen_leave_time
     leave_time_candidates = []
     config(:pool, []).each do |pool_type|
       pool = LeaveTime.get_from_pool(self.user, pool_type, self.start_time, self.end_time)
-      leave_time_candidates += 
+      leave_time_candidates +=
         pool.present? ? pool : [LeaveTime.new(user: user, leave_type: pool_type, new_by: self)]
     end
     leave_time_candidates.each do |lt|
@@ -183,7 +181,7 @@ class LeaveApplication < ApplicationRecord
     hours_to_deduct = self.hours,
     state = self.status
   )
-    
+
     if leave_time_instance.present? && (state != 'rejected'.freeze)
       leave_time_instance.deduct hours_to_deduct
     end
@@ -209,42 +207,6 @@ class LeaveApplication < ApplicationRecord
     errors.add(:end_time, :not_integer) unless self.hours > 0
     errors.add(:start_time, :should_be_earlier) unless self.end_time > self.start_time
   end
-
-  def applicable
-    unless applicable_type
-      errors.add(:leave_type, :leave_type_not_applicable)
-    else
-      unless self.import_mode
-        max_leave = MAX_LEAVE_TO_APPLICABLE_BEFORE[applicable_type].get_from_time_diff(start_time, end_time)
-        time_before_leave = start_time - Time.now
-        if (max_leave.nil? ? false : (time_before_leave < max_leave.to_i)) || (time_before_leave > MAX_PRE_APPLICATION)
-          errors.add(:start_time, :not_within_applicable_time)
-        end
-      end
-    end
-  end
-
-  def applicable_type
-    @applicable_type ||= config(:applicable).to_a.keep_if {|_, applicable_roles| applicable_roles.include?(user.role) }.first.try(:first)
-  end
-
-  def has_enough_leave_time
-    if leave_time_id_changed? || new_record?
-      if leave_time_tmp.present?
-        unless leave_time_tmp.available? hours
-          errors.add(:end_time, :not_enough_leave_time)
-        end
-      else
-        errors.add(:leave_type, :no_leave_time_available)
-      end
-    elsif hours_changed?
-      unless leave_time_tmp.available? (hours - hours_was)
-        errors.add(:end_time, :not_enough_leave_time)
-      end
-
-    end
-  end
-
 end
 
 class LeaveApplication::ActiveRecord_Associations_CollectionProxy
@@ -261,4 +223,3 @@ class LeaveApplication::ActiveRecord_Associations_CollectionProxy
     end
   end
 end
-
