@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 class LeaveApplication < ApplicationRecord
-
   include AASM
   include SignatureConcern
 
@@ -18,7 +17,7 @@ class LeaveApplication < ApplicationRecord
   LEAVE_APPLICATION_TYPES_SELECTABLE_SYM = DataHelper.each_to_sym LEAVE_APPLICATION_TYPES_SELECTABLE
 
   MAX_PRE_APPLICATION = eval Settings.leave_application_misc.max_pre_application
-  MAX_LEAVE_TO_APPLICABLE_BEFORE = DataHelper.each_keys_freeze(Settings.leave_application_misc.max_leave_to_applicable_before) {|v| DurationRangeToValue.new(v)}
+  MAX_LEAVE_TO_APPLICABLE_BEFORE = DataHelper.each_keys_freeze(Settings.leave_application_misc.max_leave_to_applicable_before) { |v| DurationRangeToValue.new(v) }
 
   acts_as_paranoid
   paginates_per 8
@@ -30,22 +29,21 @@ class LeaveApplication < ApplicationRecord
   # before_save :ensure_leave_time_hours_correct
 
   belongs_to :user
-  belongs_to :manager, class_name: "User", foreign_key: "manager_id"
+  belongs_to :manager, class_name: 'User', foreign_key: 'manager_id'
   belongs_to :leave_time
-  has_many :leave_application_logs, foreign_key: "leave_application_uuid", primary_key: "uuid", dependent: :destroy
+  has_many :leave_application_logs, foreign_key: 'leave_application_uuid', primary_key: 'uuid', dependent: :destroy
 
   validates :leave_type, :description, :start_time, :end_time, presence: true
 
   validate :hours_should_be_positive_integer
 
-  scope :leave_within_range, ->(beginning = WorkingHours.advance_to_working_time(1.month.ago.beginning_of_month),
-                                closing   = WorkingHours.return_to_working_time(1.month.ago.end_of_month)) {
+  scope :leave_within_range, ->(beginning = WorkingHours.advance_to_working_time(1.month.ago.beginning_of_month), closing = WorkingHours.return_to_working_time(1.month.ago.end_of_month)) {
     where(
       '(leave_applications.start_time, leave_applications.end_time) OVERLAPS (timestamp :beginning, timestamp :closing)',
       beginning: beginning, closing: closing
     )
   }
-  scope :with_status, -> (status) { where(status: status) }
+  scope :with_status, ->(status) { where(status: status) }
 
   aasm column: :status do
     state :pending, initial: true
@@ -74,9 +72,9 @@ class LeaveApplication < ApplicationRecord
   class << self
     def with_year(year = Time.now.year)
       t = Time.new(year)
-      range = (t.beginning_of_year .. t.end_of_year)
-      leaves_start_time_included = where(start_time: range )
-      leaves_end_time_included = where(end_time: range )
+      range = (t.beginning_of_year..t.end_of_year)
+      leaves_start_time_included = where(start_time: range)
+      leaves_end_time_included = where(end_time: range)
       leaves_start_time_included.or(leaves_end_time_included)
     end
 
@@ -162,9 +160,7 @@ class LeaveApplication < ApplicationRecord
         pool.present? ? pool : [LeaveTime.new(user: user, leave_type: pool_type, new_by: self)]
     end
     leave_time_candidates.each do |lt|
-      if lt.available? self.hours
-        return lt
-      end
+      return lt if lt.available? self.hours
     end
     nil
   end
@@ -182,7 +178,7 @@ class LeaveApplication < ApplicationRecord
     state = self.status
   )
 
-    if leave_time_instance.present? && (state != 'rejected'.freeze)
+    if leave_time_instance.present? && (state != 'rejected')
       leave_time_instance.deduct hours_to_deduct
     end
     LeaveApplicationLog.create!(leave_application_uuid: uuid,
@@ -190,12 +186,12 @@ class LeaveApplication < ApplicationRecord
   end
 
   def return_leave_time_usable_hours(
-    leave_time_instance = LeaveTime.find_by_id(leave_time_id_was),
+    leave_time_instance = LeaveTime.find_by(id: leave_time_id_was),
     hours_to_return = -self.hours_was,
     state = self.status_was
   )
 
-    if leave_time_instance.present? && (state != 'rejected'.freeze)
+    if leave_time_instance.present? && (state != 'rejected')
       leave_time_instance.deduct hours_to_return
     end
     LeaveApplicationLog.create!(leave_application_uuid: uuid,

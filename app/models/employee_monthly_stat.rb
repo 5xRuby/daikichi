@@ -5,8 +5,8 @@ class EmployeeMonthlyStat
     range_end = Time.zone.now.change(year: year, month: month).end_of_month
     @range = range_start..range_end
 
-    leaves_with_start_time_in_range = LeaveApplication.where(start_time: @range, status: "approved")
-    leaves_with_end_time_in_range = LeaveApplication.where(end_time: @range, status: "approved")
+    leaves_with_start_time_in_range = LeaveApplication.where(start_time: @range, status: 'approved')
+    leaves_with_end_time_in_range = LeaveApplication.where(end_time: @range, status: 'approved')
     leaves = leaves_with_start_time_in_range.or(leaves_with_end_time_in_range)
 
     result = CustomHash.new

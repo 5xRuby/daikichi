@@ -8,11 +8,9 @@ class BaseController < ApplicationController
     redirect_to root_path, alert: exception.message
   end
 
-  def index
-  end
+  def index; end
 
-  def show
-  end
+  def show; end
 
   def new
     @current_object = collection_scope.new(new_resource_params)
@@ -29,8 +27,7 @@ class BaseController < ApplicationController
     action_success
   end
 
-  def edit
-  end
+  def edit; end
 
   def update
     if current_object.update(resource_params)
@@ -71,7 +68,7 @@ class BaseController < ApplicationController
 
   def check_permission(object_owner)
     if current_employee != object_owner
-      flash[:alert] = t("warnings.not_authorized")
+      flash[:alert] = t('warnings.not_authorized')
       redirect_to root_path
     end
   end
@@ -80,7 +77,7 @@ class BaseController < ApplicationController
     if @actions.include?(action)
       url_for(action: :index)
     else
-      request.env["HTTP_REFERER"]
+      request.env['HTTP_REFERER']
     end
   end
 
@@ -88,7 +85,7 @@ class BaseController < ApplicationController
   def collection_scope; end
 
   def resource_params; end
-  
+
   def new_resource_params; end
 
   def current_collection

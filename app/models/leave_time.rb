@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 class LeaveTime < ApplicationRecord
-  
   LEAVE_POOLS_CONFIG =
     DataHelper.each_keys_freeze Settings.leave_pools do |v|
       v = DataHelper.each_keys_to_sym v
@@ -32,21 +31,21 @@ class LeaveTime < ApplicationRecord
   validates :used_hours,   numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validate  :positive_range
 
-  scope :get_from_pool, -> (user, pool_type, start_time, end_time) {
+  scope :get_from_pool, ->(user, pool_type, start_time, end_time) {
     belong_to(user).where(leave_type: pool_type).overlaps(start_time, end_time)
   }
 
-  scope :belong_to, -> (user) {
+  scope :belong_to, ->(user) {
     where(user: user)
   }
 
-  scope :personal, ->(user_id, leave_type, beginning, closing){
+  scope :personal, ->(user_id, leave_type, beginning, closing) {
     overlaps(beginning, closing).find_by(user_id: user_id, leave_type: leave_type)
   }
 
   scope :overlaps, ->(beginning, closing) {
     where(
-      "(leave_times.effective_date, leave_times.expiration_date) OVERLAPS (timestamp :beginning, timestamp :closing)",
+      '(leave_times.effective_date, leave_times.expiration_date) OVERLAPS (timestamp :beginning, timestamp :closing)',
       beginning: beginning, closing: closing
     )
   }
@@ -69,7 +68,7 @@ class LeaveTime < ApplicationRecord
   def allow_pre_creation?
     LEAVE_POOLS_ALLOW_PRE_CREATION.include? config(:creation)
   end
-  
+
   def auto_creation?
     LEAVE_POOLS_AUTO_CREATION.include?(config(:creation))
   end
@@ -83,11 +82,11 @@ class LeaveTime < ApplicationRecord
   end
 
   def display_used?
-    config(:display) == 'used'.freeze
+    config(:display) == 'used'
   end
 
   def display_usable?
-    config(:display) == 'usable'.freeze
+    config(:display) == 'usable'
   end
 
   def leave_times_in_the_same_pool
@@ -112,7 +111,7 @@ class LeaveTime < ApplicationRecord
       config.nil? ? default : config[key]
     end
   end
-  
+
   def init_from_type
     if new_record? && leave_type_valid? && !@inited_from_type
       self.usable_hours ||= self.quota ||= generate_init_value_from_config(config(:quota))
@@ -129,7 +128,7 @@ class LeaveTime < ApplicationRecord
     when 'occurrence'
       new_by.start_time
     when 'prev_not_effective'
-      previous.present? ? previous.expiration_date : Time.now
+      previous.present? ? previous.expiration_date : Time.current
     end
   end
 
@@ -162,5 +161,4 @@ class LeaveTime < ApplicationRecord
       .where(user_id: user_id, leave_type: self.leave_type)
       .where.not(id: self.id).any?
   end
-
 end

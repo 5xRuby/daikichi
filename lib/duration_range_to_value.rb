@@ -1,5 +1,5 @@
+# frozen_string_literal: true
 class DurationRangeToValue
-  
   # duration ranges_strs example:
   # ["~ 1.day : 1.day", "2.days ~ 5.days : 1.week", "6.days ~ 10.days : 1.month", "10.days ~ : 2.months"]
   def initialize(ranges_strs)
@@ -15,8 +15,8 @@ class DurationRangeToValue
 
   def get_from_duration_num(duration_num)
     found_at = @ranges.index do |pair|
-      ( pair[0].present? ? (duration_num >= pair[0]) : true ) &&
-        ( pair[1].present? ? (duration_num <= pair[1]) : true )
+      (pair[0].present? ? (duration_num >= pair[0]) : true) &&
+        (pair[1].present? ? (duration_num <= pair[1]) : true)
     end
     found_at.nil? ? nil : @ranges[found_at][2]
   end
