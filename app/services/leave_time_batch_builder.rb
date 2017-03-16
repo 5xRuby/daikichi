@@ -15,7 +15,12 @@ class LeaveTimeBatchBuilder
   private
 
   def batch_join_date_based_import
-    users = @forced ? User.all : User.filter_by_join_date(reaching_join_date.month, reaching_join_date.day)
+    leed_day = Time.current + JOIN_DATE_BASED_LEED_DAYS.days
+    users = if @forced
+              User.valid.where('(EXTRACT(MONTH FROM join_date), EXTRACT(DAY FROM join_date)) <= (:month, :date)', month: leed_day.month, date: leed_day.day)
+            else
+              User.valid.filter_by_join_date(reaching_join_date.month, reaching_join_date.day)
+            end
     return unless users.present?
     users.find_each do |user|
       if @forced
@@ -28,7 +33,7 @@ class LeaveTimeBatchBuilder
 
   def batch_monthly_import
     return if !end_of_working_month? && !@forced
-    User.find_each do |user|
+    User.valid.find_each do |user|
       if @forced
         LeaveTimeBuilder.new(user).monthly_import
       else
