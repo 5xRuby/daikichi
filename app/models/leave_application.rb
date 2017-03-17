@@ -3,30 +3,18 @@ class LeaveApplication < ApplicationRecord
   include AASM
   include SignatureConcern
 
-  STATUS = %i(pending approved rejected canceled).freeze
-
-  LEAVE_APPLICATION_TYPES_CONFIG =
-    DataHelper.each_keys_freeze Settings.leave_application_types do |v|
-      DataHelper.each_keys_to_sym v
-    end
-  LEAVE_APPLICATION_TYPES = LEAVE_APPLICATION_TYPES_CONFIG.keys
-  LEAVE_APPLICATION_TYPES_SELECTABLE = LEAVE_APPLICATION_TYPES.delete_if do |x|
-    LEAVE_APPLICATION_TYPES_CONFIG[x][:applicable].nil?
-  end
-  LEAVE_APPLICATION_TYPES_SYM = DataHelper.each_to_sym LEAVE_APPLICATION_TYPES
-  LEAVE_APPLICATION_TYPES_SELECTABLE_SYM = DataHelper.each_to_sym LEAVE_APPLICATION_TYPES_SELECTABLE
-
-  MAX_PRE_APPLICATION = eval Settings.leave_application_misc.max_pre_application
-  MAX_LEAVE_TO_APPLICABLE_BEFORE = DataHelper.each_keys_freeze(Settings.leave_application_misc.max_leave_to_applicable_before) { |v| DurationRangeToValue.new(v) }
+  enum status: {
+    pending:  'pending',
+    approved: 'approved',
+    rejected: 'rejected',
+    canceled: 'canceled'
+  }
 
   acts_as_paranoid
   paginates_per 8
 
   after_initialize :set_primary_id
   before_validation :assign_hours
-  # before_validation :pre_create_leave_time_if_allowed, on: :create
-  # before_validation :bind_leave_time_if_exist, on: :create
-  # before_save :ensure_leave_time_hours_correct
 
   belongs_to :user
   belongs_to :manager, class_name: 'User', foreign_key: 'manager_id'
@@ -45,7 +33,7 @@ class LeaveApplication < ApplicationRecord
   }
   scope :with_status, ->(status) { where(status: status) }
 
-  aasm column: :status do
+  aasm column: :status, enum: true do
     state :pending, initial: true
     state :approved
     state :rejected
@@ -105,20 +93,7 @@ class LeaveApplication < ApplicationRecord
     self.leave_type.to_sym == type.to_sym
   end
 
-  def just_created_a_leave_time?
-    @just_created_a_leave_time
-  end
-
   private
-
-  def config(key = nil, default = nil)
-    @config ||= LEAVE_APPLICATION_TYPES_CONFIG[self.leave_type]
-    if key.nil?
-      @config
-    else
-      config.nil? ? default : config[key]
-    end
-  end
 
   def set_primary_id
     self.uuid ||= SecureRandom.uuid
@@ -134,35 +109,6 @@ class LeaveApplication < ApplicationRecord
 
   def pre_create_leave_time_if_allowed
     leave_time_tmp.save! if leave_time_tmp.present? && leave_time_tmp.new_record? && leave_time_tmp.allow_pre_creation?
-  end
-
-  def bind_leave_time_if_exist
-    self.leave_time = leave_time_tmp if leave_time_tmp.present? && !leave_time_tmp.new_record?
-  end
-
-  def bind_and_make_leave_time_exist
-    if leave_time_tmp.new_record?
-      @just_created_a_leave_time = leave_time_tmp.save!
-      self.leave_time = leave_time_tmp
-      self.save!
-    end
-  end
-
-  def leave_time_tmp
-    @leave_time_tmp ||= self.leave_time || pick_or_gen_leave_time
-  end
-
-  def pick_or_gen_leave_time
-    leave_time_candidates = []
-    config(:pool, []).each do |pool_type|
-      pool = LeaveTime.get_from_pool(self.user, pool_type, self.start_time, self.end_time)
-      leave_time_candidates +=
-        pool.present? ? pool : [LeaveTime.new(user: user, leave_type: pool_type, new_by: self)]
-    end
-    leave_time_candidates.each do |lt|
-      return lt if lt.available? self.hours
-    end
-    nil
   end
 
   def ensure_leave_time_hours_correct
