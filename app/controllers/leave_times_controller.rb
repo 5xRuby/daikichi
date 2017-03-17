@@ -1,11 +1,12 @@
 # frozen_string_literal: true
 class LeaveTimesController < BaseController
-  def index
-    # FIXME: This won't work since LeaveTime's structure has changed
-    @current_collection = collection_scope.overlaps(
-      Date.new(specific_year.to_i, 1, 1), Date.new(specific_year.to_i, 12, 1)
-    ).page(params[:page])
-  end
+  STARTING_YEAR = Settings.misc.starting_year.to_i
+  SHOWINGS = [%i(all effective)].freeze
+  DEFAULT_SHOWING = 'effective'
+
+  helper_method :showing
+
+  def index; end
 
   def show
     leave_type = params[:type]
@@ -16,9 +17,27 @@ class LeaveTimesController < BaseController
     end
   end
 
+  def showing
+    @showing ||= params[:showing] || DEFAULT_SHOWING
+  end
+
   private
 
   def collection_scope
-    current_user.leave_times
+    return LeaveTime if params[:id]
+    lts = LeaveTime.belong_to(current_user)
+    case showing
+    when 'all'
+      lts
+    else
+      if /\A\d+\z/.match(showing)
+        showing_tmp = showing.to_i
+        lts.overlaps(
+          Date.new(showing_tmp, 1, 1), Date.new(showing_tmp, 12, 31)
+        )
+      else # 'effective'
+        lts.effective
+      end
+    end
   end
 end

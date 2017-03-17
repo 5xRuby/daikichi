@@ -1,7 +1,12 @@
 # frozen_string_literal: true
 class Backend::LeaveTimesController < Backend::BaseController
-  def index
-      @current_collection = collection_scope.get_employees_bonus.page(params[:page]).reorder(user_id: :desc)
+  helper_method :leave_type
+  DEFAULT_LEAVE_POOL_TYPE = Settings.backend.default_leave_pool_type
+
+  def index; end
+
+  def leave_type
+    @leave_type ||= params[:leave_type] || (params[:leave_time] ? params[:leave_time][:leave_type] : nil) || DEFAULT_LEAVE_POOL_TYPE
   end
 
   private
@@ -10,7 +15,29 @@ class Backend::LeaveTimesController < Backend::BaseController
     if params[:id]
       LeaveTime
     else
-      LeaveTime.order(id: :desc)
+      LeaveTime.effective.where(leave_type: leave_type).order(id: :desc)
+    end
+  end
+
+  def resource_params
+    params.require(:leave_time).permit(
+      :user_id, :leave_type, :quota, :effective_date, :expiration_date, :usable_hours, :used_hours
+    )
+  end
+
+  def new_resource_params
+    p = params.permit(
+      :user_id, :leave_type
+    ).to_h
+    p['leave_type'] ||= leave_type
+    p
+  end
+
+  def url_after(action)
+    if @actions.include?(action)
+      url_for(action: :index, leave_type: leave_type)
+    else
+      request.env['HTTP_REFERER']
     end
   end
 end

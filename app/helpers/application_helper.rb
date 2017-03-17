@@ -3,8 +3,8 @@ module ApplicationHelper
   # show 才會用到 tr_by_object，將 object 寫在最後面，可以在呼叫 tr_by_object 時省略不寫
   def tr_by_object(attribute, conversion = nil, key = nil, object = current_object)
     content_tag :tr do
-      concat content_tag :th, t_attribute(attribute, object), class: "col-md-3"
-      concat content_tag :td, t_value(attribute, object, conversion, key), class: "col-md-9"
+      concat content_tag :th, t_attribute(attribute, object), class: 'col-md-3'
+      concat content_tag :td, t_value(attribute, object, conversion, key), class: 'col-md-9'
     end
   end
 
@@ -49,24 +49,24 @@ module ApplicationHelper
   end
   # --------------------------------------------------------------------
 
-  def dropdown_title(label = "")
+  def dropdown_title(label = '')
     capture_haml do
-      haml_tag "a.dropdown-toggle", dropdown_hash do
+      haml_tag 'a.dropdown-toggle', dropdown_hash do
         haml_concat label
-        haml_tag "span.caret"
+        haml_tag 'span.caret'
       end
     end
   end
 
   def dropdown_hash
-    { "data-toggle": "dropdown",
-      "role": "button",
-      "aria-haspopup": "true",
-      "aria-expanded": "false" }
+    { "data-toggle": 'dropdown',
+      "role": 'button',
+      "aria-haspopup": 'true',
+      "aria-expanded": 'false' }
   end
 
-  def no_data_alert(message = t("warnings.no_data"))
-    content_tag :div, message, class: "alert alert-warning"
+  def no_data_alert(message = t('warnings.no_data'))
+    content_tag :div, message, class: 'alert alert-warning'
   end
 
   def status_select_option
@@ -82,7 +82,19 @@ module ApplicationHelper
   end
 
   def hours_to_humanize(hours)
-    return "-" if hours == 0
-    I18n.t("time.humanize_working_hour", days: hours.to_i/8, hours: hours%8, total: hours)
+    return '-' if hours == 0
+    I18n.t('time.humanize_working_hour', days: hours.to_i / 8, hours: hours % 8, total: hours)
+  end
+
+  def type_selector(name, label, options, default)
+    render 'shared/type_selector', name: name, label: label, options: options, default: default
+  end
+
+  def leave_times_table(leave_times, exclude_columns, &tools)
+    render 'shared/leave_times_table',
+           leave_times: leave_times,
+           show_leave_type: !exclude_columns.include?(:leave_type),
+           columns: [:name, :quota, :usable_hours_if_allow, :used_hours_if_allow, :effective_date, :expiration_date] - exclude_columns,
+           tools: tools
   end
 end

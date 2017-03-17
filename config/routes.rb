@@ -12,7 +12,7 @@ Rails.application.routes.draw do
         get :statistics, on: :collection
       end
 
-      resources :leave_times, only: [:index]
+      resources :leave_times, except: [:show]
 
       resources :bonus_leave_time_logs, only: [:index, :update]
 
@@ -36,7 +36,6 @@ Rails.application.routes.draw do
 
     get "leave_time/:type",
       to: "leave_times#show",
-      constraints: { type: /annual|bonus|personal|sick/ },
       as: "leave_time"
   end
 end

@@ -14,8 +14,8 @@
           %li.dropdown
             = dropdown_title t("nav.leave_applications")
             %ul.dropdown-menu
-              %li= link_to t("title.leave_times.index"), leave_times_path(year: specific_year)
-              %li= link_to t("title.leave_applications.index"), leave_applications_path(status: :pending, year: specific_year)
+              %li= link_to t("title.leave_times.index"), leave_times_path
+              %li= link_to t("title.leave_applications.index"), leave_applications_path
               %li= link_to t("title.leave_applications.new"), new_leave_application_path
         - if can? :manage, User
           %li.dropdown

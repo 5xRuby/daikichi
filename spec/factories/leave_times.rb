@@ -2,14 +2,14 @@
 FactoryGirl.define do
   factory :leave_time do
     user
-    leave_type "annual"
+    leave_type 'annual'
     effective_date  { Time.current.beginning_of_year }
     expiration_date { Time.current.end_of_year }
+    quota           0
+    used_hours      0
+    usable_hours    0
 
-    # leave_types include:
-    # "annual", "bonus", "marriage", "funeral", "maternity", "personal", "official", "work_related_injury", "sick"
-
-    Settings.leave_types.each do |type|
+    Settings.leave_application_types.keys.each do |type|
       trait type.to_sym do
         leave_type type
       end

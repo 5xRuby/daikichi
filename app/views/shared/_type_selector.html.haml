@@ -1,0 +1,8 @@
+
+.row
+  .col-md-3.col-sm-3.col-xs-6
+    .form-group
+      %label{:for=> name}= label
+      = select_tag name,
+        options_for_select(options, default), class: "form-control type-selector"
+

@@ -6,7 +6,7 @@ class EmployeeMonthlyStat::CustomHash
     @data = {}
 
     User.all.find_each do |employee|
-      next if employee.role == "admin"
+      next if employee.role == 'admin'
       @data[employee.id] = Hash.new(0)
     end
   end

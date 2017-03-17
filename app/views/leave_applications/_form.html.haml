@@ -2,15 +2,12 @@
 
 = simple_form_for current_object  do |f|
   - if action_name == "edit"
-    = f.input :leave_type, required: true, collection: LeaveApplication::LEAVE_TYPE, disabled: true
+    = f.input :leave_type, required: true, collection: LeaveApplication::LEAVE_APPLICATION_TYPES_SELECTABLE_SYM, disabled: true
   - else
-    = f.input :leave_type, require: true, collection: LeaveApplication::LEAVE_TYPE
-  - if current_object.new_record?
-    = f.input :start_time, date_time_picker_hash(:start, time_object_by_hour_min(9, 30))
-    = f.input :end_time, date_time_picker_hash(:end, time_object_by_hour_min(10, 30))
-  - else
-    = f.input :start_time, date_time_picker_hash(:start, current_object[:start_time])
-    = f.input :end_time, date_time_picker_hash(:end, current_object[:end_time])
+    = f.input :leave_type, require: true, collection: LeaveApplication::LEAVE_APPLICATION_TYPES
+  = f.input :start_time, date_time_picker_hash(:start, current_object[:start_time])
+  = f.input :end_time, date_time_picker_hash(:end, current_object[:end_time])
+  = f.input :hours
   = f.input :description, required: true
   = f.button :submit, class: "submit"
 

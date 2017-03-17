@@ -22,6 +22,9 @@
           %td.text-center= t_value :role, user, :translate_text_value
           %td.text-center= t_value :join_date, user, :convert_time_value, :year_date
           %td.text-center
+            = link_to t("title.backend/leave_times.new"),
+              new_backend_leave_time_path(user_id: user.id),
+              class: "btn btn-primary"
             = link_to t("title.backend/users.show"),
               backend_user_path(user),
               class: "btn btn-primary"

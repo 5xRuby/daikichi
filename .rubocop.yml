@@ -6,7 +6,6 @@ AllCops:
   Exclude:
     - bin/**/*
     - db/schema.rb
-    - spec/models/leave_application_spec.rb
     - config/**/*
     - lib/tasks/*.rake
 
@@ -48,7 +47,7 @@ SignalException:
 
 # Prefer ' strings when you don't need string interpolation or special symbols.
 StringLiterals:
-  EnforcedStyle: double_quotes
+  EnforcedStyle: single_quotes
   SupportedStyles:
     - single_quotes
     - double_quotes
@@ -93,3 +92,13 @@ MultilineMethodCallIndentation:
 
 ConditionalAssignment:
   Enabled: false
+
+Metrics/ModuleLength:
+  Exclude:
+    - "**/*_spec.rb"
+    - spec/factories/*
+
+Metrics/BlockLength:
+  Exclude:
+    - "**/*_spec.rb"
+    - spec/factories/*

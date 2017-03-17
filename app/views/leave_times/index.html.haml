@@ -1,10 +1,9 @@
 %h2= t("captions.leave_times.index", year: specific_year)
 
-.row
-  .col-md-3.col-sm-3.col-xs-6
-    .form-group
-      %label{:for=>"year"} 年度
-      = select_tag :year,
-        options_for_select( (2016 .. Time.now.year), specific_year), class: "form-control"
+= type_selector 'showing',
+  t("title.leave_times.showing"),
+  (LeaveTimesController::STARTING_YEAR .. Time.now.year).map {|y| [y,y] } + LeaveTimesController::SHOWINGS.map {|type| [t("title.leave_times." + type.to_s), type] },
+  showing
 
-= render "table", { leave_times: current_collection }
+= leave_times_table current_collection, [:name]
+

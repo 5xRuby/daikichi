@@ -1,0 +1,14 @@
+%h2= t("captions.backend/leave_times.#{action_name}")
+
+= simple_form_for [:backend, current_object] do |f|
+  = f.association :user, required: true
+  = f.input :leave_type, required: true, collection: LeaveTime::LEAVE_POOLS_TYPES_SYM
+  = f.input :quota
+  = f.input :effective_date, date_time_picker_hash(:start, current_object[:effective_date])
+  = f.input :expiration_date, date_time_picker_hash(:end, current_object[:expiration_date])
+  - unless current_object.new_record?
+    = f.input :usable_hours
+    = f.input :used_hours
+    = link_to t("title.backend/leave_times.delete"), backend_leave_time_path(current_object), method: :delete, class: "btn btn-sm btn-danger", data: {confirm: "Are you sure?"}
+  = f.button :submit
+

@@ -1,7 +1,10 @@
-document.addEventListener("turbolinks:load", function() {
-  $document = $(document);
-  $window = $(window);
-
+(function() {
+  function type_selector() {
+    $selector = $(".type-selector");
+    $selector.on('change', function(e){
+      Turbolinks.visit("?" + $(this).attr('name') + "=" + $(this).val() );
+    })
+  }
   function autoHeight() {
     $wrap = $('#wrap');
 
@@ -9,11 +12,18 @@ document.addEventListener("turbolinks:load", function() {
     $wrap.css( 'min-height', $document.height() - $('#nav').height() - $('#footer').height() );
   }
 
-  $document.ready(function(){
-    autoHeight();
-  });
+  document.addEventListener("turbolinks:load", function() {
+    $document = $(document);
+    $window = $(window);
 
-  $window.resize(function(){
-    autoHeight();
+    type_selector();
+
+    $document.ready(function(){
+      autoHeight();
+    });
+
+    $window.resize(function(){
+      autoHeight();
+    });
   });
-});
+})();

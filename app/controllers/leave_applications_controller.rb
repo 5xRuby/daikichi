@@ -13,7 +13,7 @@ class LeaveApplicationsController < BaseController
       current_object.revise!
       action_success
     elsif current_object.canceled?
-      action_fail t("warnings.not_cancellable"), :edit
+      action_fail t('warnings.not_cancellable'), :edit
     else
       respond_to do |f|
         f.html { return render action: :edit }
@@ -23,12 +23,12 @@ class LeaveApplicationsController < BaseController
   end
 
   def cancel
-    unless current_object.may_cancel?
-      action_fail t("warnings.not_cancellable"), :index
-    else
+    if current_object.may_cancel?
       current_object.cancel!
       @actions << :cancel
       action_success
+    else
+      action_fail t('warnings.not_cancellable'), :index
     end
   end
 
@@ -52,7 +52,7 @@ class LeaveApplicationsController < BaseController
     if @actions.include?(action)
       url_for(action: :index, controller: controller_path, params: { status: :pending })
     else
-      request.env["HTTP_REFERER"]
+      request.env['HTTP_REFERER']
     end
   end
 end

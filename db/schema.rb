@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170105042400) do
+ActiveRecord::Schema.define(version: 20170209073322) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -37,18 +37,19 @@ ActiveRecord::Schema.define(version: 20170105042400) do
   create_table "leave_applications", force: :cascade do |t|
     t.integer  "user_id"
     t.string   "leave_type"
-    t.integer  "hours",       default: 0
+    t.integer  "hours",         default: 0
     t.datetime "start_time"
     t.datetime "end_time"
     t.text     "description"
-    t.string   "status",      default: "pending"
+    t.string   "status",        default: "pending"
     t.datetime "sign_date"
     t.datetime "deleted_at"
-    t.datetime "created_at",                      null: false
-    t.datetime "updated_at",                      null: false
+    t.datetime "created_at",                        null: false
+    t.datetime "updated_at",                        null: false
     t.integer  "manager_id"
     t.text     "comment"
-    t.string   "uuid",                            null: false
+    t.string   "uuid",                              null: false
+    t.integer  "leave_time_id"
     t.index ["manager_id"], name: "index_leave_applications_on_manager_id", using: :btree
     t.index ["uuid"], name: "index_leave_applications_on_uuid", unique: true, using: :btree
   end
@@ -56,8 +57,8 @@ ActiveRecord::Schema.define(version: 20170105042400) do
   create_table "leave_times", force: :cascade do |t|
     t.integer  "user_id",                                  null: false
     t.string   "leave_type"
-    t.integer  "quota",           default: 0
-    t.integer  "usable_hours",    default: 0
+    t.integer  "quota"
+    t.integer  "usable_hours"
     t.integer  "used_hours",      default: 0
     t.datetime "created_at",                               null: false
     t.datetime "updated_at",                               null: false

@@ -12,11 +12,16 @@ zh-TW:
         join_date: "到職日期"
         leave_date: "離職日期"
       leave_time:
-        year: "年度"
+        user: "員工"
+        name: "擁有者"
         leave_type: "假別"
-        quota: "總時數"
-        usable_hours: "可用時數"
+        quota: "時數"
         used_hours: "已用時數"
+        used_hours_if_allow: "已用時數"
+        usable_hours: "可用時數"
+        usable_hours_if_allow: "可用時數"
+        effective_date: '有效時間'
+        expiration_date: '失效時間'
       leave_application:
         user: "員工"
         start_time: "開始時間"
@@ -35,10 +40,12 @@ zh-TW:
             leave_type:
               blank: "請選擇請假種類"
               only_take_annual_leave_year_before: "只有特休假得以於前一年提前請假"
+              no_leave_time_available: "此假別沒有可用的扣打"
             description:
               blank: "請簡述原因"
             start_time:
               should_be_earlier: "開始時間必須早於結束時間"
+              not_within_applicable_time: "距離申請時間不合規定"
             end_time:
               not_integer: "請假的最小單位是1小時"
               not_enough_leave_time: "剩餘休假時間不足"
@@ -83,17 +90,24 @@ zh-TW:
     backend/monthly_leave_times:
       index: "員工休假狀況"
     backend/leave_times:
-      index: "員工補休"
-    backend/bonus_leave_time_logs:
-      new: "增加"
+      index: "員工休假扣打"
+      new: "新增休假扣打"
+      edit: "修改"
+      delete: "刪除"
+      change_type: "切換休假種類至"
     leave_applications:
       index: "所有假單"
       show: "檢視"
       new: "新增假單"
+      create: "新增假單"
       edit: "修改"
       cancel: "取消"
     leave_times:
-      index: "請假狀況"
+      index: "請假狀況 & 扣打"
+      showing: "顯示"
+      all: '全部'
+      effective: '有效的'
+      type: '假別'
 
   captions:
     devise/registrations:
@@ -103,11 +117,12 @@ zh-TW:
       new: "登入"
       destroy: "登出"
     leave_times:
-      index: "%{year} 年 請假狀況"
+      index: "請假狀況 & 扣打"
     leave_applications:
       index: "%{year} 年 所有假單"
       show: "%{day} 假單"
       new: "新增假單"
+      create: "新增假單"
       edit: "編輯假單"
     backend/users:
       index: "員工列表"
@@ -121,12 +136,15 @@ zh-TW:
     backend/monthly_leave_times:
       index: "%{year} 年 %{month} 月 員工休假狀況"
     backend/leave_times:
-      index: "員工補休"
+      index: "員工休假扣打"
+      new: "新增休假扣打"
+      edit: "修改休假扣打"
     tools: "工具"
 
   success:
     create: "新增成功"
     update: "修改成功"
+    approved_and_require_to_update_leave_time: "已准假，若有需要請指定扣打"
     destroy: "刪除成功"
     revise: "已修改假單"
     cancel: "已取消假單"
