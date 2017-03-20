@@ -17,16 +17,7 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
 
-  ROLES = {
-    manager:    'manager',
-    hr:         'hr',
-    employee:   'employee',
-    contractor: 'contractor',
-    intern:     'intern',
-    resigned:   'resigned',
-    pending:    'pending'
-  }
-  enum role: ROLES
+  enum role: Settings.roles
   # %i(manager hr employee contractor intern resigned pending)
 
   scope :filter_by_join_date, ->(month, date) {
@@ -63,7 +54,7 @@ class User < ApplicationRecord
       .approved)
   }
 
-  ROLES.each do |key, role|
+  Settings.roles.each do |key, role|
     define_method "is_#{role}?" do
       self.role.to_s == role
     end
