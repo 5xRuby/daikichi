@@ -17,7 +17,17 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
 
-  ROLES = %i(manager hr employee contractor intern resigned pending).freeze
+  ROLES = {
+    manager:    'manager',
+    hr:         'hr',
+    employee:   'employee',
+    contractor: 'contractor',
+    intern:     'intern',
+    resigned:   'resigned',
+    pending:    'pending'
+  }
+  enum role: ROLES
+  # %i(manager hr employee contractor intern resigned pending)
 
   scope :filter_by_join_date, ->(month, date) {
     where(
@@ -53,9 +63,9 @@ class User < ApplicationRecord
       .approved)
   }
 
-  ROLES.each do |role|
+  ROLES.each do |key, role|
     define_method "is_#{role}?" do
-      self.role.to_sym == role
+      self.role.to_s == role
     end
   end
 

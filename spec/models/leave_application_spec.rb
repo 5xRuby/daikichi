@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 require 'rails_helper'
 RSpec.describe LeaveApplication, type: :model do
-  let(:first_year_employee) { FactoryGirl.create(:first_year_employee) }
-  let(:sick)     { FactoryGirl.create(:leave_time, :sick,     user: first_year_employee) }
-  let(:personal) { FactoryGirl.create(:leave_time, :personal, user: first_year_employee) }
-  let(:bonus)    { FactoryGirl.create(:leave_time, :bonus,    user: first_year_employee) }
-  let(:annual)   { FactoryGirl.create(:leave_time, :annual,   user: first_year_employee) }
+  let(:first_year_employee) { create(:first_year_employee) }
+  let(:sick)     { create(:leave_time, :sick,     user: first_year_employee) }
+  let(:personal) { create(:leave_time, :personal, user: first_year_employee) }
+  let(:bonus)    { create(:leave_time, :bonus,    user: first_year_employee) }
+  let(:annual)   { create(:leave_time, :annual,   user: first_year_employee) }
   # Monday
   let(:start_time)      { Time.zone.local(Time.current.year, 8, 15, 9, 30, 0) }
   let(:one_hour_ago)    { Time.zone.local(Time.current.year, 8, 15, 8, 30, 0) }
@@ -17,7 +17,7 @@ RSpec.describe LeaveApplication, type: :model do
     subject { described_class.new(params) }
 
     context 'has a valid factory' do
-      subject { FactoryGirl.build_stubbed(:leave_application, :with_leave_time, :annual) }
+      subject { build_stubbed(:leave_application, :with_leave_time, :annual) }
       it { expect(subject).to be_valid }
     end
 
@@ -65,7 +65,7 @@ RSpec.describe LeaveApplication, type: :model do
       let(:end_time)   { beginning + 5.working.day }
       subject { described_class.leave_within_range(beginning, closing) }
       let!(:leave_application) do
-        FactoryGirl.create(
+        create(
           :leave_application, :with_leave_time,
           start_time: start_time,
           end_time:   end_time
@@ -115,7 +115,7 @@ RSpec.describe LeaveApplication, type: :model do
 
       context 'within_range' do
         before do
-          FactoryGirl.create(:leave_application, :with_leave_time, start_time: start_time, end_time: end_time)
+          create(:leave_application, :with_leave_time, start_time: start_time, end_time: end_time)
         end
 
         it 'should be sum up' do
@@ -128,7 +128,7 @@ RSpec.describe LeaveApplication, type: :model do
         let(:end_time)   { WorkingHours.return_to_working_time(beginning + 1.working.day) }
 
         before do
-          FactoryGirl.create(:leave_application, :with_leave_time, start_time: start_time, end_time: end_time)
+          create(:leave_application, :with_leave_time, start_time: start_time, end_time: end_time)
         end
 
         it 'only hours in range will be sum up' do
@@ -141,7 +141,7 @@ RSpec.describe LeaveApplication, type: :model do
         let(:end_time)   { WorkingHours.return_to_working_time(beginning - 1.working.day) }
 
         before do
-          FactoryGirl.create(:leave_application, :with_leave_time, start_time: start_time, end_time: end_time)
+          create(:leave_application, :with_leave_time, start_time: start_time, end_time: end_time)
         end
 
         it 'should be ignored' do
@@ -154,7 +154,7 @@ RSpec.describe LeaveApplication, type: :model do
       let(:start_time) { beginning + 3.working.day }
       let(:end_time)   { WorkingHours.return_to_working_time(beginning + 5.working.day) }
       let(:leave_application) do
-        FactoryGirl.build_stubbed(
+        build_stubbed(
           :leave_application,
           start_time: start_time,
           end_time:   end_time
@@ -180,7 +180,7 @@ RSpec.describe LeaveApplication, type: :model do
 
     describe '#is_leave_type?' do
       let(:type) { 'all' }
-      let(:leave_application) { FactoryGirl.build_stubbed(:leave_application) }
+      let(:leave_application) { build_stubbed(:leave_application) }
       subject { leave_application.is_leave_type?(type) }
       context 'all' do
         it 'is true with all leave_type' do
@@ -190,7 +190,7 @@ RSpec.describe LeaveApplication, type: :model do
 
       context 'specific' do
         let(:type) { 'annual' }
-        let(:leave_application) { FactoryGirl.build_stubbed(:leave_application, leave_type: type) }
+        let(:leave_application) { build_stubbed(:leave_application, leave_type: type) }
         it "is true if given leave_type equals to object's leave_type" do
           expect(subject).to be_truthy
         end

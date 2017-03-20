@@ -2,10 +2,10 @@
 require 'rails_helper'
 
 RSpec.describe LeaveTime, type: :model do
-  let(:first_year_employee) { FactoryGirl.create(:first_year_employee) }
-  let(:third_year_employee) { FactoryGirl.create(:third_year_employee) }
-  let(:senior_employee) { FactoryGirl.create(:user, :employee, join_date: 30.years.ago) }
-  let(:contractor)      { FactoryGirl.create(:user, :contractor) }
+  let(:first_year_employee) { create(:first_year_employee) }
+  let(:third_year_employee) { create(:third_year_employee) }
+  let(:senior_employee) { create(:user, :employee, join_date: 30.years.ago) }
+  let(:contractor)      { create(:user, :contractor) }
 
   describe '#associations' do
     it { is_expected.to belong_to(:user) }
@@ -28,7 +28,7 @@ RSpec.describe LeaveTime, type: :model do
 
       context 'expiration_date earlier than effective_date' do
         let(:params) do
-          FactoryGirl.attributes_for(:leave_time,
+          attributes_for(:leave_time,
                                      effective_date:  Time.current.strftime('%Y-%m-%d'),
                                      expiration_date:  1.day.ago .strftime('%Y-%m-%d'))
         end
@@ -45,7 +45,7 @@ RSpec.describe LeaveTime, type: :model do
     let(:ending)    { 1.year.since }
     let(:effective_date)  { beginning - 10.days }
     let(:expiration_date) { beginning + 15.days }
-    let!(:leave_time) { FactoryGirl.create(:leave_time, :annual, effective_date: effective_date, expiration_date: expiration_date) }
+    let!(:leave_time) { create(:leave_time, :annual, effective_date: effective_date, expiration_date: expiration_date) }
 
     describe '.overlaps' do
       subject { described_class.overlaps(beginning, ending) }
