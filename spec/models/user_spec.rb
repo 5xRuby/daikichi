@@ -2,7 +2,21 @@
 require 'rails_helper'
 
 RSpec.describe User, type: :model do
-  let(:manager) { FactoryGirl.create(:user, :manager) }
+  let(:manager) { create(:user, :manager) }
+
+  describe "enum" do
+    it 'defines user role as enum' do
+      # Choose a sample from User roles
+      user = build(:user, role: User.roles.to_a.sample[0])
+      user.valid?
+      expect(user).to be_valid
+    end
+
+    it 'cannot save user role if not in the role enum list' do
+      expect { build(:user, role: "internship") }.to raise_error(ArgumentError)
+      expect { build(:user, role: "management") }.to raise_error(ArgumentError)
+    end
+  end
 
   describe '#associations' do
     it { is_expected.to have_many(:leave_times) }
@@ -11,7 +25,7 @@ RSpec.describe User, type: :model do
   end
 
   describe '#validations' do
-    subject { FactoryGirl.build(:user) }
+    subject { build(:user) }
     it { is_expected.to validate_presence_of(:name) }
     it { is_expected.to validate_presence_of(:login_name) }
     it { is_expected.to validate_uniqueness_of(:login_name).case_insensitive.scoped_to(:deleted_at) }
@@ -21,8 +35,8 @@ RSpec.describe User, type: :model do
     context 'should validate that :email' do
       it 'is case-insensitively unique within the scope of :deleted_at' do
         email = Faker::Internet.email
-        old_user = FactoryGirl.create(:user, email: email)
-        user = FactoryGirl.build(:user, email: email)
+        old_user = create(:user, email: email)
+        user = build(:user, email: email)
         expect(user).to be_invalid
         expect(user.errors.messages[:email]).to include I18n.t('errors.messages.taken')
         old_user.destroy
@@ -33,12 +47,12 @@ RSpec.describe User, type: :model do
 
   describe '.scope' do
     describe '.filter_by_join_date' do
-      let!(:fulltime) { FactoryGirl.create(:user, :fulltime, join_date: Date.current - 2.years) }
-      let!(:parttime) { FactoryGirl.create(:user, :parttime, join_date: Date.current - 1.year) }
+      let!(:fulltime) { create(:user, :fulltime, join_date: Date.current - 2.years) }
+      let!(:parttime) { create(:user, :parttime, join_date: Date.current - 1.year) }
       subject { User.filter_by_join_date(Date.current.month, Date.current.day) }
 
       before do
-        FactoryGirl.create(:user, :fulltime, join_date: Date.current - 3.days)
+        create(:user, :fulltime, join_date: Date.current - 3.days)
       end
 
       it 'should get all users that join_date match with given month and day' do
@@ -50,11 +64,11 @@ RSpec.describe User, type: :model do
 
     describe '.valid' do
       subject { described_class.valid }
-      let!(:resigned) { FactoryGirl.create(:user, role: :resigned) }
-      let!(:pending)  { FactoryGirl.create(:user, role: :pending) }
-      let!(:fulltime) { FactoryGirl.create(:user, :fulltime) }
-      let!(:parttime) { FactoryGirl.create(:user, :parttime) }
-      let!(:future_employee) { FactoryGirl.create(:user, join_date: Date.current + 1.day) }
+      let!(:resigned) { create(:user, role: :resigned) }
+      let!(:pending)  { create(:user, role: :pending) }
+      let!(:fulltime) { create(:user, :fulltime) }
+      let!(:parttime) { create(:user, :parttime) }
+      let!(:future_employee) { create(:user, join_date: Date.current + 1.day) }
 
       it 'should include all users except resigned and pending users' do
         expect(subject).to include fulltime
@@ -70,9 +84,9 @@ RSpec.describe User, type: :model do
 
     describe '.fulltime' do
       subject { described_class.fulltime }
-      let(:fulltime) { FactoryGirl.create(:user, :fulltime) }
-      let(:parttime) { FactoryGirl.create(:user, :parttime) }
-      let(:future_fulltime) { FactoryGirl.create(:user, :fulltime, join_date: Date.current + 1.day) }
+      let(:fulltime) { create(:user, :fulltime) }
+      let(:parttime) { create(:user, :parttime) }
+      let(:future_fulltime) { create(:user, :fulltime, join_date: Date.current + 1.day) }
 
       it 'should include active fulltime user only' do
         expect(subject).to include fulltime
@@ -83,9 +97,9 @@ RSpec.describe User, type: :model do
 
     describe '.parttime' do
       subject { described_class.parttime }
-      let!(:fulltime) { FactoryGirl.create(:user, :fulltime) }
-      let!(:parttime) { FactoryGirl.create(:user, :parttime) }
-      let!(:future_parttime) { FactoryGirl.create(:user, :parttime, join_date: Date.current + 1.day) }
+      let!(:fulltime) { create(:user, :fulltime) }
+      let!(:parttime) { create(:user, :parttime) }
+      let!(:future_parttime) { create(:user, :parttime, join_date: Date.current + 1.day) }
 
       it 'should include active parttime user only' do
         expect(subject).to include parttime
@@ -101,7 +115,7 @@ RSpec.describe User, type: :model do
       let(:end_time)   { WorkingHours.return_to_working_time(start_time + 1.working.day) }
       let!(:leave_application) do
         Timecop.travel(start_time - 30.days)
-        FactoryGirl.create(:leave_application, :with_leave_time, start_time: start_time, end_time: end_time)
+        create(:leave_application, :with_leave_time, start_time: start_time, end_time: end_time)
       end
 
       after { Timecop.return }
@@ -117,7 +131,7 @@ RSpec.describe User, type: :model do
       context 'approved leave_applications' do
         let!(:leave_application) do
           Timecop.freeze(start_time - 30.days)
-          FactoryGirl.create(:leave_application, :approved, :with_leave_time, :annual, start_time: start_time, end_time: end_time)
+          create(:leave_application, :approved, :with_leave_time, :annual, start_time: start_time, end_time: end_time)
         end
 
         context 'within range' do
@@ -129,7 +143,7 @@ RSpec.describe User, type: :model do
           context 'all leave_hours_within_month' do
             before do
               Timecop.travel(start_time - 30.days)
-              FactoryGirl.create(
+              create(
                 :leave_application, :approved, :annual,
                 user: leave_application.user,
                 start_time: start_time + 3.working.day,
@@ -145,7 +159,7 @@ RSpec.describe User, type: :model do
           context 'specific leave_hours_within_month' do
             before do
               Timecop.travel(start_time - 30.days)
-              FactoryGirl.create(
+              create(
                 :leave_application, :approved, :personal, :with_leave_time,
                 user: leave_application.user,
                 start_time: start_time + 3.working.day,
@@ -171,7 +185,7 @@ RSpec.describe User, type: :model do
           context 'all leave_hours_within_month' do
             before do
               Timecop.freeze(start_time - 30.days)
-              FactoryGirl.create(
+              create(
                 :leave_application, :approved, :annual,
                 user: leave_application.user,
                 start_time: start_time + 3.working.day,
@@ -187,7 +201,7 @@ RSpec.describe User, type: :model do
           context 'specific leave_hours_within_month' do
             before do
               Timecop.travel(start_time - 30.days)
-              FactoryGirl.create(
+              create(
                 :leave_application, :approved, :personal, :with_leave_time,
                 user: leave_application.user,
                 start_time: start_time + 3.working.day,
@@ -212,7 +226,7 @@ RSpec.describe User, type: :model do
       context 'not approved leave_applications' do
         let!(:leave_application) do
           Timecop.travel(start_time - 30.days)
-          FactoryGirl.create(:leave_application, :with_leave_time, start_time: start_time, end_time: end_time)
+          create(:leave_application, :with_leave_time, start_time: start_time, end_time: end_time)
         end
 
         include_examples 'not included in returned results'
@@ -225,13 +239,13 @@ RSpec.describe User, type: :model do
     subject { user.seniority(base_date) }
 
     context 'parttime user' do
-      let(:user) { FactoryGirl.build(:user, :parttime, join_date: Date.current - 2.years) }
+      let(:user) { build(:user, :parttime, join_date: Date.current - 2.years) }
 
       it { expect(subject).to eq 0 }
     end
 
     context 'fulltime user' do
-      let(:user) { FactoryGirl.build(:user, :fulltime, join_date: join_date) }
+      let(:user) { build(:user, :fulltime, join_date: join_date) }
 
       context 'joined less than a year' do
         let(:join_date) { Date.current - 1.year + 1.day }
@@ -255,20 +269,20 @@ RSpec.describe User, type: :model do
   describe '#fulltime?' do
     subject { user.fulltime? }
     context 'parttime user' do
-      let(:user) { FactoryGirl.create(:user, :parttime) }
+      let(:user) { create(:user, :parttime) }
 
       it { expect(subject).to be_falsey }
     end
 
     context 'fulltime user' do
-      let(:user) { FactoryGirl.create(:user, :fulltime) }
+      let(:user) { create(:user, :fulltime) }
 
       it { expect(subject).to be_truthy }
     end
   end
 
   describe '#this_year_join_anniversary' do
-    let(:user) { FactoryGirl.create(:user, :fulltime, join_date: join_date) }
+    let(:user) { create(:user, :fulltime, join_date: join_date) }
     subject { user.this_year_join_anniversary }
 
     context "this year's join anniversary not passed" do
@@ -288,7 +302,7 @@ RSpec.describe User, type: :model do
   end
 
   describe '#next_join_anniversary' do
-    let(:user) { FactoryGirl.create(:user, :fulltime, join_date: join_date) }
+    let(:user) { create(:user, :fulltime, join_date: join_date) }
     subject { user.next_join_anniversary }
 
     context "this year's join anniversary not passed" do
@@ -308,9 +322,9 @@ RSpec.describe User, type: :model do
   end
 
   describe '#is_{role}?' do
-    let(:employee) { FactoryGirl.create(:user, :employee) }
-    let(:manager)  { FactoryGirl.create(:user, :manager) }
-    let(:hr)       { FactoryGirl.create(:user, :hr) }
+    let(:employee) { create(:user, :employee) }
+    let(:manager)  { create(:user, :manager) }
+    let(:hr)       { create(:user, :hr) }
 
     context 'is_manager?' do
       it 'is true if user is manager' do
