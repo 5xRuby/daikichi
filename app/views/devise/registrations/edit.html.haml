@@ -7,7 +7,6 @@
   .form-inputs
     = f.input :login_name, required: false
     = f.input :name, required: true, autofocus: true
-    = f.input :email, required: false
     = f.input :password, autocomplete: "off", hint: t('devise.hints.leave_blank'), required: false
     = f.input :password_confirmation, required: false
     = f.input :current_password, hint: t('devise.hints.confirm_password'), required: true
