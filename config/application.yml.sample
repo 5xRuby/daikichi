@@ -10,6 +10,15 @@ defaults: &defaults
     role: 'admin'
     password: '12345678'
 
+  roles:
+    manager: 'manager'
+    hr: 'hr'
+    employee: 'employee'
+    contractor: 'contractor'
+    intern: 'intern'
+    resigned: 'resigned'
+    pending: 'pending'
+
   leave_application_types:
     remote:
       pool:
