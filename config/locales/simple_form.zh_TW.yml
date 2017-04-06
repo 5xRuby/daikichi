@@ -16,11 +16,13 @@ zh-TW:
           annual: '特休'
           bonus: '補休'
           personal: '事假'
+          sick: '病假' # 之後要改全薪/半薪病假
           sick_1: '病假'
           sick_2: '半薪病假'
           official: '公假'
           marriage: '婚假'
           maternity: '產假'
+          bereavement: '喪假' # Funeral & Bereavement 需要同時存在嗎？
           funeral: '喪假'
           absent: '曠職'
       leave_application:

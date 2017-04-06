@@ -105,6 +105,7 @@ zh-TW:
       edit: "修改"
       delete: "刪除"
       change_type: "切換休假種類至"
+      remark: "備註"
     leave_applications:
       index: "查看歷年假單"
       show: "檢視"
