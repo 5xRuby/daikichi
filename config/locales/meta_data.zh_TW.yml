@@ -24,7 +24,7 @@ zh-TW:
         user: "員工"
         name: "擁有者"
         leave_type: "假別"
-        quota: "時數"
+        quota: "額度"
         used_hours: "已用時數"
         used_hours_if_allow: "已用時數"
         usable_hours: "可用時數"
@@ -86,6 +86,7 @@ zh-TW:
     backend/users:
       index: "員工列表"
       new: "新增員工"
+      new_leave_time: "新增員工休假"
       show: "檢視"
       edit: "編輯"
       destroy: "刪除"
@@ -147,8 +148,8 @@ zh-TW:
       index: "%{year} 年 %{month} 月 員工休假狀況"
     backend/leave_times:
       index: "員工休假扣打"
-      new: "新增休假扣打"
-      edit: "修改休假扣打"
+      new: "新增員工休假"
+      edit: "修改員工休假"
     tools: "工具"
 
   success:
