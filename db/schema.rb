@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170209073322) do
+ActiveRecord::Schema.define(version: 20170330102550) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -65,6 +65,7 @@ ActiveRecord::Schema.define(version: 20170209073322) do
     t.boolean  "refilled",        default: false
     t.date     "effective_date",  default: -> { "now()" }, null: false
     t.date     "expiration_date", default: -> { "now()" }, null: false
+    t.text     "remark"
   end
 
   create_table "users", force: :cascade do |t|
