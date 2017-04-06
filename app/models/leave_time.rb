@@ -9,7 +9,8 @@ class LeaveTime < ApplicationRecord
       v
     end
   LEAVE_POOLS_TYPES = LEAVE_POOLS_CONFIG.keys
-  enum leave_type: Settings.leave_types.keys
+  LEAVE_POOLS_TYPES_SYM = DataHelper.each_to_sym LEAVE_POOLS_TYPES
+  enum leave_type: Hash[Settings.leave_types.keys.map do |type| [type, type] end]
   LEAVE_POOLS_ALLOW_PRE_CREATION =
     Settings.leave_pools_misc.allow_pre_creation
   LEAVE_POOLS_AUTO_CREATION =
@@ -25,7 +26,7 @@ class LeaveTime < ApplicationRecord
   delegate :seniority, :name, to: :user
   has_many :leave_applications
 
-  validates :leave_type, :effective_date, :expiration_date, :quota, :usable_hours, :used_hours, :user, presence: true
+  validates :leave_type, :effective_date, :expiration_date, :quota, :usable_hours, :used_hours, :user, :remark, presence: true
   validates :quota,        numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validates :usable_hours, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validates :used_hours,   numericality: { only_integer: true, greater_than_or_equal_to: 0 }
