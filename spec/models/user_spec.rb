@@ -5,16 +5,27 @@ RSpec.describe User, type: :model do
   let(:manager) { create(:user, :manager) }
 
   describe "enum" do
-    it 'defines user role as enum' do
-      # Choose a sample from User roles
-      user = build(:user, role: User.roles.to_a.sample[0])
-      user.valid?
-      expect(user).to be_valid
-    end
+    describe "role" do
+      it 'defines user role as enum' do
+        # Choose a sample from User roles
+        user = build(:user, role: User.roles.to_a.sample[0])
+        user.valid?
+        expect(user).to be_valid
+      end
 
-    it 'cannot save user role if not in the role enum list' do
-      expect { build(:user, role: "internship") }.to raise_error(ArgumentError)
-      expect { build(:user, role: "management") }.to raise_error(ArgumentError)
+      it 'cannot save user role if not in the role enum list' do
+        expect { build(:user, role: "internship") }.to raise_error(ArgumentError)
+        expect { build(:user, role: "management") }.to raise_error(ArgumentError)
+      end
+
+      it 'can get options for select' do
+        expect(described_class.enum_attributes_for_select(:roles)).to eq I18n.t("activerecord.attributes.user.roles").map { |key, val| [val, key.to_s] }
+      end
+
+      it 'can get humanize enum value' do
+        enum_key = described_class.roles.keys.sample
+        expect(described_class.human_enum_value(:roles, enum_key)).to eq I18n.t("activerecord.attributes.user.roles.#{enum_key}")
+      end
     end
   end
 
@@ -194,7 +205,7 @@ RSpec.describe User, type: :model do
               Timecop.return
             end
             it 'only those overlaps will be sum up' do
-              expect(subject.first.leave_applications.leave_hours_within_month(year: year, month: month)).to eq 32
+              expect(subject.first.leave_applications.leave_hours_within_month(year: year, month: month)).to eq 24
             end
           end
 
@@ -210,7 +221,7 @@ RSpec.describe User, type: :model do
             end
 
             it 'only with specific leave_type will be sum up' do
-              expect(subject.first.leave_applications.leave_hours_within_month(year: year, month: month, type: 'annual')).to eq 24
+              expect(subject.first.leave_applications.leave_hours_within_month(year: year, month: month, type: 'annual')).to eq 16
             end
           end
         end
