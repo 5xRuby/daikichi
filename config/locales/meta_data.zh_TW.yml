@@ -6,6 +6,15 @@ zh-TW:
         login_name: "帳號"
         email: "電子郵件"
         role: "身份"
+        roles:
+          manager: '公司主管'
+          hr: '人資主管'
+          employee: '全職員工'
+          contractor: '承包商'
+          parttime: '兼職員工'
+          intern: '實習生'
+          resigned: '離職員工'
+          pending: '未決'
         password: "密碼"
         password_confirmation: "密碼確認"
         current_password: "原密碼"
