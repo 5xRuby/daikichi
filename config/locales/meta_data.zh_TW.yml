@@ -21,6 +21,19 @@ zh-TW:
         join_date: "到職日期"
         leave_date: "離職日期"
       leave_time:
+        leave_types:
+          remote: '在家上班'
+          late: '遲到'
+          absent: '曠職'
+          annual: '特休'
+          personal: '事假'
+          sick: '病假'
+          bereavement: '喪假'
+          official: '公假'
+          marriage: '婚假'
+          maternity: '產假'
+          funeral: '喪假'
+          bonus: '補休'
         user: "員工"
         name: "擁有者"
         leave_type: "假別"
@@ -33,6 +46,12 @@ zh-TW:
         expiration_date: '失效時間'
         remark: '備註'
       leave_application:
+        statuses:
+          approved: '核准'
+          rejected: '駁回'
+          pending: '待審'
+          canceled: '取消'
+          all: '全部'
         user: "員工"
         start_time: "開始時間"
         end_time: "結束時間"
