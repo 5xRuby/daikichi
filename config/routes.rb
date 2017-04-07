@@ -38,7 +38,5 @@ Rails.application.routes.draw do
       to: "leave_times#show",
       as: "leave_time"
 
-    get "leave_application/new_remote",
-      to: "leave_applications#new_remote"
   end
 end

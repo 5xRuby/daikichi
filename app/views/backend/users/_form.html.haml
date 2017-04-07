@@ -6,13 +6,14 @@
   = f.input :email, required: true
   = f.input :join_date, required: true
   = f.input :leave_date, include_blank: true
+  
   - if action_name == "new"
     = f.input :password, required: true, hint: ("密碼長度須 #{@minimum_password_length} 字以上" if @minimum_password_length)
     = f.input :password_confirmation, required: true
   - else
     = f.input :password, required: false, hint: ("欲修改密碼才需要填寫, 密碼長度須 #{@minimum_password_length} 字以上" if @minimum_password_length)
     = f.input :password_confirmation, required: false
-  = f.input :role, collection: User::ROLES, include_blank: false
-  = f.button :submit
+    = f.input :role, collection: User::ROLES, include_blank: false
+    = f.button :submit
 
 
