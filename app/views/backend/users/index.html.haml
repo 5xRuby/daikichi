@@ -19,7 +19,7 @@
           %td.text-center= t_value :name, user
           %td.text-center= t_value :login_name, user
           %td.text-center= t_value :email, user
-          %td.text-center= t_value :role, user, :translate_text_value
+          %td.text-center= User.human_enum_value(:roles, user.role)
           %td.text-center= t_value :join_date, user, :convert_time_value, :year_date
           %td.text-center
             = link_to t("title.backend/leave_times.new"),

@@ -15,6 +15,7 @@ defaults: &defaults
     hr: 'hr'
     employee: 'employee'
     contractor: 'contractor'
+    parttime: 'parttime'
     intern: 'intern'
     resigned: 'resigned'
     pending: 'pending'
