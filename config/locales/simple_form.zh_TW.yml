@@ -37,10 +37,3 @@ zh-TW:
           maternity: '產假'
           funeral: '喪假'
           bonus: '補休'
-
-        status:
-          approved: '核准'
-          rejected: '駁回'
-          pending: '待審'
-          canceled: '取消'
-          all: '全部'
