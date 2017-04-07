@@ -22,8 +22,7 @@ zh-TW:
           official: '公假'
           marriage: '婚假'
           maternity: '產假'
-          bereavement: '喪假' # Funeral & Bereavement 需要同時存在嗎？
-          funeral: '喪假'
+          bereavement: '喪假'
           absent: '曠職'
       leave_application:
         leave_type:

@@ -2,8 +2,8 @@ zh-TW:
   activerecord:
     attributes:
       user:
-        name: "姓名"
-        login_name: "帳號"
+        name: "員工姓名"
+        login_name: "員工帳號"
         email: "電子郵件"
         role: "身份"
         roles:
@@ -31,6 +31,7 @@ zh-TW:
         usable_hours_if_allow: "可用時數"
         effective_date: '有效時間'
         expiration_date: '失效時間'
+        remark: '備註'
       leave_application:
         user: "員工"
         start_time: "開始時間"
@@ -86,7 +87,6 @@ zh-TW:
     backend/users:
       index: "員工列表"
       new: "新增員工"
-      new_leave_time: "新增員工休假"
       show: "檢視"
       edit: "編輯"
       destroy: "刪除"
@@ -101,7 +101,7 @@ zh-TW:
       index: "員工休假狀況"
     backend/leave_times:
       index: "員工休假扣打"
-      new: "新增休假扣打"
+      new: "新增員工休假"
       edit: "修改"
       delete: "刪除"
       change_type: "切換休假種類至"

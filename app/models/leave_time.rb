@@ -26,7 +26,7 @@ class LeaveTime < ApplicationRecord
   delegate :seniority, :name, to: :user
   has_many :leave_applications
 
-  validates :leave_type, :effective_date, :expiration_date, :quota, :usable_hours, :used_hours, :user, :remark, presence: true
+  validates :leave_type, :effective_date, :expiration_date, :quota, :usable_hours, :used_hours, :user, presence: true
   validates :quota,        numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validates :usable_hours, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validates :used_hours,   numericality: { only_integer: true, greater_than_or_equal_to: 0 }

@@ -6,7 +6,7 @@
   = f.input :quota
   = f.input :effective_date, date_time_picker_hash(:start, current_object[:effective_date])
   = f.input :expiration_date, date_time_picker_hash(:end, current_object[:expiration_date])
-  = f.input :remark, as: :text, required: true, label: t("title.backend/leave_times.remark")
+  = f.input :remark, as: :text
   - unless current_object.new_record?
     = f.input :usable_hours
     = f.input :used_hours
