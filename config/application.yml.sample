@@ -142,6 +142,8 @@ defaults: &defaults
       creation: none
     maternity:
       creation: none
+    bonus:
+      creation: none
 
   leave_pools:
     remote:

@@ -2,8 +2,8 @@ zh-TW:
   activerecord:
     attributes:
       user:
-        name: "姓名"
-        login_name: "帳號"
+        name: "員工姓名"
+        login_name: "員工帳號"
         email: "電子郵件"
         role: "身份"
         roles:
@@ -21,17 +21,37 @@ zh-TW:
         join_date: "到職日期"
         leave_date: "離職日期"
       leave_time:
+        leave_types:
+          remote: '在家上班'
+          late: '遲到'
+          absent: '曠職'
+          annual: '特休'
+          personal: '事假'
+          sick: '病假'
+          bereavement: '喪假'
+          official: '公假'
+          marriage: '婚假'
+          maternity: '產假'
+          funeral: '喪假'
+          bonus: '補休'
         user: "員工"
         name: "擁有者"
         leave_type: "假別"
-        quota: "時數"
+        quota: "額度"
         used_hours: "已用時數"
         used_hours_if_allow: "已用時數"
         usable_hours: "可用時數"
         usable_hours_if_allow: "可用時數"
         effective_date: '有效時間'
         expiration_date: '失效時間'
+        remark: '備註'
       leave_application:
+        statuses:
+          approved: '核准'
+          rejected: '駁回'
+          pending: '待審'
+          canceled: '取消'
+          all: '全部'
         user: "員工"
         start_time: "開始時間"
         end_time: "結束時間"
@@ -100,10 +120,11 @@ zh-TW:
       index: "員工休假狀況"
     backend/leave_times:
       index: "員工休假扣打"
-      new: "新增休假扣打"
+      new: "新增員工休假"
       edit: "修改"
       delete: "刪除"
       change_type: "切換休假種類至"
+      remark: "備註"
     leave_applications:
       index: "查看歷年假單"
       show: "檢視"
@@ -147,8 +168,8 @@ zh-TW:
       index: "%{year} 年 %{month} 月 員工休假狀況"
     backend/leave_times:
       index: "員工休假扣打"
-      new: "新增休假扣打"
-      edit: "修改休假扣打"
+      new: "新增員工休假"
+      edit: "修改員工休假"
     tools: "工具"
 
   success:

@@ -16,12 +16,13 @@ zh-TW:
           annual: '特休'
           bonus: '補休'
           personal: '事假'
+          sick: '病假' # 之後要改全薪/半薪病假
           sick_1: '病假'
           sick_2: '半薪病假'
           official: '公假'
           marriage: '婚假'
           maternity: '產假'
-          funeral: '喪假'
+          bereavement: '喪假'
           absent: '曠職'
       leave_application:
         leave_type:
@@ -36,10 +37,3 @@ zh-TW:
           maternity: '產假'
           funeral: '喪假'
           bonus: '補休'
-
-        status:
-          approved: '核准'
-          rejected: '駁回'
-          pending: '待審'
-          canceled: '取消'
-          all: '全部'

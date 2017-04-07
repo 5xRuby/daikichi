@@ -21,7 +21,7 @@ class Backend::LeaveTimesController < Backend::BaseController
 
   def resource_params
     params.require(:leave_time).permit(
-      :user_id, :leave_type, :quota, :effective_date, :expiration_date, :usable_hours, :used_hours
+      :user_id, :leave_type, :quota, :effective_date, :expiration_date, :usable_hours, :used_hours, :remark
     )
   end
 
