@@ -41,6 +41,7 @@ gem 'devise'
 gem 'haml'
 gem 'kaminari'
 gem 'paranoia', '~> 2.2'
+gem 'seed-fu'
 gem 'settingslogic'
 gem 'simple_form'
 gem 'whenever', require: false
