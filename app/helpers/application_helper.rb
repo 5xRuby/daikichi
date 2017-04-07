@@ -70,7 +70,7 @@ module ApplicationHelper
   end
 
   def status_select_option
-    ([:all] + LeaveApplication.statuses.keys).map { |type| [I18n.t("simple_form.options.leave_application.status.#{type}"), type] }.to_h
+    ([:all] + LeaveApplication.statuses.keys).map { |type| [LeaveApplication.human_enum_value(:status, type), type] }.to_h
   end
 
   def specific_year

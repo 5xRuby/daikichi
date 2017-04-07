@@ -8,6 +8,7 @@ FactoryGirl.define do
     quota           0
     used_hours      0
     usable_hours    0
+    remark          "Test string"
 
     Settings.leave_application_types.keys.each do |type|
       trait type.to_sym do
