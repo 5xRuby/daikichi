@@ -10,17 +10,6 @@ zh-TW:
       # html: '<abbr title="required">*</abbr>'
     error_notification:
       default_message: "Please review the problems below:"
-    options:
-      user:
-        role:
-          manager: '主管'
-          employee: '員工'
-          contractor: '約聘'
-          intern: '實習生'
-          resigned: '離職'
-          pending: '待審'
-          admin: '系統管理員'
-          hr: '人資'
       leave_time:
         leave_type:
           remote: '在家上班'

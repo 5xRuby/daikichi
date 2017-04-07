@@ -13,9 +13,12 @@
   = tr_by_object :name
   = tr_by_object :login_name
   = tr_by_object :email
-  = tr_by_object :role, :translate_text_value
+  %tr
+    %th.col-md-3= t_attribute(:role, User)
+    %td.col-md-9= User.human_enum_value(:roles, current_object.role)
   = tr_by_object :join_date, :convert_time_value, :year_date
-  = tr_by_object :leave_date, :convert_time_value, :year_date
+  - if current_object.leave_date
+    = tr_by_object :leave_date, :convert_time_value, :year_date
 
 = link_to t("title.backend/leave_times.new"),
   new_backend_leave_time_path(user_id: current_object.id),
@@ -23,4 +26,3 @@
 
 = leave_times_table current_object.leave_times.effective, [:name] do |lt|
   - link_to t("title.backend/leave_times.edit"), edit_backend_leave_time_path(lt), class: "btn btn-warning"
-
