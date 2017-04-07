@@ -2,7 +2,7 @@
 
 = simple_form_for [:backend, current_object] do |f|
   = f.association :user, required: true
-  = f.input :leave_type, required: true, collection: LeaveTime.leave_types.keys.map(&:to_sym)
+  = f.input :leave_type, required: true, collection: LeaveTime.enum_attributes_for_select(:leave_types), include_blank: false
   = f.input :quota
   = f.input :effective_date, date_time_picker_hash(:start, current_object[:effective_date])
   = f.input :expiration_date, date_time_picker_hash(:end, current_object[:expiration_date])
