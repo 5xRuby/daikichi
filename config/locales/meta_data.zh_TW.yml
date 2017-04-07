@@ -105,14 +105,15 @@ zh-TW:
       delete: "刪除"
       change_type: "切換休假種類至"
     leave_applications:
-      index: "所有假單"
+      index: "查看歷年假單"
       show: "檢視"
       new: "新增假單"
       create: "新增假單"
       edit: "修改"
       cancel: "取消"
+      new_remote: "申請 Remote"
     leave_times:
-      index: "請假狀況 & 扣打"
+      index: "查看請假狀況"
       showing: "顯示"
       all: '全部'
       effective: '有效的'

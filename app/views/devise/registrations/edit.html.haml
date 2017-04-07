@@ -5,11 +5,11 @@
   = f.error_notification
 
   .form-inputs
-    = f.input :login_name, label: "員工帳號", required: false
-    = f.input :name, label: "員工姓名", required: true, autofocus: true
-    = f.input :password, label: "密碼變更", autocomplete: "off", hint: t('devise.hints.leave_blank'), required: false
-    = f.input :password_confirmation, label: "密碼確認", required: false
-    = f.input :current_password, label: "原密碼確認", hint: t('devise.hints.confirm_password'), required: true
+    = f.input :login_name, required: false
+    = f.input :name, required: true, autofocus: true
+    = f.input :password, autocomplete: "off", hint: t('devise.hints.leave_blank'), required: false
+    = f.input :password_confirmation, required: false
+    = f.input :current_password, hint: t('devise.hints.confirm_password'), required: true
 
   .form-actions
     = f.button :submit
