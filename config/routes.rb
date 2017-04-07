@@ -37,5 +37,8 @@ Rails.application.routes.draw do
     get "leave_time/:type",
       to: "leave_times#show",
       as: "leave_time"
+
+    get "leave_application/new_remote",
+      to: "leave_applications#new_remote"
   end
 end
