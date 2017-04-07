@@ -37,5 +37,6 @@ Rails.application.routes.draw do
     get "leave_time/:type",
       to: "leave_times#show",
       as: "leave_time"
+
   end
 end
