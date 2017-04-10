@@ -49,7 +49,7 @@ describe LeaveTimeBuilder do
 
     context 'fulltime employee' do
       let(:user) { FactoryGirl.create(:user, :fulltime) }
-      
+
       it 'should get seniority_based leave_times' do
         leave_times = user.leave_times.reload
         expect(leave_times.size).to eq join_date_based_leave_types.size

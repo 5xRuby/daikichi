@@ -31,7 +31,7 @@ describe LeaveTimeBatchBuilder do
         expect(join_date_based_leave_time.expiration_date).to eq join_anniversary + 1.year - 1.day
       end
     end
-      
+
     context 'not forced' do
       before do
         User.skip_callback(:create, :after, :auto_assign_leave_time)

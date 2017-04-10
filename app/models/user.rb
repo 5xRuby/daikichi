@@ -87,14 +87,7 @@ class User < ApplicationRecord
   def get_refilled_annual
     leave_times.find_by(leave_type: 'annual').refill
   end
-
-  # Class method - Only used in Rspec Testing
-  # def self.skip_assign_leave_time
-  #   self.skip_callback :create, :after, :auto_assign_leave_time
-  #   yield if block_given?
-  #   self.set_callback :create, :after, :auto_assign_leave_time
-  # end
-
+  
   private
 
   def auto_assign_leave_time

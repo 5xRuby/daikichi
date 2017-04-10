@@ -33,7 +33,6 @@ FactoryGirl.define do
       role { %i(contractor intern).sample }
     end
 
-    
     factory :manager_eddie, traits: [:manager] do
       name 'eddie'
     end
