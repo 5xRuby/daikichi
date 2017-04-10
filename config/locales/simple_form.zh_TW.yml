@@ -25,32 +25,3 @@ zh-TW:
           absent: '曠職'
     error_notification:
       default_message: "Please review the problems below:"
-      leave_time:
-        leave_type:
-          remote: '在家上班'
-          annual: '特休'
-          bonus: '補休'
-          personal: '事假'
-          sick: '病假'
-          fullpaid_sick: '全薪病假'
-          halfpaid_sick: '半薪病假'
-          official: '公假'
-          marriage: '婚假'
-          maternity: '產假'
-          bereavement: '喪假'
-          absent: '曠職'
-      leave_application:
-        leave_type:
-          remote: '在家上班'
-          late: '遲到'
-          absent: '曠職'
-          annual: '特休'
-          personal: '事假'
-          sick: '病假'
-          fullpaid_sick: '全薪病假'
-          halfpaid_sick: '半薪病假'
-          official: '公假'
-          marriage: '婚假'
-          maternity: '產假'
-          funeral: '喪假'
-          bonus: '補休'
