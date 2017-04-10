@@ -12,10 +12,6 @@ describe LeaveTimeBuilder do
    end
 
   describe '.automatically_import' do
-    before do
-      LeaveTimeBuilder.new(user).automatically_import
-    end
-
     context 'fulltime employee' do
       let(:user) { FactoryGirl.create(:user, :fulltime) }
 
@@ -43,12 +39,17 @@ describe LeaveTimeBuilder do
 
   describe '.join_date_based_import' do
     before do
+      User.skip_callback(:create, :after, :auto_assign_leave_time)
       LeaveTimeBuilder.new(user).join_date_based_import
+    end
+
+    after do
+      User.set_callback(:create, :after, :auto_assign_leave_time)
     end
 
     context 'fulltime employee' do
       let(:user) { FactoryGirl.create(:user, :fulltime) }
-
+      
       it 'should get seniority_based leave_times' do
         leave_times = user.leave_times.reload
         expect(leave_times.size).to eq join_date_based_leave_types.size
@@ -85,6 +86,14 @@ describe LeaveTimeBuilder do
   end
 
   describe '.monthly_import' do
+    before do
+      User.skip_callback(:create, :after, :auto_assign_leave_time)
+    end
+
+    after do
+      User.set_callback(:create, :after, :auto_assign_leave_time)
+    end
+    
     context 'prebuild' do
       before do
         LeaveTimeBuilder.new(user).monthly_import(prebuild: true)

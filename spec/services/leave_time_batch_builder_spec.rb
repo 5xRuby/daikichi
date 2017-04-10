@@ -18,8 +18,6 @@ describe LeaveTimeBatchBuilder do
       let!(:parttime) { FactoryGirl.create(:user, :parttime, join_date: Date.current) }
       let!(:user)     { FactoryGirl.create(:user, join_date: Date.current) }
 
-      before { described_class.new(forced: true).automatically_import }
-
       it 'should run join_date_based_import and monthly import with prebuild option for all users' do
         leave_times = LeaveTime.where(user_id: [fulltime.id, parttime.id, user.id])
         expect(leave_times.reload.size).to eq((monthly_leave_types.size + join_date_based_leave_types.size) * 3 - seniority_based_leave_types.size)
@@ -33,8 +31,16 @@ describe LeaveTimeBatchBuilder do
         expect(join_date_based_leave_time.expiration_date).to eq join_anniversary + 1.year - 1.day
       end
     end
-
+      
     context 'not forced' do
+      before do
+        User.skip_callback(:create, :after, :auto_assign_leave_time)
+      end
+
+      after do
+        User.set_callback(:create, :after, :auto_assign_leave_time)
+      end
+      
       let!(:fulltime) { FactoryGirl.create(:user, :fulltime, join_date: join_date) }
       let!(:parttime) { FactoryGirl.create(:user, :parttime, join_date: join_date) }
       let!(:user)     { FactoryGirl.create(:user, join_date: join_date - 1.day) }

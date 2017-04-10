@@ -5,6 +5,8 @@ class User < ApplicationRecord
   has_many :leave_applications, -> { order(id: :desc) }
   has_many :bonus_leave_time_logs, -> { order(id: :desc) }
 
+  after_create :auto_assign_leave_time
+
   validates :name,       presence: true
   validates :login_name, presence: true,
                          uniqueness: { case_sensitive: false, scope: :deleted_at }
@@ -85,4 +87,19 @@ class User < ApplicationRecord
   def get_refilled_annual
     leave_times.find_by(leave_type: 'annual').refill
   end
+
+  # Class method - Only used in Rspec Testing
+  # def self.skip_assign_leave_time
+  #   self.skip_callback :create, :after, :auto_assign_leave_time
+  #   yield if block_given?
+  #   self.set_callback :create, :after, :auto_assign_leave_time
+  # end
+
+  private
+
+  def auto_assign_leave_time
+    leave_time_builder = LeaveTimeBuilder.new self
+    leave_time_builder.automatically_import
+  end
+  
 end
