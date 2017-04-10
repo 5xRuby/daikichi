@@ -56,6 +56,12 @@ RSpec.describe User, type: :model do
     end
   end
 
+  describe '#callback' do
+    context 'should validate callback after_create' do
+      it { is_expected.to callback(:auto_assign_leave_time).after(:create) }
+    end
+  end
+
   describe '.scope' do
     describe '.filter_by_join_date' do
       let!(:fulltime) { create(:user, :fulltime, join_date: Date.current - 2.years) }

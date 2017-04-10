@@ -54,6 +54,7 @@ group :development, :test do
   gem 'faker'
   gem 'pry-byebug'
   gem 'timecop'
+  gem 'rspec-rails'
 end
 
 group :development do
@@ -73,8 +74,8 @@ group :test do
   gem 'codeclimate-test-reporter', '~> 1.0.0'
   gem 'database_rewinder'
   gem 'rails-controller-testing'
-  gem 'rspec-rails'
   gem 'shoulda-matchers'
+  gem 'shoulda-callback-matchers'
   gem 'simplecov'
 end
 

@@ -238,6 +238,8 @@ GEM
       activerecord (>= 3.1)
       activesupport (>= 3.1)
     settingslogic (2.0.9)
+    shoulda-callback-matchers (1.1.4)
+      activesupport (>= 3)
     shoulda-matchers (3.1.1)
       activesupport (>= 4.0.0)
     simple_form (3.3.1)
@@ -333,6 +335,7 @@ DEPENDENCIES
   sass-rails (~> 5.0)
   seed-fu
   settingslogic
+  shoulda-callback-matchers
   shoulda-matchers
   simple_form
   simplecov
@@ -347,4 +350,4 @@ DEPENDENCIES
   working_hours
 
 BUNDLED WITH
-   1.14.5
+   1.14.6
