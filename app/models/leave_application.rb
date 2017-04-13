@@ -104,7 +104,7 @@ class LeaveApplication < ApplicationRecord
   end
 
   def auto_calculated_hours
-    start_time.working_time_until(end_time) / 3600.0
+    Biz.within(start_time, end_time).in_hours
   end
 
   def pre_create_leave_time_if_allowed

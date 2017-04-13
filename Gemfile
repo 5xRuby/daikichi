@@ -33,6 +33,7 @@ gem 'jbuilder', '~> 2.0'
 
 gem 'aasm'
 gem 'active_hash'
+gem 'biz'
 gem 'bootstrap-sass'
 gem 'cancancan'
 gem 'cocoon'
