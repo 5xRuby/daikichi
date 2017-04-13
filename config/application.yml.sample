@@ -88,7 +88,7 @@ defaults: &defaults
     monthly: 5 # working.days
     join_date_based: 40 # days
 
-  leave_types:
+  leave_types: # 休假類別 Settings.leave_type.keys
     annual:
       creation: join_date_based
       quota:
@@ -125,7 +125,7 @@ defaults: &defaults
     personal:
       creation: join_date_based
       quota: 14 # days
-    sick:
+    sick: # 之後改成 全薪/半薪病假
       creation: join_date_based
       quota: 30 # days
     remote:
@@ -144,6 +144,17 @@ defaults: &defaults
       creation: none
     bonus:
       creation: none
+
+  leave_times:
+    quota_types:
+      annual: annual
+      bonus: bonus
+      personal: personal
+      fullpaid_sick: fullpaid_sick
+      halfpaid_sick: halfpaid_sick
+      official: official
+      marriage: marriage
+      bereavement: bereavement
 
   leave_pools:
     remote:
@@ -195,15 +206,15 @@ defaults: &defaults
         value: '1.month'
       penalty: 0 # TODO: not implemented
       display: used
-    absent:
-      creation: occurrence
-      quota:
-        type: infinity
-      effective:
-        type: duration
-        value: '1.year'
-      penalty: -2 # TODO: not implemented
-      display: used
+    # absent:
+    #   creation: occurrence
+    #   quota:
+    #     type: infinity
+    #   effective:
+    #     type: duration
+    #     value: '1.year'
+    #   penalty: -2 # TODO: not implemented
+    #   display: used
     fullpaid_sick:
       creation: occurrence
       quota:

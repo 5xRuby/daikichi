@@ -15,7 +15,7 @@ class Backend::LeaveTimesController < Backend::BaseController
     if params[:id]
       LeaveTime
     else
-      LeaveTime.effective.where(leave_type: leave_type).order(id: :desc)
+      LeaveTime.where(leave_type: leave_type).order(id: :desc)
     end
   end
 
