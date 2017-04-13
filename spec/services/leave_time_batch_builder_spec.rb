@@ -13,12 +13,17 @@ describe LeaveTimeBatchBuilder do
    end
 
   describe 'automatically_import' do
+    before { User.skip_callback(:create, :after, :auto_assign_leave_time) }
+    after  { User.set_callback(:create, :after, :auto_assign_leave_time)  }
+    
     context 'is forced' do
       let!(:fulltime) { FactoryGirl.create(:user, :fulltime, join_date: Date.current) }
       let!(:parttime) { FactoryGirl.create(:user, :parttime, join_date: Date.current) }
       let!(:user)     { FactoryGirl.create(:user, join_date: Date.current) }
 
-      before { described_class.new(forced: true).automatically_import }
+      before do
+        described_class.new(forced: true).automatically_import
+      end
 
       it 'should run join_date_based_import and monthly import with prebuild option for all users' do
         leave_times = LeaveTime.where(user_id: [fulltime.id, parttime.id, user.id])
@@ -35,6 +40,7 @@ describe LeaveTimeBatchBuilder do
     end
 
     context 'not forced' do
+      
       let!(:fulltime) { FactoryGirl.create(:user, :fulltime, join_date: join_date) }
       let!(:parttime) { FactoryGirl.create(:user, :parttime, join_date: join_date) }
       let!(:user)     { FactoryGirl.create(:user, join_date: join_date - 1.day) }
