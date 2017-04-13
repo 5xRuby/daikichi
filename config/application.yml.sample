@@ -45,8 +45,8 @@ defaults: &defaults
         normal: *all
     sick:
       pool:
-        - sick_1
-        - sick_2
+        - fullpaid_sick
+        - halfpaid_sick
       applicable:
         immediate: *all
     official:
@@ -64,9 +64,9 @@ defaults: &defaults
         - maternity
       applicable:
         normal: *all
-    funeral:
+    bereavement:
       pool:
-        - funeral
+        - bereavement
       applicable:
         normal: *all
     bonus:
@@ -204,7 +204,7 @@ defaults: &defaults
         value: '1.year'
       penalty: -2 # TODO: not implemented
       display: used
-    sick_1:
+    fullpaid_sick:
       creation: occurrence
       quota:
         type: hours
@@ -214,7 +214,7 @@ defaults: &defaults
         value: '1.year'
       # no penalty means no penalty
       display: used
-    sick_2:
+    halfpaid_sick:
       creation: occurrence
       quota:
         type: hours
@@ -253,7 +253,7 @@ defaults: &defaults
         type: as_quota
       # no penalty means no penalty
       display: usable
-    funeral:
+    bereavement:
       creation: occurrence
       quota:
         type: hours

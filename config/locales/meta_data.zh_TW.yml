@@ -32,7 +32,6 @@ zh-TW:
           official: '公假'
           marriage: '婚假'
           maternity: '產假'
-          funeral: '喪假'
           bonus: '補休'
         user: "員工"
         name: "擁有者"
