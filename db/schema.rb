@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170330102550) do
+ActiveRecord::Schema.define(version: 20170413072816) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -54,6 +54,16 @@ ActiveRecord::Schema.define(version: 20170330102550) do
     t.index ["uuid"], name: "index_leave_applications_on_uuid", unique: true, using: :btree
   end
 
+  create_table "leave_time_usages", force: :cascade do |t|
+    t.integer  "leave_application_id"
+    t.integer  "leave_time_id"
+    t.integer  "used_hours"
+    t.datetime "created_at",           null: false
+    t.datetime "updated_at",           null: false
+    t.index ["leave_application_id"], name: "index_leave_time_usages_on_leave_application_id", using: :btree
+    t.index ["leave_time_id"], name: "index_leave_time_usages_on_leave_time_id", using: :btree
+  end
+
   create_table "leave_times", force: :cascade do |t|
     t.integer  "user_id",                                  null: false
     t.string   "leave_type"
@@ -66,6 +76,7 @@ ActiveRecord::Schema.define(version: 20170330102550) do
     t.date     "effective_date",  default: -> { "now()" }, null: false
     t.date     "expiration_date", default: -> { "now()" }, null: false
     t.text     "remark"
+    t.integer  "locked_hours"
   end
 
   create_table "users", force: :cascade do |t|
@@ -91,4 +102,6 @@ ActiveRecord::Schema.define(version: 20170330102550) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
   end
 
+  add_foreign_key "leave_time_usages", "leave_applications"
+  add_foreign_key "leave_time_usages", "leave_times"
 end

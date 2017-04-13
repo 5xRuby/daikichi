@@ -19,6 +19,7 @@ class LeaveApplication < ApplicationRecord
   belongs_to :user
   belongs_to :manager, class_name: 'User', foreign_key: 'manager_id'
   belongs_to :leave_time
+  has_many :leave_time_usages
   has_many :leave_application_logs, foreign_key: 'leave_application_uuid', primary_key: 'uuid', dependent: :destroy
 
   validates :leave_type, :description, :start_time, :end_time, presence: true
