@@ -148,12 +148,15 @@ defaults: &defaults
   leave_times:
     quota_types:
       annual: annual
+      remote: remote
       bonus: bonus
       personal: personal
+      sick: sick
       fullpaid_sick: fullpaid_sick
       halfpaid_sick: halfpaid_sick
       official: official
       marriage: marriage
+      maternity: maternity
       bereavement: bereavement
 
   leave_pools:
