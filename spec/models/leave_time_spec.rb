@@ -9,7 +9,7 @@ RSpec.describe LeaveTime, type: :model do
 
   describe '#associations' do
     it { is_expected.to belong_to(:user) }
-    it { is_expected.to have_many(:leave_applications) }
+    it { is_expected.to have_many(:leave_time_usages) }
   end
 
   describe '#validations' do
