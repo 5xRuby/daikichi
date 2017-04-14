@@ -4,6 +4,7 @@ class User < ApplicationRecord
   has_many :leave_times, -> { order(id: :desc) }
   has_many :leave_applications, -> { order(id: :desc) }
   has_many :bonus_leave_time_logs, -> { order(id: :desc) }
+  has_many :suspensions, -> { order(id: :desc) }
 
   after_create :auto_assign_leave_time
 
@@ -81,6 +82,12 @@ class User < ApplicationRecord
                                else
                                  this_year_join_anniversary
                                end
+  end
+
+  def suspension_days
+    days = 0
+    self.suspensions.each { |s| days += s.days }
+    days
   end
 
   # TODO: change to pre-gen prev_not_effective
