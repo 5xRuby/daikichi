@@ -20,6 +20,53 @@ defaults: &defaults
     resigned: 'resigned'
     pending: 'pending'
 
+  leave_applications:
+    statuses:
+      pending: pending
+      approved: approved
+      rejected: rejected
+      canceled: canceled
+    leave_types:
+      annual: annual
+      bonus: bonus
+      unpaid: unpaid
+      sick: sick
+      official: official
+      marriage: marriage
+      compassionate: compassionate
+      personal: personal
+      remote: remote
+    available_quota_types:
+      annual:
+        - annual
+      bonus:
+        - bonus
+      unpaid:
+        - unpaid
+      sick:
+        - fullpaid_sick
+        - halfpaid_sick
+      official:
+        - official
+      marriage:
+        - marriage
+      compassionate:
+        - compassionate
+
+
+  leave_times:
+    quota_types:
+      annual: annual
+      bonus: bonus
+      unpaid: unpaid
+      sick: sick # Deprecated
+      fullpaid_sick: fullpaid_sick
+      halfpaid_sick: halfpaid_sick
+      official: official
+      marriage: marriage
+      compassionate: compassionate
+      remote: remote
+
   leave_application_types:
     remote:
       pool:
