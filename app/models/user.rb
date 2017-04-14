@@ -86,9 +86,7 @@ class User < ApplicationRecord
 
   def suspension_days
     days = 0
-    self.suspensions.each do |s|
-      days += s.days
-    end
+    self.suspensions.each { |s| days += s.days }
     days
   end
 
