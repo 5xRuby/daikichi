@@ -12,6 +12,10 @@ RSpec.describe LeaveApplication, type: :model do
   let(:half_hour_later) { Time.zone.local(Time.current.year, 8, 15, 10, 0, 0) }
   let(:one_hour_later)  { Time.zone.local(Time.current.year, 8, 15, 10, 30, 0) }
 
+  describe "#associations" do
+    it { is_expected.to have_many(:leave_time_usages) }
+  end
+
   describe 'validation' do
     let(:params) { FactotyGirl.attributes_for(:leave_application) }
     subject { described_class.new(params) }
