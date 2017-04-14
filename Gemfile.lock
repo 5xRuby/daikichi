@@ -49,6 +49,9 @@ GEM
       execjs
     awesome_print (1.7.0)
     bcrypt (3.1.11)
+    biz (1.6.1)
+      clavius (~> 1.0)
+      tzinfo
     bootstrap-sass (3.3.7)
       autoprefixer-rails (>= 5.2.1)
       sass (>= 3.3.4)
@@ -73,6 +76,7 @@ GEM
     capistrano-upload-config (0.7.0)
       capistrano (>= 3.0)
     chronic (0.10.2)
+    clavius (1.0.2)
     cocoon (1.2.9)
     codeclimate-test-reporter (1.0.4)
       simplecov
@@ -301,6 +305,7 @@ DEPENDENCIES
   aasm
   active_hash
   awesome_print
+  biz
   bootstrap-sass
   bootstrap3-datetimepicker-rails
   byebug

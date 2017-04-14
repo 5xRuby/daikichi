@@ -3,12 +3,8 @@ class LeaveApplication < ApplicationRecord
   include AASM
   include SignatureConcern
 
-  enum status: {
-    pending:  'pending',
-    approved: 'approved',
-    rejected: 'rejected',
-    canceled: 'canceled'
-  }
+  enum status:     Settings.leave_applications.statuses
+  enum leave_type: Settings.leave_applications.leave_types
 
   acts_as_paranoid
   paginates_per 8
@@ -19,6 +15,7 @@ class LeaveApplication < ApplicationRecord
   belongs_to :user
   belongs_to :manager, class_name: 'User', foreign_key: 'manager_id'
   belongs_to :leave_time
+  has_many :leave_time_usages
   has_many :leave_application_logs, foreign_key: 'leave_application_uuid', primary_key: 'uuid', dependent: :destroy
 
   validates :leave_type, :description, :start_time, :end_time, presence: true
@@ -93,6 +90,13 @@ class LeaveApplication < ApplicationRecord
     self.leave_type.to_sym == type.to_sym
   end
 
+  def available_leave_times
+    self.user.leave_times
+      .where(leave_type: Settings.leave_applications.available_quota_types.send(self.leave_type))
+      .where('usable_hours > 0')
+      .overlaps(start_time, end_time)
+      .order(:expiration_date, :usable_hours)
+  end
   private
 
   def set_primary_id
@@ -100,11 +104,12 @@ class LeaveApplication < ApplicationRecord
   end
 
   def assign_hours
-    self.hours = auto_calculated_hours if self.hours.nil? or self.hours == 0
+    self.hours = auto_calculated_hours if self.hours.nil? or self.hours.zero?
   end
 
   def auto_calculated_hours
-    start_time.working_time_until(end_time) / 3600.0
+    return 0 unless start_time && end_time
+    Biz.within(start_time, end_time).in_hours
   end
 
   def pre_create_leave_time_if_allowed
