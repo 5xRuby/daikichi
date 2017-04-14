@@ -15,7 +15,7 @@ class Backend::LeaveTimesController < Backend::BaseController
     if params[:id]
       LeaveTime
     else
-      LeaveTime.where(leave_type: leave_type).order(expiration_date: :desc)
+      LeaveTime.joins(:user).where(leave_type: leave_type).order(expiration_date: :desc)
     end
   end
 
