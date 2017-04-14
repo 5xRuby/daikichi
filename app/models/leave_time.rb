@@ -10,12 +10,13 @@ class LeaveTime < ApplicationRecord
     end
   LEAVE_POOLS_TYPES = LEAVE_POOLS_CONFIG.keys
   LEAVE_POOLS_TYPES_SYM = DataHelper.each_to_sym LEAVE_POOLS_TYPES
-  enum leave_type: Hash[Settings.leave_types.keys.map do |type| [type, type] end]
   LEAVE_POOLS_ALLOW_PRE_CREATION =
     Settings.leave_pools_misc.allow_pre_creation
   LEAVE_POOLS_AUTO_CREATION =
     Settings.leave_pools_misc.auto_creation
   INFINITY_VALUE = Settings.leave_pools_misc.infinity_value
+
+  enum leave_type: Hash[Settings.leave_times.quota_types.keys.map do |type| [type, type] end]
 
   attr_accessor :new_by
 
