@@ -44,6 +44,7 @@ defaults: &defaults
       unpaid:
         - unpaid
       sick:
+        - sick # Deprecated
         - fullpaid_sick
         - halfpaid_sick
       official:
@@ -52,7 +53,9 @@ defaults: &defaults
         - marriage
       compassionate:
         - compassionate
-
+      # Deprecated
+      personal:
+        - personal
 
   leave_times:
     quota_types:
@@ -66,76 +69,13 @@ defaults: &defaults
       marriage: marriage
       compassionate: compassionate
       remote: remote
+      personal: personal #should be deprecated
 
-  leave_application_types:
-    remote:
-      pool:
-        - remote
-      applicable:
-        immediate: &all [manager, hr, employee, contractor, intern]
-    late:
-      pool:
-        - annual
-        - personal
-      applicable:
-        immediate: *all
-    annual:
-      pool:
-        - annual
-      applicable:
-        normal: &full_time [manager, hr, employee]
-    personal:
-      pool:
-        - annual
-        - personal
-      applicable:
-        normal: *all
-    sick:
-      pool:
-        - fullpaid_sick
-        - halfpaid_sick
-      applicable:
-        immediate: *all
-    official:
-      pool:
-        - official
-      applicable:
-        normal: *all
-    marriage:
-      pool:
-        - marriage
-      applicable:
-        normal: *all
-    maternity:
-      pool:
-        - maternity
-      applicable:
-        normal: *all
-    bereavement:
-      pool:
-        - bereavement
-      applicable:
-        normal: *all
-    bonus:
-      pool:
-        - bonus
-      applicable:
-        normal: *all
-
-  leave_application_misc:
-    max_pre_application: '1.year'
-    max_leave_to_applicable_before:
-      normal:
-        - '~ 1.day : 1.day'
-        - '1.days ~ 5.days : 1.week'
-        - '5.days ~ 10.days : 1.month'
-        - '10.days ~ : 2.months'
-      immediate: []
   leed_days:
     monthly: 5 # working.days
     join_date_based: 40 # days
 
-  leave_types: # 休假類別 Settings.leave_type.keys
+  leave_types:
     annual:
       creation: join_date_based
       quota:
@@ -172,7 +112,7 @@ defaults: &defaults
     personal:
       creation: join_date_based
       quota: 14 # days
-    sick: # 之後改成 全薪/半薪病假
+    sick:
       creation: join_date_based
       quota: 30 # days
     remote:
@@ -191,157 +131,6 @@ defaults: &defaults
       creation: none
     bonus:
       creation: none
-
-  leave_times:
-    quota_types:
-      annual: annual
-      remote: remote
-      bonus: bonus
-      personal: personal
-      sick: sick
-      fullpaid_sick: fullpaid_sick
-      halfpaid_sick: halfpaid_sick
-      official: official
-      marriage: marriage
-      maternity: maternity
-      bereavement: bereavement
-
-  leave_pools:
-    remote:
-      creation: prev_not_effective
-      quota:
-        type: hours
-        value: 16 # hours
-      effective:
-        type: duration
-        value: '1.month'
-      # no penalty means no penalty
-      display: usable
-      allow_overspend: true
-    annual:
-      creation: prev_not_effective
-      quota:
-        type: annual
-        value:
-          - ' ~ 2.years : 56' # hours, ( + 1 bonus, manually )
-          - '2.years ~ 3.years : 80'
-          - '3.years ~ 5.years : 112'
-          - '5.years ~ 10.years : 120'
-          - '10.years ~ 11.years : 128'
-          - '11.years ~ 12.years : 136'
-          - '12.years ~ 13.years : 144'
-          - '13.years ~ 14.years : 152'
-          - '14.years ~ 15.years : 160'
-          - '15.years ~ 16.years : 168'
-          - '16.years ~ 17.years : 176'
-          - '17.years ~ 18.years : 184'
-          - '18.years ~ 19.years : 192'
-          - '19.years ~ 20.years : 200'
-          - '20.years ~ 21.years : 208'
-          - '21.years ~ 22.years : 216'
-          - '22.years ~ 23.years : 224'
-          - '23.years ~ 24.years : 232'
-          - '24.years ~ : 240'
-      effective:
-        type: duration
-        value: '1.year'
-      # no penalty means no penalty
-      display: usable
-    personal:
-      creation: occurrence
-      quota:
-        type: infinity
-      effective:
-        type: duration
-        value: '1.month'
-      penalty: 0 # TODO: not implemented
-      display: used
-    # absent:
-    #   creation: occurrence
-    #   quota:
-    #     type: infinity
-    #   effective:
-    #     type: duration
-    #     value: '1.year'
-    #   penalty: -2 # TODO: not implemented
-    #   display: used
-    fullpaid_sick:
-      creation: occurrence
-      quota:
-        type: hours
-        value: 56 # hours
-      effective:
-        type: duration
-        value: '1.year'
-      # no penalty means no penalty
-      display: used
-    halfpaid_sick:
-      creation: occurrence
-      quota:
-        type: hours
-        value: 168 # hours
-      effective:
-        type: duration
-        value: '1.year'
-      penalty: 0.5 # TODO: not implemented
-      display: used
-    official:
-      creation: occurrence
-      quota:
-        type: hours
-        value: 8 # hours, the default
-      effective:
-        type: duration
-        value: '1.month'
-      # no penalty means no penalty
-      display: usable
-    marriage:
-      creation: occurrence
-      quota:
-        type: hours
-        value: 64 # hours, the default
-      effective:
-        type: duration
-        value: '1.year'
-      # no penalty means no penalty
-      display: usable
-    maternity:
-      creation: occurrence
-      quota:
-        type: hours
-        value: 448 # hours, the default
-      effective:
-        type: as_quota
-      # no penalty means no penalty
-      display: usable
-    bereavement:
-      creation: occurrence
-      quota:
-        type: hours
-        value: 64 # hours, the default
-      effective:
-        type: duration
-        value: '49.days'
-      # no penalty means no penalty
-      display: usable
-    bonus:
-      creation: admin
-      quota:
-        type: hours
-        value: 1 # hours, the default
-      effective:
-        type: duration
-        value: '1.days'
-      # no penalty means no penalty
-      display: usable
-
-  leave_pools_misc:
-    allow_pre_creation:
-      - prev_not_effective
-    auto_creation:
-      - occurrence
-      - prev_not_effective
-    infinity_value: 2920 # 365 * 8
 
   backend:
     default_leave_pool_type: bonus

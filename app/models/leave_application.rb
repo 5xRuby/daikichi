@@ -15,8 +15,8 @@ class LeaveApplication < ApplicationRecord
   belongs_to :user
   belongs_to :manager, class_name: 'User', foreign_key: 'manager_id'
   belongs_to :leave_time
-  has_many :leave_time_usages
-  has_many :leave_application_logs, foreign_key: 'leave_application_uuid', primary_key: 'uuid', dependent: :destroy
+  has_many   :leave_time_usages
+  has_many   :leave_application_logs, foreign_key: 'leave_application_uuid', primary_key: 'uuid', dependent: :destroy
 
   validates :leave_type, :description, :start_time, :end_time, presence: true
 
@@ -55,8 +55,8 @@ class LeaveApplication < ApplicationRecord
   end
 
   class << self
-    def with_year(year = Time.now.year)
-      t = Time.new(year)
+    def with_year(year = Time.current.year)
+      t = Time.zone.local(year)
       range = (t.beginning_of_year..t.end_of_year)
       leaves_start_time_included = where(start_time: range)
       leaves_end_time_included = where(end_time: range)
@@ -97,6 +97,7 @@ class LeaveApplication < ApplicationRecord
       .overlaps(start_time, end_time)
       .order(:expiration_date, :usable_hours)
   end
+
   private
 
   def set_primary_id
@@ -112,44 +113,6 @@ class LeaveApplication < ApplicationRecord
     Biz.within(start_time, end_time).in_hours
   end
 
-  def pre_create_leave_time_if_allowed
-    leave_time_tmp.save! if leave_time_tmp.present? && leave_time_tmp.new_record? && leave_time_tmp.allow_pre_creation?
-  end
-
-  def ensure_leave_time_hours_correct
-    if leave_time_id_changed? || hours_changed? || status_changed?
-      return_leave_time_usable_hours
-      deduct_leave_time_usable_hours
-    end
-  end
-
-  def deduct_leave_time_usable_hours(
-    leave_time_instance = self.leave_time,
-    hours_to_deduct = self.hours,
-    state = self.status
-  )
-
-    if leave_time_instance.present? && (state != 'rejected')
-      leave_time_instance.deduct hours_to_deduct
-    end
-    LeaveApplicationLog.create!(leave_application_uuid: uuid,
-                                amount: hours_to_deduct)
-  end
-
-  def return_leave_time_usable_hours(
-    leave_time_instance = LeaveTime.find_by(id: leave_time_id_was),
-    hours_to_return = -self.hours_was,
-    state = self.status_was
-  )
-
-    if leave_time_instance.present? && (state != 'rejected')
-      leave_time_instance.deduct hours_to_return
-    end
-    LeaveApplicationLog.create!(leave_application_uuid: uuid,
-                                amount: hours_to_return,
-                                returning?: true)
-  end
-
   def hours_should_be_positive_integer
     errors.add(:end_time, :not_integer) unless self.hours > 0
     errors.add(:start_time, :should_be_earlier) unless self.end_time > self.start_time
@@ -158,8 +121,8 @@ end
 
 class LeaveApplication::ActiveRecord_Associations_CollectionProxy
   def leave_hours_within_month(type: 'all', year: Time.current.year, month: Time.current.month)
-    beginning = WorkingHours.advance_to_working_time(Time.new(year, month, 1))
-    closing   = WorkingHours.return_to_working_time(Time.new(year, month, 1).end_of_month)
+    beginning = WorkingHours.advance_to_working_time(Time.zone.local(year, month, 1))
+    closing   = WorkingHours.return_to_working_time(Time.zone.local(year, month, 1).end_of_month)
     records.select { |r| r.is_leave_type?(type) }.reduce(0) do |result, la|
       if la.range_exceeded?(beginning, closing)
         valid_range = [la.start_time, beginning].max..[la.end_time, closing].min

@@ -94,7 +94,7 @@ module ApplicationHelper
     render 'shared/leave_times_table',
            leave_times: leave_times,
            show_leave_type: !exclude_columns.include?(:leave_type),
-           columns: [:name, :quota, :usable_hours_if_allow, :used_hours_if_allow, :effective_date, :expiration_date] - exclude_columns,
+           columns: [:name, :quota, :usable_hours, :used_hours, :effective_date, :expiration_date] - exclude_columns,
            tools: tools
   end
 end
