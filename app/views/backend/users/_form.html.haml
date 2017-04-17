@@ -4,9 +4,11 @@
   = f.input :name, required: true
   = f.input :login_name, required: true
   = f.input :email, required: true
-  = f.input :join_date, required: true
-  = f.input :leave_date, include_blank: true
-  
+  = f.input :join_date,  as: :string, required: true, wrapper_html: { class: 'date-input' },
+    input_html: { data: { input: 'datepicker', format: 'YYYY/MM/DD' } }
+  = f.input :leave_date, as: :string, wrapper_html: { class: 'date-input' },
+    input_html: { data: { input: 'datepicker', format: 'YYYY/MM/DD' } }
+
   - if action_name == "new"
     = f.input :password, required: true, hint: ("密碼長度須 #{@minimum_password_length} 字以上" if @minimum_password_length)
     = f.input :password_confirmation, required: true
