@@ -5,7 +5,7 @@ document.addEventListener("turbolinks:load", function() {
 
   $dateTimePickerStart.datetimepicker( {
     format: 'YYYY-MM-DD HH:mm',
-    enabledHours: [9, 10, 11, 12, 13, 14, 15, 16, 17, 18],
+    disabledTimeIntervals: [[moment({ h: 0 }), moment({ h: 9, m: 29 })], [moment({ h: 18, m: 31 }), moment({ h: 24 })]],
     stepping: 30,
     useCurrent: false,
     sideBySide: true,
@@ -14,7 +14,7 @@ document.addEventListener("turbolinks:load", function() {
 
   $dateTimePickerEnd.datetimepicker( {
     format: 'YYYY-MM-DD HH:mm',
-    enabledHours: [9, 10, 11, 12, 13, 14, 15, 16, 17, 18],
+    disabledTimeIntervals: [[moment({ h: 0 }), moment({ h: 9, m: 29 })], [moment({ h: 18, m: 31 }), moment({ h: 24 })]],
     stepping: 30,
     useCurrent: false,
     sideBySide: true,

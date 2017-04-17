@@ -6,3 +6,4 @@
 //= require moment
 //= require bootstrap-datetimepicker
 //= require base
+//= require bootstrap3-datetimepicker

@@ -4,12 +4,13 @@
   = f.association :user, required: true
   = f.input :leave_type, required: true, collection: LeaveTime.enum_attributes_for_select(:leave_types)
   = f.input :quota
-  = f.input :effective_date, date_time_picker_hash(:start, current_object[:effective_date])
-  = f.input :expiration_date, date_time_picker_hash(:end, current_object[:expiration_date])
+  = f.input :effective_date,  as: :string, required: true, wrapper_html: { class: 'date-input' },
+    input_html: { data: { input: 'datepicker', format: 'YYYY/MM/DD' } }
+  = f.input :expiration_date, as: :string, required: true, wrapper_html: { class: 'date-input' },
+    input_html: { data: { input: 'datepicker', format: 'YYYY/MM/DD' } }
   = f.input :remark, as: :text
   - unless current_object.new_record?
     = f.input :usable_hours
     = f.input :used_hours
     = link_to t("title.backend/leave_times.delete"), backend_leave_time_path(current_object), method: :delete, class: "btn btn-sm btn-danger", data: {confirm: "Are you sure?"}
   = f.button :submit
-
