@@ -8,6 +8,8 @@ class LeaveTime < ApplicationRecord
   has_many   :leave_applications
   has_many   :leave_time_usages
 
+  before_validation :set_default_values
+
   validates :leave_type, :effective_date, :expiration_date, :quota, :usable_hours, :used_hours, :user, presence: true
   validates :quota,        numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validates :usable_hours, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
@@ -40,6 +42,12 @@ class LeaveTime < ApplicationRecord
   end
 
   private
+
+  def set_default_values
+    self.usable_hours ||= self.quota
+    self.used_hours   ||= 0
+    self.locked_hours ||= 0
+  end
 
   def positive_range
     unless expiration_date && effective_date && expiration_date >= effective_date

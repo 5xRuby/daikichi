@@ -34,6 +34,9 @@ zh-TW:
           marriage: '婚假'
           maternity: '產假'
           bonus: '補休'
+          compassionate: '喪假'
+          sick: '病假 (Deprecatred)'
+          unpaid: '無薪事假'
         user: "員工"
         name: "擁有者"
         leave_type: "假別"
@@ -52,6 +55,15 @@ zh-TW:
           pending: '待審'
           canceled: '取消'
           all: '全部'
+        leave_types:
+          annual: '特別休假'
+          bonus: '補充休假'
+          sick: '病假'
+          personal: '無薪事假'
+          remote: '遠端工作'
+          official: '公假'
+          marriage: '婚假'
+          compassionate: '喪假'
         user: "員工"
         start_time: "開始時間"
         end_time: "結束時間"
