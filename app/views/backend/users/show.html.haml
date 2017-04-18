@@ -24,5 +24,5 @@
   new_backend_leave_time_path(user_id: current_object.id),
   class: "btn btn-primary"
 
-= leave_times_table current_object.leave_times.effective, [:name] do |lt|
+= leave_times_table current_object.leave_times, [:name] do |lt|
   - link_to t("title.backend/leave_times.edit"), edit_backend_leave_time_path(lt), class: "btn btn-warning"

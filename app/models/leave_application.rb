@@ -110,7 +110,7 @@ class LeaveApplication < ApplicationRecord
 
   def auto_calculated_hours
     return 0 unless start_time && end_time
-    Biz.within(start_time, end_time).in_hours
+    $biz.within(start_time, end_time).in_hours
   end
 
   def hours_should_be_positive_integer
