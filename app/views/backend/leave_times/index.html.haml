@@ -1,4 +1,4 @@
-%h2= t("captions.backend/leave_times.index") + "::" + t("simple_form.options.leave_time.leave_type.#{leave_type}")
+%h2= t("captions.backend/leave_times.index") + "::" + LeaveTime.human_enum_value(:leave_types, leave_type)
 
 = type_selector 'leave_type', t("title.backend/leave_times.change_type"), LeaveTime.enum_attributes_for_select('leave_types'), leave_type
 
@@ -6,3 +6,5 @@
 
 = leave_times_table current_collection, [:leave_type] do |lt|
   - link_to t("title.backend/leave_times.edit"), edit_backend_leave_time_path(lt), class: "btn btn-warning"
+
+= paginate current_collection
