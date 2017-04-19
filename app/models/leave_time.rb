@@ -41,6 +41,21 @@ class LeaveTime < ApplicationRecord
     save!
   end
 
+  def cover?(time_format)
+    date = time_format.to_date
+    (self.effective_date..self.expiration_date).cover? date
+  end
+
+  def lock_hours(hours)
+    unless hours > self.usable_hours
+      self.usable_hours -= hours
+      self.locked_hours += hours
+      self.save!
+    else
+      false
+    end
+  end
+
   private
 
   def set_default_values
