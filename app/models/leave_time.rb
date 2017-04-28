@@ -47,21 +47,13 @@ class LeaveTime < ApplicationRecord
   end
 
   def lock_hours(hours)
-    if self.usable_hours_changed? && hours <= self.usable_hours_was || hours <= self.usable_hours
-      self.usable_hours = self.usable_hours_was - hours
-      self.locked_hours = self.locked_hours_was + hours
-      self.save
-    end
+    self.usable_hours -= hours
+    self.locked_hours += hours
   end
 
   def lock_hours!(hours)
-    if self.usable_hours_changed? && hours <= self.usable_hours_was || hours <= self.usable_hours
-      self.usable_hours = self.usable_hours_was - hours
-      self.locked_hours = self.locked_hours_was + hours
-      self.save!
-    else
-      raise ActiveRecord::Rollback
-    end
+    self.lock_hours(hours)
+    self.save!
   end
 
   private
