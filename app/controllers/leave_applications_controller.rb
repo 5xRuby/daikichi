@@ -8,6 +8,20 @@ class LeaveApplicationsController < BaseController
     @current_collection = @current_collection.page(params[:page])
   end
 
+  def create
+    collection_scope.transaction do
+      @current_object = collection_scope.new(resource_params)
+      @current_object.save!
+      raise ActiveRecord::Rollback unless LeaveTimeUsageBuilder.new(@current_object).build_leave_time_usages
+    end
+    
+    if @current_object.persisted?
+      action_success
+    else
+      action_fail t('warnings.leave_time_not_sufficient'), :new
+    end
+  end
+
   def update
     if !current_object.canceled? and current_object.update(resource_params)
       current_object.revise!
