@@ -39,5 +39,3 @@ docker-compose.yml
 /postgres
 
 /db/fixtures/production/
-
-.DS_Store
