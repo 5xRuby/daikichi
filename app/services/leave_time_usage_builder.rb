@@ -47,7 +47,7 @@ class LeaveTimeUsageBuilder
       .until(@leave_application.end_time).to_a
   end
 
-  def leave_time_covered_application_time_interval?
+  def leave_time_include_application_time_interval?
     include_start_time = include_end_time = false
     @available_leave_times.each do |lt|
       include_start_time = true if lt.cover?(@leave_application.start_time.to_date)
@@ -80,7 +80,7 @@ class LeaveTimeUsageBuilder
   end
 
   def corresponding_leave_hours_date_is_zero?(date)
-    @leave_hours_by_date[date].nil? || @leave_hours_by_date[date].zero?
+    @leave_hours_by_date[date].zero?
   end
 
   def remain_leave_hours_by_date?
