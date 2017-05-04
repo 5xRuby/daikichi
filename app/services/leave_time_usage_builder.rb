@@ -27,7 +27,7 @@ class LeaveTimeUsageBuilder
       end
 
       unless_remain_leave_hours_by_date
-      create_leave_time_usage
+      create_leave_time_usage_and_lock_hours
     end
   end
 
@@ -57,10 +57,10 @@ class LeaveTimeUsageBuilder
     la_end_date = @leave_application.end_time.to_date
     start_date = la_start_date > leave_time.effective_date ? la_start_date : leave_time.effective_date
     end_date = la_end_date < leave_time.expiration_date ? la_end_date : leave_time.expiration_date
-    start_date.upto(end_date) { |date| yield date unless weekday?(date) }
+    start_date.upto(end_date) { |date| yield date unless is_weekday?(date) }
   end
 
-  def weekday?(date)
+  def is_weekday?(date)
     date.saturday? || date.sunday?
   end
 
@@ -90,9 +90,18 @@ class LeaveTimeUsageBuilder
     @leave_hours_by_date.each_value { |v| raise ActiveRecord::Rollback unless v.zero? }
   end
 
-  def create_leave_time_usage
+  def create_leave_time_usage_and_lock_hours
     @leave_time_usages.each do |lt_usage|
-      @leave_application.leave_time_usages.create!(leave_time: lt_usage[:leave_time], used_hours: lt_usage[:used_hours])
+      create_leave_time_usage(lt_usage[:leave_time], lt_usage[:used_hours])
+      lock_leave_time_hours(lt_usage[:leave_time], lt_usage[:used_hours])
     end
+  end
+
+  def create_leave_time_usage(leave_time, used_hours)
+    @leave_application.leave_time_usages.create!(leave_time: leave_time, used_hours: used_hours)
+  end
+
+  def lock_leave_time_hours(leave_time, used_hours)
+    leave_time.lock_hours!(used_hours)
   end
 end
