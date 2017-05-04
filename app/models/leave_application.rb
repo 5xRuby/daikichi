@@ -94,7 +94,7 @@ class LeaveApplication < ApplicationRecord
     self.user.leave_times
       .where(leave_type: Settings.leave_applications.available_quota_types.send(self.leave_type))
       .where('usable_hours > 0')
-      .overlaps(start_time.beginning_of_day, end_time.end_of_day)
+      .overlaps(start_time, end_time)
       .order(:expiration_date, :usable_hours)
   end
 
