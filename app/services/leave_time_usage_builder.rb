@@ -13,13 +13,8 @@ class LeaveTimeUsageBuilder
   def build_leave_time_usages
     lts = @leave_application.available_leave_times
     lhs_by_date = leave_hours_by_date
-
-    # 檢查 leave_times 至少有切到 leave_application 之起點以及終點
-
-    # 迭代 leave_times 並且開始扣除 leave_hours_by_date 之額度
-    # - 當扣除到額度時，產生 leave_time_usage 記錄
-    # - 當扣除到額度時，將相對應扣除之時數記錄到 leave_times 的 locked_hours
-  
+    
+    puts lhs_by_date
   end
 
   private
