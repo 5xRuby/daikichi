@@ -15,18 +15,23 @@ class LeaveTimeUsageBuilder
 
   def build_leave_time_usages
     ActiveRecord::Base.transaction do
-      raise ActiveRecord::Rollback unless application_covered_by_leave_time_interval?
+      raise ActiveRecord::Rollback unless leave_time_covered_application_time_interval?
 
       @available_leave_times.each do |lt|
+        @used_hour_count = 0
         iterate_leave_time_dates(lt) do |date|
-          break if usable_hours_is_empty?(lt)
           next if corresponding_leave_hours_date_is_zero?(date)
-          deduct_leave_hours_by_date(lt, date)
+          if usable_hours_affordable?(lt, date)
+            fill_all_leave_hours_by_date(date)
+          else
+            fill_leave_hours_by_date_with_remain_leave_time(lt, date)
+            break
+          end
         end
-        stack_leave_time_usage_record(lt)
+        @leave_time_usages.push(leave_time: lt, used_hours: @used_hour_count)
       end
 
-      unless_remain_leave_hours_by_date
+      raise ActiveRecord::Rollback if remain_leave_hours_by_date?
       create_leave_time_usage_and_lock_hours
     end
   end
@@ -42,12 +47,11 @@ class LeaveTimeUsageBuilder
       .until(@leave_application.end_time).to_a
   end
 
-  def application_covered_by_leave_time_interval?
+  def leave_time_covered_application_time_interval?
     include_start_time = include_end_time = false
     @available_leave_times.each do |lt|
-      include_start_time = true if lt.cover?(@leave_application.start_time) # leave_time start_date 跟 date 相同會不會 cover 到
-      include_end_time = true if lt.cover?(@leave_application.end_time)
-      break if include_start_time && include_end_time
+      include_start_time = true if lt.cover?(@leave_application.start_time.to_date)
+      include_end_time = true if lt.cover?(@leave_application.end_time.to_date)
     end
     include_start_time && include_end_time
   end
@@ -57,37 +61,31 @@ class LeaveTimeUsageBuilder
     la_end_date = @leave_application.end_time.to_date
     start_date = la_start_date > leave_time.effective_date ? la_start_date : leave_time.effective_date
     end_date = la_end_date < leave_time.expiration_date ? la_end_date : leave_time.expiration_date
-    start_date.upto(end_date) { |date| yield date unless is_weekday?(date) }
+    start_date.upto(end_date) { |date| yield date }
   end
 
-  def is_weekday?(date)
-    date.saturday? || date.sunday?
+  def usable_hours_affordable?(leave_time, date)
+    @used_hour_count + @leave_hours_by_date[date] <= leave_time.usable_hours
   end
 
-  def usable_hours_is_empty?(leave_time)
-    leave_time.usable_hours.zero?
+  def fill_all_leave_hours_by_date(date)
+    @used_hour_count += @leave_hours_by_date[date]
+    @leave_hours_by_date[date] = 0
   end
 
-  def deduct_leave_hours_by_date(leave_time, date)
-    if leave_time.usable_hours > @leave_hours_by_date[date]
-      leave_time.usable_hours -= @leave_hours_by_date[date]
-      @leave_hours_by_date[date] = 0
-    else
-      @leave_hours_by_date[date] -= leave_time.usable_hours
-      leave_time.usable_hours = 0
-    end
+  def fill_leave_hours_by_date_with_remain_leave_time(leave_time, date)
+    remain_hours = @used_hour_count + @leave_hours_by_date[date] - lt.usable_hours
+    @used_hour_count = lt.usable_hours
+    @leave_hours_by_date[date] = remain_hours
   end
 
   def corresponding_leave_hours_date_is_zero?(date)
-    @leave_hours_by_date[date].zero?
+    @leave_hours_by_date[date].nil? || @leave_hours_by_date[date].zero?
   end
 
-  def stack_leave_time_usage_record(leave_time)
-    @leave_time_usages.push(leave_time: leave_time, used_hours: leave_time.usable_hours_was - leave_time.usable_hours)
-  end
-
-  def unless_remain_leave_hours_by_date
-    @leave_hours_by_date.each_value { |v| raise ActiveRecord::Rollback unless v.zero? }
+  def remain_leave_hours_by_date?
+    @leave_hours_by_date.each_value { |v| return true unless v.zero? }
+    false
   end
 
   def create_leave_time_usage_and_lock_hours
@@ -98,10 +96,13 @@ class LeaveTimeUsageBuilder
   end
 
   def create_leave_time_usage(leave_time, used_hours)
-    @leave_application.leave_time_usages.create!(leave_time: leave_time, used_hours: used_hours)
+    leave_time_usage = @leave_application.leave_time_usages.new
+    leave_time_usage.leave_time = leave_time
+    leave_time_usage.used_hours = used_hours
+    leave_time_usage.save!
   end
 
   def lock_leave_time_hours(leave_time, used_hours)
-    leave_time.lock_hours!(used_hours)
+    leave_time.lock_hours used_hours
   end
 end
