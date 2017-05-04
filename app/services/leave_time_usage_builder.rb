@@ -10,13 +10,6 @@ class LeaveTimeUsageBuilder
     end.to_h
   end
 
-  def build_leave_time_usages
-    lts = @leave_application.available_leave_times
-    lhs_by_date = leave_hours_by_date
-    
-    puts lhs_by_date
-  end
-
   private
 
   def work_periods_by_date
