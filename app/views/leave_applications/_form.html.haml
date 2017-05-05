@@ -7,6 +7,11 @@
     = f.input :leave_type, require: true, collection: LeaveApplication.enum_attributes_for_select(:leave_types)
   = f.input :start_time, date_time_picker_hash(:start, current_object[:start_time])
   = f.input :end_time, date_time_picker_hash(:end, current_object[:end_time])
+  - if @error_message
+    %ul
+      - @error_message.each do |error|
+        %li
+          = error
   = f.input :description, required: true
   = f.button :submit, class: "submit"
 
