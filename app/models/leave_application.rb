@@ -41,7 +41,7 @@ class LeaveApplication < ApplicationRecord
       transitions to: :approved, from: [:pending]
     end
 
-    event :reject, after: proc { |manager| sign(manager) } do
+    event :reject, after: [proc { |manager| sign(manager) }, :return_leave_time_usable_hours] do
       transitions to: :rejected, from: [:pending]
     end
 
@@ -49,7 +49,7 @@ class LeaveApplication < ApplicationRecord
       transitions to: :pending, from: [:pending, :approved, :rejected]
     end
 
-    event :cancel do
+    event :cancel, after: :return_leave_time_usable_hours do
       transitions to: :canceled, from: [:pending, :rejected]
       transitions to: :canceled, from: :approved, unless: :happened?
     end
@@ -126,6 +126,13 @@ class LeaveApplication < ApplicationRecord
 
   def create_leave_time_usages
     raise ActiveRecord::Rollback unless LeaveTimeUsageBuilder.new(self).build_leave_time_usages
+  end
+  
+  def return_leave_time_usable_hours
+    LeaveTimeUsage.where(leave_application: self).each do |usage|
+      usage.leave_time.unlock_hours!(usage.used_hours)
+      usage.destroy
+    end
   end
 end
 
