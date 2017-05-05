@@ -11,6 +11,7 @@ class LeaveApplication < ApplicationRecord
 
   after_initialize :set_primary_id
   before_validation :assign_hours
+  after_save :create_leave_time_usages
 
   belongs_to :user
   belongs_to :manager, class_name: 'User', foreign_key: 'manager_id'
@@ -121,6 +122,10 @@ class LeaveApplication < ApplicationRecord
 
   def order_by_sequence
     'array_position(Array%s, leave_type::TEXT)' %Settings.leave_applications.available_quota_types.send(self.leave_type).to_s.tr('"', "'")
+  end
+
+  def create_leave_time_usages
+    raise ActiveRecord::Rollback unless LeaveTimeUsageBuilder.new(self).build_leave_time_usages
   end
 end
 

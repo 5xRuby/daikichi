@@ -8,6 +8,16 @@ class LeaveApplicationsController < BaseController
     @current_collection = @current_collection.page(params[:page])
   end
 
+  def create
+    @current_object = collection_scope.new(resource_params)    
+    if @current_object.save!
+      action_success
+    else
+      @error_message = @current_object.errors[:hours]
+      render action: :new
+    end
+  end
+
   def update
     if !current_object.canceled? and current_object.update(resource_params)
       current_object.revise!

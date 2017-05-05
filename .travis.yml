@@ -2,6 +2,8 @@ language: ruby
 rvm:
 - 2.3.1
 bundler_args: --jobs 1 --retry 3
+dist: trusty
+sudo: required
 script:
   - cp config/database.yml.sample config/database.yml
   - cp config/secrets.yml.sample config/secrets.yml
@@ -12,6 +14,6 @@ cache: bundler
 services:
   - postgresql
 addons:
-  postgresql: "9.4"
+  postgresql: "9.5"
 after_success:
   - bundle exec codeclimate-test-reporter
