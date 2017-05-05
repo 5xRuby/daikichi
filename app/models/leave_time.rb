@@ -40,7 +40,7 @@ class LeaveTime < ApplicationRecord
     self.usable_hours = quota - used_hours
     save!
   end
-
+  
   def cover?(time_format)
     date = time_format.to_date
     (self.effective_date..self.expiration_date).cover? date

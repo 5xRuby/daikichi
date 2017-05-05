@@ -96,6 +96,7 @@ class LeaveApplication < ApplicationRecord
       .where(leave_type: Settings.leave_applications.available_quota_types.send(self.leave_type))
       .where('usable_hours > 0')
       .overlaps(start_time.beginning_of_day, end_time.end_of_day)
+      .order(order_by_sequence)
       .order(:expiration_date, :usable_hours)
   end
 
@@ -117,6 +118,10 @@ class LeaveApplication < ApplicationRecord
   def hours_should_be_positive_integer
     errors.add(:end_time, :not_integer) unless self.hours > 0
     errors.add(:start_time, :should_be_earlier) unless self.end_time > self.start_time
+  end
+
+  def order_by_sequence
+    'array_position(Array%s, leave_type::TEXT)' %Settings.leave_applications.available_quota_types.send(self.leave_type).to_s.tr('"', "'")
   end
 
   def create_leave_time_usages
