@@ -12,6 +12,6 @@ cache: bundler
 services:
   - postgresql
 addons:
-  postgresql: "9.4"
+  postgresql: "9.5"
 after_success:
   - bundle exec codeclimate-test-reporter
