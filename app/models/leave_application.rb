@@ -11,6 +11,7 @@ class LeaveApplication < ApplicationRecord
 
   after_initialize :set_primary_id
   before_validation :assign_hours
+  after_save :create_leave_time_usages
 
   belongs_to :user
   belongs_to :manager, class_name: 'User', foreign_key: 'manager_id'
@@ -116,6 +117,10 @@ class LeaveApplication < ApplicationRecord
   def hours_should_be_positive_integer
     errors.add(:end_time, :not_integer) unless self.hours > 0
     errors.add(:start_time, :should_be_earlier) unless self.end_time > self.start_time
+  end
+
+  def create_leave_time_usages
+    raise ActiveRecord::Rollback unless LeaveTimeUsageBuilder.new(self).build_leave_time_usages
   end
 end
 

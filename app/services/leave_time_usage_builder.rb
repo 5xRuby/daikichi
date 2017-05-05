@@ -15,10 +15,10 @@ class LeaveTimeUsageBuilder
 
   def build_leave_time_usages
     ActiveRecord::Base.transaction do
-      raise ActiveRecord::Rollback unless application_covered_by_leave_time_interval?
+      validate_application_covered_by_leave_time_interval
 
       @available_leave_times.each do |lt|
-        iterate_leave_time_dates(lt) do |date|
+        @leave_hours_by_date.keys.each do |date|
           break if usable_hours_is_empty?(lt)
           next if corresponding_leave_hours_date_is_zero?(date)
           deduct_leave_hours_by_date(lt, date)
@@ -42,26 +42,15 @@ class LeaveTimeUsageBuilder
       .until(@leave_application.end_time).to_a
   end
 
-  def application_covered_by_leave_time_interval?
+  def validate_application_covered_by_leave_time_interval
     include_start_time = include_end_time = false
     @available_leave_times.each do |lt|
       include_start_time = true if lt.cover?(@leave_application.start_time) # leave_time start_date 跟 date 相同會不會 cover 到
       include_end_time = true if lt.cover?(@leave_application.end_time)
       break if include_start_time && include_end_time
     end
-    include_start_time && include_end_time
-  end
 
-  def iterate_leave_time_dates(leave_time)
-    la_start_date = @leave_application.start_time.to_date
-    la_end_date = @leave_application.end_time.to_date
-    start_date = la_start_date > leave_time.effective_date ? la_start_date : leave_time.effective_date
-    end_date = la_end_date < leave_time.expiration_date ? la_end_date : leave_time.expiration_date
-    start_date.upto(end_date) { |date| yield date unless weekday?(date) }
-  end
-
-  def weekday?(date)
-    date.saturday? || date.sunday?
+    rollback_with_error_message unless include_start_time && include_end_time
   end
 
   def usable_hours_is_empty?(leave_time)
@@ -87,7 +76,17 @@ class LeaveTimeUsageBuilder
   end
 
   def unless_remain_leave_hours_by_date
-    @leave_hours_by_date.each_value { |v| raise ActiveRecord::Rollback unless v.zero? }
+    @leave_hours_by_date.each_value { |v| rollback_with_error_message unless v.zero? }
+  end
+
+  def rollback_with_error_message
+    append_leave_application_error_message
+    raise ActiveRecord::Rollback
+  end
+
+  def append_leave_application_error_message
+    @leave_application.errors.add(:hours, I18n.t('warnings.leave_time_not_sufficient'))
+    @leave_hours_by_date.each_pair { |date, hours| @leave_application.errors.add(:hours, "\n" + date.strftime('%Y/%m/%d') + ' 缺少額度：' + hours.to_s + ' 小時') unless hours.zero? }
   end
 
   def create_leave_time_usage
