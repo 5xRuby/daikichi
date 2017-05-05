@@ -8,6 +8,7 @@ FactoryGirl.define do
     quota           0
     used_hours      0
     usable_hours    0
+    locked_hours    0
     remark          'Test string'
 
     Settings.leave_applications.leave_types.keys.each do |type|

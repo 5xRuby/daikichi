@@ -40,6 +40,71 @@ RSpec.describe LeaveTime, type: :model do
     end
   end
 
+  describe '.hours' do
+    describe 'lock hours' do
+      let(:leave_time) { create(:leave_time, :bonus, quota: 50, usable_hours: 50) }
+
+      context 'without bang' do
+        it 'locks hour without saving the record' do
+          leave_time.lock_hours 5
+          expect(leave_time.usable_hours).to eq 45
+          expect(leave_time.locked_hours).to eq 5
+          expect(leave_time.used_hours).to eq 0
+
+          actual_record = LeaveTime.find(leave_time.id)
+          expect(actual_record.usable_hours).to eq 50
+          expect(actual_record.locked_hours).to eq 0
+          expect(actual_record.used_hours).to eq 0  
+        end
+      end
+
+      context 'with bang' do
+        it 'locks hour with saving the record' do
+          leave_time.lock_hours! 5
+          expect(leave_time.usable_hours).to eq 45
+          expect(leave_time.locked_hours).to eq 5
+          expect(leave_time.used_hours).to eq 0
+
+          actual_record = LeaveTime.find(leave_time.id)
+          expect(actual_record.usable_hours).to eq 45
+          expect(actual_record.locked_hours).to eq 5
+          expect(actual_record.used_hours).to eq 0
+        end
+      end
+    end
+
+    describe 'unlock hours' do
+      let(:leave_time) { create(:leave_time, :bonus, quota: 50, usable_hours: 30, locked_hours: 10, used_hours: 10) }
+      context 'with bang' do
+        it 'unlocks hour without saving the record' do
+          leave_time.unlock_hours 7
+          expect(leave_time.usable_hours).to eq 37
+          expect(leave_time.locked_hours).to eq 3
+          expect(leave_time.used_hours).to eq 10
+
+          actual_record = LeaveTime.find(leave_time.id)
+          expect(actual_record.usable_hours).to eq 30
+          expect(actual_record.locked_hours).to eq 10
+          expect(actual_record.used_hours).to eq 10
+        end
+      end
+      
+      context 'without bang' do
+        it 'unlocks hour with saving the record' do
+          leave_time.unlock_hours! 7
+          expect(leave_time.usable_hours).to eq 37
+          expect(leave_time.locked_hours).to eq 3
+          expect(leave_time.used_hours).to eq 10
+
+          actual_record = LeaveTime.find(leave_time.id)
+          expect(actual_record.usable_hours).to eq 37
+          expect(actual_record.locked_hours).to eq 3
+          expect(actual_record.used_hours).to eq 10
+        end
+      end
+    end
+  end
+
   describe '.scope' do
     let(:beginning) { Time.current }
     let(:ending)    { 1.year.since }
