@@ -9,16 +9,12 @@ class LeaveApplicationsController < BaseController
   end
 
   def create
-    collection_scope.transaction do
-      @current_object = collection_scope.new(resource_params)
-      @current_object.save!
-      raise ActiveRecord::Rollback unless LeaveTimeUsageBuilder.new(@current_object).build_leave_time_usages
-    end
-    
-    if @current_object.persisted?
+    @current_object = collection_scope.new(resource_params)    
+    if @current_object.save!
       action_success
     else
-      action_fail t('warnings.leave_time_not_sufficient'), :new
+      @error_message = @current_object.errors[:hours]
+      render action: :new
     end
   end
 
