@@ -2,6 +2,9 @@
 class LeaveTimeUsageBuilder
   def initialize(leave_application)
     @leave_application = leave_application
+    @available_leave_times = @leave_application.available_leave_times
+    @leave_hours_by_date = leave_hours_by_date
+    @leave_time_usages = []
   end
 
   def leave_hours_by_date
@@ -35,7 +38,7 @@ class LeaveTimeUsageBuilder
   end
 
   def work_periods
-    Biz.periods.after(@leave_application.start_time).timeline
+    $biz.periods.after(@leave_application.start_time).timeline
       .until(@leave_application.end_time).to_a
   end
 

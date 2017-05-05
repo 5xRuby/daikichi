@@ -120,13 +120,12 @@ class LeaveApplication < ApplicationRecord
     errors.add(:start_time, :should_be_earlier) unless self.end_time > self.start_time
   end
 
-<<<<<<< HEAD
   def order_by_sequence
     'array_position(Array%s, leave_type::TEXT)' %Settings.leave_applications.available_quota_types.send(self.leave_type).to_s.tr('"', "'")
-=======
+  end
+
   def create_leave_time_usages
     raise ActiveRecord::Rollback unless LeaveTimeUsageBuilder.new(self).build_leave_time_usages
->>>>>>> #108 Refactor code and generate remain leave_hours_by_date error message
   end
 end
 
