@@ -2,7 +2,7 @@ class LeaveTimeUsage < ApplicationRecord
   belongs_to :leave_application
   belongs_to :leave_time
 
-  before_save :lock_leave_time_hours
+  after_create :lock_leave_time_hours
 
   private
 
