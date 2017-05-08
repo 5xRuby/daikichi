@@ -51,7 +51,7 @@ RSpec.describe LeaveTime, type: :model do
           expect(leave_time.locked_hours).to eq 5
           expect(leave_time.used_hours).to eq 0
 
-          actual_record = LeaveTime.find(leave_time.id)
+          actual_record = described_class.find(leave_time.id)
           expect(actual_record.usable_hours).to eq 50
           expect(actual_record.locked_hours).to eq 0
           expect(actual_record.used_hours).to eq 0  
@@ -65,7 +65,7 @@ RSpec.describe LeaveTime, type: :model do
           expect(leave_time.locked_hours).to eq 5
           expect(leave_time.used_hours).to eq 0
 
-          actual_record = LeaveTime.find(leave_time.id)
+          actual_record = described_class.find(leave_time.id)
           expect(actual_record.usable_hours).to eq 45
           expect(actual_record.locked_hours).to eq 5
           expect(actual_record.used_hours).to eq 0
@@ -82,7 +82,7 @@ RSpec.describe LeaveTime, type: :model do
           expect(leave_time.locked_hours).to eq 3
           expect(leave_time.used_hours).to eq 10
 
-          actual_record = LeaveTime.find(leave_time.id)
+          actual_record = described_class.find(leave_time.id)
           expect(actual_record.usable_hours).to eq 30
           expect(actual_record.locked_hours).to eq 10
           expect(actual_record.used_hours).to eq 10
@@ -96,7 +96,7 @@ RSpec.describe LeaveTime, type: :model do
           expect(leave_time.locked_hours).to eq 3
           expect(leave_time.used_hours).to eq 10
 
-          actual_record = LeaveTime.find(leave_time.id)
+          actual_record = described_class.find(leave_time.id)
           expect(actual_record.usable_hours).to eq 37
           expect(actual_record.locked_hours).to eq 3
           expect(actual_record.used_hours).to eq 10
@@ -145,6 +145,39 @@ RSpec.describe LeaveTime, type: :model do
             expect(subject).not_to include leave_time
           end
         end
+      end
+    end
+
+    describe ".cover?" do
+      context "date is between effective and expiration date range" do
+        it 'is true in LeaveTime date range' do
+          date = Time.current.to_date
+          expect(leave_time.cover?(date)).to be true
+        end
+      end
+
+      context "date is on the effective or expiration date range edge" do
+        it 'is true on effective date' do
+          expect(leave_time.cover?(effective_date)).to be true
+        end
+
+        it 'is true on expiration date' do
+          expect(leave_time.cover?(expiration_date)).to be true
+        end
+      end
+
+      context "date is before effective date" do
+        it 'is false before effective date' do
+          date = effective_date - 1.day
+          expect(leave_time.cover?(date)).to be false
+        end
+      end
+
+      context "date is after expiration date" do
+        it 'is false after expiration date' do
+          date = expiration_date + 1.day
+          expect(leave_time.cover?(date)).to be false
+        end        
       end
     end
 

@@ -61,6 +61,12 @@ RSpec.describe LeaveApplication, type: :model do
     end
   end
 
+  describe "#callback" do
+    context "should create LeaveTimeUsage after LeaveApplication created" do
+      it { is_expected.to callback(:create_leave_time_usages).after(:create) }
+    end
+  end
+
   describe 'scope' do
     let(:beginning)  { WorkingHours.advance_to_working_time(1.month.ago.beginning_of_month) }
     let(:closing)    { WorkingHours.return_to_working_time(1.month.ago.end_of_month) }
