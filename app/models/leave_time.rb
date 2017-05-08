@@ -78,7 +78,7 @@ class LeaveTime < ApplicationRecord
 
   def unuse_hours(hours)
     self.used_hours -= hours
-    self.locked_hours += hours
+    self.usable_hours += hours
   end
 
   def unuse_hours!(hours)
