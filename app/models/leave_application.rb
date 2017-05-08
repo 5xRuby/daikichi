@@ -51,7 +51,7 @@ class LeaveApplication < ApplicationRecord
 
     event :cancel do
       transitions to: :canceled, from: :pending, after: :return_leave_time_usable_hours 
-      transitions to: :canceled, from: :approved, unless: :happened?
+      transitions to: :canceled, from: :approved, unless: :happened?, after: :return_approved_application_usable_hours
     end
   end
 
@@ -136,6 +136,13 @@ class LeaveApplication < ApplicationRecord
   def return_leave_time_usable_hours
     self.leave_time_usages.each do |usage|
       usage.leave_time.unlock_hours!(usage.used_hours)
+      usage.destroy
+    end
+  end
+
+  def return_approved_application_usable_hours
+    LeaveTimeUsage.where(leave_application: self).each do |usage|
+      usage.leave_time.unuse_hours!(usage.used_hours)
       usage.destroy
     end
   end

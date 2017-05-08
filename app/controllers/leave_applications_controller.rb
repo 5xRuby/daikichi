@@ -37,6 +37,8 @@ class LeaveApplicationsController < BaseController
       current_object.cancel!
       @actions << :cancel
       action_success
+    elsif current_object.approved?
+      action_fail t('warnings.already_happened'), :index
     else
       action_fail t('warnings.not_cancellable'), :index
     end

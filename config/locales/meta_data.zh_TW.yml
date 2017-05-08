@@ -202,6 +202,7 @@ zh-TW:
     confirm_cancel: "你確定要取消嗎？"
     not_verifiable: "已審核假單無法再次操作"
     not_cancellable: "無法再操作已取消的假單"
+    already_happened: "無法刪除已經通過並且生效的假單"
     leave_time_not_sufficient: "請假額度不足，無法申請假單："
 
   misc:
