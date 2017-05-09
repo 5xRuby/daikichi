@@ -44,6 +44,7 @@ zh-TW:
         used_hours: "已用時數"
         used_hours_if_allow: "已用時數"
         usable_hours: "可用時數"
+        locked_hours: "圈存時數"
         usable_hours_if_allow: "可用時數"
         effective_date: '有效時間'
         expiration_date: '失效時間'
@@ -70,6 +71,7 @@ zh-TW:
         hours: "時數"
         status: "狀態"
         leave_type: "假別"
+        leave_time_usage_builder: "每日請假時數"
         description: "事由"
         manager: "簽核主管"
         sign_date: "簽核時間"
