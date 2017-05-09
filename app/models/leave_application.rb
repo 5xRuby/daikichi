@@ -12,7 +12,7 @@ class LeaveApplication < ApplicationRecord
   after_initialize :set_primary_id
   before_validation :assign_hours
   after_create :create_leave_time_usages
-  after_update :update_leave_time_usages, on: :update
+  after_update :update_leave_time_usages
   
   belongs_to :user
   belongs_to :manager, class_name: 'User', foreign_key: 'manager_id'
@@ -46,8 +46,8 @@ class LeaveApplication < ApplicationRecord
       transitions to: :rejected, from: :pending, after: :return_leave_time_usable_hours
     end
 
-    event :revise do
-      transitions to: :pending, from: [:pending, :approved], after: :update_leave_application
+    event :revise, after: proc { |params| update_leave_application(params) } do
+      transitions to: :pending, from: [:pending, :approved]
     end
 
     event :cancel do
@@ -135,8 +135,11 @@ class LeaveApplication < ApplicationRecord
   end
 
   def update_leave_time_usages
-    if self.pending?
-      return_leave_time_usable_hours
+    return unless self.start_time_changed? or self.end_time_changed?
+
+    case aasm.from_state
+    when :pending then return_leave_time_usable_hours
+    when :approved then return_approved_application_usable_hours
     end
     create_leave_time_usages
   end
