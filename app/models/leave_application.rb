@@ -12,7 +12,8 @@ class LeaveApplication < ApplicationRecord
   after_initialize :set_primary_id
   before_validation :assign_hours
   after_create :create_leave_time_usages
-
+  after_update :update_leave_time_usages, on: :update
+  
   belongs_to :user
   belongs_to :manager, class_name: 'User', foreign_key: 'manager_id'
   belongs_to :leave_time
@@ -46,7 +47,7 @@ class LeaveApplication < ApplicationRecord
     end
 
     event :revise do
-      transitions to: :pending, from: [:pending, :approved, :rejected]
+      transitions to: :pending, from: [:pending, :approved], after: :update_leave_application
     end
 
     event :cancel do
@@ -128,11 +129,26 @@ class LeaveApplication < ApplicationRecord
   def create_leave_time_usages
     raise ActiveRecord::Rollback unless LeaveTimeUsageBuilder.new(self).build_leave_time_usages
   end
-  
-  def transfer_locked_hours_to_used_hours
-    LeaveTimeUsage.where(leave_application: self).each { |usage| usage.leave_time.use_hours!(usage.used_hours) }
+
+  def update_leave_application(resource_params)
+    self.update(resource_params)
   end
-  
+
+  def update_leave_time_usages
+    if self.pending?
+      return_leave_time_usable_hours
+    end
+    create_leave_time_usages
+  end
+
+  def transfer_locked_hours_to_used_hours
+    self.leave_time_usages.each { |usage| usage.leave_time.use_hours!(usage.used_hours) }
+  end
+
+  def revert_used_hours_to_locked_hours
+    self.leave_time_usages.each { |usage| usage.leave_time.unuse_and_lock_hours!(usage.used_hours) }
+  end
+
   def return_leave_time_usable_hours
     self.leave_time_usages.each do |usage|
       usage.leave_time.unlock_hours!(usage.used_hours)
@@ -141,7 +157,7 @@ class LeaveApplication < ApplicationRecord
   end
 
   def return_approved_application_usable_hours
-    LeaveTimeUsage.where(leave_application: self).each do |usage|
+    self.leave_time_usages.each do |usage|
       usage.leave_time.unuse_hours!(usage.used_hours)
       usage.destroy
     end
