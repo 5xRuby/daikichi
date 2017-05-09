@@ -42,6 +42,7 @@ zh-TW:
         leave_type: "假別"
         quota: "額度"
         used_hours: "已用時數"
+        locked_hours: "圈存時數"
         used_hours_if_allow: "已用時數"
         usable_hours: "可用時數"
         locked_hours: "圈存時數"
