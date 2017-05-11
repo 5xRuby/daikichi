@@ -209,6 +209,40 @@ RSpec.describe LeaveTime, type: :model do
           end
         end
       end
+
+      context 'boundary overlaps' do
+        context 'only the beginning of the scope' do
+          let(:effective_date)  { beginning - 5.days }
+          let(:expiration_date) { beginning }
+          it 'should include LeaveTime when expiration date is beginning of the scope' do
+            expect(subject).to include leave_time
+          end
+        end
+
+        context 'before a day of beginning of the scope' do
+          let(:effective_date)  { beginning - 5.days }
+          let(:expiration_date) { beginning - 1.day }
+          it 'not include LeaveTime when expiration date is one day before beginning of the scope' do
+            expect(subject).not_to include leave_time
+          end
+        end
+
+        context 'only the end of the scope' do
+          let(:effective_date)  { ending }
+          let(:expiration_date) { ending + 5.days }
+          it 'should include LeaveTime when effective date is end of the scope' do
+            expect(subject).to include leave_time
+          end
+        end
+
+        context 'after a day of end of the scope' do
+          let(:effective_date)  { ending + 1.day }
+          let(:expiration_date) { ending + 5.days }
+          it 'not include LeaveTime when effective date is one day after end of the scope' do
+            expect(subject).not_to include leave_time
+          end
+        end
+      end
     end
 
     describe ".cover?" do

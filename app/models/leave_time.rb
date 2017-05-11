@@ -27,7 +27,7 @@ class LeaveTime < ApplicationRecord
   scope :overlaps, ->(beginning, closing) {
     where(
       '(leave_times.effective_date, leave_times.expiration_date) OVERLAPS (timestamp :beginning, timestamp :closing)',
-      beginning: beginning, closing: closing
+      beginning: beginning.beginning_of_day, closing: closing.end_of_day
     )
   }
 
