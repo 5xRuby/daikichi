@@ -129,7 +129,7 @@ class LeaveApplication < ApplicationRecord
   end
   
   def return_leave_time_usable_hours
-    LeaveTimeUsage.where(leave_application: self).each do |usage|
+    self.leave_time_usages.each do |usage|
       usage.leave_time.unlock_hours!(usage.used_hours)
       usage.destroy
     end
