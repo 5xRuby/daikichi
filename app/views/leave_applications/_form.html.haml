@@ -1,6 +1,6 @@
 %h2= t("captions.leave_applications.#{action_name}")
 
-= simple_form_for current_object  do |f|
+= simple_form_for current_object, url: url_for(action: action), method: method  do |f|
   - if action_name == "edit"
     = f.input :leave_type, required: true, collection: LeaveApplication.enum_attributes_for_select(:leave_types), disabled: true
   - else
