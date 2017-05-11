@@ -61,9 +61,39 @@ RSpec.describe LeaveApplication, type: :model do
     end
   end
 
-  describe "#callback" do
+  describe "callback" do
     context "should create LeaveTimeUsage after LeaveApplication created" do
       it { is_expected.to callback(:create_leave_time_usages).after(:create) }
+    end
+
+    context "create_leave_time_usage" do
+      let(:user)              { create(:user) }
+      let(:effective_date)    { Time.zone.local(2017, 5, 1) }
+      let(:expiration_date)   { Time.zone.local(2017, 5, 15) }
+      let(:start_time)        { Time.zone.local(2017, 5, 1, 9, 30) }
+      let(:end_time)          { Time.zone.local(2017, 5, 5, 12, 30) }
+      let(:total_leave_hours) { $biz.within(start_time, end_time).in_hours }
+      before { user.leave_times.destroy_all }
+      it "should successfully create LeaveTimeUsage on sufficient LeaveTime hours" do
+        lt = user.leave_times.create(leave_type: 'annual', quota: total_leave_hours, usable_hours: total_leave_hours, effective_date: effective_date, expiration_date: expiration_date)
+        la = user.leave_applications.create(leave_type: 'annual', start_time: start_time, end_time: end_time, description: 'Test string')
+        leave_time_usage = la.leave_time_usages.first
+        leave_time = leave_time_usage.leave_time
+        expect(leave_time_usage.used_hours).to eq total_leave_hours
+        expect(leave_time.usable_hours).to eq 0
+        expect(leave_time.used_hours).to eq 0
+        expect(leave_time.locked_hours).to eq total_leave_hours
+      end
+      
+      it "should not create LeaveTimeUsage when insufficient LeaveTime hours" do
+        lt = user.leave_times.create(leave_type: 'annual', quota: total_leave_hours - 1, usable_hours: total_leave_hours - 1, effective_date: effective_date, expiration_date: expiration_date)
+        la = user.leave_applications.create!(leave_type: 'annual', start_time: start_time, end_time: end_time, description: 'Test string')
+        leave_time = LeaveTime.find(lt.id)
+        expect(la.leave_time_usages.any?).to be false
+        expect(leave_time.usable_hours).to eq (total_leave_hours - 1)
+        expect(leave_time.used_hours).to eq 0
+        expect(leave_time.locked_hours).to eq 0
+      end
     end
   end
 
