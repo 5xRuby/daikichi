@@ -45,8 +45,8 @@ class LeaveTimeUsageBuilder
   def validate_application_covered_by_leave_time_interval
     include_start_time = include_end_time = false
     @available_leave_times.each do |lt|
-      include_start_time = true if lt.cover?(@leave_application.start_time) # leave_time start_date 跟 date 相同會不會 cover 到
-      include_end_time = true if lt.cover?(@leave_application.end_time)
+      include_start_time = true if lt.cover?(@leave_hours_by_date.keys.first) # leave_time start_date 跟 date 相同會不會 cover 到
+      include_end_time = true if lt.cover?(@leave_hours_by_date.keys.last)
       break if include_start_time && include_end_time
     end
 
