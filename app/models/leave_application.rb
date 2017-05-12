@@ -11,7 +11,7 @@ class LeaveApplication < ApplicationRecord
 
   after_initialize :set_primary_id
   before_validation :assign_hours
-  after_save :create_leave_time_usages
+  after_create :create_leave_time_usages
 
   belongs_to :user
   belongs_to :manager, class_name: 'User', foreign_key: 'manager_id'
@@ -37,12 +37,12 @@ class LeaveApplication < ApplicationRecord
     state :rejected
     state :canceled
 
-    event :approve, after: [proc { |manager| sign(manager) }, :bind_and_make_leave_time_exist] do
+    event :approve, after: [proc { |manager| sign(manager) }] do
       transitions to: :approved, from: [:pending]
     end
 
     event :reject, after: proc { |manager| sign(manager) } do
-      transitions to: :rejected, from: [:pending]
+      transitions to: :rejected, from: [:pending], after: :return_leave_time_usable_hours
     end
 
     event :revise do
@@ -50,7 +50,7 @@ class LeaveApplication < ApplicationRecord
     end
 
     event :cancel do
-      transitions to: :canceled, from: [:pending, :rejected]
+      transitions to: :canceled, from: :pending, after: :return_leave_time_usable_hours 
       transitions to: :canceled, from: :approved, unless: :happened?
     end
   end
@@ -127,6 +127,13 @@ class LeaveApplication < ApplicationRecord
 
   def create_leave_time_usages
     raise ActiveRecord::Rollback unless LeaveTimeUsageBuilder.new(self).build_leave_time_usages
+  end
+  
+  def return_leave_time_usable_hours
+    self.leave_time_usages.each do |usage|
+      usage.leave_time.unlock_hours!(usage.used_hours)
+      usage.destroy
+    end
   end
 end
 

@@ -9,8 +9,8 @@ class LeaveApplicationsController < BaseController
   end
 
   def create
-    @current_object = collection_scope.new(resource_params)
-    if @current_object.save!
+    @current_object = collection_scope.new(resource_params)    
+    if @current_object.save
       action_success
     else
       @error_message = @current_object.errors[:hours]

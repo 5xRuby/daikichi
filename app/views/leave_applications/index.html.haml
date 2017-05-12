@@ -24,10 +24,10 @@
             = link_to t("title.leave_applications.show"),
               leave_application_path(leave),
               class: "btn btn-primary"
-            - unless leave.canceled?
-              = link_to t("title.leave_applications.edit"),
-                edit_leave_application_path(leave),
-                class: "btn btn-warning"
+            = link_to t("title.leave_applications.edit"),
+              edit_leave_application_path(leave),
+              class: "btn btn-warning"
+            - if leave.may_cancel?
               = link_to t("title.leave_applications.cancel"),
                 cancel_leave_application_path(leave),
                 class: "btn btn-danger",
