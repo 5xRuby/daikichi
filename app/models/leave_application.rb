@@ -12,7 +12,8 @@ class LeaveApplication < ApplicationRecord
   after_initialize :set_primary_id
   before_validation :assign_hours
   after_create :create_leave_time_usages
-
+  after_update :update_leave_time_usages
+  
   belongs_to :user
   belongs_to :manager, class_name: 'User', foreign_key: 'manager_id'
   belongs_to :leave_time
@@ -45,8 +46,8 @@ class LeaveApplication < ApplicationRecord
       transitions to: :rejected, from: :pending, after: :return_leave_time_usable_hours
     end
 
-    event :revise do
-      transitions to: :pending, from: [:pending, :approved, :rejected]
+    event :revise, after: proc { |params| update_leave_application(params) } do
+      transitions to: :pending, from: [:pending, :approved]
     end
 
     event :cancel do
@@ -128,11 +129,29 @@ class LeaveApplication < ApplicationRecord
   def create_leave_time_usages
     raise ActiveRecord::Rollback unless LeaveTimeUsageBuilder.new(self).build_leave_time_usages
   end
-  
-  def transfer_locked_hours_to_used_hours
-    LeaveTimeUsage.where(leave_application: self).each { |usage| usage.leave_time.use_hours!(usage.used_hours) }
+
+  def update_leave_application(resource_params)
+    self.update(resource_params)
   end
-  
+
+  def update_leave_time_usages
+    return unless self.start_time_changed? or self.end_time_changed?
+
+    case aasm.from_state
+    when :pending then return_leave_time_usable_hours
+    when :approved then return_approved_application_usable_hours
+    end
+    create_leave_time_usages
+  end
+
+  def transfer_locked_hours_to_used_hours
+    self.leave_time_usages.each { |usage| usage.leave_time.use_hours!(usage.used_hours) }
+  end
+
+  def revert_used_hours_to_locked_hours
+    self.leave_time_usages.each { |usage| usage.leave_time.unuse_and_lock_hours!(usage.used_hours) }
+  end
+
   def return_leave_time_usable_hours
     self.leave_time_usages.each do |usage|
       usage.leave_time.unlock_hours!(usage.used_hours)
@@ -141,7 +160,7 @@ class LeaveApplication < ApplicationRecord
   end
 
   def return_approved_application_usable_hours
-    LeaveTimeUsage.where(leave_application: self).each do |usage|
+    self.leave_time_usages.each do |usage|
       usage.leave_time.unuse_hours!(usage.used_hours)
       usage.destroy
     end
