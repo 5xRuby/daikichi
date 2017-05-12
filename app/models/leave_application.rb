@@ -107,21 +107,22 @@ class LeaveApplication < ApplicationRecord
   end
 
   def assign_hours
-    self.hours = auto_calculated_hours if self.hours.nil? or self.hours.zero?
+    self.hours = auto_calculated_minutes / 60
   end
 
-  def auto_calculated_hours
-    return 0 unless start_time && end_time
-    $biz.within(start_time, end_time).in_hours
+  def auto_calculated_minutes
+    return @minutes = 0 unless start_time && end_time
+    @minutes ||= $biz.within(start_time, end_time).in_minutes
   end
 
   def hours_should_be_positive_integer
-    errors.add(:end_time, :not_integer) unless self.hours > 0
+    return if self.errors[:start_time].any? or self.errors[:end_time].any?
+    errors.add(:end_time, :not_integer) if (@minutes % 60).nonzero? || !self.hours.positive?
     errors.add(:start_time, :should_be_earlier) unless self.end_time > self.start_time
   end
 
   def order_by_sequence
-    'array_position(Array%s, leave_type::TEXT)' %Settings.leave_applications.available_quota_types.send(self.leave_type).to_s.tr('"', "'")
+    'array_position(Array%s, leave_type::TEXT)' % Settings.leave_applications.available_quota_types.send(self.leave_type).to_s.tr('"', "'")
   end
 
   def create_leave_time_usages

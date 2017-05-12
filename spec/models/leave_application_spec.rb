@@ -12,7 +12,7 @@ RSpec.describe LeaveApplication, type: :model do
   let(:half_hour_later) { Time.zone.local(Time.current.year, 8, 15, 10, 0, 0) }
   let(:one_hour_later)  { Time.zone.local(Time.current.year, 8, 15, 10, 30, 0) }
 
-  describe "#associations" do
+  describe '#associations' do
     it { is_expected.to have_many(:leave_time_usages) }
   end
 
@@ -54,10 +54,20 @@ RSpec.describe LeaveApplication, type: :model do
       leave.end_time = start_time
       expect(leave).to be_invalid
       expect(leave.errors.messages[:start_time].first).to eq '開始時間必須早於結束時間'
+    end
 
-      leave.end_time = half_hour_later
-      expect(leave).to be_invalid
-      expect(leave.errors.messages[:end_time].first).to eq '請假的最小單位是1小時'
+    describe 'hours_should_be_positive_integer' do
+      context 'minimum unit' do
+        let(:params) do
+          attributes_for(:leave_application,
+                         start_time: Time.zone.local(2017, 1, 3, 10, 0),
+                         end_time:   Time.zone.local(2017, 1, 3, 10, 59))
+        end
+        it 'is an hour' do
+          expect(subject).to be_invalid
+          expect(subject.errors.messages[:end_time]).to include I18n.t('activerecord.errors.models.leave_application.attributes.end_time.not_integer')
+        end
+      end
     end
   end
 
