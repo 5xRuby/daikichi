@@ -30,12 +30,7 @@ class Backend::LeaveApplicationsController < Backend::BaseController
   def approve
     if current_object.pending?
       current_object.approve!(current_user)
-      if current_object.just_created_a_leave_time?
-        flash[:success] = t('success.approved_and_require_to_update_leave_time')
-        action_success(edit_backend_leave_time_path(current_object.leave_time))
-      else
-        action_success
-      end
+      action_success
     else
       action_fail t('warnings.not_verifiable'), :verify
     end

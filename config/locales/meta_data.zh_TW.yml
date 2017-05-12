@@ -189,7 +189,6 @@ zh-TW:
   success:
     create: "新增成功"
     update: "修改成功"
-    approved_and_require_to_update_leave_time: "已准假，若有需要請指定扣打"
     destroy: "刪除成功"
     revise: "已修改假單"
     cancel: "已取消假單"

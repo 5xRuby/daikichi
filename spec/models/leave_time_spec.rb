@@ -54,7 +54,7 @@ RSpec.describe LeaveTime, type: :model do
           actual_record = described_class.find(leave_time.id)
           expect(actual_record.usable_hours).to eq 50
           expect(actual_record.locked_hours).to eq 0
-          expect(actual_record.used_hours).to eq 0  
+          expect(actual_record.used_hours).to eq 0
         end
       end
 
@@ -100,6 +100,69 @@ RSpec.describe LeaveTime, type: :model do
           expect(actual_record.usable_hours).to eq 37
           expect(actual_record.locked_hours).to eq 3
           expect(actual_record.used_hours).to eq 10
+        end
+      end
+    end
+
+    describe 'use hours' do
+      let(:leave_time) { create(:leave_time, :bonus, quota: 50, usable_hours: 20, locked_hours: 10, used_hours: 20) }
+
+      context 'without bang' do
+        it 'uses hour without saving the record' do
+          leave_time.use_hours 7
+          expect(leave_time.usable_hours).to eq 20
+          expect(leave_time.locked_hours).to eq 3
+          expect(leave_time.used_hours).to eq 27
+
+          actual_record = described_class.find(leave_time.id)
+          expect(actual_record.usable_hours).to eq 20
+          expect(actual_record.locked_hours).to eq 10
+          expect(actual_record.used_hours).to eq 20
+        end
+      end
+
+      context 'with bang' do
+        it 'uses hour with saving the record' do
+          leave_time.use_hours! 7
+          expect(leave_time.usable_hours).to eq 20
+          expect(leave_time.locked_hours).to eq 3
+          expect(leave_time.used_hours).to eq 27
+
+          actual_record = described_class.find(leave_time.id)
+          expect(actual_record.usable_hours).to eq 20
+          expect(actual_record.locked_hours).to eq 3
+          expect(actual_record.used_hours).to eq 27
+        end
+      end
+    end
+
+    describe 'unuse hours' do
+      let(:leave_time) { create(:leave_time, :bonus, quota: 50, usable_hours: 20, locked_hours: 10, used_hours: 20) }
+      context 'with bang' do
+        it 'unuses hour without saving the record' do
+          leave_time.unuse_hours 12
+          expect(leave_time.usable_hours).to eq 32
+          expect(leave_time.locked_hours).to eq 10
+          expect(leave_time.used_hours).to eq 8
+
+          actual_record = described_class.find(leave_time.id)
+          expect(actual_record.usable_hours).to eq 20
+          expect(actual_record.locked_hours).to eq 10
+          expect(actual_record.used_hours).to eq 20
+        end
+      end
+      
+      context 'without bang' do
+        it 'unuses hour with saving the record' do
+          leave_time.unuse_hours! 12
+          expect(leave_time.usable_hours).to eq 32
+          expect(leave_time.locked_hours).to eq 10
+          expect(leave_time.used_hours).to eq 8
+
+          actual_record = described_class.find(leave_time.id)
+          expect(actual_record.usable_hours).to eq 32
+          expect(actual_record.locked_hours).to eq 10
+          expect(actual_record.used_hours).to eq 8
         end
       end
     end

@@ -66,6 +66,26 @@ class LeaveTime < ApplicationRecord
     self.save!
   end
 
+  def use_hours(hours)
+    self.locked_hours -= hours
+    self.used_hours += hours
+  end
+
+  def use_hours!(hours)
+    self.use_hours(hours)
+    self.save!
+  end
+
+  def unuse_hours(hours)
+    self.used_hours -= hours
+    self.usable_hours += hours
+  end
+
+  def unuse_hours!(hours)
+    self.unuse_hours(hours)
+    self.save!
+  end
+
   private
 
   def set_default_values
