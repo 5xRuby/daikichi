@@ -128,8 +128,8 @@ RSpec.describe User, type: :model do
     describe '.with_leave_application_statistics' do
       let(:year)  { Time.current.year }
       let(:month) { Time.current.month }
-      let(:start_time) { WorkingHours.advance_to_working_time(Time.zone.local(year, month, 1)) }
-      let(:end_time)   { WorkingHours.return_to_working_time(start_time + 1.working.day) }
+      let(:start_time) { $biz.periods.after(Time.zone.local(year, month, 1)).first.start_time }
+      let(:end_time)   { $biz.time(8, :hour).after(start_time) }
       let!(:leave_application) do
         Timecop.travel(start_time - 30.days)
         create(:leave_application, :with_leave_time, start_time: start_time, end_time: end_time)
