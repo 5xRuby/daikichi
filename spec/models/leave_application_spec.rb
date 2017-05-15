@@ -13,6 +13,9 @@ RSpec.describe LeaveApplication, type: :model do
   let(:one_hour_later)  { Time.zone.local(Time.current.year, 8, 15, 10, 30, 0) }
 
   describe '#associations' do
+    it { is_expected.to belong_to(:user) }
+    it { is_expected.to belong_to(:manager).with_foreign_key(:manager_id) }
+    it { is_expected.to have_many(:leave_times).through(:leave_time_usages) }
     it { is_expected.to have_many(:leave_time_usages) }
   end
 
@@ -94,7 +97,7 @@ RSpec.describe LeaveApplication, type: :model do
         expect(leave_time.used_hours).to eq 0
         expect(leave_time.locked_hours).to eq total_leave_hours
       end
-      
+
       it "should not create LeaveTimeUsage when insufficient LeaveTime hours" do
         lt = user.leave_times.create(leave_type: 'annual', quota: total_leave_hours - 1, usable_hours: total_leave_hours - 1, effective_date: effective_date, expiration_date: expiration_date)
         la = user.leave_applications.create!(leave_type: 'annual', start_time: start_time, end_time: end_time, description: 'Test string')
@@ -146,7 +149,7 @@ RSpec.describe LeaveApplication, type: :model do
       end
 
       context 'LeaveApplication happened after specific range' do
-        let(:start_time) { WorkingHours.advance_to_working_time(closing) }
+        let(:start_time) { $biz.periods.after(closing).first.start_time }
         let(:end_time)   { start_time + 1.working.day }
         it 'should not be included in returned results' do
           expect(subject).not_to include(leave_application)

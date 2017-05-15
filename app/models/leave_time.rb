@@ -5,15 +5,16 @@ class LeaveTime < ApplicationRecord
   enum leave_type: Settings.leave_times.quota_types
 
   belongs_to :user
-  has_many   :leave_applications
+  has_many   :leave_applications, through: :leave_time_usages
   has_many   :leave_time_usages
 
   before_validation :set_default_values
 
-  validates :leave_type, :effective_date, :expiration_date, :quota, :usable_hours, :used_hours, :user, presence: true
+  validates :leave_type, :effective_date, :expiration_date, :quota, :usable_hours, :used_hours, :locked_hours, :user, presence: true
   validates :quota,        numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validates :usable_hours, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validates :used_hours,   numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+  validates :locked_hours, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validate  :positive_range
 
   scope :belong_to, ->(user) {
@@ -40,7 +41,7 @@ class LeaveTime < ApplicationRecord
     self.usable_hours = quota - used_hours
     save!
   end
-  
+
   def cover?(time_format)
     date = time_format.to_date
     (self.effective_date..self.expiration_date).cover? date
@@ -90,7 +91,7 @@ class LeaveTime < ApplicationRecord
     self.used_hours -= hours
     self.locked_hours += hours
   end
-  
+
   def unuse_and_lock_hours!(hours)
     self.unuse_and_lock_hours(hours)
     self.save!

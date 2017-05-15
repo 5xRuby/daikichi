@@ -9,6 +9,7 @@ RSpec.describe LeaveTime, type: :model do
 
   describe '#associations' do
     it { is_expected.to belong_to(:user) }
+    it { is_expected.to have_many(:leave_applications).through(:leave_time_usages) }
     it { is_expected.to have_many(:leave_time_usages) }
   end
 
@@ -22,6 +23,7 @@ RSpec.describe LeaveTime, type: :model do
     it { is_expected.to validate_presence_of(:usable_hours) }
     it { is_expected.to validate_numericality_of(:usable_hours).only_integer.is_greater_than_or_equal_to(0) }
     it { is_expected.to validate_numericality_of(:used_hours).only_integer.is_greater_than_or_equal_to(0) }
+    it { is_expected.to validate_numericality_of(:locked_hours).only_integer.is_greater_than_or_equal_to(0) }
 
     context '#positive_range' do
       subject { described_class.new(params) }
@@ -88,7 +90,7 @@ RSpec.describe LeaveTime, type: :model do
           expect(actual_record.used_hours).to eq 10
         end
       end
-      
+
       context 'without bang' do
         it 'unlocks hour with saving the record' do
           leave_time.unlock_hours! 7
@@ -151,7 +153,7 @@ RSpec.describe LeaveTime, type: :model do
           expect(actual_record.used_hours).to eq 20
         end
       end
-      
+
       context 'without bang' do
         it 'unuses hour with saving the record' do
           leave_time.unuse_hours! 12
@@ -274,7 +276,7 @@ RSpec.describe LeaveTime, type: :model do
         it 'is false after expiration date' do
           date = expiration_date + 1.day
           expect(leave_time.cover?(date)).to be false
-        end        
+        end
       end
     end
 

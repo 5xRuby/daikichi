@@ -13,10 +13,10 @@ class LeaveApplication < ApplicationRecord
   before_validation :assign_hours
   after_create :create_leave_time_usages
   after_update :update_leave_time_usages
-  
+
   belongs_to :user
   belongs_to :manager, class_name: 'User', foreign_key: 'manager_id'
-  belongs_to :leave_time
+  has_many   :leave_times, through: :leave_time_usages
   has_many   :leave_time_usages
   has_many   :leave_application_logs, foreign_key: 'leave_application_uuid', primary_key: 'uuid', dependent: :destroy
 
@@ -51,7 +51,7 @@ class LeaveApplication < ApplicationRecord
     end
 
     event :cancel do
-      transitions to: :canceled, from: :pending, after: :return_leave_time_usable_hours 
+      transitions to: :canceled, from: :pending, after: :return_leave_time_usable_hours
       transitions to: :canceled, from: :approved, unless: :happened?, after: :return_approved_application_usable_hours
     end
   end
