@@ -24,6 +24,7 @@ class LeaveTimeUsageBuilder
           deduct_leave_hours_by_date(lt, date)
         end
         stack_leave_time_usage_record(lt)
+        break if leave_hours_by_date_is_empty?
       end
 
       unless_remain_leave_hours_by_date
@@ -75,8 +76,12 @@ class LeaveTimeUsageBuilder
     @leave_time_usages.push(leave_time: leave_time, used_hours: leave_time.usable_hours_was - leave_time.usable_hours)
   end
 
+  def leave_hours_by_date_is_empty?
+    @leave_hours_by_date.values.all?(&:zero?)
+  end
+
   def unless_remain_leave_hours_by_date
-    @leave_hours_by_date.each_value { |v| rollback_with_error_message unless v.zero? }
+    rollback_with_error_message unless leave_hours_by_date_is_empty?
   end
 
   def rollback_with_error_message
