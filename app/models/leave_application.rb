@@ -23,7 +23,7 @@ class LeaveApplication < ApplicationRecord
   validates :leave_type, :description, :start_time, :end_time, presence: true
 
   validate :hours_should_be_positive_integer
-  validate :should_not_overlaps_other_applications
+  validate :should_not_overlaps_other_applications, on: :create
 
   scope :leave_within_range, ->(beginning = Daikichi::Config::Biz.periods.after(1.month.ago.beginning_of_month).first.start_time, closing = Daikichi::Config::Biz.periods.before(1.month.ago.end_of_month).first.end_time.localtime) {
     where(
