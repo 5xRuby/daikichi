@@ -87,6 +87,8 @@ zh-TW:
       models:
         leave_application:
           attributes:
+            base:
+              overlaps_other_application: "此假單與其他假單有重複之請假時數"
             leave_type:
               blank: "請選擇請假種類"
               only_take_annual_leave_year_before: "只有特休假得以於前一年提前請假"

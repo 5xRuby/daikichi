@@ -8,10 +8,16 @@
   = f.input :start_time, date_time_picker_hash(:start, current_object[:start_time])
   = f.input :end_time, date_time_picker_hash(:end, current_object[:end_time])
   - if @error_message
-    %ul
-      - @error_message.each do |error|
-        %li
-          = error
+    - if @error_message[:hours].any?
+      %ul
+        - @error_message[:hours].each do |error|
+          %li
+            = error
+    - elsif @error_message[:base].any?
+      %ul
+        - @error_message[:base].each do |error|
+          %li
+            = error
   = f.input :description, required: true
   = f.button :submit, class: "submit"
 

@@ -23,6 +23,7 @@ class LeaveApplication < ApplicationRecord
   validates :leave_type, :description, :start_time, :end_time, presence: true
 
   validate :hours_should_be_positive_integer
+  validate :should_not_overlaps_other_applications
 
   scope :leave_within_range, ->(beginning = Daikichi::Config::Biz.periods.after(1.month.ago.beginning_of_month).first.start_time, closing = Daikichi::Config::Biz.periods.before(1.month.ago.end_of_month).first.end_time.localtime) {
     where(
@@ -30,7 +31,19 @@ class LeaveApplication < ApplicationRecord
       beginning: beginning, closing: closing
     )
   }
+
+  scope :personal, ->(user_id, beginning, ending, status_array = ['pending', 'approved']) {
+    where(status: status_array, user_id: user_id).overlaps(beginning, ending)
+  }
+
   scope :with_status, ->(status) { where(status: status) }
+
+  scope :overlaps, ->(beginning, ending) {
+    where(
+      '(leave_applications.start_time, leave_applications.end_time) OVERLAPS (timestamp :beginning, timestamp :ending)',
+      beginning: beginning, ending: ending
+    )
+  }
 
   aasm column: :status, enum: true do
     state :pending, initial: true
@@ -130,6 +143,24 @@ class LeaveApplication < ApplicationRecord
     return if self.errors[:start_time].any? or self.errors[:end_time].any?
     errors.add(:end_time, :not_integer) if (@minutes % 60).nonzero? || !self.hours.positive?
     errors.add(:start_time, :should_be_earlier) unless self.end_time > self.start_time
+  end
+
+  def should_not_overlaps_other_applications
+    return if self.errors[:start_time].any? or self.errors[:end_time].any?
+    overlapped_application = LeaveApplication.personal(user_id, start_time, end_time)
+    return unless overlapped_application.any?
+    errors.add(:base, :overlaps_other_application) 
+    add_overlapped_application_error_messages(overlapped_application)
+  end
+
+  def add_overlapped_application_error_messages(leave_applications, time_format = '%Y/%m/%d %H:%M')
+    leave_applications.each_with_index do |la, index|
+      status_t     = I18n.t("activerecord.attributes.leave_application.statuses.#{status}")
+      leave_type_t = I18n.t("activerecord.attributes.leave_application.leave_types.#{leave_type}")
+      start_time_t = la.start_time.strftime(time_format)
+      end_time_t   = la.end_time.strftime(time_format)
+      errors.add(:base, "#{index.next}. 假別：#{leave_type_t}, 狀態：#{status_t}, 起始時間：#{start_time_t},  結束時間：#{end_time_t}")
+    end
   end
 
   def order_by_sequence
