@@ -1,10 +1,11 @@
+
 %table.table
   %thead
     %tr
       - if show_leave_type
-        %th.type= t('title.leave_times.type')
+        %th.text-center= t('title.leave_times.type')
       - columns.each do |c|
-        %th= t_attribute c, LeaveTime
+        %th.text-right= t_attribute c, LeaveTime
       - if tools.present?
         %th.tools= t("captions.tools")
 
@@ -12,8 +13,11 @@
     - leave_times.each do |lt|
       %tr
         - if show_leave_type
-          %th= t_value :leave_type, lt, :translate_text_value
+          %th.text-center= t_value :leave_type, lt, :translate_text_value
         - columns.each do |c|
-          %th= t_value c, lt
+          %th.text-right= t_value c, lt
         - if tools.present?
           %td.tools= tools.call(lt)
+
+
+- console

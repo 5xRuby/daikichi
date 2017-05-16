@@ -1,24 +1,51 @@
-%h2= t("captions.backend/leave_applications.verify")
+.panel.panel-info
+  .panel-heading
+    %h2= t("captions.backend/leave_applications.verify")
 
-%table.table
-  %tr
-    %th 
-      = t_attribute(:leave_type, current_object)
-    %td 
-      = LeaveTime.human_enum_value(:leave_types, current_object.leave_type)
-  = tr_by_object :start_time, :convert_time_value, :full
-  = tr_by_object :end_time, :convert_time_value, :full
-  = tr_by_object :hours
-  %tr
-    %th 
-      = t_attribute(:leave_time_usage_builder, current_object)
-    %td 
-      = LeaveTimeUsageBuilder.new(current_object).leave_hours_by_date
-  = tr_by_object :description
-  = tr_by_object :status, :translate_text_value
-  = tr_by_object :sign_date, :convert_time_value
-  = tr_by_object :manager, :convert_user_object_to_name, :name
- 
+  %table.table
+    %tr
+      %th= t_attribute(:leave_type, current_object)
+      %td= LeaveTime.human_enum_value(:leave_types, current_object.leave_type)
 
-- if current_object.pending?
-  = render "form"
+    %tr  
+      %th= t_attribute(:start_time, current_object)
+      %td= l current_object.start_time, format: :long
+    
+    %tr  
+      %th= t_attribute(:end_time, current_object)
+      %td= l current_object.end_time, format: :long
+
+    = tr_by_object :hours
+
+    %tr
+      %th= t_attribute(:leave_time_usage_builder, current_object)
+      %td 
+        - LeaveTimeUsageBuilder.new(current_object).leave_hours_by_date.each do |daily|
+          %li 
+            = l daily.first, format: :long
+            \ :
+            = daily.second
+            \  小時
+    = tr_by_object :description
+
+    %tr
+      %th= t_attribute(:status, current_object)
+      %td= LeaveApplication.human_enum_value(:status, current_object.status)
+
+    %tr
+      %th= t_attribute(:sign_date, current_object)
+      %td= current_object.sign_date ? l(current_object.sign_date, format: :long) : nil
+    
+    = tr_by_object :manager, :convert_user_object_to_name, :name
+
+    %tr
+      %th= t_attribute(:created_at, current_object)
+      %td= l current_object.created_at, format: :long
+
+    %tr
+      %th= t_attribute(:updated_at, current_object)
+      %td= l current_object.updated_at, format: :long
+   
+
+  - if current_object.pending?
+    = render "form"
