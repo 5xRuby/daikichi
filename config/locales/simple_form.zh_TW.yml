@@ -23,5 +23,10 @@ zh-TW:
           maternity: '產假'
           bereavement: '喪假'
           absent: '曠職'
+    labels:
+      q:
+        leave_type_eq: 依額度類別篩選
+        user_id_eq: 依員工篩選
+        effective_true: 依有效與否篩選
     error_notification:
       default_message: "Please review the problems below:"

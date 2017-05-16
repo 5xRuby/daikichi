@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 source 'https://rubygems.org'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
@@ -47,6 +48,7 @@ gem 'settingslogic'
 gem 'simple_form'
 gem 'whenever', require: false
 gem 'working_hours'
+gem 'ransack', git: 'https://github.com/activerecord-hackery/ransack.git'
 
 group :development, :test do
   gem 'awesome_print'
@@ -69,6 +71,7 @@ group :development do
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
   gem 'web-console'
+  gem 'i18n-debug'
 end
 
 group :test do

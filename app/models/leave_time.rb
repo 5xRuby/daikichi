@@ -36,6 +36,10 @@ class LeaveTime < ApplicationRecord
     overlaps(date.beginning_of_day, date.end_of_day)
   }
 
+  ransacker :effective do |parent|
+    Arel.sql("(select (leave_times.effective_date, leave_times.expiration_date) OVERLAPS (timestamp '#{Time.current.beginning_of_day}', timestamp '#{Time.current.end_of_day}'))")
+  end
+
   def deduct(hours)
     self.used_hours += hours
     self.usable_hours = quota - used_hours

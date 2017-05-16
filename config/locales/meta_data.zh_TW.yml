@@ -50,6 +50,9 @@ zh-TW:
         effective_date: '有效時間'
         expiration_date: '失效時間'
         remark: '備註'
+        state:
+          effective: 有效
+          expired: 過期
       leave_application:
         statuses:
           approved: '核准'
@@ -137,7 +140,7 @@ zh-TW:
     backend/monthly_leave_times:
       index: "員工休假狀況"
     backend/leave_times:
-      index: "員工休假扣打"
+      index: "員工休假額度"
       new: "新增員工休假"
       edit: "修改"
       delete: "刪除"
@@ -185,7 +188,7 @@ zh-TW:
     backend/monthly_leave_times:
       index: "%{year} 年 %{month} 月 員工休假狀況"
     backend/leave_times:
-      index: "員工休假扣打"
+      index: "員工休假額度"
       new: "新增員工休假"
       edit: "修改員工休假"
     tools: "工具"

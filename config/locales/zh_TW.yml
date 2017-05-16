@@ -35,6 +35,7 @@ zh-TW:
       default: "%Y-%m-%d"
       long: "%Y年%b%d日"
       short: "%b%d日"
+      detailed: "%Y年 %m月 %d日 (%a)"
     month_names:
     -
     - 1月
