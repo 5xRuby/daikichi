@@ -24,7 +24,7 @@ RSpec.describe LeaveApplication, type: :model do
     subject { described_class.new(params) }
 
     context 'has a valid factory' do
-      subject { build_stubbed(:leave_application, :with_leave_time, :annual) }
+      subject { build(:leave_application, :with_leave_time, :annual) }
       it { expect(subject).to be_valid }
     end
 
