@@ -8,3 +8,8 @@ zh-TW:
         plz_select_leave_type: 請選擇要篩選的休假類別
         plz_select_user: 請選擇要篩選的使用者
         plz_select_effectiveness_state: 所有額度
+
+  leave_times:
+      index:
+        plz_select_leave_type: 請選擇要篩選的休假類別
+        plz_select_effectiveness_state: 所有額度

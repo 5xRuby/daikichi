@@ -3,10 +3,19 @@ class LeaveTimesController < BaseController
   STARTING_YEAR = Settings.misc.starting_year.to_i
   SHOWINGS = %i(all effective)
   DEFAULT_SHOWING = 'effective'
+  before_action :set_query_object
 
   helper_method :showing
 
   def index; end
+
+  def set_query_object
+    @q = LeaveTime.belong_to(current_user).ransack(params[:q])
+  end
+
+   def search_params
+    params.fetch(:q, {})&.permit(:s, :leave_type_eq, :effective_true)
+  end
 
   def show
     leave_type = params[:type]
@@ -24,20 +33,10 @@ class LeaveTimesController < BaseController
   private
 
   def collection_scope
-    return LeaveTime if params[:id]
-    lts = LeaveTime.belong_to(current_user)
-    case showing
-    when 'all'
-      lts
+    if params[:id]
+      LeaveTime
     else
-      if /\A\d+\z/.match(showing)
-        showing_tmp = showing.to_i
-        lts.overlaps(
-          Date.new(showing_tmp, 1, 1), Date.new(showing_tmp, 12, 31)
-        )
-      else # 'effective'
-        lts.effective
-      end
+      @q.result.preload(:user)
     end
   end
 end
