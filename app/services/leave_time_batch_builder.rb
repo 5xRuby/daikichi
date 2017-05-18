@@ -43,7 +43,7 @@ class LeaveTimeBatchBuilder
   end
 
   def end_of_working_month?
-    @end_of_working_month_bool ||= Time.zone.today + MONTHLY_LEED_DAYS.working.days == WorkingHours.return_to_working_time(Time.current.end_of_month).to_date
+    @end_of_working_month_bool ||= $biz.time(MONTHLY_LEED_DAYS, :days).after(Time.current.beginning_of_day).to_date == $biz.periods.before(Time.current.end_of_month).first.end_time.to_date
   end
 
   def reaching_join_date

@@ -4,8 +4,8 @@ FactoryGirl.define do
     user
     leave_type  'personal'
     description { Faker::Lorem.characters(30) }
-    start_time  { 3.working.day.from_now.beginning_of_day + 9.hours + 30.minutes }
-    end_time    { 5.working.day.from_now.beginning_of_day + 18.hours + 30.minutes }
+    start_time  { $biz.periods.after(Time.current.beginning_of_day).first.start_time }
+    end_time    { $biz.periods.after(Time.current.beginning_of_day).first(2).second.end_time }
 
     trait :sick do
       leave_type 'sick'
@@ -34,8 +34,8 @@ FactoryGirl.define do
     end
 
     trait :next_year do
-      start_time { WorkingHours.next_working_time(1.year.since) }
-      end_time   { WorkingHours.next_working_time(1.year.since) + 9.hours }
+      start_time { $biz.periods.after(1.year.since).first.start_time }
+      end_time   { $biz.periods.after(1.year.since).first(2).second.end_time }
     end
 
     trait :with_leave_time do

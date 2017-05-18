@@ -1,4 +1,4 @@
-$biz = Biz::Schedule.new do |config|
+$biz = Biz.configure do |config|
   config.hours = {
     mon: {'09:30' => '12:30', '13:30' => '18:30'},
     tue: {'09:30' => '12:30', '13:30' => '18:30'},

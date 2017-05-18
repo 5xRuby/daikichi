@@ -74,12 +74,12 @@ RSpec.describe LeaveApplication, type: :model do
     end
   end
 
-  describe "callback" do
-    context "should create LeaveTimeUsage after LeaveApplication created" do
+  describe 'callback' do
+    context 'should create LeaveTimeUsage after LeaveApplication created' do
       it { is_expected.to callback(:create_leave_time_usages).after(:create) }
     end
 
-    context "create_leave_time_usage" do
+    context 'create_leave_time_usage' do
       let(:user)              { create(:user) }
       let(:effective_date)    { Time.zone.local(2017, 5, 1) }
       let(:expiration_date)   { Time.zone.local(2017, 5, 15) }
@@ -87,7 +87,7 @@ RSpec.describe LeaveApplication, type: :model do
       let(:end_time)          { Time.zone.local(2017, 5, 5, 12, 30) }
       let(:total_leave_hours) { $biz.within(start_time, end_time).in_hours }
       before { user.leave_times.destroy_all }
-      it "should successfully create LeaveTimeUsage on sufficient LeaveTime hours" do
+      it 'should successfully create LeaveTimeUsage on sufficient LeaveTime hours' do
         lt = user.leave_times.create(leave_type: 'annual', quota: total_leave_hours, usable_hours: total_leave_hours, effective_date: effective_date, expiration_date: expiration_date)
         la = user.leave_applications.create(leave_type: 'annual', start_time: start_time, end_time: end_time, description: 'Test string')
         leave_time_usage = la.leave_time_usages.first
@@ -98,7 +98,7 @@ RSpec.describe LeaveApplication, type: :model do
         expect(leave_time.locked_hours).to eq total_leave_hours
       end
 
-      it "should not create LeaveTimeUsage when insufficient LeaveTime hours" do
+      it 'should not create LeaveTimeUsage when insufficient LeaveTime hours' do
         lt = user.leave_times.create(leave_type: 'annual', quota: total_leave_hours - 1, usable_hours: total_leave_hours - 1, effective_date: effective_date, expiration_date: expiration_date)
         la = user.leave_applications.create!(leave_type: 'annual', start_time: start_time, end_time: end_time, description: 'Test string')
         leave_time = LeaveTime.find(lt.id)
@@ -111,11 +111,11 @@ RSpec.describe LeaveApplication, type: :model do
   end
 
   describe 'scope' do
-    let(:beginning)  { WorkingHours.advance_to_working_time(1.month.ago.beginning_of_month) }
-    let(:closing)    { WorkingHours.return_to_working_time(1.month.ago.end_of_month) }
+    let(:beginning)  { $biz.periods.after(1.month.ago.beginning_of_month).first.start_time }
+    let(:closing)    { $biz.periods.before(1.month.ago.end_of_month).first.end_time }
     describe '.leave_within_range' do
-      let(:start_time) { beginning + 3.working.day }
-      let(:end_time)   { beginning + 5.working.day }
+      let(:start_time) { $biz.time(3, :days).after(beginning) }
+      let(:end_time)   { $biz.time(5, :days).after(beginning) }
       subject { described_class.leave_within_range(beginning, closing) }
       let!(:leave_application) do
         create(
@@ -132,8 +132,8 @@ RSpec.describe LeaveApplication, type: :model do
       end
 
       context 'LeaveApplication overlaps specific range' do
-        let(:start_time) { beginning - 1.working.day }
-        let(:end_time)   { beginning + 1.working.day }
+        let(:start_time) { $biz.time(1, :day).before(beginning) }
+        let(:end_time)   { $biz.time(1, :day).after(beginning) }
 
         it 'should be included in returned results' do
           expect(subject).to include(leave_application)
@@ -141,8 +141,8 @@ RSpec.describe LeaveApplication, type: :model do
       end
 
       context 'LeaveApplication happened before specific range' do
-        let(:start_time) { beginning - 2.working.day }
-        let(:end_time)   { beginning - 1.working.day }
+        let(:start_time) { $biz.time(2, :days).before(beginning) }
+        let(:end_time)   { $biz.time(1, :day).before(beginning) }
         it 'should not be included in returned results' do
           expect(subject).not_to include(leave_application)
         end
@@ -150,7 +150,7 @@ RSpec.describe LeaveApplication, type: :model do
 
       context 'LeaveApplication happened after specific range' do
         let(:start_time) { $biz.periods.after(closing).first.start_time }
-        let(:end_time)   { start_time + 1.working.day }
+        let(:end_time)   { $biz.time(1, :day).after(start_time) }
         it 'should not be included in returned results' do
           expect(subject).not_to include(leave_application)
         end
@@ -159,11 +159,11 @@ RSpec.describe LeaveApplication, type: :model do
   end
 
   describe 'helper method' do
-    let(:beginning)  { WorkingHours.advance_to_working_time(1.month.ago.beginning_of_month) }
-    let(:closing)    { WorkingHours.return_to_working_time(1.month.ago.end_of_month) }
+    let(:beginning)  { $biz.periods.after(1.month.ago.beginning_of_month).first.start_time }
+    let(:closing)    { $biz.periods.before(1.month.ago.end_of_month).first.end_time }
     describe '.leave_hours_within' do
-      let(:start_time) { beginning + 3.working.day }
-      let(:end_time)   { beginning + 5.working.day }
+      let(:start_time) { $biz.time(3, :days).after(beginning) }
+      let(:end_time)   { $biz.time(5, :days).after(beginning) }
       subject { described_class.leave_hours_within(beginning, closing) }
 
       context 'within_range' do
@@ -177,8 +177,8 @@ RSpec.describe LeaveApplication, type: :model do
       end
 
       context 'partially overlaps with given range' do
-        let(:start_time) { beginning - 1.working.day }
-        let(:end_time)   { WorkingHours.return_to_working_time(beginning + 1.working.day) }
+        let(:start_time) { $biz.time(1, :day).before(beginning) }
+        let(:end_time)   { $biz.periods.before($biz.time(1, :day).after(beginning)).first.end_time }
 
         before do
           create(:leave_application, :with_leave_time, start_time: start_time, end_time: end_time)
@@ -190,8 +190,8 @@ RSpec.describe LeaveApplication, type: :model do
       end
 
       context 'out of range' do
-        let(:start_time) { beginning - 2.working.day }
-        let(:end_time)   { WorkingHours.return_to_working_time(beginning - 1.working.day) }
+        let(:start_time) { $biz.time(2, :days).before(beginning) }
+        let(:end_time)   { $biz.periods.before($biz.time(1, :day).before(beginning)).first.end_time }
 
         before do
           create(:leave_application, :with_leave_time, start_time: start_time, end_time: end_time)
@@ -204,8 +204,8 @@ RSpec.describe LeaveApplication, type: :model do
     end
 
     describe '#range_exceeded?' do
-      let(:start_time) { beginning + 3.working.day }
-      let(:end_time)   { WorkingHours.return_to_working_time(beginning + 5.working.day) }
+      let(:start_time) { $biz.time(3, :days).after(beginning) }
+      let(:end_time)   { $biz.periods.before($biz.time(5, :days).after(beginning)).first.end_time }
       let(:leave_application) do
         build_stubbed(
           :leave_application,

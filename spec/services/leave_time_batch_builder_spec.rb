@@ -15,7 +15,7 @@ describe LeaveTimeBatchBuilder do
   describe 'automatically_import' do
     before { User.skip_callback(:create, :after, :auto_assign_leave_time) }
     after  { User.set_callback(:create, :after, :auto_assign_leave_time)  }
-    
+
     context 'is forced' do
       let!(:fulltime) { FactoryGirl.create(:user, :fulltime, join_date: Date.current) }
       let!(:parttime) { FactoryGirl.create(:user, :parttime, join_date: Date.current) }
@@ -40,16 +40,16 @@ describe LeaveTimeBatchBuilder do
     end
 
     context 'not forced' do
-      
+
       let!(:fulltime) { FactoryGirl.create(:user, :fulltime, join_date: join_date) }
       let!(:parttime) { FactoryGirl.create(:user, :parttime, join_date: join_date) }
       let!(:user)     { FactoryGirl.create(:user, join_date: join_date - 1.day) }
 
       context 'end of working month' do
-        let(:join_date) { WorkingHours.return_to_working_time(Time.current.end_of_month) - monthly_lead_days.working.days - 2.years + join_date_based_leed_days.days }
+        let(:join_date) { $biz.time(monthly_lead_days, :days).before($biz.periods.before(Time.current.end_of_month).first.end_time) - 2.years + join_date_based_leed_days.days }
 
         before do
-          Timecop.freeze(WorkingHours.return_to_working_time(Time.current.end_of_month) - monthly_lead_days.working.days)
+          Timecop.freeze($biz.time(monthly_lead_days, :days).before($biz.periods.before(Time.current.end_of_month).first.end_time))
           described_class.new.automatically_import
         end
         after { Timecop.return }

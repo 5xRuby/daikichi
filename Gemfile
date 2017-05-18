@@ -47,7 +47,6 @@ gem 'seed-fu'
 gem 'settingslogic'
 gem 'simple_form'
 gem 'whenever', require: false
-gem 'working_hours'
 gem 'ransack', git: 'https://github.com/activerecord-hackery/ransack.git'
 
 group :development, :test do
