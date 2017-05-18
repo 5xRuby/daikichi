@@ -33,17 +33,10 @@ class LeaveApplication < ApplicationRecord
   }
 
   scope :personal, ->(user_id, beginning, ending, status_array = ['pending', 'approved']) {
-    where(status: status_array, user_id: user_id).overlaps(beginning, ending)
+    where(status: status_array, user_id: user_id).leave_within_range(beginning, ending)
   }
 
   scope :with_status, ->(status) { where(status: status) }
-
-  scope :overlaps, ->(beginning, ending) {
-    where(
-      '(leave_applications.start_time, leave_applications.end_time) OVERLAPS (timestamp :beginning, timestamp :ending)',
-      beginning: beginning, ending: ending
-    )
-  }
 
   aasm column: :status, enum: true do
     state :pending, initial: true
@@ -149,10 +142,10 @@ class LeaveApplication < ApplicationRecord
     return if self.errors[:start_time].any? or self.errors[:end_time].any?
     overlapped_application = LeaveApplication.personal(user_id, start_time, end_time)
     return unless overlapped_application.any?
-    add_overlapped_application_error_messages(overlapped_application)
+    overlap_application_error_messages(overlapped_application)
   end
 
-  def add_overlapped_application_error_messages(leave_applications, time_format = '%Y/%m/%d %H:%M')
+  def overlap_application_error_messages(leave_applications, time_format = '%Y/%m/%d %H:%M')
     leave_applications.each do |la|
       status_t     = LeaveApplication.human_enum_value :status, la.status
       leave_type_t = LeaveApplication.human_enum_value :leave_type, la.leave_type
