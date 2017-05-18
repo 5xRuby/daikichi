@@ -146,12 +146,13 @@ class LeaveApplication < ApplicationRecord
   end
 
   def overlap_application_error_messages(leave_applications, time_format = '%Y/%m/%d %H:%M')
+    url = Rails.application.routes.url_helpers
     leave_applications.each do |la|
-      status_t     = LeaveApplication.human_enum_value :status, la.status
-      leave_type_t = LeaveApplication.human_enum_value :leave_type, la.leave_type
-      start_time_t = I18n.l la.start_time
-      end_time_t   = I18n.l la.end_time
-      errors.add(:base, { leave_application: la, message: "與 #{leave_type_t}，狀態：#{status_t}，起始：#{start_time_t}，結束：#{end_time_t} 時段重複" })
+      status     = LeaveApplication.human_enum_value :status, la.status
+      leave_type = LeaveApplication.human_enum_value :leave_type, la.leave_type
+      start_time = I18n.l la.start_time
+      end_time   = I18n.l la.end_time
+      errors.add(:base, :overlap_application_html, status: status, leave_type: leave_type, start_time: start_time, end_time: end_time, link: url.leave_application_path({ id: la.id }))
     end
   end
 

@@ -87,6 +87,8 @@ zh-TW:
       models:
         leave_application:
           attributes:
+            base:
+              overlap_application_html: '<a href="%{link}" target="_blank">與 %{leave_type}，狀態：%{status}，起始：%{start_time}，結束：%{end_time} 時段重複</a>'
             leave_type:
               blank: "請選擇請假種類"
               only_take_annual_leave_year_before: "只有特休假得以於前一年提前請假"
