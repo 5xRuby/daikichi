@@ -82,7 +82,7 @@ module ApplicationHelper
   end
 
   def hours_to_humanize(hours)
-    return '-' if hours == 0
+    return '-' if hours.to_i.zero?
     I18n.t('time.humanize_working_hour', days: hours.to_i / 8, hours: hours % 8, total: hours)
   end
 
@@ -94,7 +94,7 @@ module ApplicationHelper
     render 'shared/leave_times_table',
            leave_times: leave_times,
            show_leave_type: !exclude_columns.include?(:leave_type),
-           columns: [:name, :quota, :usable_hours, :locked_hours, :used_hours, :effective_date, :expiration_date] - exclude_columns,
+           columns: [:id, :name, :quota, :usable_hours, :locked_hours, :used_hours, :effective_date, :expiration_date] - exclude_columns,
            tools: tools
   end
 end
