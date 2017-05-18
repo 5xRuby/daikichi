@@ -103,6 +103,8 @@ zh-TW:
           attributes:
             user:
               required: 休假時數必須屬於一個員工
+            quota:
+              unbalanced_hours: 總額度必須等於可用、圈存以及已用額度之總和
             effective_date:
               range_should_be_positive: 截止日期應在生效日期之後
               range_should_not_overlaps: 該類別休假額度已存在
