@@ -24,7 +24,8 @@ class LeaveApplication < ApplicationRecord
 
   validate :hours_should_be_positive_integer
 
-  scope :leave_within_range, ->(beginning = WorkingHours.advance_to_working_time(1.month.ago.beginning_of_month), closing = WorkingHours.return_to_working_time(1.month.ago.end_of_month)) {
+  scope :leave_within_range, ->(beginning = $biz.periods.after(1.month.ago.beginning_of_month).first.start_time,
+                                closing   = $biz.periods.before(1.month.ago.end_of_month).first.end_time.localtime) {
     where(
       '(leave_applications.start_time, leave_applications.end_time) OVERLAPS (timestamp :beginning, timestamp :closing)',
       beginning: beginning, closing: closing
@@ -65,11 +66,12 @@ class LeaveApplication < ApplicationRecord
       leaves_start_time_included.or(leaves_end_time_included)
     end
 
-    def leave_hours_within(beginning = WorkingHours.advance_to_working_time(1.month.ago.beginning_of_month), closing = WorkingHours.return_to_working_time(1.month.ago.end_of_month))
+    def leave_hours_within(beginning = $biz.periods.after(1.month.ago.beginning_of_month).first.start_time,
+                           closing   = $biz.periods.before(1.month.ago.end_of_month).first.end_time)
       self.leave_within_range(beginning, closing).reduce(0) do |result, la|
         if la.range_exceeded?(beginning, closing)
           @valid_range = [la.start_time, beginning].max..[la.end_time, closing].min
-          result + @valid_range.min.working_time_until(@valid_range.max) / 3600.0
+          result + $biz.within(@valid_range.min, @valid_range.max).in_minutes / 60.0
         else
           result + la.hours
         end
@@ -83,7 +85,8 @@ class LeaveApplication < ApplicationRecord
     Time.current > self.start_time
   end
 
-  def range_exceeded?(beginning = WorkingHours.advance_to_working_time(1.month.ago.beginning_of_month), closing = WorkingHours.return_to_working_time(1.month.ago.end_of_month))
+  def range_exceeded?(beginning = $biz.periods.after(1.month.ago.beginning_of_month).first.start_time,
+                      closing   = $biz.periods.before(1.month.ago.end_of_month).first.end_time)
     beginning > self.start_time || closing < self.end_time
   end
 
@@ -169,12 +172,12 @@ end
 
 class LeaveApplication::ActiveRecord_Associations_CollectionProxy
   def leave_hours_within_month(type: 'all', year: Time.current.year, month: Time.current.month)
-    beginning = WorkingHours.advance_to_working_time(Time.zone.local(year, month, 1))
-    closing   = WorkingHours.return_to_working_time(Time.zone.local(year, month, 1).end_of_month)
+    beginning = $biz.periods.after(Time.zone.local(year, month, 1)).first.start_time
+    closing   = $biz.periods.before(Time.zone.local(year, month, 1).end_of_month).first.end_time
     records.select { |r| r.is_leave_type?(type) }.reduce(0) do |result, la|
       if la.range_exceeded?(beginning, closing)
-        valid_range = [la.start_time, beginning].max..[la.end_time, closing].min
-        result + valid_range.min.working_time_until(valid_range.max) / 3600.0
+        @valid_range = [la.start_time, beginning].max..[la.end_time, closing].min
+        result + $biz.within(@valid_range.min, @valid_range.max).in_minutes / 60.0
       else
         result + la.hours
       end

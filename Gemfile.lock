@@ -350,9 +350,6 @@ GEM
     websocket-extensions (0.1.2)
     whenever (0.9.7)
       chronic (>= 0.6.3)
-    working_hours (1.1.3)
-      activesupport (>= 3.2)
-      tzinfo
 
 PLATFORMS
   java
@@ -414,7 +411,6 @@ DEPENDENCIES
   uglifier (>= 1.3.0)
   web-console
   whenever
-  working_hours
 
 BUNDLED WITH
    1.14.6

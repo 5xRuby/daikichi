@@ -20,9 +20,9 @@ class EmployeeMonthlyStat
     if @range.cover?(leave.start_time) and @range.cover?(leave.end_time)
       leave.hours
     elsif @range.cover?(leave.start_time)
-      leave.start_time.working_time_until(@range.end) / 3600
+      $biz.within(leave.start_time, @range.end).in_minutes / 60.0
     else
-      @range.begin.working_time_until(leave.end_time) / 3600
+      $biz.within(@range.begin, leave.end_time).in_minutes / 60.0
     end
   end
 end

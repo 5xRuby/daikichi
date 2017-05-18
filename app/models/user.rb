@@ -50,8 +50,8 @@ class User < ApplicationRecord
     joins(:leave_applications, :leave_times)
       .includes(:leave_applications, :leave_times)
       .merge(LeaveApplication.leave_within_range(
-        WorkingHours.advance_to_working_time(Time.zone.local(year, month, 1)),
-        WorkingHours.return_to_working_time(Time.zone.local(year, month, 1).end_of_month)
+        $biz.periods.after(Time.zone.local(year, month, 1)).first.start_time,
+        $biz.periods.before(Time.zone.local(year, month, 1).end_of_month).first.end_time
       )
       .approved)
   }
@@ -87,12 +87,12 @@ class User < ApplicationRecord
   def get_refilled_annual
     leave_times.find_by(leave_type: 'annual').refill
   end
-  
+
   private
 
   def auto_assign_leave_time
     leave_time_builder = LeaveTimeBuilder.new self
     leave_time_builder.automatically_import
   end
-  
+
 end
