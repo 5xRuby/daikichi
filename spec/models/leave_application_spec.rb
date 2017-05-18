@@ -93,16 +93,12 @@ RSpec.describe LeaveApplication, type: :model do
         it 'should be invalid when overlaps after start_time of the pending leave application' do
           la = application_subject(start_time - 1.day, start_time + 1.hour)
           expect(la.valid?).to be_falsy
-          expect(la.errors[:base].first[:leave_application]).to eq user.leave_applications.first
-          expect(la.errors[:base].first[:message]).to eq '與 特別休假，狀態：待審，起始：2017年5月09日 星期二 12:30:00 CST，結束：2017年5月11日 星期四 14:30:00 CST 時段重複'
         end
 
         it 'should be invalid when overlaps after start_time of the approved leave application' do
           user.leave_applications.first.approve!(user)
           la = application_subject(start_time - 1.day, start_time + 1.hour)
           expect(la.valid?).to be_falsy
-          expect(la.errors[:base].first[:leave_application]).to eq user.leave_applications.first
-          expect(la.errors[:base].first[:message]).to eq '與 特別休假，狀態：核准，起始：2017年5月09日 星期二 12:30:00 CST，結束：2017年5月11日 星期四 14:30:00 CST 時段重複'
         end
       end
 
@@ -110,16 +106,12 @@ RSpec.describe LeaveApplication, type: :model do
         it 'should be invalid when overlaps before end_time of the pending leave application' do
           la = application_subject(end_time - 1.hour, end_time + 1.day)
           expect(la.valid?).to be_falsy
-          expect(la.errors[:base].first[:leave_application]).to eq user.leave_applications.first
-          expect(la.errors[:base].first[:message]).to eq '與 特別休假，狀態：待審，起始：2017年5月09日 星期二 12:30:00 CST，結束：2017年5月11日 星期四 14:30:00 CST 時段重複'
         end
 
         it 'should be invalid when overlaps before end_time of the approved leave application' do
           user.leave_applications.first.approve!(user)
           la = application_subject(end_time - 1.hour, end_time + 1.day)
           expect(la.valid?).to be_falsy
-          expect(la.errors[:base].first[:leave_application]).to eq user.leave_applications.first
-          expect(la.errors[:base].first[:message]).to eq '與 特別休假，狀態：核准，起始：2017年5月09日 星期二 12:30:00 CST，結束：2017年5月11日 星期四 14:30:00 CST 時段重複'
         end
       end
       
