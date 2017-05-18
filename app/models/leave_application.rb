@@ -149,17 +149,16 @@ class LeaveApplication < ApplicationRecord
     return if self.errors[:start_time].any? or self.errors[:end_time].any?
     overlapped_application = LeaveApplication.personal(user_id, start_time, end_time)
     return unless overlapped_application.any?
-    errors.add(:base, :overlaps_other_application) 
     add_overlapped_application_error_messages(overlapped_application)
   end
 
   def add_overlapped_application_error_messages(leave_applications, time_format = '%Y/%m/%d %H:%M')
-    leave_applications.each_with_index do |la, index|
-      status_t     = I18n.t("activerecord.attributes.leave_application.statuses.#{status}")
-      leave_type_t = I18n.t("activerecord.attributes.leave_application.leave_types.#{leave_type}")
-      start_time_t = la.start_time.strftime(time_format)
-      end_time_t   = la.end_time.strftime(time_format)
-      errors.add(:base, "#{index.next}. 假別：#{leave_type_t}, 狀態：#{status_t}, 起始時間：#{start_time_t},  結束時間：#{end_time_t}")
+    leave_applications.each do |la|
+      status_t     = LeaveApplication.human_enum_value :status, la.status
+      leave_type_t = LeaveApplication.human_enum_value :leave_type, la.leave_type
+      start_time_t = I18n.l la.start_time
+      end_time_t   = I18n.l la.end_time
+      errors.add(:base, { leave_application: la, message: "與 #{leave_type_t}，狀態：#{status_t}，起始：#{start_time_t}，結束：#{end_time_t} 時段重複" })
     end
   end
 
