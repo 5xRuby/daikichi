@@ -19,16 +19,21 @@ class LeaveApplicationsController < BaseController
   end
 
   def update
-    unless current_object.canceled? # and current_object.update(resource_params)
-      current_object.revise(resource_params)
-      unless current_object.errors[:hours].any?
-        action_success
-      else
-        @error_message = @current_object.errors[:hours]
-        render action: :edit
-      end
-    else
+    if current_object.canceled?
       action_fail t('warnings.not_cancellable'), :edit
+    else
+      current_object.assign_attributes(resource_params)
+      if !current_object.changed?
+        action_fail t('warnings.no_change'), :edit
+      else
+        current_object.revise(resource_params)
+        if current_object.errors[:hours].any?
+          @error_message = @current_object.errors[:hours]
+          render action: :edit
+        else
+          action_success
+        end
+      end
     end
   end
 
