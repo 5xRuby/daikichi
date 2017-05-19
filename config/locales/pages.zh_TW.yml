@@ -3,8 +3,11 @@ zh-TW:
     filter_conditions: 篩選條件
 
   backend:
-    leave_times:
-      index:
+    leave_times: &id001
+      index:   
         plz_select_leave_type: 請選擇要篩選的休假類別
         plz_select_user: 請選擇要篩選的使用者
         plz_select_effectiveness_state: 所有額度
+
+  leave_times:
+      <<: *id001
