@@ -28,5 +28,8 @@ zh-TW:
         leave_type_eq: 依額度類別篩選
         user_id_eq: 依員工篩選
         effective_true: 依有效與否篩選
+        status_eq: 依狀態篩選
+        end_date_gteq: 查詢起始區間
+        start_date_lteq: 查詢結束區間
     error_notification:
       default_message: "Please review the problems below:"

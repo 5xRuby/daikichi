@@ -7,7 +7,7 @@ class LeaveApplication < ApplicationRecord
   enum leave_type: Settings.leave_applications.leave_types
 
   acts_as_paranoid
-  paginates_per 8
+  paginates_per 15
 
   after_initialize :set_primary_id
   before_validation :assign_hours
@@ -55,6 +55,14 @@ class LeaveApplication < ApplicationRecord
       transitions to: :canceled, from: :pending, after: :return_leave_time_usable_hours
       transitions to: :canceled, from: :approved, unless: :happened?, after: :return_approved_application_usable_hours
     end
+  end
+
+  ransacker :start_date do
+    Arel.sql("DATE((#{table_name}.start_time AT TIME ZONE 'UTC') AT TIME ZONE 'Asia/Taipei')")
+  end
+
+  ransacker :end_date do
+    Arel.sql("DATE((#{table_name}.end_time AT TIME ZONE 'UTC') AT TIME ZONE 'Asia/Taipei')")
   end
 
   class << self
