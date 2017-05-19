@@ -1,6 +1,6 @@
 .panel.panel-info
   .panel-heading
-    %h2= t("captions.backend/leave_applications.verify")
+    %h4= t("captions.backend/leave_applications.verify")
 
   %table.table
     %tr
@@ -45,7 +45,29 @@
     %tr
       %th= t_attribute(:updated_at, current_object)
       %td= l current_object.updated_at, format: :long
+
+.panel.panel-info
+  .panel-heading
+    %h4= t_attribute(:leave_time_usages, current_object)
+  %table.table
+    %thead
+      %tr
+        %th.text-right #
+        %th.text-center 假別
+        %th.text-right 使用時數
+        %th.text-right 餘額
+        %th.text-right 生效日期
+        %th.text-right 失效日期
+    %tbody
+      - current_object.leave_time_usages.each do |usage|
+        %tr
+          %td.text-right= usage.leave_time_id
+          %td.text-center= LeaveTime.human_enum_value(:leave_type, usage.leave_time.leave_type)
+          %td.text-right= hours_to_humanize usage.used_hours
+          %td.text-right= hours_to_humanize usage.leave_time.usable_hours
+          %td.text-right= l usage.leave_time.effective_date, format: :long
+          %td.text-right= l usage.leave_time.expiration_date, format: :long
    
 
-  - if current_object.pending?
-    = render "form"
+- if current_object.pending?
+  = render "form"

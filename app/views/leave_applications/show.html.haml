@@ -1,6 +1,6 @@
 .panel.panel-info
   .panel-heading
-    %h2= t( "captions.leave_applications.show", start_day: current_object.start_time.to_formatted_s(:month_date), end_day: current_object.end_time.to_formatted_s(:month_date), type: LeaveTime.human_enum_value(:leave_type, current_object.leave_type))
+    %h4= t( "captions.leave_applications.show", start_day: current_object.start_time.to_formatted_s(:month_date), end_day: current_object.end_time.to_formatted_s(:month_date), type: LeaveTime.human_enum_value(:leave_type, current_object.leave_type))
 
   %table.table
     %tr
