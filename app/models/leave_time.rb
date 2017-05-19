@@ -16,7 +16,7 @@ class LeaveTime < ApplicationRecord
   validates :used_hours,   numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validates :locked_hours, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validate  :positive_range
-  validate  :balanced_hours_check_sum
+  validate  :balanced_hours
 
   scope :belong_to, ->(user) {
     where(user: user)
@@ -122,7 +122,7 @@ class LeaveTime < ApplicationRecord
       .where.not(id: self.id).any?
   end
 
-  def balanced_hours_check_sum
-    errors.add(:quota, :unbalanced_hours) if quota != usable_hours + used_hours + locked_hours
+  def balanced_hours
+    errors.add(:quota, :unbalanced_hours) if persisted? and quota != (usable_hours + used_hours + locked_hours)
   end
 end
