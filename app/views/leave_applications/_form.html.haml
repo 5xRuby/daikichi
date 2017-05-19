@@ -4,7 +4,7 @@
   - if current_object.errors and current_object.errors[:base].any?
     %ul
       - current_object.errors[:base].each do |error_message|
-        - haml_tag :li, sanitize(error_message, tags: %w(a), attributes: %w(href target))
+        %li= sanitize(error_message, tags: %w(a), attributes: %w(href target))
   - if action_name == "edit"
     = f.input :leave_type, required: true, collection: LeaveApplication.enum_attributes_for_select(:leave_types), disabled: true
   - else
@@ -14,7 +14,7 @@
   - if current_object.errors and current_object.errors[:hours].any?
     %ul
       - current_object.errors[:hours].each do |error_message|
-        - haml_tag :li, error_message
+        %li= error_message
   = f.input :description, required: true
   = f.button :submit, class: "submit"
 

@@ -145,14 +145,13 @@ class LeaveApplication < ApplicationRecord
     overlap_application_error_messages(overlapped_application)
   end
 
-  def overlap_application_error_messages(leave_applications, time_format = '%Y/%m/%d %H:%M')
+  def overlap_application_error_messages(leave_applications)
     url = Rails.application.routes.url_helpers
     leave_applications.each do |la|
-      status     = LeaveApplication.human_enum_value :status, la.status
       leave_type = LeaveApplication.human_enum_value :leave_type, la.leave_type
-      start_time = I18n.l la.start_time
-      end_time   = I18n.l la.end_time
-      errors.add(:base, :overlap_application_html, status: status, leave_type: leave_type, start_time: start_time, end_time: end_time, link: url.leave_application_path({ id: la.id }))
+      start_time = la.start_time.to_formatted_s(:month_date)
+      end_time   = la.end_time.to_formatted_s(:month_date)
+      errors.add(:base, :overlap_application_html, leave_type: leave_type, start_time: start_time, end_time: end_time, link: url.leave_application_path({ id: la.id }))
     end
   end
 
@@ -169,7 +168,7 @@ class LeaveApplication < ApplicationRecord
   end
 
   def update_leave_time_usages
-    return unless self.changed?
+    return unless self.start_time_changed? or self.end_time_changed? or self.description_changed?
 
     case aasm.from_state
     when :pending then return_leave_time_usable_hours
