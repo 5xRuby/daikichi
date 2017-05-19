@@ -43,23 +43,24 @@ RSpec.describe LeaveTime, type: :model do
 
     context '#balanced_hours' do
       let(:quota) { 50 }
-      subject { create(:leave_time, :annual, quota: quota, usable_hours: usable_hours, used_hours: used_hours, locked_hours: locked_hours) }
+      subject { build(:leave_time, :annual, quota: quota, usable_hours: usable_hours, used_hours: used_hours, locked_hours: locked_hours) }
 
-      context 'is valid' do
+      context 'when balanced hours' do
         let(:usable_hours) { 20 }
         let(:used_hours)   { 15 }
         let(:locked_hours) { 15 }
-        it 'when balanced hours' do
+        it 'is valid' do
           expect(subject.valid?).to be_truthy
         end
       end
 
-      context 'is invalid' do
+      context 'when unbalanced hours' do
         let(:usable_hours) { 21 }
         let(:used_hours)   { 15 }
         let(:locked_hours) { 15 }
-        it 'unbalanced hours' do
+        it 'is invalid' do
           expect(subject.valid?).to be_falsey
+          expect(subject.errors.messages[:quota]).to include I18n.t('activerecord.errors.models.leave_time.attributes.quota.unbalanced_hours')
         end
       end
     end

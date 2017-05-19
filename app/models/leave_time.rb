@@ -123,6 +123,7 @@ class LeaveTime < ApplicationRecord
   end
 
   def balanced_hours
-    errors.add(:quota, :unbalanced_hours) if persisted? and quota != (usable_hours + used_hours + locked_hours)
+    return if errors[:usable_hours].any? or errors[:used_hours].any? or errors[:locked_hours].any?
+    errors.add(:quota, :unbalanced_hours) if quota != (usable_hours + used_hours + locked_hours)
   end
 end
