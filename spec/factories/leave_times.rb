@@ -5,9 +5,9 @@ FactoryGirl.define do
     leave_type 'annual'
     effective_date  { Time.current.beginning_of_year }
     expiration_date { Time.current.end_of_year }
-    quota           0
+    quota           50
     used_hours      0
-    usable_hours    0
+    usable_hours    50
     locked_hours    0
     remark          'Test string'
 
