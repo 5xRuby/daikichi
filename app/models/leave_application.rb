@@ -138,7 +138,7 @@ class LeaveApplication < ApplicationRecord
   end
 
   def update_leave_time_usages
-    return unless self.start_time_changed? or self.end_time_changed?
+    return unless self.changed?
 
     case aasm.from_state
     when :pending then return_leave_time_usable_hours
