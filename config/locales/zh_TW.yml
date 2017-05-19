@@ -200,7 +200,7 @@ zh-TW:
     am: 上午
     formats:
       default: "%Y年%b%d日 %A %H:%M:%S %Z"
-      long: "%Y年%b%d日 (%a) %H:%M"
+      long: "%Y年 %m月 %d日 (%a) %H:%M"
       short: "%b%d日 %H:%M"
     pm: 下午
     humanize_working_hour: "%{days} 天 %{hours} 小時 (%{total}小時)"

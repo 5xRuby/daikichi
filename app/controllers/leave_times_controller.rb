@@ -9,14 +9,6 @@ class LeaveTimesController < BaseController
 
   def index; end
 
-  def set_query_object
-    @q = LeaveTime.belong_to(current_user).ransack(params[:q])
-  end
-
-   def search_params
-    params.fetch(:q, {})&.permit(:s, :leave_type_eq, :effective_true)
-  end
-
   def show
     leave_type = params[:type]
     leave_time = LeaveTime.personal current_user.id, leave_type
@@ -38,5 +30,13 @@ class LeaveTimesController < BaseController
     else
       @q.result.preload(:user)
     end
+  end
+
+  def set_query_object
+    @q = LeaveTime.belong_to(current_user).ransack(search_params)
+  end
+
+   def search_params
+    params.fetch(:q, {})&.permit(:s, :leave_type_eq, :effective_true)
   end
 end

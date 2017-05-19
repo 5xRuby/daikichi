@@ -15,7 +15,7 @@ class Backend::LeaveTimesController < Backend::BaseController
   private
 
   def set_query_object
-    @q = LeaveTime.ransack(params[:q])
+    @q = LeaveTime.ransack(search_params)
   end
 
   def collection_scope

@@ -1,11 +1,10 @@
 # frozen_string_literal: true
 class Backend::LeaveApplicationsController < Backend::BaseController
   include Selectable
+  before_action :set_query_object
 
   def index
-    @current_collection = collection_scope.with_year(specific_year)
-    @current_collection = @current_collection.with_status(params[:status]) if status_selected?
-    @current_collection = @current_collection.page(params[:page])
+    @users = User.all
   end
 
   def verify; end
@@ -49,12 +48,22 @@ class Backend::LeaveApplicationsController < Backend::BaseController
     if params[:id]
       LeaveApplication
     else
-      LeaveApplication.order(id: :desc)
+      @q.result.preload(:user)
     end
   end
 
   def resource_params
     params.require(:leave_application).permit(:comment)
+  end
+
+  def search_params
+    @search_params = params.fetch(:q, {})&.permit(
+      :s, :leave_type_eq, :user_id_eq, :status_eq, :end_date_gteq, :start_date_lteq)
+    @search_params.present? ? @search_params : @search_params.merge({ status_eq: :pending })
+  end
+
+  def set_query_object
+    @q = LeaveApplication.ransack(search_params)
   end
 
   def url_after(action)

@@ -1,27 +1,52 @@
 %h2= t("captions.backend/leave_applications.index")
 
-= render "shared/year_type_selector"
+.panel.panel-default
+  .panel-heading= t('panel_header.filter_conditions')
+  .panel-body
+    = simple_form_for @q, url: url_for(action: :index), method: :get do |f|
+      = f.hidden_field :s, value: params.dig(:q, :s)
+      = f.input :status_eq, collection: LeaveApplication.enum_attributes_for_select(:statuses),
+        include_blank: t('.plz_select_status'), required: false, wrapper_html: { class: 'col-md-4' }
+      = f.input :leave_type_eq, collection: LeaveApplication.enum_attributes_for_select(:leave_types),
+        include_blank: t('.plz_select_leave_type'), required: false, wrapper_html: { class: 'col-md-4' }
+      = f.input :user_id_eq, collection: @users, required: false,
+        include_blank: t('.plz_select_user'), label_method: :name, value_method: :id,
+        wrapper_html: { class: 'col-md-4' }
+      = f.input :end_date_gteq, wrapper_html: { class: 'date-input col-md-6' },
+        input_html: { data: { input: 'datepicker', format: 'YYYY/MM/DD' } }, required: false
+      = f.input :start_date_lteq, wrapper_html: { class: 'date-input col-md-6' },
+        input_html: { data: { input: 'datepicker', format: 'YYYY/MM/DD' } }, required: false
+
+      .text-right
+        = f.button :submit, class: 'btn-warning'
 
 - if current_collection.any?
-  %table.table
+  %table.table.table-striped.table-bordered.table-hover
     %thead
-      %tr
+      %tr.info
+        %th.text-right
+          = sort_link(@q, :id, '#')
         %th.text-center= t_attribute :user, LeaveApplication
         %th.text-center= t_attribute :leave_type, LeaveApplication
-        %th.text-center= t_attribute :start_time, LeaveApplication
-        %th.text-center= t_attribute :end_time, LeaveApplication
-        %th.text-right= t_attribute :hours, LeaveApplication
+        %th.text-right
+          = sort_link(@q, :start_time)
+        %th.text-right
+          = sort_link(@q, :end_time)
+        %th.text-right
+          = sort_link(@q, :hours)
         %th.text-center= t_attribute :status, LeaveApplication
         %th.text-center= t("captions.tools")
     %tbody
       - current_collection.each do |leave|
         %tr
+          %td.text-right= leave.id
           %td.text-center= t_value :user, leave, :convert_user_object_to_name, :name
           %td.text-center= LeaveApplication.human_enum_value(:leave_type, leave.leave_type)
-          %td.text-center= l leave.start_time, format: :long
-          %td.text-center= l leave.end_time, format: :long
-          %td.text-right= t_value :hours, leave
-          %td.text-center= LeaveApplication.human_enum_value(:status, leave.status)
+          %td.text-right= l leave.start_time, format: :long
+          %td.text-right= l leave.end_time, format: :long
+          %td.text-right= hours_to_humanize(leave.hours)
+          %td.text-center
+            - colored_state_label(leave.status) #LeaveApplication.human_enum_value(:status, leave.status)
           %td.text-center
             - if leave.pending?
               = link_to t("title.backend/leave_applications.verify"),
@@ -36,4 +61,3 @@
 
 .paginate
   = paginate current_collection
-
