@@ -1,0 +1,64 @@
+%h2= t '.title', id: current_object.id, user_name: current_object.user.name, leave_type: LeaveTime.human_enum_value(:leave_type, current_object.leave_type)
+
+.panel.panel-primary
+  .panel-heading
+    %h3.panel-title= t('.quota_info')
+  %table.table.table-striped.table-bordered.table-hover
+    %thead
+      %tr.active
+        %th.text-right #
+        %th= t_attribute :leave_type, LeaveTime
+        %th= t_attribute :user, LeaveTime
+        %th.text-right= t_attribute :quota, LeaveTime
+        %th.text-right= t_attribute :locked_hours, LeaveTime
+        %th.text-right= t_attribute :used_hours, LeaveTime
+        %th.text-right= t_attribute :usable_hours, LeaveTime
+        %th.text-right= t_attribute :effective_date, LeaveTime
+        %th.text-right= t_attribute :expiration_date, LeaveTime
+    %tbody
+      %tr
+        %td.text-right= current_object.id
+        %td= LeaveTime.human_enum_value(:leave_type, current_object.leave_type)
+        %td= current_object.user.name
+        %td.text-right= hours_to_humanize current_object.quota
+        %td.text-right= hours_to_humanize current_object.locked_hours
+        %td.text-right= hours_to_humanize current_object.used_hours
+        %td.text-right= hours_to_humanize current_object.usable_hours
+        %td.text-right= l current_object.effective_date, format: :detailed
+        %td.text-right= l current_object.expiration_date, format: :detailed
+      %tr
+        %th.text-right.active{colspan: 2}= t_attribute :remark, LeaveTime
+        %td{colspan: 7}= current_object.remark
+
+.panel.panel-warning
+  .panel-heading
+    %h3.panel-title= t('.quota_usage_info')
+  %table.table.table-striped.table-bordered.table-hover
+    %thead
+      %tr.active
+        %th.text-right #
+        %th.text-center= t_attribute :leave_type, LeaveApplication
+        %th.text-right= t('.used_locked_hours')
+        %th.text-right= t('.used_hours')
+        %th.text-right= t('.application_total_hours')
+        %th.text-center= t_attribute :status, LeaveApplication
+        %th.text-right= t_attribute :start_time, LeaveApplication
+        %th.text-right= t_attribute :end_time, LeaveApplication
+    %tbody
+      - current_object.leave_time_usages.each do |usage|
+        %tr
+          %td.text-right
+            = link_to usage.leave_application_id, verify_backend_leave_application_path(usage.leave_application_id)
+          %td.text-center= LeaveApplication.human_enum_value(:leave_type, usage.leave_application.leave_type)
+          %td.text-right= usage.leave_application.pending? ? hours_to_humanize(usage.used_hours) : '-'
+          %td.text-right= usage.leave_application.approved? ? hours_to_humanize(usage.used_hours) : '-'
+          %td.text-right= hours_to_humanize usage.leave_application.hours
+          %td.text-center
+            - colored_state_label(usage.leave_application.status)
+          %td.text-right= l usage.leave_application.start_time, format: :long
+          %td.text-right= l usage.leave_application.end_time,   format: :long
+      %tr
+        %th.active.text-right{colspan: 2}= t('.sum')
+        %td.text-right= hours_to_humanize current_object.leave_time_usages.select { |u| u.leave_application.pending? }.sum(&:used_hours)
+        %td.text-right= hours_to_humanize current_object.leave_time_usages.select { |u| u.leave_application.approved? }.sum(&:used_hours)
+        %td{colspan: 5}

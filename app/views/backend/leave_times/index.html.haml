@@ -42,7 +42,8 @@
   %tbody
     - current_collection.each do |quota|
       %tr
-        %td.text-right= quota.id
+        %td.text-right
+          = link_to quota.id, backend_leave_time_path(quota.id)
         %td.text-center= quota.user.name
         %td.text-center= LeaveTime.human_enum_value(:leave_type, quota.leave_type)
         %td.text-right= hours_to_humanize quota.quota
