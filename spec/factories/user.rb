@@ -33,10 +33,6 @@ FactoryGirl.define do
       role { %i(contractor intern).sample }
     end
 
-    trait :without_leave_times do
-      after(:create) { |u| u.leave_times.destroy_all }
-    end
-
     factory :manager_eddie, traits: [:manager] do
       name 'eddie'
     end

@@ -331,13 +331,14 @@ RSpec.describe LeaveApplication, type: :model do
     end
 
     describe '.personal' do
-      let!(:user)            { create(:user, :hr, :without_leave_times) }
+      let!(:user)            { create(:user, :hr) }
       let(:effective_date)  { Time.zone.local(2017, 5, 1).to_date }
       let(:expiration_date) { Time.zone.local(2017, 5, 31).to_date }
       let(:beginning)       { effective_date.beginning_of_day }
       let(:ending)          { expiration_date.end_of_day }
 
       before do
+        User.skip_callback(:create, :after, :auto_assign_leave_time)
         create(:leave_time, :annual, user: user, quota: 100, usable_hours: 100, effective_date: effective_date, expiration_date: expiration_date)
         create(:leave_application, :annual, user: user, start_time: Time.zone.local(2017, 5, 2, 9, 30), end_time: Time.zone.local(2017, 5, 4, 12, 30))
         create(:leave_application, :annual, user: user, start_time: Time.zone.local(2017, 5, 9, 9, 30), end_time: Time.zone.local(2017, 5, 11, 12, 30))
@@ -354,6 +355,8 @@ RSpec.describe LeaveApplication, type: :model do
         @rejected = user.leave_applications.fourth
         user.reload
       end
+
+      after  { User.set_callback(:create, :after, :auto_assign_leave_time) }
 
       it 'should include only pending or approved applications' do
         personal = described_class.personal(user, beginning, ending)
