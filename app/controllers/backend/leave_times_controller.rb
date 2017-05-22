@@ -1,15 +1,9 @@
 # frozen_string_literal: true
 class Backend::LeaveTimesController < Backend::BaseController
   before_action :set_query_object
-  helper_method :leave_type
-  DEFAULT_LEAVE_POOL_TYPE = Settings.backend.default_leave_pool_type
 
   def index
     @users = User.all
-  end
-
-  def leave_type
-    @leave_type ||= params[:leave_type] || (params[:leave_time] ? params[:leave_time][:leave_type] : nil) || DEFAULT_LEAVE_POOL_TYPE
   end
 
   private
@@ -20,10 +14,9 @@ class Backend::LeaveTimesController < Backend::BaseController
 
   def collection_scope
     if params[:id]
-      LeaveTime
+      LeaveTime.preload(:user, leave_time_usages: :leave_application)
     else
       @q.result.preload(:user)
-      # LeaveTime.preload(:user).where(leave_type: leave_type).order(expiration_date: :desc)
     end
   end
 
@@ -34,15 +27,13 @@ class Backend::LeaveTimesController < Backend::BaseController
   end
 
   def search_params
-    params.fetch(:q, {})&.permit(:s, :leave_type_eq, :effective_true)
+    params.fetch(:q, {})&.permit(:s, :leave_type_eq, :effective_true, :user_id_eq)
   end
 
   def new_resource_params
     p = params.permit(
       :user_id, :leave_type
     ).to_h
-    p['leave_type'] ||= leave_type
-    p
   end
 
   def url_after(action)

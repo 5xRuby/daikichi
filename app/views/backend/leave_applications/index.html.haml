@@ -46,7 +46,7 @@
           %td.text-right= l leave.end_time, format: :long
           %td.text-right= hours_to_humanize(leave.hours)
           %td.text-center
-            - colored_state_label(leave.status) #LeaveApplication.human_enum_value(:status, leave.status)
+            - colored_state_label(leave.status)
           %td.text-center
             - if leave.pending?
               = link_to t("title.backend/leave_applications.verify"),

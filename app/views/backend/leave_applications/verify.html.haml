@@ -1,17 +1,17 @@
 .panel.panel-info
   .panel-heading
-    %h4= t("captions.backend/leave_applications.verify")
+    %h4.panel-title= t("captions.backend/leave_applications.verify")
 
   %table.table
     %tr
       %th= t_attribute(:leave_type, current_object)
       %td= LeaveTime.human_enum_value(:leave_types, current_object.leave_type)
 
-    %tr  
+    %tr
       %th= t_attribute(:start_time, current_object)
       %td= l current_object.start_time, format: :long
-    
-    %tr  
+
+    %tr
       %th= t_attribute(:end_time, current_object)
       %td= l current_object.end_time, format: :long
 
@@ -19,9 +19,9 @@
 
     %tr
       %th= t_attribute(:leave_time_usage_builder, current_object)
-      %td 
+      %td
         - LeaveTimeUsageBuilder.new(current_object).leave_hours_by_date.each do |daily|
-          %li 
+          %li
             = l daily.first, format: :long
             \ :
             = daily.second
@@ -35,7 +35,7 @@
     %tr
       %th= t_attribute(:sign_date, current_object)
       %td= current_object.sign_date ? l(current_object.sign_date, format: :long) : nil
-    
+
     = tr_by_object :manager, :convert_user_object_to_name, :name
 
     %tr
@@ -48,7 +48,7 @@
 
 .panel.panel-info
   .panel-heading
-    %h4= t_attribute(:leave_time_usages, current_object)
+    %h4.panel-title= t_attribute(:leave_time_usages, current_object)
   %table.table
     %thead
       %tr
@@ -61,13 +61,13 @@
     %tbody
       - current_object.leave_time_usages.each do |usage|
         %tr
-          %td.text-right= usage.leave_time_id
+          %td.text-right= link_to usage.leave_time_id, backend_leave_time_path(usage.leave_time_id)
           %td.text-center= LeaveTime.human_enum_value(:leave_type, usage.leave_time.leave_type)
           %td.text-right= hours_to_humanize usage.used_hours
           %td.text-right= hours_to_humanize usage.leave_time.usable_hours
-          %td.text-right= l usage.leave_time.effective_date, format: :long
-          %td.text-right= l usage.leave_time.expiration_date, format: :long
-   
+          %td.text-right= l usage.leave_time.effective_date, format: :detailed
+          %td.text-right= l usage.leave_time.expiration_date, format: :detailed
+
 
 - if current_object.pending?
   = render "form"
