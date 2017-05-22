@@ -23,7 +23,7 @@ class LeaveApplication < ApplicationRecord
   validates :leave_type, :description, :start_time, :end_time, presence: true
 
   validate :hours_should_be_positive_integer
-  validate :should_not_overlaps_other_applications, on: :create
+  validate :should_not_overlaps_other_applications
 
   scope :leave_within_range, ->(beginning = Daikichi::Config::Biz.periods.after(1.month.ago.beginning_of_month).first.start_time, closing = Daikichi::Config::Biz.periods.before(1.month.ago.end_of_month).first.end_time.localtime) {
     where(
@@ -140,9 +140,14 @@ class LeaveApplication < ApplicationRecord
 
   def should_not_overlaps_other_applications
     return if self.errors[:start_time].any? or self.errors[:end_time].any?
-    overlapped_application = LeaveApplication.personal(user_id, start_time, end_time)
-    return unless overlapped_application.any?
-    overlap_application_error_messages(overlapped_application)
+    overlapped = LeaveApplication.personal(user_id, start_time, end_time)
+    overlapped = exclude_self(overlapped) unless self.id.nil?
+    return unless overlapped.any?
+    overlap_application_error_messages(overlapped)
+  end
+
+  def exclude_self(record)
+    record.where.not(id: self.id)
   end
 
   def overlap_application_error_messages(leave_applications)
@@ -169,7 +174,6 @@ class LeaveApplication < ApplicationRecord
 
   def update_leave_time_usages
     return unless self.start_time_changed? or self.end_time_changed? or self.description_changed?
-
     case aasm.from_state
     when :pending then return_leave_time_usable_hours
     when :approved then return_approved_application_usable_hours
