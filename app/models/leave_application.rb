@@ -152,12 +152,17 @@ class LeaveApplication < ApplicationRecord
 
   def overlap_application_error_messages(leave_applications)
     url = Rails.application.routes.url_helpers
+    error_details = ''
     leave_applications.each do |la|
-      leave_type = LeaveApplication.human_enum_value :leave_type, la.leave_type
-      start_time = la.start_time.to_formatted_s(:month_date)
-      end_time   = la.end_time.to_formatted_s(:month_date)
-      errors.add(:base, :overlap_application_html, leave_type: leave_type, start_time: start_time, end_time: end_time, link: url.leave_application_path({ id: la.id }))
+      error_details += I18n.t(
+        'activerecord.errors.models.leave_application.attributes.base.overlap_application',
+        leave_type: LeaveApplication.human_enum_value(:leave_type, la.leave_type),
+        start_time: la.start_time.to_formatted_s(:month_date),
+        end_time:   la.end_time.to_formatted_s(:month_date),
+        link:       url.leave_application_path({ id: la.id })
+      ) + '<br />'
     end
+    errors.add(:base, error_details)
   end
 
   def order_by_sequence
