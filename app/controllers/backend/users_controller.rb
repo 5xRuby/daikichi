@@ -5,7 +5,7 @@ class Backend::UsersController < Backend::BaseController
   
 
   def show
-    @leave_times = LeaveTime.effective
+    @leave_times = current_object.leave_times
   end
 
   def update
@@ -20,14 +20,18 @@ class Backend::UsersController < Backend::BaseController
   private
 
   def set_query_object
-    @q = User.ransack(params[:q])
+    @q = User.ransack(search_params)
+  end
+
+  def search_params
+    params.fetch(:q, {})&.permit(:s, :id_eq, :role_eq, :login_name_cont_any)
   end
 
   def collection_scope
     if params[:id]
       User
     else
-      @q.result.order(id: :desc)
+      @q.result.order(id: :desc).page(params[:page])
     end
   end
 

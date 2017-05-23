@@ -1,22 +1,21 @@
 %h2= t("captions.backend/users.index")
 
-/ .panel.panel-default
-/   .panel-heading= t('panel_header.filter_conditions')
-/   .panel-body
-/     = simple_form_for @q, url: url_for(action: :index), method: :get do |f|
-/       = f.hidden_field :s, value: params.dig(:q, :s)
-/       = f.input :leave_type_eq, collection: LeaveTime.enum_attributes_for_select(:leave_types),
-/         include_blank: t('.plz_select_leave_type'), required: false,
-/         wrapper_html: { class: 'col-md-6' }
-/       = f.input :user_id_eq, collection: @users, required: false,
-/         include_blank: t('.plz_select_user'), label_method: :name, value_method: :id,
-/         wrapper_html: { class: 'col-md-6' }
-/       = f.input :effective_true, collection: [[I18n.t('activerecord.attributes.leave_time.state.effective'), true], [I18n.t('activerecord.attributes.leave_time.state.expired'), false]],
-/         include_blank: t('.plz_select_effectiveness_state'), required: false,
-/         wrapper_html: { class: 'col-md-6' }
-
-/       .text-right
-/         = f.button :submit, class: 'btn-warning'
+.panel.panel-default
+  .panel-heading= t('panel_header.filter_conditions')
+  .panel-body
+    = simple_form_for @q, url: url_for(action: :index), method: :get do |f|
+      = f.hidden_field :s, value: params.dig(:q, :s)
+      = f.input :login_name_cont_any, required: false,
+        include_blank: t('.plz_select_user'), label_method: :name, value_method: :name,
+        wrapper_html: { class: 'col-md-4' }
+      = f.input :id_eq, collection: @users, required: false,
+        include_blank: t('.plz_select_user'), label_method: :name, value_method: :id,
+        wrapper_html: { class: 'col-md-4' }
+      = f.input :role_eq, collection: User.enum_attributes_for_select(:roles), required: false,
+        include_blank: t('.plz_select_role'), wrapper_html: { class: 'col-md-4' }
+        
+      .text-right
+        = f.button :submit, class: 'btn-warning'
 
 %table.table.table-striped.table-bordered.table-hover
   %thead

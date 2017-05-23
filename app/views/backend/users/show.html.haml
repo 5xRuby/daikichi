@@ -40,7 +40,7 @@
         %th.text-right= t_attribute(:effective_date,LeaveTime)
         %th.text-right= t_attribute(:expiration_date,LeaveTime)
     %tbody
-      - current_object.leave_times.each do |leave_time|
+      - @leave_times.each do |leave_time|
         %tr
           %td.text-right= leave_time.id
           %td.text-center= LeaveTime.human_enum_value(:leave_type, leave_time.leave_type)
