@@ -28,6 +28,15 @@ FactoryGirl.define do
       association :manager, factory: [:user, :manager]
     end
 
+    trait :rejected do
+      status 'rejected'
+      association :manager, factory: [:user, :manager]
+    end
+
+    trait :canceled do
+      status 'canceled'
+    end
+
     trait :happened do
       start_time { 1.minute.ago.beginning_of_hour }
       end_time   { 1.day.since.beginning_of_hour }

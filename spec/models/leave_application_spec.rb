@@ -331,55 +331,47 @@ RSpec.describe LeaveApplication, type: :model do
     end
 
     describe '.personal' do
-      let!(:user)            { create(:user, :hr) }
+      let(:user)            { create(:user, :hr) }
       let(:effective_date)  { Time.zone.local(2017, 5, 1).to_date }
       let(:expiration_date) { Time.zone.local(2017, 5, 31).to_date }
       let(:beginning)       { effective_date.beginning_of_day }
       let(:ending)          { expiration_date.end_of_day }
+      let(:pending)         { create(:leave_application, :annual, user: user, start_time: Time.zone.local(2017, 5, 2, 9, 30), end_time: Time.zone.local(2017, 5, 4, 12, 30)) }
+      let(:approved)        { create(:leave_application, :annual, :approved, user: user, start_time: Time.zone.local(2017, 5, 9, 9, 30), end_time: Time.zone.local(2017, 5, 11, 12, 30)) }
 
       before do
         User.skip_callback(:create, :after, :auto_assign_leave_time)
         create(:leave_time, :annual, user: user, quota: 100, usable_hours: 100, effective_date: effective_date, expiration_date: expiration_date)
-        create(:leave_application, :annual, user: user, start_time: Time.zone.local(2017, 5, 2, 9, 30), end_time: Time.zone.local(2017, 5, 4, 12, 30))
-        create(:leave_application, :annual, user: user, start_time: Time.zone.local(2017, 5, 9, 9, 30), end_time: Time.zone.local(2017, 5, 11, 12, 30))
-        create(:leave_application, :annual, user: user, start_time: Time.zone.local(2017, 5, 16, 9, 30), end_time: Time.zone.local(2017, 5, 18, 12, 30))
-        create(:leave_application, :annual, user: user, start_time: Time.zone.local(2017, 5, 23, 9, 30), end_time: Time.zone.local(2017, 5, 25, 12, 30))
-        user.reload
-        
-        @pending  = user.leave_applications.first
-        user.leave_applications.second.cancel!
-        @canceled = user.leave_applications.second
-        user.leave_applications.third.approve! user
-        @approved = user.leave_applications.third
-        user.leave_applications.fourth.reject! user
-        @rejected = user.leave_applications.fourth
-        user.reload
       end
 
       after  { User.set_callback(:create, :after, :auto_assign_leave_time) }
 
-      it 'should include only pending or approved applications' do
-        personal = described_class.personal(user, beginning, ending)
-        expect(personal).to contain_exactly(@pending, @approved)
+      context 'default behaviour' do
+        it 'should include only pending or approved applications' do
+          personal = described_class.personal(user, beginning, ending)
+          expect(personal).to contain_exactly(pending, approved)
+        end
       end
 
       context 'specific type of leave application' do
+        let(:canceled) { create(:leave_application, :annual, :canceled, user: user, start_time: Time.zone.local(2017, 5, 16, 9, 30), end_time: Time.zone.local(2017, 5, 18, 12, 30)) }
+        let(:rejected) { create(:leave_application, :annual, :rejected, user: user, start_time: Time.zone.local(2017, 5, 23, 9, 30), end_time: Time.zone.local(2017, 5, 25, 12, 30)) }
         it 'should only contain specific types of leave applications' do
-          expect(described_class.personal(user, beginning, ending, [:approved])).to contain_exactly(@approved)
-          expect(described_class.personal(user, beginning, ending, [:canceled, :rejected])).to contain_exactly(@canceled, @rejected)
-          expect(described_class.personal(user, beginning, ending, [:pending, :canceled])).to contain_exactly(@pending, @canceled)
+          expect(described_class.personal(user, beginning, ending, [:approved])).to contain_exactly(approved)
+          expect(described_class.personal(user, beginning, ending, [:canceled, :rejected])).to contain_exactly(canceled, rejected)
+          expect(described_class.personal(user, beginning, ending, [:pending, :canceled])).to contain_exactly(pending, canceled)
         end
       end
 
       context 'overlaps on boundary' do
         it 'should not include any applications when overlaps on start_time boundary' do
-          expect(described_class.personal(user, @pending.start_time - 1.day, @pending.start_time)).not_to include(@pending)
-          expect(described_class.personal(user, @approved.start_time - 1.day, @approved.start_time)).not_to include(@approved)
+          expect(described_class.personal(user, pending.start_time - 1.day, pending.start_time)).not_to include(pending)
+          expect(described_class.personal(user, approved.start_time - 1.day, approved.start_time)).not_to include(approved)
         end
 
         it 'should not include any applications when overlaps on end_time boundary' do
-          expect(described_class.personal(user, @pending.end_time, @pending.end_time + 1.day)).not_to include(@pending)
-          expect(described_class.personal(user, @approved.end_time, @approved.end_time + 1.day)).not_to include(@approved)
+          expect(described_class.personal(user, pending.end_time, pending.end_time + 1.day)).not_to include(pending)
+          expect(described_class.personal(user, approved.end_time, approved.end_time + 1.day)).not_to include(approved)
         end
       end
     end
