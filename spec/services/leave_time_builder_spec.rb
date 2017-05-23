@@ -93,7 +93,7 @@ describe LeaveTimeBuilder do
     after do
       User.set_callback(:create, :after, :auto_assign_leave_time)
     end
-    
+
     context 'prebuild' do
       before do
         LeaveTimeBuilder.new(user).monthly_import(prebuild: true)

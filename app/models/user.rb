@@ -94,5 +94,4 @@ class User < ApplicationRecord
     leave_time_builder = LeaveTimeBuilder.new self
     leave_time_builder.automatically_import
   end
-
 end

@@ -24,8 +24,7 @@ class LeaveApplication < ApplicationRecord
 
   validate :hours_should_be_positive_integer
 
-  scope :leave_within_range, ->(beginning = $biz.periods.after(1.month.ago.beginning_of_month).first.start_time,
-                                closing   = $biz.periods.before(1.month.ago.end_of_month).first.end_time.localtime) {
+  scope :leave_within_range, ->(beginning = $biz.periods.after(1.month.ago.beginning_of_month).first.start_time, closing = $biz.periods.before(1.month.ago.end_of_month).first.end_time.localtime) {
     where(
       '(leave_applications.start_time, leave_applications.end_time) OVERLAPS (timestamp :beginning, timestamp :closing)',
       beginning: beginning, closing: closing

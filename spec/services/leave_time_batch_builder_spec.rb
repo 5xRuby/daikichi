@@ -40,7 +40,6 @@ describe LeaveTimeBatchBuilder do
     end
 
     context 'not forced' do
-
       let!(:fulltime) { FactoryGirl.create(:user, :fulltime, join_date: join_date) }
       let!(:parttime) { FactoryGirl.create(:user, :parttime, join_date: join_date) }
       let!(:user)     { FactoryGirl.create(:user, join_date: join_date - 1.day) }

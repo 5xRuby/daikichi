@@ -4,8 +4,8 @@ require 'rails_helper'
 RSpec.describe User, type: :model do
   let(:manager) { create(:user, :manager) }
 
-  describe "enum" do
-    describe "role" do
+  describe 'enum' do
+    describe 'role' do
       it 'defines user role as enum' do
         # Choose a sample from User roles
         user = build(:user, role: User.roles.to_a.sample[0])
@@ -14,12 +14,12 @@ RSpec.describe User, type: :model do
       end
 
       it 'cannot save user role if not in the role enum list' do
-        expect { build(:user, role: "internship") }.to raise_error(ArgumentError)
-        expect { build(:user, role: "management") }.to raise_error(ArgumentError)
+        expect { build(:user, role: 'internship') }.to raise_error(ArgumentError)
+        expect { build(:user, role: 'management') }.to raise_error(ArgumentError)
       end
 
       it 'can get options for select' do
-        expect(described_class.enum_attributes_for_select(:roles)).to eq I18n.t("activerecord.attributes.user.roles").map { |key, val| [val, key.to_s] }
+        expect(described_class.enum_attributes_for_select(:roles)).to eq I18n.t('activerecord.attributes.user.roles').map { |key, val| [val, key.to_s] }
       end
 
       it 'can get humanize enum value' do
