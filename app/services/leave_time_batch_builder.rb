@@ -43,7 +43,7 @@ class LeaveTimeBatchBuilder
   end
 
   def end_of_working_month?
-    @end_of_working_month_bool ||= $biz.time(MONTHLY_LEED_DAYS, :days).after(Time.current.beginning_of_day).to_date == $biz.periods.before(Time.current.end_of_month).first.end_time.to_date
+    @end_of_working_month_bool ||= Daikichi::Config::Biz.time(MONTHLY_LEED_DAYS, :days).after(Time.current.beginning_of_day).to_date == Daikichi::Config::Biz.periods.before(Time.current.end_of_month).first.end_time.to_date
   end
 
   def reaching_join_date

@@ -50,8 +50,8 @@ class User < ApplicationRecord
     joins(:leave_applications, :leave_times)
       .includes(:leave_applications, :leave_times)
       .merge(LeaveApplication.leave_within_range(
-        $biz.periods.after(Time.zone.local(year, month, 1)).first.start_time,
-        $biz.periods.before(Time.zone.local(year, month, 1).end_of_month).first.end_time
+        Daikichi::Config::Biz.periods.after(Time.zone.local(year, month, 1)).first.start_time,
+        Daikichi::Config::Biz.periods.before(Time.zone.local(year, month, 1).end_of_month).first.end_time
       )
       .approved)
   }

@@ -39,7 +39,7 @@ class LeaveTimeUsageBuilder
   end
 
   def work_periods
-    $biz.periods.after(@leave_application.start_time).timeline
+    Daikichi::Config::Biz.periods.after(@leave_application.start_time).timeline
       .until(@leave_application.end_time).to_a
   end
 

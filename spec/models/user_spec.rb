@@ -128,8 +128,8 @@ RSpec.describe User, type: :model do
     describe '.with_leave_application_statistics' do
       let(:year)  { Time.current.year }
       let(:month) { Time.current.month }
-      let(:start_time) { $biz.periods.after(Time.zone.local(year, month, 1)).first.start_time }
-      let(:end_time)   { $biz.time(8, :hour).after(start_time) }
+      let(:start_time) { Daikichi::Config::Biz.periods.after(Time.zone.local(year, month, 1)).first.start_time }
+      let(:end_time)   { Daikichi::Config::Biz.time(8, :hour).after(start_time) }
       let!(:leave_application) do
         Timecop.travel(start_time - 30.days)
         create(:leave_application, :with_leave_time, start_time: start_time, end_time: end_time)
@@ -163,8 +163,8 @@ RSpec.describe User, type: :model do
               create(
                 :leave_application, :approved, :annual,
                 user: leave_application.user,
-                start_time: $biz.time(3, :days).after(start_time),
-                end_time: $biz.periods.before($biz.time(4, :days).after(start_time)).first.end_time
+                start_time: Daikichi::Config::Biz.time(3, :days).after(start_time),
+                end_time: Daikichi::Config::Biz.periods.before(Daikichi::Config::Biz.time(4, :days).after(start_time)).first.end_time
               )
             end
 
@@ -179,8 +179,8 @@ RSpec.describe User, type: :model do
               create(
                 :leave_application, :approved, :personal, :with_leave_time,
                 user: leave_application.user,
-                start_time: $biz.time(3, :days).after(start_time),
-                end_time: $biz.periods.before($biz.time(4, :days).after(start_time)).first.end_time
+                start_time: Daikichi::Config::Biz.time(3, :days).after(start_time),
+                end_time: Daikichi::Config::Biz.periods.before(Daikichi::Config::Biz.time(4, :days).after(start_time)).first.end_time
               )
             end
 
@@ -191,8 +191,8 @@ RSpec.describe User, type: :model do
         end
 
         context 'partially overlaps given range' do
-          let(:start_time) { $biz.periods.after($biz.time(1, :day).before(Time.zone.local(year, month, 1))).first.start_time }
-          let(:end_time)   { $biz.periods.before($biz.time(3, :days).after(Time.zone.local(year, month, 1))).first.end_time }
+          let(:start_time) { Daikichi::Config::Biz.periods.after(Daikichi::Config::Biz.time(1, :day).before(Time.zone.local(year, month, 1))).first.start_time }
+          let(:end_time)   { Daikichi::Config::Biz.periods.before(Daikichi::Config::Biz.time(3, :days).after(Time.zone.local(year, month, 1))).first.end_time }
 
           it 'is include in returned results' do
             expect(subject).to include leave_application.user
@@ -205,8 +205,8 @@ RSpec.describe User, type: :model do
               create(
                 :leave_application, :approved, :annual,
                 user: leave_application.user,
-                start_time: $biz.time(3, :days).after(start_time),
-                end_time: $biz.periods.before($biz.time(4, :days).after(start_time)).first.end_time
+                start_time: Daikichi::Config::Biz.time(3, :days).after(start_time),
+                end_time: Daikichi::Config::Biz.periods.before(Daikichi::Config::Biz.time(4, :days).after(start_time)).first.end_time
               )
               Timecop.return
             end
@@ -221,8 +221,8 @@ RSpec.describe User, type: :model do
               create(
                 :leave_application, :approved, :personal, :with_leave_time,
                 user: leave_application.user,
-                start_time: $biz.time(3, :days).after(start_time),
-                end_time: $biz.periods.before($biz.time(4, :days).after(start_time)).first.end_time
+                start_time: Daikichi::Config::Biz.time(3, :days).after(start_time),
+                end_time: Daikichi::Config::Biz.periods.before(Daikichi::Config::Biz.time(4, :days).after(start_time)).first.end_time
               )
             end
 
@@ -233,8 +233,8 @@ RSpec.describe User, type: :model do
         end
 
         context 'out of range' do
-          let(:start_time) { $biz.periods.after($biz.time(2, :days).before(Time.zone.local(year, month, 1))).first.start_time }
-          let(:end_time)   { $biz.periods.before($biz.time(1, :day).before(Time.zone.local(year, month, 1))).first.end_time }
+          let(:start_time) { Daikichi::Config::Biz.periods.after(Daikichi::Config::Biz.time(2, :days).before(Time.zone.local(year, month, 1))).first.start_time }
+          let(:end_time)   { Daikichi::Config::Biz.periods.before(Daikichi::Config::Biz.time(1, :day).before(Time.zone.local(year, month, 1))).first.end_time }
 
           include_examples 'not included in returned results'
         end
