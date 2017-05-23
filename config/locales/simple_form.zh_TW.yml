@@ -31,5 +31,8 @@ zh-TW:
         status_eq: 依狀態篩選
         end_date_gteq: 查詢起始區間
         start_date_lteq: 查詢結束區間
+        id_eq: 依員工姓名篩選
+        login_name_cont_any: 輸入員工帳號搜尋
+        role_eq: 依員工身份篩選
     error_notification:
       default_message: "Please review the problems below:"

@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 class Backend::UsersController < Backend::BaseController
-  before_action :set_minimum_password_length, only: [:new, :edit]
+  before_action :set_query_object
+  before_action :set_minimum_password_length, only: %i[new edit]
 
   def show
-    @leave_times = LeaveTime.effective
+    @leave_times = current_object.leave_times
   end
 
   def update
@@ -17,17 +18,25 @@ class Backend::UsersController < Backend::BaseController
 
   private
 
+  def set_query_object
+    @q = User.ransack(search_params)
+  end
+
+  def search_params
+    params.fetch(:q, {})&.permit(:s, :id_eq, :role_eq, :login_name_cont_any)
+  end
+
   def collection_scope
     if params[:id]
       User
     else
-      User.order(id: :desc)
+      @q.result.order(id: :desc).page(params[:page])
     end
   end
 
   def resource_params
     params.require(:user).permit(
-      :name, :email, :login_name, :role,
+      :id, :name, :email, :login_name, :role,
       :password, :password_confirmation,
       :join_date, :leave_date
     )
