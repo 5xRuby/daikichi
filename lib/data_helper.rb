@@ -17,6 +17,6 @@ class DataHelper
   end
 
   def self.each_to_sym(arr)
-    arr.map { |e| e.to_sym }
+    arr.map(&:to_sym)
   end
 end

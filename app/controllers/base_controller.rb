@@ -61,16 +61,16 @@ class BaseController < ApplicationController
     end
   end
 
+  # TODO: Seems never used in applications
   # override in controller if needed
   def require_permission
     check_permission current_object.employee
   end
 
   def check_permission(object_owner)
-    if current_employee != object_owner
-      flash[:alert] = t('warnings.not_authorized')
-      redirect_to root_path
-    end
+    return if current_employee == object_owner
+    flash[:alert] = t('warnings.not_authorized')
+    redirect_to root_path
   end
 
   def url_after(action)
@@ -97,10 +97,10 @@ class BaseController < ApplicationController
   end
 
   def specific_year
-    params[:year] || Time.now.year
+    params[:year] || Time.current.year
   end
 
   def specific_month
-    params[:month] || Time.now.month
+    params[:month] || Time.current.month
   end
 end

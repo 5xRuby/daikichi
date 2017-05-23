@@ -83,8 +83,8 @@ class User < ApplicationRecord
                                end
   end
 
-  # TODO: change to pre-gen prev_not_effective
-  def get_refilled_annual
+  # TODO: Seems no longer a valid method
+  def refill_annual
     leave_times.find_by(leave_type: 'annual').refill
   end
 

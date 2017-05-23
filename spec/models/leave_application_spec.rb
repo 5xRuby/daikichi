@@ -88,6 +88,7 @@ RSpec.describe LeaveApplication, type: :model do
       let(:total_leave_hours) { Daikichi::Config::Biz.within(start_time, end_time).in_hours }
       before { user.leave_times.destroy_all }
       it 'should successfully create LeaveTimeUsage on sufficient LeaveTime hours' do
+        # TODO: lt is a useless assignment
         lt = user.leave_times.create(leave_type: 'annual', quota: total_leave_hours, usable_hours: total_leave_hours, effective_date: effective_date, expiration_date: expiration_date)
         la = user.leave_applications.create(leave_type: 'annual', start_time: start_time, end_time: end_time, description: 'Test string')
         leave_time_usage = la.leave_time_usages.first
@@ -103,7 +104,7 @@ RSpec.describe LeaveApplication, type: :model do
         la = user.leave_applications.create!(leave_type: 'annual', start_time: start_time, end_time: end_time, description: 'Test string')
         leave_time = LeaveTime.find(lt.id)
         expect(la.leave_time_usages.any?).to be false
-        expect(leave_time.usable_hours).to eq (total_leave_hours - 1)
+        expect(leave_time.usable_hours).to eq total_leave_hours - 1
         expect(leave_time.used_hours).to eq 0
         expect(leave_time.locked_hours).to eq 0
       end
@@ -231,10 +232,10 @@ RSpec.describe LeaveApplication, type: :model do
       end
     end
 
-    describe '#is_leave_type?' do
+    describe '#leave_type?' do
       let(:type) { 'all' }
       let(:leave_application) { build_stubbed(:leave_application) }
-      subject { leave_application.is_leave_type?(type) }
+      subject { leave_application.leave_type?(type) }
       context 'all' do
         it 'is true with all leave_type' do
           expect(subject).to be_truthy
@@ -249,7 +250,7 @@ RSpec.describe LeaveApplication, type: :model do
         end
 
         it "is false if given leave_type not equals to object's leave_type" do
-          expect(leave_application.is_leave_type?('unknown')).to be_falsy
+          expect(leave_application.leave_type?('unknown')).to be_falsy
         end
       end
     end

@@ -97,7 +97,7 @@ class LeaveApplication < ApplicationRecord
     beginning > self.start_time || closing < self.end_time
   end
 
-  def is_leave_type?(type = :all)
+  def leave_type?(type = :all)
     return true if type.to_sym == :all
     self.leave_type.to_sym == type.to_sym
   end
@@ -133,7 +133,7 @@ class LeaveApplication < ApplicationRecord
   end
 
   def order_by_sequence
-    'array_position(Array%s, leave_type::TEXT)' % Settings.leave_applications.available_quota_types.send(self.leave_type).to_s.tr('"', "'")
+    format 'array_position(Array%s, leave_type::TEXT)', Settings.leave_applications.available_quota_types.send(self.leave_type).to_s.tr('"', "'")
   end
 
   def create_leave_time_usages
@@ -181,7 +181,7 @@ class LeaveApplication::ActiveRecord_Associations_CollectionProxy
   def leave_hours_within_month(type: 'all', year: Time.current.year, month: Time.current.month)
     beginning = Daikichi::Config::Biz.periods.after(Time.zone.local(year, month, 1)).first.start_time
     closing   = Daikichi::Config::Biz.periods.before(Time.zone.local(year, month, 1).end_of_month).first.end_time
-    records.select { |r| r.is_leave_type?(type) }.reduce(0) do |result, la|
+    records.select { |r| r.leave_type?(type) }.reduce(0) do |result, la|
       if la.range_exceeded?(beginning, closing)
         @valid_range = [la.start_time, beginning].max..[la.end_time, closing].min
         result + Daikichi::Config::Biz.within(@valid_range.min, @valid_range.max).in_minutes / 60.0

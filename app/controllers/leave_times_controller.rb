@@ -38,5 +38,5 @@ class LeaveTimesController < BaseController
 
   def search_params
     params.fetch(:q, {})&.permit(:s, :leave_type_eq, :effective_true)
- end
+  end
 end

@@ -74,11 +74,11 @@ module ApplicationHelper
   end
 
   def specific_year
-    params[:year] || Time.now.year
+    params[:year] || Time.current.year
   end
 
   def specific_month
-    params[:month] || Time.now.month
+    params[:month] || Time.current.month
   end
 
   def hours_to_humanize(hours)

@@ -26,7 +26,7 @@ class DurationRangeToValue
   end
 
   def get_from_past_time(time)
-    get_from_duration_num(Time.now - time)
+    get_from_duration_num(Time.current - time)
   end
 
   def get_from_time_diff(time1, time2)
