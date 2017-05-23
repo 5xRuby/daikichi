@@ -46,7 +46,7 @@
     %tbody
       - @leave_times.each do |leave_time|
         %tr
-          %td.text-right= leave_time.id
+          %td.text-right= link_to leave_time.id, backend_leave_time_path(leave_time.id)
           %td.text-center= LeaveTime.human_enum_value(:leave_type, leave_time.leave_type)
           %td.text-right= hours_to_humanize leave_time.quota
           %td.text-right= hours_to_humanize leave_time.locked_hours
