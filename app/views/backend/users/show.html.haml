@@ -1,6 +1,6 @@
 .panel.panel-info
   .panel-heading
-    %h3= t("captions.backend/users.show", name: current_object[:name])
+    %h3.panel-title= t("captions.backend/users.show", name: current_object[:name])
     = link_to t("title.backend/users.edit"),
     edit_backend_user_path(current_object),
     class: "btn btn-warning"
@@ -17,9 +17,13 @@
     %tr
       %th.col-md-3= t_attribute(:role, User)
       %td.col-md-9= User.human_enum_value(:roles, current_object.role)
-    = tr_by_object :join_date, :convert_time_value, :year_date
+    %tr
+      %th.col-md-3= t_attribute(:join_date, User)
+      %td.col-md-9= l current_object.join_date, format: :long
     - if current_object.leave_date
-      = tr_by_object :leave_date, :convert_time_value, :year_date
+      %tr
+        %th.col-md-3= t_attribute(:leave_date, User)
+        %td.col-md-9= l current_object.leave_date, format: :long
 
 
 

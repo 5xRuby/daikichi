@@ -11,5 +11,4 @@ class ApplicationRecord < ActiveRecord::Base
       [I18n.t("activerecord.attributes.#{model_name.i18n_key}.#{enum_name}.#{enum_value}"), enum_value]
     end
   end
-
 end

@@ -1,4 +1,7 @@
-%h2= t("captions.backend/users.index")
+%h2
+  = t("captions.backend/users.index")
+  = link_to t("title.backend/users.new"), new_backend_user_path, class: 'btn btn-primary'
+
 
 .panel.panel-default
   .panel-heading= t('panel_header.filter_conditions')
