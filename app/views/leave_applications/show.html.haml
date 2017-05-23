@@ -57,11 +57,11 @@
     %thead
       %tr
         %th.text-right #
-        %th.text-center 假別
+        %th.text-center= t_attribute(:leave_type, LeaveTime)
         %th.text-right 使用時數
-        %th.text-right 餘額
-        %th.text-right 生效日期
-        %th.text-right 失效日期
+        %th.text-right= t_attribute(:quota,LeaveTime)
+        %th.text-right= t_attribute(:effective_date,LeaveTime)
+        %th.text-right= t_attribute(:expiration_date,LeaveTime)
     %tbody
       - current_object.leave_time_usages.each do |usage|
         %tr
