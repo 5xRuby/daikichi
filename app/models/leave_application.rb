@@ -141,13 +141,9 @@ class LeaveApplication < ApplicationRecord
   def should_not_overlaps_other_applications
     return if self.errors[:start_time].any? or self.errors[:end_time].any?
     overlapped = LeaveApplication.personal(user_id, start_time, end_time)
-    overlapped = exclude_self(overlapped) unless self.id.nil?
+    overlapped = overlapped.where.not(id: self.id) unless self.new_record?
     return unless overlapped.any?
     overlap_application_error_messages(overlapped)
-  end
-
-  def exclude_self(record)
-    record.where.not(id: self.id)
   end
 
   def overlap_application_error_messages(leave_applications)

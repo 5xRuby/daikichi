@@ -73,83 +73,62 @@ RSpec.describe LeaveApplication, type: :model do
       end
     end
 
-    describe 'create application which overlaps other pending or approved application' do
+    describe 'application should not overlaps other pending or approved applications under same user scope' do
       let(:user)            { create(:user, :hr) }
       let(:effective_date)  { Time.zone.local(2017, 5, 1).to_date }
       let(:expiration_date) { Time.zone.local(2017, 5, 31).to_date }
       let(:start_time)      { Time.zone.local(2017, 5, 9, 12, 30) }
       let(:end_time)        { Time.zone.local(2017, 5, 11, 14, 30) }
 
-      before { User.skip_callback(:create, :after, :auto_assign_leave_time) }
+      before do
+        User.skip_callback(:create, :after, :auto_assign_leave_time)
+        create(:leave_time, :annual, user: user, quota: 50, usable_hours: 50, effective_date: effective_date, expiration_date: expiration_date)
+      end
       after  { User.set_callback(:create, :after, :auto_assign_leave_time)  }
 
       subject { build(:leave_application, :annual, user: user, start_time: beginning, end_time: ending) }
 
-      before do
-        user.leave_times.create(leave_type: 'annual', quota: 50, effective_date: effective_date, expiration_date: expiration_date)
-        user.leave_applications.create(leave_type: 'annual', start_time: start_time, end_time: end_time, description: 'test string')
+      shared_examples 'invalid' do |overlap_section, status|
+        it "should be invalid when overlaps #{overlap_section} of the #{status} leave application" do
+          create(:leave_application, :annual, status, user: user, start_time: start_time, end_time: end_time, description: 'test string')
+          expect(subject.valid?).to be_falsy
+          # expect(subject.errors.)
+        end
       end
 
-      context 'overlaps after start_time' do
+      context 'overlaps other applications\' start_time' do
         let(:beginning) { start_time - 1.day }
         let(:ending)    { start_time + 1.hour }
-        it 'should be invalid when overlaps after start_time of the pending leave application' do
-          expect(subject.valid?).to be_falsy
-        end
-
-        it 'should be invalid when overlaps after start_time of the approved leave application' do
-          user.leave_applications.first.approve!(user)
-          expect(subject.valid?).to be_falsy
-        end
+        it_should_behave_like 'invalid', 'after start_time', :pending
+        it_should_behave_like 'invalid', 'after start_time', :approved
       end
 
-      context 'overlaps before end_time' do
+      context 'overlaps other applications\' end_time' do
         let(:beginning) { end_time - 1.hour }
         let(:ending)    { end_time + 1.day }
-        it 'should be invalid when overlaps before end_time of the pending leave application' do
-          expect(subject.valid?).to be_falsy
-        end
+        it_should_behave_like 'invalid', 'before end_time', :pending
+        it_should_behave_like 'invalid', 'before end_time', :approved
+      end
 
-        it 'should be invalid when overlaps before end_time of the approved leave application' do
-          user.leave_applications.first.approve!(user)
-          expect(subject.valid?).to be_falsy
+      shared_examples 'valid' do |boundary, status|
+        it "is valid to overlap on #{boundary} of the other #{status} application" do
+          create(:leave_application, :annual, status, user: user, start_time: start_time, end_time: end_time, description: 'test string')
+          expect(subject.valid?).to be_truthy
         end
       end
       
-      context 'boundary condition' do
-        context "overlaps on start_time of the pending leave application" do
-          let(:beginning) { start_time - 1.day }
-          let(:ending)    { start_time }
-          it 'is valid' do
-            expect(subject.valid?).to be_truthy
-          end
-        end
+      context 'overlaps only on other applications\' start_time' do
+        let(:beginning) { start_time - 1.day }
+        let(:ending)    { start_time }
+        it_should_behave_like 'valid', 'start_time', :pending
+        it_should_behave_like 'valid', 'start_time', :approved
+      end
 
-        context "overlaps on other end_time of the pending leave application" do
-          let(:beginning) { end_time }
-          let(:ending)     { end_time + 1.day }
-          it 'is valid' do
-            expect(subject.valid?).to be_truthy
-          end
-        end
-
-        context "overlaps on start_time of the approved leave application" do
-          let(:beginning) { start_time - 1.day }
-          let(:ending)    { start_time }
-          it 'is valid' do  
-            user.leave_applications.first.approve!(user)
-            expect(subject.valid?).to be_truthy
-          end
-        end
-
-        context "overlaps on other end_time of the approved leave application" do
-          let(:beginning) { end_time }
-          let(:ending)    { end_time + 1.day }
-          it 'is valid' do
-            user.leave_applications.first.approve!(user)
-            expect(subject.valid?).to be_truthy
-          end
-        end
+      context 'overlaps only on other applications\' end_time' do
+        let(:beginning) { end_time }
+        let(:ending)    { end_time + 1.day }
+        it_should_behave_like 'valid', 'end_time', :pending
+        it_should_behave_like 'valid', 'end_time', :approved
       end
     end    
   end
@@ -172,8 +151,8 @@ RSpec.describe LeaveApplication, type: :model do
 
       it 'should successfully create LeaveTimeUsage on sufficient LeaveTime hours' do
         # TODO: lt is a useless assignment
-        lt = user.leave_times.create(leave_type: 'annual', quota: total_leave_hours, usable_hours: total_leave_hours, effective_date: effective_date, expiration_date: expiration_date)
-        la = user.leave_applications.create(leave_type: 'annual', start_time: start_time, end_time: end_time, description: 'Test string')
+        lt = create(:leave_time, :annual, user: user, quota: total_leave_hours, usable_hours: total_leave_hours, effective_date: effective_date, expiration_date: expiration_date)
+        la = create(:leave_application, :annual, user: user, start_time: start_time, end_time: end_time, description: 'Test string')
         leave_time_usage = la.leave_time_usages.first
         leave_time = leave_time_usage.leave_time
         expect(leave_time_usage.used_hours).to eq total_leave_hours
@@ -183,8 +162,8 @@ RSpec.describe LeaveApplication, type: :model do
       end
 
       it 'should not create LeaveTimeUsage when insufficient LeaveTime hours' do
-        lt = user.leave_times.create(leave_type: 'annual', quota: total_leave_hours - 1, usable_hours: total_leave_hours - 1, effective_date: effective_date, expiration_date: expiration_date)
-        la = user.leave_applications.create!(leave_type: 'annual', start_time: start_time, end_time: end_time, description: 'Test string')
+        lt = create(:leave_time, :annual, user: user, quota: total_leave_hours - 1, usable_hours: total_leave_hours - 1, effective_date: effective_date, expiration_date: expiration_date)
+        la = create(:leave_application, :annual, user: user, start_time: start_time, end_time: end_time, description: 'Test string')
         leave_time = LeaveTime.find(lt.id)
         expect(la.leave_time_usages.any?).to be false
         expect(leave_time.usable_hours).to eq total_leave_hours - 1
@@ -258,59 +237,6 @@ RSpec.describe LeaveApplication, type: :model do
         end
       end
 
-      describe '.personal' do
-        let(:user)            { create(:user, :hr) }
-        let(:effective_date)  { Time.zone.local(2017, 5, 1).to_date }
-        let(:expiration_date) { Time.zone.local(2017, 5, 31).to_date }
-        let(:beginning)       { effective_date.beginning_of_day }
-        let(:ending)          { expiration_date.end_of_day }
-
-        before do
-          User.skip_callback(:create, :after, :auto_assign_leave_time)
-          create(:leave_time, :annual, user: user, quota: 100, usable_hours: 100, used_hours: 0, locked_hours: 0, effective_date: effective_date, expiration_date: expiration_date)
-          create(:leave_application, :annual, user: user, start_time: Time.zone.local(2017, 5, 2, 9, 30), end_time: Time.zone.local(2017, 5, 4, 12, 30))
-          create(:leave_application, :annual, user: user, start_time: Time.zone.local(2017, 5, 9, 9, 30), end_time: Time.zone.local(2017, 5, 11, 12, 30))
-          create(:leave_application, :annual, user: user, start_time: Time.zone.local(2017, 5, 16, 9, 30), end_time: Time.zone.local(2017, 5, 18, 12, 30))
-          create(:leave_application, :annual, user: user, start_time: Time.zone.local(2017, 5, 23, 9, 30), end_time: Time.zone.local(2017, 5, 25, 12, 30))
-          user.reload
-          @pending  = user.leave_applications.first
-          user.leave_applications.second.cancel!
-          @canceled = user.leave_applications.second
-          user.leave_applications.third.approve! user
-          @approved = user.leave_applications.third
-          user.leave_applications.fourth.reject! user
-          @rejected = user.leave_applications.fourth
-          user.reload
-        end
-
-        after  { User.set_callback(:create, :after, :auto_assign_leave_time)  }
-
-        it 'should include only pending or approved applications' do
-          personal = described_class.personal(user, beginning, ending)
-          expect(personal).to contain_exactly(@pending, @approved)
-        end
-
-        context 'specific type of leave application' do
-          it 'should only contain specific types of leave applications' do
-            expect(described_class.personal(user, beginning, ending, [:approved])).to contain_exactly(@approved)
-            expect(described_class.personal(user, beginning, ending, [:canceled, :rejected])).to contain_exactly(@canceled, @rejected)
-            expect(described_class.personal(user, beginning, ending, [:pending, :canceled])).to contain_exactly(@pending, @canceled)
-          end
-        end
-
-        context 'overlaps on boundary' do
-          it 'should not include any applications when overlaps on start_time boundary' do
-            expect(described_class.personal(user, @pending.start_time - 1.day, @pending.start_time)).not_to include(@pending)
-            expect(described_class.personal(user, @approved.start_time - 1.day, @approved.start_time)).not_to include(@approved)
-          end
-
-          it 'should not include any applications when overlaps on end_time boundary' do
-            expect(described_class.personal(user, @pending.end_time, @pending.end_time + 1.day)).not_to include(@pending)
-            expect(described_class.personal(user, @approved.end_time, @approved.end_time + 1.day)).not_to include(@approved)
-          end
-        end
-      end
-
       context 'LeaveApplication on range boundary' do
         context 'LeaveApplication start_time is at the end of the range' do
           let(:start_time) { beginning - 5.days }
@@ -331,32 +257,33 @@ RSpec.describe LeaveApplication, type: :model do
     end
 
     describe '.personal' do
-      let(:user)            { create(:user, :hr) }
+      let(:user) do
+        User.skip_callback(:create, :after, :auto_assign_leave_time)
+        create(:user, :hr)
+      end
       let(:effective_date)  { Time.zone.local(2017, 5, 1).to_date }
       let(:expiration_date) { Time.zone.local(2017, 5, 31).to_date }
       let(:beginning)       { effective_date.beginning_of_day }
       let(:ending)          { expiration_date.end_of_day }
-      let(:pending)         { create(:leave_application, :annual, user: user, start_time: Time.zone.local(2017, 5, 2, 9, 30), end_time: Time.zone.local(2017, 5, 4, 12, 30)) }
-      let(:approved)        { create(:leave_application, :annual, :approved, user: user, start_time: Time.zone.local(2017, 5, 9, 9, 30), end_time: Time.zone.local(2017, 5, 11, 12, 30)) }
-
-      before do
-        User.skip_callback(:create, :after, :auto_assign_leave_time)
-        create(:leave_time, :annual, user: user, quota: 100, usable_hours: 100, effective_date: effective_date, expiration_date: expiration_date)
-      end
-
+      let!(:leave_time)     { create(:leave_time, :annual, user: user, quota: 100, usable_hours: 100, effective_date: effective_date, expiration_date: expiration_date) }
+      let!(:pending)        { create(:leave_application, :annual, user: user, start_time: Time.zone.local(2017, 5, 2, 9, 30), end_time: Time.zone.local(2017, 5, 4, 12, 30)) }
+      let!(:approved)       { create(:leave_application, :annual, :approved, user: user, start_time: Time.zone.local(2017, 5, 9, 9, 30), end_time: Time.zone.local(2017, 5, 11, 12, 30)) }
+      let!(:canceled)       { create(:leave_application, :annual, :canceled, user: user, start_time: Time.zone.local(2017, 5, 16, 9, 30), end_time: Time.zone.local(2017, 5, 18, 12, 30)) }
+      let!(:rejected)       { create(:leave_application, :annual, :rejected, user: user, start_time: Time.zone.local(2017, 5, 23, 9, 30), end_time: Time.zone.local(2017, 5, 25, 12, 30)) }
+        
       after  { User.set_callback(:create, :after, :auto_assign_leave_time) }
 
       context 'default behaviour' do
         it 'should include only pending or approved applications' do
           personal = described_class.personal(user, beginning, ending)
-          expect(personal).to contain_exactly(pending, approved)
+          expect(personal.size).to eq 2
+          expect(personal).to include(pending, approved)
+          expect(personal).not_to include(canceled, rejected)
         end
       end
 
-      context 'specific type of leave application' do
-        let(:canceled) { create(:leave_application, :annual, :canceled, user: user, start_time: Time.zone.local(2017, 5, 16, 9, 30), end_time: Time.zone.local(2017, 5, 18, 12, 30)) }
-        let(:rejected) { create(:leave_application, :annual, :rejected, user: user, start_time: Time.zone.local(2017, 5, 23, 9, 30), end_time: Time.zone.local(2017, 5, 25, 12, 30)) }
-        it 'should only contain specific types of leave applications' do
+      context 'specific status of leave application' do
+        it 'should only contain specific status of leave applications' do
           expect(described_class.personal(user, beginning, ending, [:approved])).to contain_exactly(approved)
           expect(described_class.personal(user, beginning, ending, [:canceled, :rejected])).to contain_exactly(canceled, rejected)
           expect(described_class.personal(user, beginning, ending, [:pending, :canceled])).to contain_exactly(pending, canceled)
@@ -364,12 +291,12 @@ RSpec.describe LeaveApplication, type: :model do
       end
 
       context 'overlaps on boundary' do
-        it 'should not include any applications when overlaps on start_time boundary' do
+        it 'should not include other applications when overlaps on its\' start_time boundary' do
           expect(described_class.personal(user, pending.start_time - 1.day, pending.start_time)).not_to include(pending)
           expect(described_class.personal(user, approved.start_time - 1.day, approved.start_time)).not_to include(approved)
         end
 
-        it 'should not include any applications when overlaps on end_time boundary' do
+        it 'should not include other applications when overlaps on its\' end_time boundary' do
           expect(described_class.personal(user, pending.end_time, pending.end_time + 1.day)).not_to include(pending)
           expect(described_class.personal(user, approved.end_time, approved.end_time + 1.day)).not_to include(approved)
         end
