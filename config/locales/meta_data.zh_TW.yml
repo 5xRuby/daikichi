@@ -88,7 +88,7 @@ zh-TW:
         leave_application:
           attributes:
             base:
-              overlap_application: '<a href="%{link}" target="_blank">與 %{start_time} ~ %{end_time} %{leave_type} 時段重複</a><br />'
+              overlap_application: '<a href="%{link}" target="_blank">與 %{start_time} ~ %{end_time} %{leave_type} 時段重複</a>'
             leave_type:
               blank: "請選擇請假種類"
               only_take_annual_leave_year_before: "只有特休假得以於前一年提前請假"
@@ -101,6 +101,9 @@ zh-TW:
             end_time:
               not_integer: "請假的最小單位是1小時"
               not_enough_leave_time: "剩餘休假時間不足"
+            hours:
+              leave_time_not_sufficient: "請假額度不足，無法申請假單："
+              lacking_hours: "%{date} 缺少額度：%{hours} 小時"
         leave_time:
           attributes:
             user:
@@ -215,7 +218,6 @@ zh-TW:
     not_verifiable: "已審核假單無法再次操作"
     not_cancellable: "無法再操作已取消的假單"
     already_happened: "無法刪除已經通過並且生效的假單"
-    leave_time_not_sufficient: "請假額度不足，無法申請假單："
 
   misc:
     app_title: "五倍神社"

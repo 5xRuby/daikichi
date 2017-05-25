@@ -140,25 +140,25 @@ class LeaveApplication < ApplicationRecord
 
   def should_not_overlaps_other_applications
     return if self.errors[:start_time].any? or self.errors[:end_time].any?
-    overlapped = LeaveApplication.personal(user_id, start_time, end_time)
-    overlapped = overlapped.where.not(id: self.id) unless self.new_record?
+    overlapped = LeaveApplication.personal(user_id, start_time, end_time).where.not(id: self.id)
     return unless overlapped.any?
     overlap_application_error_messages(overlapped)
   end
 
   def overlap_application_error_messages(leave_applications)
     url = Rails.application.routes.url_helpers
-    error_details = ''
     leave_applications.each do |la|
-      error_details += I18n.t(
-        'activerecord.errors.models.leave_application.attributes.base.overlap_application',
-        leave_type: LeaveApplication.human_enum_value(:leave_type, la.leave_type),
-        start_time: la.start_time.to_formatted_s(:month_date),
-        end_time:   la.end_time.to_formatted_s(:month_date),
-        link:       url.leave_application_path({ id: la.id })
+      errors.add(
+        :base,
+        I18n.t(
+          'activerecord.errors.models.leave_application.attributes.base.overlap_application',
+          leave_type: LeaveApplication.human_enum_value(:leave_type, la.leave_type),
+          start_time: la.start_time.to_formatted_s(:month_date),
+          end_time:   la.end_time.to_formatted_s(:month_date),
+          link:       url.leave_application_path({ id: la.id })
+        )
       )
     end
-    errors.add(:base, error_details)
   end
 
   def order_by_sequence
