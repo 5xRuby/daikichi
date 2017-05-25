@@ -24,8 +24,7 @@ class LeaveApplication < ApplicationRecord
 
   validate :hours_should_be_positive_integer
 
-  scope :leave_within_range, ->(beginning = $biz.periods.after(1.month.ago.beginning_of_month).first.start_time,
-                                closing   = $biz.periods.before(1.month.ago.end_of_month).first.end_time.localtime) {
+  scope :leave_within_range, ->(beginning = Daikichi::Config::Biz.periods.after(1.month.ago.beginning_of_month).first.start_time, closing = Daikichi::Config::Biz.periods.before(1.month.ago.end_of_month).first.end_time.localtime) {
     where(
       '(leave_applications.start_time, leave_applications.end_time) OVERLAPS (timestamp :beginning, timestamp :closing)',
       beginning: beginning, closing: closing
@@ -74,12 +73,12 @@ class LeaveApplication < ApplicationRecord
       leaves_start_time_included.or(leaves_end_time_included)
     end
 
-    def leave_hours_within(beginning = $biz.periods.after(1.month.ago.beginning_of_month).first.start_time,
-                           closing   = $biz.periods.before(1.month.ago.end_of_month).first.end_time)
+    def leave_hours_within(beginning = Daikichi::Config::Biz.periods.after(1.month.ago.beginning_of_month).first.start_time,
+                           closing   = Daikichi::Config::Biz.periods.before(1.month.ago.end_of_month).first.end_time)
       self.leave_within_range(beginning, closing).reduce(0) do |result, la|
         if la.range_exceeded?(beginning, closing)
           @valid_range = [la.start_time, beginning].max..[la.end_time, closing].min
-          result + $biz.within(@valid_range.min, @valid_range.max).in_minutes / 60.0
+          result + Daikichi::Config::Biz.within(@valid_range.min, @valid_range.max).in_minutes / 60.0
         else
           result + la.hours
         end
@@ -93,12 +92,12 @@ class LeaveApplication < ApplicationRecord
     Time.current > self.start_time
   end
 
-  def range_exceeded?(beginning = $biz.periods.after(1.month.ago.beginning_of_month).first.start_time,
-                      closing   = $biz.periods.before(1.month.ago.end_of_month).first.end_time)
+  def range_exceeded?(beginning = Daikichi::Config::Biz.periods.after(1.month.ago.beginning_of_month).first.start_time,
+                      closing   = Daikichi::Config::Biz.periods.before(1.month.ago.end_of_month).first.end_time)
     beginning > self.start_time || closing < self.end_time
   end
 
-  def is_leave_type?(type = :all)
+  def leave_type?(type = :all)
     return true if type.to_sym == :all
     self.leave_type.to_sym == type.to_sym
   end
@@ -124,7 +123,7 @@ class LeaveApplication < ApplicationRecord
 
   def auto_calculated_minutes
     return @minutes = 0 unless start_time && end_time
-    @minutes ||= $biz.within(start_time, end_time).in_minutes
+    @minutes ||= Daikichi::Config::Biz.within(start_time, end_time).in_minutes
   end
 
   def hours_should_be_positive_integer
@@ -134,7 +133,7 @@ class LeaveApplication < ApplicationRecord
   end
 
   def order_by_sequence
-    'array_position(Array%s, leave_type::TEXT)' % Settings.leave_applications.available_quota_types.send(self.leave_type).to_s.tr('"', "'")
+    format 'array_position(Array%s, leave_type::TEXT)', Settings.leave_applications.available_quota_types.send(self.leave_type).to_s.tr('"', "'")
   end
 
   def create_leave_time_usages
@@ -180,12 +179,12 @@ end
 
 class LeaveApplication::ActiveRecord_Associations_CollectionProxy
   def leave_hours_within_month(type: 'all', year: Time.current.year, month: Time.current.month)
-    beginning = $biz.periods.after(Time.zone.local(year, month, 1)).first.start_time
-    closing   = $biz.periods.before(Time.zone.local(year, month, 1).end_of_month).first.end_time
-    records.select { |r| r.is_leave_type?(type) }.reduce(0) do |result, la|
+    beginning = Daikichi::Config::Biz.periods.after(Time.zone.local(year, month, 1)).first.start_time
+    closing   = Daikichi::Config::Biz.periods.before(Time.zone.local(year, month, 1).end_of_month).first.end_time
+    records.select { |r| r.leave_type?(type) }.reduce(0) do |result, la|
       if la.range_exceeded?(beginning, closing)
         @valid_range = [la.start_time, beginning].max..[la.end_time, closing].min
-        result + $biz.within(@valid_range.min, @valid_range.max).in_minutes / 60.0
+        result + Daikichi::Config::Biz.within(@valid_range.min, @valid_range.max).in_minutes / 60.0
       else
         result + la.hours
       end

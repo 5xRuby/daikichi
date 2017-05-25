@@ -50,8 +50,8 @@ class User < ApplicationRecord
     joins(:leave_applications, :leave_times)
       .includes(:leave_applications, :leave_times)
       .merge(LeaveApplication.leave_within_range(
-        $biz.periods.after(Time.zone.local(year, month, 1)).first.start_time,
-        $biz.periods.before(Time.zone.local(year, month, 1).end_of_month).first.end_time
+        Daikichi::Config::Biz.periods.after(Time.zone.local(year, month, 1)).first.start_time,
+        Daikichi::Config::Biz.periods.before(Time.zone.local(year, month, 1).end_of_month).first.end_time
       )
       .approved)
   }
@@ -83,8 +83,8 @@ class User < ApplicationRecord
                                end
   end
 
-  # TODO: change to pre-gen prev_not_effective
-  def get_refilled_annual
+  # TODO: Seems no longer a valid method
+  def refill_annual
     leave_times.find_by(leave_type: 'annual').refill
   end
 
@@ -94,5 +94,4 @@ class User < ApplicationRecord
     leave_time_builder = LeaveTimeBuilder.new self
     leave_time_builder.automatically_import
   end
-
 end

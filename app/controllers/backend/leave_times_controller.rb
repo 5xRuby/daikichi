@@ -30,12 +30,6 @@ class Backend::LeaveTimesController < Backend::BaseController
     params.fetch(:q, {})&.permit(:s, :leave_type_eq, :effective_true, :user_id_eq)
   end
 
-  def new_resource_params
-    p = params.permit(
-      :user_id, :leave_type
-    ).to_h
-  end
-
   def url_after(action)
     if @actions.include?(action)
       url_for(action: :index, leave_type: leave_type)

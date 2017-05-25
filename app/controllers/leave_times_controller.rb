@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 class LeaveTimesController < BaseController
   STARTING_YEAR = Settings.misc.starting_year.to_i
-  SHOWINGS = %i(all effective)
+  SHOWINGS = %i(all effective).freeze
   DEFAULT_SHOWING = 'effective'
   before_action :set_query_object
 
@@ -36,7 +36,7 @@ class LeaveTimesController < BaseController
     @q = LeaveTime.belong_to(current_user).ransack(search_params)
   end
 
-   def search_params
+  def search_params
     params.fetch(:q, {})&.permit(:s, :leave_type_eq, :effective_true)
   end
 end

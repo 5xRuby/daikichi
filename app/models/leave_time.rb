@@ -111,9 +111,9 @@ class LeaveTime < ApplicationRecord
   end
 
   def positive_range
-    unless expiration_date && effective_date && expiration_date >= effective_date
-      errors.add(:effective_date, :range_should_be_positive)
-    end
+    return if self.errors[:effective_date].any? || self.errors[:expiration_date].any?
+    return if expiration_date >= effective_date
+    errors.add(:effective_date, :range_should_be_positive)
   end
 
   def overlaps?

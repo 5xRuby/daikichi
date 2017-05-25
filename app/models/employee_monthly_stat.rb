@@ -20,9 +20,9 @@ class EmployeeMonthlyStat
     if @range.cover?(leave.start_time) and @range.cover?(leave.end_time)
       leave.hours
     elsif @range.cover?(leave.start_time)
-      $biz.within(leave.start_time, @range.end).in_minutes / 60.0
+      Daikichi::Config::Biz.within(leave.start_time, @range.end).in_minutes / 60.0
     else
-      $biz.within(@range.begin, leave.end_time).in_minutes / 60.0
+      Daikichi::Config::Biz.within(@range.begin, leave.end_time).in_minutes / 60.0
     end
   end
 end

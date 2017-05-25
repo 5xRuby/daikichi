@@ -85,9 +85,10 @@ RSpec.describe LeaveApplication, type: :model do
       let(:expiration_date)   { Time.zone.local(2017, 5, 15) }
       let(:start_time)        { Time.zone.local(2017, 5, 1, 9, 30) }
       let(:end_time)          { Time.zone.local(2017, 5, 5, 12, 30) }
-      let(:total_leave_hours) { $biz.within(start_time, end_time).in_hours }
+      let(:total_leave_hours) { Daikichi::Config::Biz.within(start_time, end_time).in_hours }
       before { user.leave_times.destroy_all }
       it 'should successfully create LeaveTimeUsage on sufficient LeaveTime hours' do
+        # TODO: lt is a useless assignment
         lt = user.leave_times.create(leave_type: 'annual', quota: total_leave_hours, usable_hours: total_leave_hours, effective_date: effective_date, expiration_date: expiration_date)
         la = user.leave_applications.create(leave_type: 'annual', start_time: start_time, end_time: end_time, description: 'Test string')
         leave_time_usage = la.leave_time_usages.first
@@ -103,7 +104,7 @@ RSpec.describe LeaveApplication, type: :model do
         la = user.leave_applications.create!(leave_type: 'annual', start_time: start_time, end_time: end_time, description: 'Test string')
         leave_time = LeaveTime.find(lt.id)
         expect(la.leave_time_usages.any?).to be false
-        expect(leave_time.usable_hours).to eq (total_leave_hours - 1)
+        expect(leave_time.usable_hours).to eq total_leave_hours - 1
         expect(leave_time.used_hours).to eq 0
         expect(leave_time.locked_hours).to eq 0
       end
@@ -111,11 +112,11 @@ RSpec.describe LeaveApplication, type: :model do
   end
 
   describe 'scope' do
-    let(:beginning)  { $biz.periods.after(1.month.ago.beginning_of_month).first.start_time }
-    let(:closing)    { $biz.periods.before(1.month.ago.end_of_month).first.end_time }
+    let(:beginning)  { Daikichi::Config::Biz.periods.after(1.month.ago.beginning_of_month).first.start_time }
+    let(:closing)    { Daikichi::Config::Biz.periods.before(1.month.ago.end_of_month).first.end_time }
     describe '.leave_within_range' do
-      let(:start_time) { $biz.time(3, :days).after(beginning) }
-      let(:end_time)   { $biz.time(5, :days).after(beginning) }
+      let(:start_time) { Daikichi::Config::Biz.time(3, :days).after(beginning) }
+      let(:end_time)   { Daikichi::Config::Biz.time(5, :days).after(beginning) }
       subject { described_class.leave_within_range(beginning, closing) }
       let!(:leave_application) do
         create(
@@ -132,8 +133,8 @@ RSpec.describe LeaveApplication, type: :model do
       end
 
       context 'LeaveApplication overlaps specific range' do
-        let(:start_time) { $biz.time(1, :day).before(beginning) }
-        let(:end_time)   { $biz.time(1, :day).after(beginning) }
+        let(:start_time) { Daikichi::Config::Biz.time(1, :day).before(beginning) }
+        let(:end_time)   { Daikichi::Config::Biz.time(1, :day).after(beginning) }
 
         it 'should be included in returned results' do
           expect(subject).to include(leave_application)
@@ -141,16 +142,16 @@ RSpec.describe LeaveApplication, type: :model do
       end
 
       context 'LeaveApplication happened before specific range' do
-        let(:start_time) { $biz.time(2, :days).before(beginning) }
-        let(:end_time)   { $biz.time(1, :day).before(beginning) }
+        let(:start_time) { Daikichi::Config::Biz.time(2, :days).before(beginning) }
+        let(:end_time)   { Daikichi::Config::Biz.time(1, :day).before(beginning) }
         it 'should not be included in returned results' do
           expect(subject).not_to include(leave_application)
         end
       end
 
       context 'LeaveApplication happened after specific range' do
-        let(:start_time) { $biz.periods.after(closing).first.start_time }
-        let(:end_time)   { $biz.time(1, :day).after(start_time) }
+        let(:start_time) { Daikichi::Config::Biz.periods.after(closing).first.start_time }
+        let(:end_time)   { Daikichi::Config::Biz.time(1, :day).after(start_time) }
         it 'should not be included in returned results' do
           expect(subject).not_to include(leave_application)
         end
@@ -159,11 +160,11 @@ RSpec.describe LeaveApplication, type: :model do
   end
 
   describe 'helper method' do
-    let(:beginning)  { $biz.periods.after(1.month.ago.beginning_of_month).first.start_time }
-    let(:closing)    { $biz.periods.before(1.month.ago.end_of_month).first.end_time }
+    let(:beginning)  { Daikichi::Config::Biz.periods.after(1.month.ago.beginning_of_month).first.start_time }
+    let(:closing)    { Daikichi::Config::Biz.periods.before(1.month.ago.end_of_month).first.end_time }
     describe '.leave_hours_within' do
-      let(:start_time) { $biz.time(3, :days).after(beginning) }
-      let(:end_time)   { $biz.time(5, :days).after(beginning) }
+      let(:start_time) { Daikichi::Config::Biz.time(3, :days).after(beginning) }
+      let(:end_time)   { Daikichi::Config::Biz.time(5, :days).after(beginning) }
       subject { described_class.leave_hours_within(beginning, closing) }
 
       context 'within_range' do
@@ -177,8 +178,8 @@ RSpec.describe LeaveApplication, type: :model do
       end
 
       context 'partially overlaps with given range' do
-        let(:start_time) { $biz.time(1, :day).before(beginning) }
-        let(:end_time)   { $biz.periods.before($biz.time(1, :day).after(beginning)).first.end_time }
+        let(:start_time) { Daikichi::Config::Biz.time(1, :day).before(beginning) }
+        let(:end_time)   { Daikichi::Config::Biz.periods.before(Daikichi::Config::Biz.time(1, :day).after(beginning)).first.end_time }
 
         before do
           create(:leave_application, :with_leave_time, start_time: start_time, end_time: end_time)
@@ -190,8 +191,8 @@ RSpec.describe LeaveApplication, type: :model do
       end
 
       context 'out of range' do
-        let(:start_time) { $biz.time(2, :days).before(beginning) }
-        let(:end_time)   { $biz.periods.before($biz.time(1, :day).before(beginning)).first.end_time }
+        let(:start_time) { Daikichi::Config::Biz.time(2, :days).before(beginning) }
+        let(:end_time)   { Daikichi::Config::Biz.periods.before(Daikichi::Config::Biz.time(1, :day).before(beginning)).first.end_time }
 
         before do
           create(:leave_application, :with_leave_time, start_time: start_time, end_time: end_time)
@@ -204,8 +205,8 @@ RSpec.describe LeaveApplication, type: :model do
     end
 
     describe '#range_exceeded?' do
-      let(:start_time) { $biz.time(3, :days).after(beginning) }
-      let(:end_time)   { $biz.periods.before($biz.time(5, :days).after(beginning)).first.end_time }
+      let(:start_time) { Daikichi::Config::Biz.time(3, :days).after(beginning) }
+      let(:end_time)   { Daikichi::Config::Biz.periods.before(Daikichi::Config::Biz.time(5, :days).after(beginning)).first.end_time }
       let(:leave_application) do
         build_stubbed(
           :leave_application,
@@ -231,10 +232,10 @@ RSpec.describe LeaveApplication, type: :model do
       end
     end
 
-    describe '#is_leave_type?' do
+    describe '#leave_type?' do
       let(:type) { 'all' }
       let(:leave_application) { build_stubbed(:leave_application) }
-      subject { leave_application.is_leave_type?(type) }
+      subject { leave_application.leave_type?(type) }
       context 'all' do
         it 'is true with all leave_type' do
           expect(subject).to be_truthy
@@ -249,7 +250,7 @@ RSpec.describe LeaveApplication, type: :model do
         end
 
         it "is false if given leave_type not equals to object's leave_type" do
-          expect(leave_application.is_leave_type?('unknown')).to be_falsy
+          expect(leave_application.leave_type?('unknown')).to be_falsy
         end
       end
     end

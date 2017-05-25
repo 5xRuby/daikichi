@@ -31,8 +31,8 @@ RSpec.describe LeaveTime, type: :model do
       context 'expiration_date earlier than effective_date' do
         let(:params) do
           attributes_for(:leave_time,
-                                     effective_date:  Time.current.strftime('%Y-%m-%d'),
-                                     expiration_date:  1.day.ago .strftime('%Y-%m-%d'))
+                         effective_date:  Time.current.strftime('%Y-%m-%d'),
+                         expiration_date:  1.day.ago .strftime('%Y-%m-%d'))
         end
         it 'is invalid' do
           expect(subject.valid?).to be_falsey
@@ -197,7 +197,7 @@ RSpec.describe LeaveTime, type: :model do
   describe '.scope' do
     let(:beginning) { Time.current }
     let(:ending)    { 1.year.since }
-    let(:effective_date)  { $biz.time(10, :days).before(beginning) }
+    let(:effective_date)  { Daikichi::Config::Biz.time(10, :days).before(beginning) }
     let(:expiration_date) { beginning + 15.days }
     let!(:leave_time) { create(:leave_time, :annual, effective_date: effective_date, expiration_date: expiration_date) }
 
@@ -220,8 +220,8 @@ RSpec.describe LeaveTime, type: :model do
 
       context 'not overlaps at all' do
         context 'before given range' do
-          let(:effective_date)  { $biz.time(10, :days).before(beginning) }
-          let(:expiration_date) { $biz.time(5, :days).before(beginning) }
+          let(:effective_date)  { Daikichi::Config::Biz.time(10, :days).before(beginning) }
+          let(:expiration_date) { Daikichi::Config::Biz.time(5, :days).before(beginning) }
           it 'is not include in returned results' do
             expect(subject).not_to include leave_time
           end
@@ -238,7 +238,7 @@ RSpec.describe LeaveTime, type: :model do
 
       context 'boundary overlaps' do
         context 'only the beginning of the scope' do
-          let(:effective_date)  { $biz.time(5, :days).before(beginning) }
+          let(:effective_date)  { Daikichi::Config::Biz.time(5, :days).before(beginning) }
           let(:expiration_date) { beginning }
           it 'should include LeaveTime when expiration date is beginning of the scope' do
             expect(subject).to include leave_time
@@ -246,8 +246,8 @@ RSpec.describe LeaveTime, type: :model do
         end
 
         context 'before a day of beginning of the scope' do
-          let(:effective_date)  { $biz.time(5, :days).before(beginning) }
-          let(:expiration_date) { $biz.time(1, :day).before(beginning) }
+          let(:effective_date)  { Daikichi::Config::Biz.time(5, :days).before(beginning) }
+          let(:expiration_date) { Daikichi::Config::Biz.time(1, :day).before(beginning) }
           it 'not include LeaveTime when expiration date is one day before beginning of the scope' do
             expect(subject).not_to include leave_time
           end
@@ -271,15 +271,15 @@ RSpec.describe LeaveTime, type: :model do
       end
     end
 
-    describe ".cover?" do
-      context "date is between effective and expiration date range" do
+    describe '.cover?' do
+      context 'date is between effective and expiration date range' do
         it 'is true in LeaveTime date range' do
           date = Time.current.to_date
           expect(leave_time.cover?(date)).to be true
         end
       end
 
-      context "date is on the effective or expiration date range edge" do
+      context 'date is on the effective or expiration date range edge' do
         it 'is true on effective date' do
           expect(leave_time.cover?(effective_date)).to be true
         end
@@ -289,14 +289,14 @@ RSpec.describe LeaveTime, type: :model do
         end
       end
 
-      context "date is before effective date" do
+      context 'date is before effective date' do
         it 'is false before effective date' do
           date = effective_date - 1.day
           expect(leave_time.cover?(date)).to be false
         end
       end
 
-      context "date is after expiration date" do
+      context 'date is after expiration date' do
         it 'is false after expiration date' do
           date = expiration_date + 1.day
           expect(leave_time.cover?(date)).to be false
@@ -317,8 +317,8 @@ RSpec.describe LeaveTime, type: :model do
         end
 
         context 'records not overlaps with give date' do
-          let(:effective_date)  { $biz.time(3, :days).before(beginning) }
-          let(:expiration_date) { $biz.time(1, :day).before(beginning) }
+          let(:effective_date)  { Daikichi::Config::Biz.time(3, :days).before(beginning) }
+          let(:expiration_date) { Daikichi::Config::Biz.time(1, :day).before(beginning) }
           it 'is not include in returned results' do
             expect(subject).not_to include leave_time
           end
