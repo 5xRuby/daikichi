@@ -156,7 +156,7 @@ class LeaveApplication < ApplicationRecord
         start_time: la.start_time.to_formatted_s(:month_date),
         end_time:   la.end_time.to_formatted_s(:month_date),
         link:       url.leave_application_path({ id: la.id })
-      ) + '<br />'
+      )
     end
     errors.add(:base, error_details)
   end

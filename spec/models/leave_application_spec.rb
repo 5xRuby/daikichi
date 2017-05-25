@@ -90,9 +90,15 @@ RSpec.describe LeaveApplication, type: :model do
 
       shared_examples 'invalid' do |overlap_section, status|
         it "should be invalid when overlaps #{overlap_section} of the #{status} leave application" do
-          create(:leave_application, :annual, status, user: user, start_time: start_time, end_time: end_time, description: 'test string')
+          la = create(:leave_application, :annual, status, user: user, start_time: start_time, end_time: end_time, description: 'test string')
           expect(subject.valid?).to be_falsy
-          # expect(subject.errors.)
+          expect(subject.errors[:base]).to include I18n.t(
+            'activerecord.errors.models.leave_application.attributes.base.overlap_application',
+            leave_type: described_class.human_enum_value(:leave_type, la.leave_type),
+            start_time: la.start_time.to_formatted_s(:month_date),
+            end_time:   la.end_time.to_formatted_s(:month_date),
+            link:       Rails.application.routes.url_helpers.leave_application_path({ id: la.id })
+          )
         end
       end
 
