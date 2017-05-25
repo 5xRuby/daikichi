@@ -203,7 +203,7 @@ RSpec.describe LeaveApplication, type: :model do
         end
       end
 
-      let!(:leave_time) { create(:leave_time, :annual, user: user, quota: quota, usable_hours: 100, effective_date: effective_date, expiration_date: expiration_date) }
+      let!(:leave_time) { create(:leave_time, :annual, user: user, quota: quota, usable_hours: quota, effective_date: effective_date, expiration_date: expiration_date) }
       context 'pending application' do
         let!(:leave_application) { create(:leave_application, :annual, user: user, start_time: start_time, end_time: end_time) }
         it_should_behave_like 'revise attribute', :start_time,  Time.zone.local(2017, 5, 3, 9, 30)
