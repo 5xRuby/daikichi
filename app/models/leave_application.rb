@@ -23,6 +23,7 @@ class LeaveApplication < ApplicationRecord
   validates :leave_type, :description, :start_time, :end_time, presence: true
 
   validate :hours_should_be_positive_integer
+  validate :should_not_overlaps_other_applications
 
   scope :leave_within_range, ->(beginning = Daikichi::Config::Biz.periods.after(1.month.ago.beginning_of_month).first.start_time, closing = Daikichi::Config::Biz.periods.before(1.month.ago.end_of_month).first.end_time.localtime) {
     where(
@@ -30,6 +31,11 @@ class LeaveApplication < ApplicationRecord
       beginning: beginning, closing: closing
     )
   }
+
+  scope :personal, ->(user_id, beginning, ending, status_array = ['pending', 'approved']) {
+    where(status: status_array, user_id: user_id).leave_within_range(beginning, ending)
+  }
+
   scope :with_status, ->(status) { where(status: status) }
 
   aasm column: :status, enum: true do
@@ -132,6 +138,29 @@ class LeaveApplication < ApplicationRecord
     errors.add(:start_time, :should_be_earlier) unless self.end_time > self.start_time
   end
 
+  def should_not_overlaps_other_applications
+    return if self.errors[:start_time].any? or self.errors[:end_time].any?
+    overlapped = LeaveApplication.personal(user_id, start_time, end_time).where.not(id: self.id)
+    return unless overlapped.any?
+    overlap_application_error_messages(overlapped)
+  end
+
+  def overlap_application_error_messages(leave_applications)
+    url = Rails.application.routes.url_helpers
+    leave_applications.each do |la|
+      errors.add(
+        :base,
+        I18n.t(
+          'activerecord.errors.models.leave_application.attributes.base.overlap_application',
+          leave_type: LeaveApplication.human_enum_value(:leave_type, la.leave_type),
+          start_time: la.start_time.to_formatted_s(:month_date),
+          end_time:   la.end_time.to_formatted_s(:month_date),
+          link:       url.leave_application_path({ id: la.id })
+        )
+      )
+    end
+  end
+
   def order_by_sequence
     format 'array_position(Array%s, leave_type::TEXT)', Settings.leave_applications.available_quota_types.send(self.leave_type).to_s.tr('"', "'")
   end
@@ -145,8 +174,7 @@ class LeaveApplication < ApplicationRecord
   end
 
   def update_leave_time_usages
-    return unless self.changed?
-
+    return unless self.start_time_changed? or self.end_time_changed? or self.description_changed?
     case aasm.from_state
     when :pending then return_leave_time_usable_hours
     when :approved then return_approved_application_usable_hours

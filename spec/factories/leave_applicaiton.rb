@@ -23,9 +23,22 @@ FactoryGirl.define do
       leave_type 'annual'
     end
 
+    trait :pending do
+      status 'pending'
+    end
+
     trait :approved do
       status 'approved'
       association :manager, factory: [:user, :manager]
+    end
+
+    trait :rejected do
+      status 'rejected'
+      association :manager, factory: [:user, :manager]
+    end
+
+    trait :canceled do
+      status 'canceled'
     end
 
     trait :happened do

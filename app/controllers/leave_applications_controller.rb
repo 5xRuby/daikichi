@@ -13,7 +13,6 @@ class LeaveApplicationsController < BaseController
     if @current_object.save
       action_success
     else
-      @error_message = @current_object.errors[:hours]
       render action: :new
     end
   end

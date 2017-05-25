@@ -90,8 +90,8 @@ class LeaveTimeUsageBuilder
   end
 
   def append_leave_application_error_message
-    @leave_application.errors.add(:hours, I18n.t('warnings.leave_time_not_sufficient'))
-    @leave_hours_by_date.each_pair { |date, hours| @leave_application.errors.add(:hours, "\n" + date.strftime('%Y/%m/%d') + ' 缺少額度：' + hours.to_s + ' 小時') unless hours.zero? }
+    @leave_application.errors.add(:hours, :leave_time_not_sufficient)
+    @leave_hours_by_date.each { |date, hours| @leave_application.errors.add(:hours, :lacking_hours, date: date.to_formatted_s('month_date'), hours: hours) }
   end
 
   def create_leave_time_usage
