@@ -8,7 +8,7 @@ zh-TW:
         plz_select_leave_type: 請選擇要篩選的休假類別
         plz_select_user: 請選擇要篩選的使用者
         plz_select_effectiveness_state: 所有額度
-      show:
+      show: &leave_application_mapping
         title: 額度檢視 %{id}.%{user_name} - %{leave_type} 額度
         quota_info: 額度基本資料
         quota_usage_info: 額度使用情形 (假單)
@@ -31,3 +31,6 @@ zh-TW:
 
   leave_times:
       <<: *leave_times_filter_prompt
+      show:
+        <<: *leave_application_mapping
+        title: 額度檢視 %{id} - %{leave_type} 額度

@@ -32,11 +32,7 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :leave_times, only: [:index]
-
-    get "leave_time/:type",
-      to: "leave_times#show",
-      as: "leave_time"
+    resources :leave_times, only: [:index, :show]
 
   end
 end
