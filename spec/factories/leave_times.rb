@@ -11,7 +11,7 @@ FactoryGirl.define do
     locked_hours    0
     remark          'Test string'
 
-    Settings.leave_applications.leave_types.keys.each do |type|
+    Settings.leave_times.quota_types.keys.each do |type|
       trait type.to_sym do
         leave_type type
       end
