@@ -25,6 +25,9 @@ zh-TW:
       index:
         plz_select_role: 請選擇要篩選的員工身份
         plz_select_user: 請選擇要篩選的使用者
+        id_eq: 依員工姓名篩選
+        login_name_cont_any: 輸入員工帳號搜尋
+        role_eq: 依員工身份篩選
 
   leave_times:
       <<: *leave_times_filter_prompt
