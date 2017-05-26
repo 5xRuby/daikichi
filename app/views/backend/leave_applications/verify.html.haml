@@ -20,12 +20,8 @@
     %tr
       %th= t_attribute(:leave_time_usage_builder, current_object)
       %td
-        - LeaveTimeUsageBuilder.new(current_object).leave_hours_by_date.each do |daily|
-          %li
-            = l daily.first, format: :long
-            \ :
-            = daily.second
-            \  小時
+        - current_object.leave_hours_by_dates.each do |date|
+          %li #{ l date.date, format: :detailed }：#{ date.hours } 小時
     = tr_by_object :description
 
     %tr

@@ -7,31 +7,27 @@
       %th= t_attribute(:leave_type, current_object)
       %td= LeaveTime.human_enum_value(:leave_types, current_object.leave_type)
 
-    %tr  
+    %tr
       %th= t_attribute(:start_time, current_object)
       %td= l current_object.start_time, format: :long
 
-    %tr  
+    %tr
       %th= t_attribute(:end_time, current_object)
       %td= l current_object.end_time, format: :long
 
     = tr_by_object :hours
     %tr
       %th= t_attribute(:leave_time_usage_builder, current_object)
-      %td 
-        - LeaveTimeUsageBuilder.new(current_object).leave_hours_by_date.each do |daily|
-          %li 
-            = l daily.first, format: :long
-            \ :
-            = daily.second
-            \  小時
+      %td
+        - current_object.leave_hours_by_dates.each do |date|
+          %li #{ l date.date, format: :detailed }：#{ date.hours } 小時
 
     = tr_by_object :description
-    
+
     %tr
       %th= t_attribute(:status, current_object)
       %td= LeaveApplication.human_enum_value(:status, current_object.status)
-    
+
     %tr
       %th= t_attribute(:sign_date, current_object)
       %td= current_object.sign_date ? l(current_object.sign_date, format: :long) : nil
@@ -71,6 +67,3 @@
           %td.text-right= hours_to_humanize usage.leave_time.usable_hours
           %td.text-right= l usage.leave_time.effective_date, format: :long
           %td.text-right= l usage.leave_time.expiration_date, format: :long
-
-  
-

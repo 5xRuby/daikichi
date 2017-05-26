@@ -1,0 +1,1 @@
+LeaveApplication.add_observer LeaveApplicationObserver.instance

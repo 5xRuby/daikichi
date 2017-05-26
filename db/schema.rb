@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170413072816) do
+ActiveRecord::Schema.define(version: 20170525103302) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -52,6 +52,15 @@ ActiveRecord::Schema.define(version: 20170413072816) do
     t.integer  "leave_time_id"
     t.index ["manager_id"], name: "index_leave_applications_on_manager_id", using: :btree
     t.index ["uuid"], name: "index_leave_applications_on_uuid", unique: true, using: :btree
+  end
+
+  create_table "leave_hours_by_dates", force: :cascade do |t|
+    t.integer  "leave_application_id"
+    t.date     "date"
+    t.integer  "hours"
+    t.datetime "created_at",           null: false
+    t.datetime "updated_at",           null: false
+    t.index ["leave_application_id"], name: "index_leave_hours_by_dates_on_leave_application_id", using: :btree
   end
 
   create_table "leave_time_usages", force: :cascade do |t|
@@ -102,6 +111,7 @@ ActiveRecord::Schema.define(version: 20170413072816) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
   end
 
+  add_foreign_key "leave_hours_by_dates", "leave_applications"
   add_foreign_key "leave_time_usages", "leave_applications"
   add_foreign_key "leave_time_usages", "leave_times"
 end
