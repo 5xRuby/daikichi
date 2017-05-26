@@ -20,7 +20,7 @@ class LeaveTimeUsageBuilder
       @available_leave_times.each do |lt|
         @leave_hours_by_date.keys.each do |date|
           break if usable_hours_is_empty?(lt)
-          next if corresponding_leave_hours_date_is_zero?(date)
+          next if corresponding_leave_hours_date_is_zero?(date) or not in_leave_time_inteval_range?(lt, date)
           deduct_leave_hours_by_date(lt, date)
         end
         stack_leave_time_usage_record(lt)
@@ -70,6 +70,10 @@ class LeaveTimeUsageBuilder
 
   def corresponding_leave_hours_date_is_zero?(date)
     @leave_hours_by_date[date].zero?
+  end
+
+  def in_leave_time_inteval_range?(leave_time, date)
+    date.between?(leave_time.effective_date, leave_time.expiration_date)
   end
 
   def stack_leave_time_usage_record(leave_time)
