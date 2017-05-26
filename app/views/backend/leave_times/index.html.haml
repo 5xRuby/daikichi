@@ -56,9 +56,9 @@
     %tr
       %th.text-right{colspan: 3} Sum
       %td.active.text-right= hours_to_humanize current_collection.to_a.sum(&:quota)
-      %td.active.text-right= hours_to_humanize current_collection.to_a.sum(&:usable_hours)
-      %td.active.text-right= hours_to_humanize current_collection.to_a.sum(&:used_hours)
       %td.active.text-right= hours_to_humanize current_collection.to_a.sum(&:locked_hours)
+      %td.active.text-right= hours_to_humanize current_collection.to_a.sum(&:used_hours)
+      %td.active.text-right= hours_to_humanize current_collection.to_a.sum(&:usable_hours)
 
 .text-center
   = paginate current_collection
