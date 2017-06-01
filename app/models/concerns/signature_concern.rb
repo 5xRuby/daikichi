@@ -8,7 +8,6 @@ module SignatureConcern
         manager_id: manager.id,
         sign_date: Time.current
       }
-      save!
     end
   end
 

@@ -154,10 +154,6 @@ RSpec.describe LeaveApplication, type: :model do
       it { is_expected.to callback(:create_leave_time_usages).after(:create) }
     end
 
-    context 'should update LeaveTimeUsage after LeaveApplication updated' do
-      it { is_expected.to callback(:update_leave_time_usages).after(:update) }
-    end
-
     context '.create_leave_time_usages' do
       let(:total_leave_hours) { Daikichi::Config::Biz.within(start_time, end_time).in_hours }
 
@@ -189,7 +185,7 @@ RSpec.describe LeaveApplication, type: :model do
       shared_examples 'revise attribute' do |attribute, value|
         it "should successfully recreate LeaveTimeUsage when application #{attribute} changed" do
           leave_application.assign_attributes(attribute => value)
-          leave_application.revise(attribute => value)
+          leave_application.revise!
           leave_application.reload
           used_hours = Daikichi::Config::Biz.within(leave_application.start_time, leave_application.end_time).in_hours
           leave_time_usage = LeaveTimeUsage.where(leave_application: leave_application).first

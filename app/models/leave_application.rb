@@ -12,7 +12,8 @@ class LeaveApplication < ApplicationRecord
   after_initialize  :set_primary_id
   before_validation :assign_hours
   after_create  :create_leave_time_usages
-  after_update  :update_leave_time_usages
+  before_update :transfer_locked_hours_to_used_hours
+  before_update :return_leave_time_usable_hours
 
   belongs_to :user
   belongs_to :manager, class_name: 'User', foreign_key: 'manager_id'
@@ -48,21 +49,21 @@ class LeaveApplication < ApplicationRecord
     state :rejected
     state :canceled
 
-    event :approve, after: [proc { |manager| sign(manager) }] do
-      transitions to: :approved, from: :pending, after: :transfer_locked_hours_to_used_hours
+    event :approve, before: [proc { |manager| sign(manager) }] do
+      transitions to: :approved, from: :pending
     end
 
-    event :reject, after: proc { |manager| sign(manager) } do
-      transitions to: :rejected, from: :pending, after: :return_leave_time_usable_hours
+    event :reject, before: proc { |manager| sign(manager) } do
+      transitions to: :rejected, from: :pending
     end
 
-    event :revise, after: proc { |params| update_leave_application(params) } do
+    event :revise do
       transitions to: :pending, from: [:pending, :approved]
     end
 
     event :cancel do
-      transitions to: :canceled, from: :pending, after: :return_leave_time_usable_hours
-      transitions to: :canceled, from: :approved, unless: :happened?, after: :return_approved_application_usable_hours
+      transitions to: :canceled, from: :pending
+      transitions to: :canceled, from: :approved, unless: :happened?
     end
   end
 
@@ -165,40 +166,28 @@ class LeaveApplication < ApplicationRecord
     raise ActiveRecord::Rollback unless LeaveTimeUsageBuilder.new(self).build_leave_time_usages
   end
 
-  def update_leave_application(resource_params)
-    self.update(resource_params)
-  end
-
-  def update_leave_time_usages
-    return if aasm.current_event != :revise
-
-    case aasm.from_state
-    when :pending then return_leave_time_usable_hours
-    when :approved then return_approved_application_usable_hours
-    end
-    create_leave_time_usages
+  def current_aasm_event?(event)
+    [event, :"#{event}!"].include? aasm.current_event
   end
 
   def transfer_locked_hours_to_used_hours
+    return unless current_aasm_event? :approve
     self.leave_time_usages.each { |usage| usage.leave_time.use_hours!(usage.used_hours) }
   end
 
-  def revert_used_hours_to_locked_hours
-    self.leave_time_usages.each { |usage| usage.leave_time.unuse_and_lock_hours!(usage.used_hours) }
-  end
-
   def return_leave_time_usable_hours
-    self.leave_time_usages.each do |usage|
-      usage.leave_time.unlock_hours!(usage.used_hours)
-      usage.destroy
-    end
+    return unless current_aasm_event?(:reject) or current_aasm_event?(:cancel) or current_aasm_event?(:revise)
+    self.leave_time_usages.each { |usage| revert_hours(usage) }
+    create_leave_time_usages if current_aasm_event?(:revise)
   end
 
-  def return_approved_application_usable_hours
-    self.leave_time_usages.each do |usage|
+  def revert_hours(usage)
+    if aasm.from_state == :pending
+      usage.leave_time.unlock_hours!(usage.used_hours)
+    else
       usage.leave_time.unuse_hours!(usage.used_hours)
-      usage.destroy
     end
+    usage.destroy
   end
 end
 
