@@ -48,6 +48,8 @@ gem 'settingslogic'
 gem 'simple_form'
 gem 'whenever', require: false
 gem 'ransack', git: 'https://github.com/activerecord-hackery/ransack.git'
+gem 'activerecord-import'
+gem 'rails-observers', git: 'https://github.com/rails/rails-observers.git'
 
 group :development, :test do
   gem 'awesome_print'

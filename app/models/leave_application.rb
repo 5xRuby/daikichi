@@ -9,15 +9,16 @@ class LeaveApplication < ApplicationRecord
   acts_as_paranoid
   paginates_per 15
 
-  after_initialize :set_primary_id
+  after_initialize  :set_primary_id
   before_validation :assign_hours
-  after_create :create_leave_time_usages
-  after_update :update_leave_time_usages
+  after_create  :create_leave_time_usages
+  after_update  :update_leave_time_usages
 
   belongs_to :user
   belongs_to :manager, class_name: 'User', foreign_key: 'manager_id'
   has_many   :leave_times, through: :leave_time_usages
   has_many   :leave_time_usages
+  has_many   :leave_hours_by_dates, dependent: :delete_all
   has_many   :leave_application_logs, foreign_key: 'leave_application_uuid', primary_key: 'uuid', dependent: :destroy
 
   validates :leave_type, :description, :start_time, :end_time, presence: true
@@ -37,6 +38,9 @@ class LeaveApplication < ApplicationRecord
   }
 
   scope :with_status, ->(status) { where(status: status) }
+  scope :with_year,   ->(year = Time.current.year) {
+    leave_within_range(Time.zone.local(year).beginning_of_year, Time.zone.local(year).end_of_year)
+  }
 
   aasm column: :status, enum: true do
     state :pending, initial: true
@@ -70,29 +74,17 @@ class LeaveApplication < ApplicationRecord
     Arel.sql("DATE((#{table_name}.end_time AT TIME ZONE 'UTC') AT TIME ZONE 'Asia/Taipei')")
   end
 
-  class << self
-    def with_year(year = Time.current.year)
-      t = Time.zone.local(year)
-      range = (t.beginning_of_year..t.end_of_year)
-      leaves_start_time_included = where(start_time: range)
-      leaves_end_time_included = where(end_time: range)
-      leaves_start_time_included.or(leaves_end_time_included)
-    end
-
-    def leave_hours_within(beginning = Daikichi::Config::Biz.periods.after(1.month.ago.beginning_of_month).first.start_time,
-                           closing   = Daikichi::Config::Biz.periods.before(1.month.ago.end_of_month).first.end_time)
-      self.leave_within_range(beginning, closing).reduce(0) do |result, la|
-        if la.range_exceeded?(beginning, closing)
-          @valid_range = [la.start_time, beginning].max..[la.end_time, closing].min
-          result + Daikichi::Config::Biz.within(@valid_range.min, @valid_range.max).in_minutes / 60.0
-        else
-          result + la.hours
-        end
+  def self.leave_hours_within(beginning = Daikichi::Config::Biz.periods.after(1.month.ago.beginning_of_month).first.start_time,
+                              closing   = Daikichi::Config::Biz.periods.before(1.month.ago.end_of_month).first.end_time)
+    self.leave_within_range(beginning, closing).reduce(0) do |result, la|
+      if la.range_exceeded?(beginning, closing)
+        @valid_range = [la.start_time, beginning].max..[la.end_time, closing].min
+        result + Daikichi::Config::Biz.within(@valid_range.min, @valid_range.max).in_minutes / 60.0
+      else
+        result + la.hours
       end
     end
   end
-
-  attr_accessor :import_mode
 
   def happened?
     Time.current > self.start_time
@@ -115,6 +107,10 @@ class LeaveApplication < ApplicationRecord
       .overlaps(start_time.beginning_of_day, end_time.end_of_day)
       .order(order_by_sequence)
       .order(:expiration_date, :usable_hours)
+  end
+
+  def interval_changed?
+    @interval_changed ||= self.new_record? || self.start_time_changed? || self.end_time_changed?
   end
 
   private

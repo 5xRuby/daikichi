@@ -32,6 +32,7 @@ namespace :import_data do
     end
   end
 
+  # TODO: No longer a valid tasks, needs to be removed
   # 匯入過去所有請的假
   desc "users' leaves"
   task leaves: :environment do
