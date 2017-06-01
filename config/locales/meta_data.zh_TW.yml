@@ -118,6 +118,7 @@ zh-TW:
   nav:
     leave_applications: "請假系統"
     backend: "員工管理"
+    manage: "休假管理"
 
   title:
     devise/registrations:
@@ -144,8 +145,6 @@ zh-TW:
       approve: "核准"
       reject: "駁回"
       statistics: "員工休假狀況"
-    backend/monthly_leave_times:
-      index: "員工休假狀況"
     backend/leave_times:
       index: "員工休假額度"
       new: "新增員工休假額度"
@@ -191,9 +190,7 @@ zh-TW:
     backend/leave_applications:
       index: "審核假單"
       verify: "審核假單"
-      statistics: "員工休假統計 v.2"
-    backend/monthly_leave_times:
-      index: "%{year} 年 %{month} 月 員工休假狀況"
+      statistics: "員工休假統計"
     backend/leave_times:
       index: "員工休假額度"
       new: "新增員工休假額度"
