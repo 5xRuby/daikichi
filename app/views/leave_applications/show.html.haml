@@ -65,7 +65,7 @@
     %tbody
       - current_object.leave_time_usages.each do |usage|
         %tr
-          %td.text-right= usage.leave_time_id
+          %td.text-right= link_to usage.leave_time_id, leave_time_path(usage.leave_time_id)
           %td.text-center= LeaveTime.human_enum_value(:leave_type, usage.leave_time.leave_type)
           %td.text-right= hours_to_humanize usage.used_hours
           %td.text-right= hours_to_humanize usage.leave_time.usable_hours

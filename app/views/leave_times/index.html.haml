@@ -37,7 +37,7 @@
   %tbody
     - current_collection.each do |quota|
       %tr
-        %td.text-right= quota.id
+        %td.text-right= link_to quota.id, leave_time_path(quota.id)
         %td.text-center= LeaveTime.human_enum_value(:leave_type, quota.leave_type)
         %td.text-right= hours_to_humanize quota.quota
         %td.text-right= hours_to_humanize quota.locked_hours
@@ -49,10 +49,11 @@
     %tr
       %th.text-right{colspan: 2} Sum
       %td.active.text-right= hours_to_humanize current_collection.to_a.sum(&:quota)
-      %td.active.text-right= hours_to_humanize current_collection.to_a.sum(&:usable_hours)
-      %td.active.text-right= hours_to_humanize current_collection.to_a.sum(&:used_hours)
       %td.active.text-right= hours_to_humanize current_collection.to_a.sum(&:locked_hours)
+      %td.active.text-right= hours_to_humanize current_collection.to_a.sum(&:used_hours)
+      %td.active.text-right= hours_to_humanize current_collection.to_a.sum(&:usable_hours)
 
 .text-center
   = paginate current_collection
+
 

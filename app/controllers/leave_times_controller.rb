@@ -9,15 +9,6 @@ class LeaveTimesController < BaseController
 
   def index; end
 
-  def show
-    leave_type = params[:type]
-    leave_time = LeaveTime.personal current_user.id, leave_type
-
-    respond_to do |format|
-      format.json { render json: leave_time }
-    end
-  end
-
   def showing
     @showing ||= params[:showing] || DEFAULT_SHOWING
   end
@@ -26,7 +17,7 @@ class LeaveTimesController < BaseController
 
   def collection_scope
     if params[:id]
-      LeaveTime
+      LeaveTime.preload(:user, leave_time_usages: :leave_application)
     else
       @q.result.preload(:user)
     end
