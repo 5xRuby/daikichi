@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 class LeaveApplicationsController < BaseController
   include Selectable
+  before_action :set_query_object
 
   def index
     @current_collection = collection_scope.with_year(specific_year)
@@ -54,8 +55,18 @@ class LeaveApplicationsController < BaseController
     if params[:id]
       LeaveApplication.where(user_id: current_user.id)
     else
-      LeaveApplication.where(user_id: current_user.id).order(id: :desc)
+      @q.result.order(id: :desc).page(params[:page])
     end
+  end
+
+  def search_params
+    @search_params = params.fetch(:q, {})&.permit(
+      :s, :leave_type_eq, :status_eq, :end_date_gteq, :start_date_lteq)
+    @search_params.present? ? @search_params : @search_params.merge(status_eq: :pending)
+  end
+
+  def set_query_object
+    @q = LeaveApplication.ransack(search_params)
   end
 
   def resource_params
