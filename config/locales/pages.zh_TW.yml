@@ -30,7 +30,7 @@ zh-TW:
         role_eq: 依員工身份篩選
 
   leave_times:
-      <<: *leave_times_filter_prompt
       show:
         <<: *leave_application_mapping
         title: 額度檢視 %{id} - %{leave_type} 額度
+        
