@@ -34,7 +34,7 @@ class LeaveApplication < ApplicationRecord
     )
   }
 
-  scope :personal, ->(user_id, beginning, ending, status_array = ['pending', 'approved']) {
+  scope :personal, ->(user_id, beginning, ending, status_array = %w(pending approved)) {
     where(status: status_array, user_id: user_id).leave_within_range(beginning, ending)
   }
 
@@ -156,7 +156,7 @@ class LeaveApplication < ApplicationRecord
           leave_type: LeaveApplication.human_enum_value(:leave_type, la.leave_type),
           start_time: la.start_time.to_formatted_s(:month_date),
           end_time:   la.end_time.to_formatted_s(:month_date),
-          link:       url.leave_application_path({ id: la.id })
+          link:       url.leave_application_path(id: la.id)
         )
       )
     end
