@@ -139,83 +139,189 @@ RSpec.describe LeaveApplication, type: :model do
     end    
   end
 
+  describe 'aasm' do
+    let(:manager) { create(:user, :manager) }
+    shared_examples 'transitions' do |params|
+      let(:leave_application) { create(:leave_application, params[:from]).reload }
+      describe 'without bang' do
+        it "transition from #{params[:from]} to #{params[:to]} with action #{params[:with_action]}" do
+          expect(leave_application.send(:"#{params[:from]}?")).to be_truthy
+          expect(leave_application.send(:"may_#{params[:with_action]}?")).to be_truthy
+          leave_application.send params[:with_action], (params[:manager_required] ? manager : nil)
+          expect(leave_application.send(:"#{params[:to]}?")).to be_truthy
+        end
+
+        it "should not update state when using AASM method #{params[:with_action]} without bang" do
+          leave_application.send params[:with_action], (params[:manager_required] ? manager : nil)
+          expect(leave_application.send :"#{params[:to]}?").to be_truthy
+          leave_application.reload
+          expect(leave_application.send :"#{params[:from]}?").to be_truthy
+        end
+      end
+
+      describe 'bang method' do
+        it "transition from #{params[:from]} to #{params[:to]} with action #{params[:with_action]}!" do
+          expect(leave_application.send(:"#{params[:from]}?")).to be_truthy
+          expect(leave_application.send(:"may_#{params[:with_action]}?")).to be_truthy
+          leave_application.send :"#{params[:with_action]}!", (params[:manager_required] ? manager : nil)
+          expect(leave_application.send(:"#{params[:to]}?")).to be_truthy
+        end
+
+        it "should update state when using AASM method #{params[:with_action]}" do
+          leave_application.send params[:with_action], (params[:manager_required] ? manager : nil)
+          expect(leave_application.send :"#{params[:to]}?").to be_truthy
+          leave_application.reload
+          expect(leave_application.send :"#{params[:from]}?").to be_truthy
+        end
+      end
+    end
+
+    it_should_behave_like 'transitions', from: :pending,  to: :approved, with_action: :approve, manager_required: true
+    it_should_behave_like 'transitions', from: :pending,  to: :canceled, with_action: :cancel
+    it_should_behave_like 'transitions', from: :pending,  to: :rejected, with_action: :reject,  manager_required: true
+    it_should_behave_like 'transitions', from: :pending,  to: :pending,  with_action: :revise
+    it_should_behave_like 'transitions', from: :approved, to: :pending,  with_action: :revise
+
+    describe 'conditional transition' do
+      let(:leave_application) { create(:leave_application, :happened) }
+      it 'can transition from approved to canceled unless LeaveApplication happened already' do
+        leave_application.reload.approve!(create(:user, :hr))
+        expect(leave_application.happened?).to be_truthy
+        expect(leave_application.approved?).to be_truthy
+        expect(leave_application.may_cancel?).to be_falsy
+      end
+    end
+  end
+
   describe 'callback' do
-    let(:user)            { create(:user) }
-    let(:quota)           { 100 }
-    let(:effective_date)  { Time.zone.local(2017, 5, 1) }
-    let(:expiration_date) { Time.zone.local(2017, 5, 30) }
-    let(:start_time)      { Time.zone.local(2017, 5, 1, 9, 30) }
-    let(:end_time)        { Time.zone.local(2017, 5, 5, 12, 30) }
+    let(:user)              { create(:user, :hr) }
+    let(:effective_date)    { Time.zone.local(2017, 5, 2) }
+    let(:expiration_date)   { Time.zone.local(2017, 5, 30) }
+    let(:start_time)        { Time.zone.local(2017, 5, 2, 9, 30) }
+    let(:end_time)          { Time.zone.local(2017, 5, 5, 10, 30) }
+    let(:total_leave_hours) { Daikichi::Config::Biz.within(start_time, end_time).in_hours }
+    let(:leave_application) { create(:leave_application, :annual, user: user, start_time: start_time, end_time: end_time) }
 
     before { User.skip_callback(:create, :after, :auto_assign_leave_time) }
     after  { User.set_callback(:create, :after, :auto_assign_leave_time)  }
 
-    context 'should create LeaveTimeUsage after LeaveApplication created' do
-      it { is_expected.to callback(:create_leave_time_usages).after(:create) }
-    end
+    describe '.create_leave_time_usages' do
+      let!(:leave_time)       { create(:leave_time, :annual, user: user, quota: total_leave_hours, usable_hours: total_leave_hours, effective_date: effective_date, expiration_date: expiration_date) }
+      context 'after_create' do 
+        it { is_expected.to callback(:create_leave_time_usages).after(:create) }
 
-    context '.create_leave_time_usages' do
-      let(:total_leave_hours) { Daikichi::Config::Biz.within(start_time, end_time).in_hours }
+        it 'should successfully create LeaveTimeUsage on sufficient LeaveTime hours' do
+          leave_time_usage = leave_application.leave_time_usages.first
+          leave_time.reload
+          expect(leave_time_usage.used_hours).to eq total_leave_hours
+          expect(leave_time_usage.leave_time).to eq leave_time
+          expect(leave_time.locked_hours).to eq total_leave_hours
+        end
 
-      it 'should successfully create LeaveTimeUsage on sufficient LeaveTime hours' do
-        # TODO: lt is a useless assignment
-        lt = create(:leave_time, :annual, user: user, quota: total_leave_hours, usable_hours: total_leave_hours, effective_date: effective_date, expiration_date: expiration_date)
-        la = create(:leave_application, :annual, user: user, start_time: start_time, end_time: end_time, description: 'Test string')
-        leave_time_usage = la.leave_time_usages.first
-        lt.reload
-        expect(leave_time_usage.used_hours).to eq total_leave_hours
-        expect(leave_time_usage.leave_time).to eq lt
-        expect(lt.usable_hours).to eq 0
-        expect(lt.used_hours).to eq 0
-        expect(lt.locked_hours).to eq total_leave_hours
-      end
-
-      it 'should not create LeaveTimeUsage when insufficient LeaveTime hours' do
-        lt = create(:leave_time, :annual, user: user, quota: total_leave_hours - 1, usable_hours: total_leave_hours - 1, effective_date: effective_date, expiration_date: expiration_date)
-        la = create(:leave_application, :annual, user: user, start_time: start_time, end_time: end_time)
-        lt.reload
-        expect(la.leave_time_usages.any?).to be false
-        expect(lt.usable_hours).to eq (total_leave_hours - 1)
-        expect(lt.used_hours).to eq 0
-        expect(lt.locked_hours).to eq 0
-      end
-    end
-
-    context '.update_leave_time_usages' do
-      shared_examples 'revise attribute' do |attribute, value|
-        it "should successfully recreate LeaveTimeUsage when application #{attribute} changed" do
-          leave_application.assign_attributes(attribute => value)
-          leave_application.revise!
-          leave_application.reload
-          used_hours = Daikichi::Config::Biz.within(leave_application.start_time, leave_application.end_time).in_hours
-          leave_time_usage = LeaveTimeUsage.where(leave_application: leave_application).first
-          leave_time = leave_time_usage.leave_time
-          expect(leave_application.hours).to eq used_hours
-          expect(leave_application.status).to eq "pending"
-          expect(leave_time_usage.used_hours).to eq used_hours
-          expect(leave_time.usable_hours).to eq quota - used_hours
-          expect(leave_time.used_hours).to eq 0
-          expect(leave_time.locked_hours).to eq used_hours
+        it 'should not create LeaveTimeUsage when insufficient LeaveTime hours' do
+          la = create(:leave_application, :annual, user: user, start_time: start_time, end_time: end_time + 1.hour)
+          expect(la.errors.any?).to be_truthy
+          expect(la.leave_time_usages.any?).to be false
+          expect(leave_time.usable_hours).to eq total_leave_hours
         end
       end
 
-      let!(:leave_time) { create(:leave_time, :annual, user: user, quota: quota, usable_hours: quota, effective_date: effective_date, expiration_date: expiration_date) }
-      context 'pending application' do
-        let!(:leave_application) { create(:leave_application, :annual, user: user, start_time: start_time, end_time: end_time) }
-        it_should_behave_like 'revise attribute', :start_time,  Time.zone.local(2017, 5, 3, 9, 30)
-        it_should_behave_like 'revise attribute', :end_time,    Time.zone.local(2017, 5, 3, 12, 30)
-        it_should_behave_like 'revise attribute', :description, Faker::Lorem.paragraph
-      end
+      context 'after_update' do
+        it { is_expected.to callback(:create_leave_time_usages).after(:update) }
+        it 'should recreate LeaveTimeUsage only when AASM event is "revise"' do
+          la = create(:leave_application, :annual, :approved, user: user, start_time: start_time, end_time: end_time)
+          leave_time_usage = la.leave_time_usages.first
+          leave_time.reload
+          expect(leave_time_usage.used_hours).to eq total_leave_hours
+          expect(leave_time_usage.leave_time).to eq leave_time
+          expect(leave_time.used_hours).to eq total_leave_hours
 
-      context 'approved application' do
-        let!(:leave_application) do 
-          create(:leave_application, :annual, user: user, start_time: start_time, end_time: end_time)
-          user.leave_applications.first.approve! user
-          user.leave_applications.first
+          la.assign_attributes(start_time: start_time + 1.hour)
+          la.revise!
+          leave_time_usage = la.leave_time_usages.first
+          leave_time.reload
+          expect(leave_time_usage.used_hours).to eq (total_leave_hours - 1)
+          expect(leave_time_usage.leave_time).to eq leave_time
+          expect(leave_time.locked_hours).to eq (total_leave_hours - 1)
         end
-        it_should_behave_like 'revise attribute', :start_time,  Time.zone.local(2017, 5, 3, 9, 30)
-        it_should_behave_like 'revise attribute', :end_time,    Time.zone.local(2017, 5, 3, 12, 30)
-        it_should_behave_like 'revise attribute', :description, Faker::Lorem.paragraph
+      end
+    end
+
+    describe '.hours_update' do
+      let(:quota) { 100 }
+      let!(:leave_time)       { create(:leave_time, :annual, user: user, quota: quota, usable_hours: quota, effective_date: effective_date, expiration_date: expiration_date) }
+      context 'before_update' do
+        it { is_expected.to callback(:hours_transfer).before(:update) }
+
+        describe 'AASM "approve" event' do
+          it 'should transfer locked_hours to used_hours' do
+            leave_time_usage = leave_application.leave_time_usages.first
+            leave_time.reload
+            expect(leave_time_usage.leave_time).to eq leave_time
+            expect(leave_time.usable_hours).to eq (quota - total_leave_hours)
+            expect(leave_time.locked_hours).to eq total_leave_hours
+            leave_application.reload.approve! user
+            leave_time.reload
+            expect(leave_time.usable_hours).to eq (quota - total_leave_hours)
+            expect(leave_time.used_hours).to eq total_leave_hours
+          end
+        end
+
+        shared_examples 'return locked_hours back to used_hours' do |event, required_user|
+          describe "AASM \"#{event}\" event" do
+            it "should return locked_hours back to used_hours when #{event}ed" do
+              leave_time_usage = leave_application.leave_time_usages.first
+              leave_time.reload
+              expect(leave_time_usage.leave_time).to eq leave_time
+              expect(leave_time.usable_hours).to eq (quota - total_leave_hours)
+              expect(leave_time.locked_hours).to eq total_leave_hours
+              leave_application.reload.send :"#{event}!", (required_user ? user : nil)
+              leave_time.reload
+              expect(leave_time.usable_hours).to eq quota
+              expect(leave_time.locked_hours).to be_zero
+            end
+          end
+        end
+
+        it_should_behave_like 'return locked_hours back to used_hours', :reject, true
+        it_should_behave_like 'return locked_hours back to used_hours', :cancel
+
+        describe 'AASM "revise" event' do
+          shared_examples 'revise attribute' do |attribute, value|
+            it "should successfully recreate LeaveTimeUsage when application #{attribute} changed" do
+              leave_application.assign_attributes(attribute => value)
+              leave_application.revise!
+              leave_application.reload
+              used_hours = Daikichi::Config::Biz.within(leave_application.start_time, leave_application.end_time).in_hours
+              leave_time_usage = leave_application.leave_time_usages.first
+              leave_time.reload
+              expect(leave_application.hours).to eq used_hours
+              expect(leave_application.status).to eq "pending"
+              expect(leave_time_usage.used_hours).to eq used_hours
+              expect(leave_time_usage.leave_time).to eq leave_time
+              expect(leave_time.usable_hours).to eq quota - used_hours
+              expect(leave_time.locked_hours).to eq used_hours
+            end
+          end
+
+          context 'pending application' do
+            let!(:leave_application) { create(:leave_application, :annual, user: user, start_time: start_time, end_time: end_time) }
+            it_should_behave_like 'revise attribute', :start_time,  Time.zone.local(2017, 5, 3, 9, 30)
+            it_should_behave_like 'revise attribute', :end_time,    Time.zone.local(2017, 5, 3, 12, 30)
+            it_should_behave_like 'revise attribute', :description, Faker::Lorem.paragraph
+          end
+
+          context 'approved application' do
+            let!(:leave_application) do 
+              create(:leave_application, :annual, user: user, start_time: start_time, end_time: end_time)
+              user.leave_applications.first.approve! user
+              user.leave_applications.first
+            end
+            it_should_behave_like 'revise attribute', :start_time,  Time.zone.local(2017, 5, 3, 9, 30)
+            it_should_behave_like 'revise attribute', :end_time,    Time.zone.local(2017, 5, 3, 12, 30)
+            it_should_behave_like 'revise attribute', :description, Faker::Lorem.paragraph
+          end
+        end
       end
     end
   end
