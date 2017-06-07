@@ -20,9 +20,21 @@ FactoryGirl.define do
       role 'employee'
     end
 
+    trait :intern do
+      role 'intern'
+    end
+
     trait :contractor do
       role 'contractor'
-      join_date { nil }
+      # join_date { nil }
+      before(:create) { User.skip_callback(:create, :after, :auto_assign_leave_time) }
+      after(:create)  { User.set_callback(:create, :after, :auto_assign_leave_time)  }
+    end
+
+    trait :resigned do
+      role 'resigned'
+      before(:create) { User.skip_callback(:create, :after, :auto_assign_leave_time) }
+      after(:create)  { User.set_callback(:create, :after, :auto_assign_leave_time)  }
     end
 
     trait :fulltime do

@@ -57,8 +57,37 @@ RSpec.describe User, type: :model do
   end
 
   describe '#callback' do
-    context 'should validate callback after_create' do
-      it { is_expected.to callback(:auto_assign_leave_time).after(:create) }
+    context 'after_create' do
+      describe '.auto_assign_leave_time' do
+        it { is_expected.to callback(:auto_assign_leave_time).after(:create) }
+
+        shared_examples 'different role' do |roles, leave_types|
+          roles.each do |role|
+            it "should create LeaveTime when user is a/an #{role}" do
+              leave_types = create(:user, role).leave_times.pluck(:leave_type)
+              expect(leave_types.size).to eq leave_types.size
+              leave_types.each { |leave_type| expect(leave_types).to include leave_type }
+            end
+          end
+        end
+        it_should_behave_like 'different role', %i(manager hr employee), %w(annual personal sick remote)
+        it_should_behave_like 'different role', %i(intern),              %w(personal sick remote)
+        it_should_behave_like 'different role', %i(resigned contractor), %w()
+
+        shared_examples 'different leave_type' do |roles, leave_type, quota|
+          roles.each do |role|
+            it "should have leave_type of \"#{leave_type}\" with quota of #{quota} in role #{roles}" do
+              leave_time = create(:user, role).leave_times.find_by_leave_type(leave_type)
+              expect(leave_time).not_to be_nil
+              expect(leave_time.quota).to be quota
+              expect(leave_time.usable_hours).to be quota
+            end
+          end
+        end
+        all_roles = %i(manager hr employee intern)
+        it_should_behave_like 'different leave_type', all_roles, 'personal', 112
+        it_should_behave_like 'different leave_type', all_roles, 'remote',   16
+      end
     end
   end
 
