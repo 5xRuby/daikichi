@@ -51,7 +51,7 @@ class LeaveApplicationsController < BaseController
     if params[:id]
       current_user.leave_applications
     else
-      @q.result.order(id: :desc).page(params[:page])
+      @q.result.where(user_id: current_user.id).order(id: :desc).page(params[:page])
     end
   end
 
