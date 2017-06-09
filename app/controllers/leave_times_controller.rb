@@ -17,14 +17,14 @@ class LeaveTimesController < BaseController
 
   def collection_scope
     if params[:id]
-      LeaveTime.preload(:user, leave_time_usages: :leave_application)
+      current_user.leave_times.preload(:user, leave_time_usages: :leave_application)
     else
       @q.result.preload(:user)
     end
   end
 
   def set_query_object
-    @q = LeaveTime.belong_to(current_user).ransack(search_params)
+    @q = current_user.leave_times.ransack(search_params)
   end
 
   def search_params

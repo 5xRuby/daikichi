@@ -53,7 +53,7 @@ class LeaveApplicationsController < BaseController
 
   def collection_scope
     if params[:id]
-      LeaveApplication.where(user_id: current_user.id)
+      current_user.leave_applications
     else
       @q.result.order(id: :desc).page(params[:page])
     end
@@ -66,7 +66,7 @@ class LeaveApplicationsController < BaseController
   end
 
   def set_query_object
-    @q = LeaveApplication.ransack(search_params)
+    @q = current_user.leave_applications.ransack(search_params)
   end
 
   def resource_params
