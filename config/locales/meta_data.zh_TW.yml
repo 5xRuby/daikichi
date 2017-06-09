@@ -182,6 +182,10 @@ zh-TW:
       new: "新增假單"
       create: "新增假單"
       edit: "編輯假單"
+    remote:
+      new: "申請 Remote"
+      create: "申請 Remote"
+
     backend/users:
       index: "員工列表"
       show: "%{name}"
