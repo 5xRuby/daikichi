@@ -32,7 +32,7 @@ class Backend::LeaveTimesController < Backend::BaseController
 
   def url_after(action)
     if @actions.include?(action)
-      url_for(action: :index, leave_type: leave_type)
+      url_for(action: :index)
     else
       request.env['HTTP_REFERER']
     end
