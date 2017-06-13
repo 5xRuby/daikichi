@@ -183,9 +183,15 @@ RSpec.describe LeaveApplication, type: :model do
     it_should_behave_like 'transitions', from: :approved, to: :pending,  with_action: :revise
 
     describe 'conditional transition' do
-      let(:leave_application) { create(:leave_application, :happened) }
+      let(:user)            { create(:user, :employee) }
+      let(:effective_date)  { Time.zone.local(2017, 6, 1).to_date  }
+      let(:expiration_date) { Time.zone.local(2017, 6, 30).to_date }
+      let(:start_time)      { Time.zone.local(2017, 6, 1, 9, 30)   }
+      let(:end_time)        { Time.zone.local(2017, 6, 5, 12, 30)  }
+      before { create(:leave_time, :annual, user: user, quota: 100, usable_hours: 100) }
       it 'can transition from approved to canceled unless LeaveApplication happened already' do
-        leave_application.reload.approve!(create(:user, :hr))
+        leave_application = create(:leave_application, :annual, user: user, start_time: start_time, end_time: end_time).reload
+        leave_application.approve!(create(:user, :hr))
         expect(leave_application.happened?).to be_truthy
         expect(leave_application.approved?).to be_truthy
         expect(leave_application.may_cancel?).to be_falsy
