@@ -70,9 +70,9 @@ RSpec.describe User, type: :model do
             end
           end
         end
-        it_should_behave_like 'different role', %i(manager hr employee), %w(annual personal sick remote)
-        it_should_behave_like 'different role', %i(intern),              %w(personal sick remote)
-        it_should_behave_like 'different role', %i(resigned contractor), %w()
+        it_should_behave_like 'different role', %i(manager hr employee fulltime), %w(annual personal fullpaid_sick halfpaid_sick remote)
+        it_should_behave_like 'different role', %i(intern contractor parttime),   %w(personal fullpaid_sick halfpaid_sick remote)
+        it_should_behave_like 'different role', %i(resigned pending), %w()
 
         shared_examples 'different leave_type' do |roles, leave_type, quota|
           roles.each do |role|
