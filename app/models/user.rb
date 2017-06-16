@@ -4,6 +4,7 @@ class User < ApplicationRecord
   has_many :leave_times
   has_many :leave_applications, -> { order(id: :desc) }
   has_many :bonus_leave_time_logs, -> { order(id: :desc) }
+  attr_accessor :assign_leave_time, :assign_date
 
   after_create :auto_assign_leave_time
 
@@ -13,6 +14,7 @@ class User < ApplicationRecord
   validates :email,      presence: true,
                          uniqueness: { case_sensitive: false, scope: :deleted_at }
   validates :join_date,  presence: true
+  validate  :assign_leave_time_fields
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
@@ -79,9 +81,16 @@ class User < ApplicationRecord
     self.role != 'pending' and self.role != 'resigned'
   end
 
+  def assign_leave_time_fields
+    return if assign_leave_time == '0'
+    errors.add(:assign_date, :blank) if assign_date.empty?
+  end
+
   def auto_assign_leave_time
     return unless valid_role?
-    leave_time_builder = LeaveTimeBuilder.new self
-    leave_time_builder.automatically_import
+    if assign_leave_time == '1'
+      leave_time_builder = LeaveTimeBuilder.new self
+      leave_time_builder.automatically_import
+    end
   end
 end
