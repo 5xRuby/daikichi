@@ -9,7 +9,6 @@ class LeaveApplication < ApplicationRecord
   acts_as_paranoid
   paginates_per 15
 
-  after_initialize  :set_primary_id
   before_validation :assign_hours
   after_create  :create_leave_time_usages
   after_update  :update_leave_time_usages
@@ -19,7 +18,6 @@ class LeaveApplication < ApplicationRecord
   has_many   :leave_times, through: :leave_time_usages
   has_many   :leave_time_usages
   has_many   :leave_hours_by_dates, dependent: :delete_all
-  has_many   :leave_application_logs, foreign_key: 'leave_application_uuid', primary_key: 'uuid', dependent: :destroy
 
   validates :leave_type, :description, :start_time, :end_time, presence: true
 
@@ -114,10 +112,6 @@ class LeaveApplication < ApplicationRecord
   end
 
   private
-
-  def set_primary_id
-    self.uuid ||= SecureRandom.uuid
-  end
 
   def assign_hours
     self.hours = auto_calculated_minutes / 60
