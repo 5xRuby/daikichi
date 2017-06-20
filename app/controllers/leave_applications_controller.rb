@@ -25,14 +25,10 @@ class LeaveApplicationsController < BaseController
       current_object.assign_attributes(resource_params)
       if !current_object.changed?
         action_fail t('warnings.no_change'), :edit
+      elsif current_object.revise!
+        action_success
       else
-        current_object.revise(resource_params)
-        if current_object.errors[:hours].any?
-          @error_message = @current_object.errors[:hours]
-          render action: :edit
-        else
-          action_success
-        end
+        render action: :edit
       end
     end
   end
@@ -55,7 +51,7 @@ class LeaveApplicationsController < BaseController
     if params[:id]
       current_user.leave_applications
     else
-      @q.result.order(id: :desc).page(params[:page])
+      @q.result.where(user_id: current_user.id).order(id: :desc).page(params[:page])
     end
   end
 

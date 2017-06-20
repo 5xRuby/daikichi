@@ -28,8 +28,15 @@ FactoryGirl.define do
     end
 
     trait :approved do
-      status 'approved'
-      association :manager, factory: [:user, :manager]
+      before(:create) do |la|
+        create(:leave_time, la.leave_type.to_sym, user: la.user, quota: 56, usable_hours: 56,
+                                                  effective_date:  la.start_time - 50.days,
+                                                  expiration_date: la.start_time + 1.year)
+      end
+
+      after(:create) do |la|
+        la.reload.approve! create(:user, [:manager, :hr].sample)
+      end
     end
 
     trait :rejected do
