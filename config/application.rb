@@ -15,6 +15,6 @@ module Daikichi
     config.i18n.default_locale = 'zh-TW'
     config.autoload_paths << Rails.root.join('lib')
 
-    config.active_record.observers = :leave_application_observer
+    config.active_record.observers = %i(leave_application_observer)
   end
 end
