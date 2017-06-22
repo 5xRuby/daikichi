@@ -14,5 +14,7 @@ module Daikichi
     config.time_zone = 'Taipei'
     config.i18n.default_locale = 'zh-TW'
     config.autoload_paths << Rails.root.join('lib')
+
+    config.active_record.observers = :leave_application_observer
   end
 end
