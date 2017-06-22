@@ -6,6 +6,7 @@ class User < ApplicationRecord
   has_many :bonus_leave_time_logs, -> { order(id: :desc) }
   attr_accessor :assign_leave_time, :assign_date
 
+  before_validation :parse_assign_leave_time_attr
   after_create :auto_assign_leave_time
 
   validates :name,       presence: true
@@ -75,22 +76,36 @@ class User < ApplicationRecord
                                end
   end
 
+  # TODO: Seems no longer a valid method
+  def refill_annual
+    leave_times.find_by(leave_type: 'annual').refill
+  end
+
+  def assign_leave_time?
+    self.assign_leave_time == 'true'
+  end
+
   private
 
   def valid_role?
     self.role != 'pending' and self.role != 'resigned'
   end
 
+  def parse_assign_leave_time_attr
+    return if !assign_leave_time? or self.assign_date.is_a?(Date)
+    self.assign_date = Time.zone.parse(self.assign_date).to_date
+  end
+
   def assign_leave_time_fields
-    return if assign_leave_time == '0'
-    errors.add(:assign_date, :blank) if assign_date.empty?
+    return unless assign_leave_time?
+    errors.add(:assign_date, :blank) if assign_date.nil?
   end
 
   def auto_assign_leave_time
     return unless valid_role?
-    if assign_leave_time == '1'
+    if assign_leave_time?
       leave_time_builder = LeaveTimeBuilder.new self
-      leave_time_builder.automatically_import
+      leave_time_builder.automatically_import by_assign_date: true
     end
   end
 end

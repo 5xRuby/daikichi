@@ -48,10 +48,10 @@ describe LeaveTimeBuilder do
     end
 
     context 'fulltime employee' do
-      let(:user) { FactoryGirl.create(:user, :fulltime) }
+      let!(:user) { FactoryGirl.create(:user, :fulltime) }
 
       it 'should get seniority_based leave_times' do
-        leave_times = user.leave_times.reload
+        leave_times = user.leave_times
         expect(leave_times.size).to eq join_date_based_leave_types.size
         config = seniority_based_leave_types.first.second
         initial_quota = if user.seniority >= config['quota']['maximum_seniority']
@@ -72,7 +72,7 @@ describe LeaveTimeBuilder do
       let(:user) { FactoryGirl.create(:user, :parttime) }
 
       it 'should not get seniority_based leave_times' do
-        leave_times = user.leave_times.reload
+        leave_times = user.leave_times
         expect(leave_times.size).to eq join_date_based_leave_types.size - seniority_based_leave_types.size
         leave_time = leave_times.first
         initial_quota = join_date_based_leave_types.select { |lt| lt.first == leave_time.leave_type }.first.second['quota'] * 8

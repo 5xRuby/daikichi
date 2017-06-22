@@ -64,5 +64,10 @@ FactoryGirl.define do
     end
 
     factory :employee, traits: [:employee]
+
+    before(:create) do |user|
+      user.assign_leave_time = 'true'
+      user.assign_date = user.join_date
+    end
   end
 end

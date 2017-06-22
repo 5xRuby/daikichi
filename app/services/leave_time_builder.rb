@@ -7,50 +7,66 @@ class LeaveTimeBuilder
     @user = user
   end
 
-  def automatically_import
-    monthly_import
-    join_date_based_import
+  def automatically_import(by_assign_date: false)
+    monthly_import by_assign_date: by_assign_date
+    join_date_based_import by_assign_date: by_assign_date
   end
 
-  def join_date_based_import(prebuild: false)
+  def join_date_based_import(by_assign_date: false, prebuild: false)
     JOIN_DATE_BASED_LEAVE_TYPES.each do |leave_type, config|
-      build_join_date_based_leave_types(leave_type, config, prebuild)
+      build_join_date_based_leave_types(leave_type, config, by_assign_date, prebuild)
     end
   end
 
-  def monthly_import(prebuild: false)
+  def monthly_import(by_assign_date: false, prebuild: false)
     MONTHLY_LEAVE_TYPES.each do |leave_type, config|
-      build_monthly_leave_types(leave_type, config, prebuild)
+      build_monthly_leave_types(leave_type, config, by_assign_date, prebuild)
     end
   end
 
   private
 
-  def build_join_date_based_leave_types(leave_type, config, prebuild)
+  def build_join_date_based_leave_types(leave_type, config, build_by_assign_date = false, prebuild)
     return unless user_can_have_leave_type?(@user, config)
     quota = extract_quota(config, @user, prebuild: prebuild)
-    join_anniversary = @user.next_join_anniversary
-    @user.leave_times.create(
-      leave_type: leave_type,
-      quota: quota,
-      usable_hours: quota,
-      used_hours: 0,
-      effective_date: join_anniversary,
-      expiration_date: join_anniversary + 1.year - 1.day
-    )
+    if build_by_assign_date
+      date = @user.assign_date
+      while date <= Time.zone.now.to_date
+        expiration_date = date.next_year - 1.day
+        create_leave_time(leave_type, quota, date, expiration_date)
+        date = date.next_year
+      end
+    else
+      join_anniversary = @user.next_join_anniversary
+      expiration_date = join_anniversary.next_year - 1.day
+      create_leave_time(leave_type, quota, join_anniversary, expiration_date)
+    end
   end
 
-  def build_monthly_leave_types(leave_type, config, prebuild)
-    @effective_date  = prebuild ? Time.zone.today.next_month.beginning_of_month : Time.zone.today
-    @expiration_date = prebuild ? Time.zone.today.next_month.end_of_month : Time.zone.today.end_of_month
+  def build_monthly_leave_types(leave_type, config, build_by_assign_date = false, prebuild)
     quota = extract_quota(config, @user, prebuild: prebuild)
+    if build_by_assign_date
+      date = @user.assign_date
+      while date <= Time.zone.now
+        expiration_date = date.end_of_month
+        create_leave_time(leave_type, quota, date, expiration_date)
+        date = date.next_month.beginning_of_month
+      end
+    else
+      @effective_date  = prebuild ? Time.zone.today.next_month.beginning_of_month : Time.zone.today
+      @expiration_date = prebuild ? Time.zone.today.next_month.end_of_month : Time.zone.today.end_of_month
+      create_leave_time(leave_type, quota, @effective_date, @expiration_date)
+    end
+  end
+
+  def create_leave_time(leave_type, quota, effective_date, expiration_date)
     @user.leave_times.create(
       leave_type: leave_type,
       quota: quota,
       usable_hours: quota,
       used_hours: 0,
-      effective_date: @effective_date,
-      expiration_date: @expiration_date
+      effective_date: effective_date,
+      expiration_date: expiration_date
     )
   end
 

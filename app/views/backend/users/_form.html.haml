@@ -10,7 +10,7 @@
     input_html: { data: { input: 'datepicker', format: 'YYYY/MM/DD' } }
 
   - if %w(new create).include? action_name
-    = f.input :assign_leave_time, as: :boolean, input_html: { value: false }
+    = f.input :assign_leave_time, as: :boolean, checked_value: true, unchecked_value: false, input_html: { value: false }
     = f.input :assign_date, as: :string, wrapper_html: { class: 'date-input' },
       input_html: { data: { input: 'datepicker', format: 'YYYY/MM/DD' } }
     = f.input :password, required: true, hint: ("密碼長度須 #{@minimum_password_length} 字以上" if @minimum_password_length)
