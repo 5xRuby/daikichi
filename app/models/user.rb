@@ -46,16 +46,6 @@ class User < ApplicationRecord
       .order(id: :desc)
   }
 
-  scope :with_leave_application_statistics, ->(year, month) {
-    joins(:leave_applications, :leave_times)
-      .includes(:leave_applications, :leave_times)
-      .merge(LeaveApplication.leave_within_range(
-        Daikichi::Config::Biz.periods.after(Time.zone.local(year, month, 1)).first.start_time,
-        Daikichi::Config::Biz.periods.before(Time.zone.local(year, month, 1).end_of_month).first.end_time
-      )
-      .approved)
-  }
-
   Settings.roles.each do |key, role|
     define_method "is_#{role}?" do
       self.role.to_s == role

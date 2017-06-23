@@ -3,11 +3,14 @@ class LeaveApplication < ApplicationRecord
   include AASM
   include SignatureConcern
 
+  delegate :name, to: :user, prefix: true
+
   enum status:     Settings.leave_applications.statuses
   enum leave_type: Settings.leave_applications.leave_types
 
   acts_as_paranoid
   paginates_per 15
+
   belongs_to :user
   belongs_to :manager, class_name: 'User', foreign_key: 'manager_id'
   has_many   :leave_times, through: :leave_time_usages
@@ -33,6 +36,16 @@ class LeaveApplication < ApplicationRecord
   scope :with_status, ->(status) { where(status: status) }
   scope :with_year,   ->(year = Time.current.year) {
     leave_within_range(Time.zone.local(year).beginning_of_year, Time.zone.local(year).end_of_year)
+  }
+
+  scope :with_leave_application_statistics, ->(year = Date.current.year, month = Date.current.month) {
+    joins(:leave_hours_by_dates, :leave_times)
+      .merge(LeaveHoursByDate.where(date: Date.new(year,month,15).beginning_of_month..Date.new(year,month,15).end_of_month))
+      .approved
+      .leave_within_range((Time.zone.local(year,month,1).beginning_of_month),(Time.zone.local(year,month,1).end_of_month))
+      .select('leave_applications.user_id, leave_times.leave_type as quota_type, sum(leave_hours_by_dates.hours) as sum')
+      .preload(:user)
+      .group(:user_id, 'leave_times.leave_type')
   }
 
   aasm column: :status, enum: true do
@@ -148,6 +161,17 @@ class LeaveApplication < ApplicationRecord
 
   def order_by_sequence
     format 'array_position(Array%s, leave_type::TEXT)', Settings.leave_applications.available_quota_types.send(self.leave_type).to_s.tr('"', "'")
+  end
+
+  def self.statistics_table(month: Date.current.month, year: Date.current.year)
+    records = LeaveApplication.with_leave_application_statistics(year, month)
+    grid = PivotTable::Grid.new do |g|
+      g.source_data = records
+      g.column_name = :quota_type
+      g.row_name    = :user_name
+      g.value_name  = :sum
+    end
+    grid.build
   end
 end
 

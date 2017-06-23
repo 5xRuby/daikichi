@@ -1,42 +1,44 @@
 %h2= t("captions.backend/leave_applications.statistics", year: specific_year, month: specific_month)
-%hr
 
-.year-mon-selector
-  .row
-    .col-md-6.col-sm-6.col-xs-12
-      .form-group
-        %label{:for=>"year"} Year
-        = select_tag "year",
-          options_for_select(2016 .. Time.now.year, specific_year),
-          class: "form-control"
 
-    .col-md-6.col-sm-6.col-xs-12
-      .form-group
-        %label{:for=>"month"} Month
-        = select_tag "month", options_for_select(1..12, specific_month),
-          class: "form-control"
+.panel.panel-default
+  .panel-body
+    .year-mon-selector
+      .row
+        .col-md-6.col-sm-6.col-xs-12
+          .form-group
+            %label{:for=>"year"} Year
+            = select_tag "year",
+              options_for_select(2016 .. Time.now.year, specific_year),
+              class: "form-control"
 
-- if @users.present?
-  .table-responsive
-    %table.table.table-bordered.table-striped.table-hover
-      %thead
-        %tr.active
-          %th.name=  t_attribute(:name, User)
-          %th 別名
-          %th.hours.text-right= t("simple_form.options.leave_time.leave_type.annual")
-          %th.hours.text-right= t("simple_form.options.leave_time.leave_type.bonus")
-          %th.hours.text-right= t("simple_form.options.leave_time.leave_type.personal")
-          %th.hours.text-right= t("simple_form.options.leave_time.leave_type.sick")
-          %th.hours.text-right 總計
-      %tbody
-        - @users.each do |user|
-          %tr
-            %td.name=  user.name
-            %td= user.login_name
-            %td.hours.text-right= hours_to_humanize user.leave_applications.leave_hours_within_month(year: specific_year, month: specific_month, type: 'annual')
-            %td.hours.text-right= hours_to_humanize user.leave_applications.leave_hours_within_month(year: specific_year, month: specific_month, type: 'bonus')
-            %td.hours.text-right= hours_to_humanize user.leave_applications.leave_hours_within_month(year: specific_year, month: specific_month, type: 'personal')
-            %td.hours.text-right= hours_to_humanize user.leave_applications.leave_hours_within_month(year: specific_year, month: specific_month, type: 'sick')
-            %td.hours.text-right= hours_to_humanize user.leave_applications.leave_hours_within_month(year: specific_year, month: specific_month)
+        .col-md-6.col-sm-6.col-xs-12
+          .form-group
+            %label{:for=>"month"} Month
+            = select_tag "month", options_for_select(1..12, specific_month),
+              class: "form-control"
+
+
+- if @statistics.columns[0].present?
+  %table.table.table-striped.table-bordered.table-hover
+    %thead
+      %tr.info        
+        %th.text-center.name=  t_attribute(:name, User)
+        - @statistics.columns.each do |leave_type|
+          %th.text-right= LeaveTime.human_enum_value(:leave_type, leave_type.header)
+        %th.text-right 總計
+    
+    %tbody
+      - @statistics.rows.each do |sum|
+        %tr
+          %td.text-center.name= sum.header
+          - sum.data.each do |data|
+            - if data.present?
+              %td.text-right= hours_to_humanize data.sum
+            - else
+              %td.text-right - 
+          %td.text-right= hours_to_humanize sum.total
+
+            
 - else
   = no_data_alert
