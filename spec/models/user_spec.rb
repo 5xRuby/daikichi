@@ -57,8 +57,49 @@ RSpec.describe User, type: :model do
   end
 
   describe '#callback' do
-    context 'should validate callback after_create' do
-      it { is_expected.to callback(:auto_assign_leave_time).after(:create) }
+    context 'after_create' do
+      describe '.auto_assign_leave_time' do
+        it { is_expected.to callback(:auto_assign_leave_time).after(:create) }
+
+        shared_examples 'different roles create LeaveTime with different leave_type' do |roles, leave_types|
+          roles.each do |role|
+            leave_types.each do |leave_type|
+              it "should create LeaveTime with type :#{leave_type} when user is a/an #{role}" do
+                result_leave_types = create(:user, role).leave_times.pluck(:leave_type)
+                expect(result_leave_types.size).to eq leave_types.size
+                expect(result_leave_types).to include leave_type
+              end
+            end
+          end
+        end
+        it_should_behave_like 'different roles create LeaveTime with different leave_type', %i(manager hr employee fulltime), %w(annual personal fullpaid_sick halfpaid_sick remote)
+        it_should_behave_like 'different roles create LeaveTime with different leave_type', %i(intern contractor parttime),   %w(personal fullpaid_sick halfpaid_sick remote)
+
+        shared_examples 'specific roles should not create any LeaveTime' do |roles|
+          roles.each do |role|
+            it "should not create any LeaveTime when user is on the state of #{role}" do
+              expect(create(:user, role).leave_times.any?).to be_falsey
+            end
+          end
+        end
+        it_should_behave_like 'specific roles should not create any LeaveTime', %i(pending resigned)
+
+        shared_examples 'leave_type created with specific quota' do |roles, leave_type, quota|
+          roles.each do |role|
+            it "should have leave_type of \"#{leave_type}\" with quota of #{quota} in roles: #{roles.join ', '}" do
+              leave_time = create(:user, role).leave_times.find_by_leave_type(leave_type)
+              expect(leave_time).not_to be_nil
+              expect(leave_time.quota).to be quota
+              expect(leave_time.usable_hours).to be quota
+            end
+          end
+        end
+        all_roles = %i(manager hr employee intern)
+        it_should_behave_like 'leave_type created with specific quota', all_roles, 'personal',      112
+        it_should_behave_like 'leave_type created with specific quota', all_roles, 'remote',        16
+        it_should_behave_like 'leave_type created with specific quota', all_roles, 'fullpaid_sick', 56
+        it_should_behave_like 'leave_type created with specific quota', all_roles, 'halfpaid_sick', 184
+      end
     end
   end
 

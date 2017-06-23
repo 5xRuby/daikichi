@@ -90,7 +90,12 @@ class User < ApplicationRecord
 
   private
 
+  def valid_role?
+    self.role != 'pending' and self.role != 'resigned'
+  end
+
   def auto_assign_leave_time
+    return unless valid_role?
     leave_time_builder = LeaveTimeBuilder.new self
     leave_time_builder.automatically_import
   end

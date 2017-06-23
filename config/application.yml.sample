@@ -29,7 +29,7 @@ defaults: &defaults
     leave_types:
       annual: annual
       bonus: bonus
-      unpaid: unpaid
+      # unpaid: unpaid
       sick: sick
       official: official
       marriage: marriage
@@ -55,7 +55,11 @@ defaults: &defaults
         - compassionate
       # Deprecated
       personal:
+        - bonus
+        - annual
         - personal
+      remote:
+        - remote
 
   leave_times:
     quota_types:
@@ -112,9 +116,12 @@ defaults: &defaults
     personal:
       creation: join_date_based
       quota: 14 # days
-    sick:
+    fullpaid_sick:
       creation: join_date_based
-      quota: 30 # days
+      quota: 7 # days
+    halfpaid_sick:
+      creation: join_date_based
+      quota: 23
     remote:
       creation: monthly
       quota: 2 # days

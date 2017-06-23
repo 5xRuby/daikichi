@@ -8,6 +8,10 @@ FactoryGirl.define do
     join_date { Time.zone.today }
     role 'employee'
 
+    trait :fulltime do
+      role { %i(manager hr employee).sample }
+    end
+
     trait :manager do
       role 'manager'
     end
@@ -20,17 +24,26 @@ FactoryGirl.define do
       role 'employee'
     end
 
-    trait :contractor do
-      role 'contractor'
-      join_date { nil }
-    end
-
-    trait :fulltime do
-      role { %i(manager hr employee).sample }
-    end
-
     trait :parttime do
       role { %i(contractor intern).sample }
+    end
+
+    trait :intern do
+      role 'intern'
+    end
+
+    trait :contractor do
+      role 'contractor'
+    end
+
+    trait :pending do
+      role 'pending'
+    end
+
+    trait :resigned do
+      role 'resigned'
+      # before(:create) { User.skip_callback(:create, :after, :auto_assign_leave_time) }
+      # after(:create)  { User.set_callback(:create, :after, :auto_assign_leave_time)  }
     end
 
     factory :manager_eddie, traits: [:manager] do
