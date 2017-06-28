@@ -21,7 +21,7 @@ class Backend::LeaveApplicationsController < Backend::BaseController
   end
 
   def statistics
-    @users = User.with_leave_application_statistics(specific_year, specific_month).all
+    @statistics = LeaveApplication.statistics_table(year: specific_year.to_i, month: specific_month.to_i)
   end
 
   private

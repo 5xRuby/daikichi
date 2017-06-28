@@ -50,6 +50,7 @@ gem 'whenever', require: false
 gem 'ransack', git: 'https://github.com/activerecord-hackery/ransack.git'
 gem 'activerecord-import'
 gem 'rails-observers', git: 'https://github.com/rails/rails-observers.git'
+gem 'pivot_table', git: 'https://github.com/edjames/pivot_table'
 
 group :development, :test do
   gem 'awesome_print'
