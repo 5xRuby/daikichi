@@ -47,7 +47,7 @@ FactoryGirl.define do
     end
 
     trait :without_assign_date do
-      before(:create) { |user| user.assign_leave_time = 'false' }
+      before(:create) { |user| user.assign_leave_time = '0' }
     end
 
     factory :manager_eddie, traits: [:manager] do
@@ -70,8 +70,8 @@ FactoryGirl.define do
     factory :employee, traits: [:employee]
 
     before(:create) do |user|
-      user.assign_leave_time = 'true'
-      user.assign_date = user.join_date
+      user.assign_leave_time = '1'
+      user.assign_date = user.join_date.to_s
     end
   end
 end

@@ -112,7 +112,7 @@ RSpec.describe User, type: :model do
 
         it 'should have error message when assign_leave_time is true while assign_date is nil' do
           user = described_class.new(attributes_for(:user, :hr))
-          user.assign_leave_time = 'true'
+          user.assign_leave_time = '1'
           expect(user.valid?).to be_falsey
           expect(user.errors.keys).to include :assign_date
           expect(user.errors[:assign_date]).to include I18n.t('activerecord.errors.models.user.attributes.assign_date.blank')
@@ -298,19 +298,19 @@ RSpec.describe User, type: :model do
         expect(manager.is_hr?).to be_falsey
       end
     end
-  end
 
-  describe 'assign_leave_time?' do
-    let(:user) { described_class.new(attributes_for(:user, :fulltime)) }
+    describe 'assign_leave_time?' do
+      let(:user) { described_class.new(attributes_for(:user, :fulltime)) }
 
-    it 'is true if assign_leave_time is string value of "true"' do
-      user.assign_leave_time = 'true'
-      expect(user.assign_leave_time?).to be_truthy
-    end
+      it 'is true if assign_leave_time is string value of "1"' do
+        user.assign_leave_time = '1'
+        expect(user.assign_leave_time?).to be_truthy
+      end
 
-    it 'is false if assign_leave_time is string value of "false"' do
-      user.assign_leave_time = 'false'
-      expect(user.assign_leave_time?).to be_falsey
+      it 'is false if assign_leave_time is string value of "0"' do
+        user.assign_leave_time = '0'
+        expect(user.assign_leave_time?).to be_falsey
+      end
     end
   end
 end

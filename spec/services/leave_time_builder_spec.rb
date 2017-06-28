@@ -30,7 +30,7 @@ describe LeaveTimeBuilder do
         before do
           Timecop.freeze current_date
           user.join_date = join_date
-          user.assign_leave_time = 'true'
+          user.assign_leave_time = '1'
         end
         after { Timecop.return }
 
@@ -70,7 +70,7 @@ describe LeaveTimeBuilder do
 
         context 'assign date before join date' do
           before do
-            user.assign_date = before_date
+            user.assign_date = before_date.to_s
             user.save!
           end
           it_should_behave_like 'import LeaveTime from join date'
@@ -78,7 +78,7 @@ describe LeaveTimeBuilder do
 
         context 'assign date on join date' do
           before do
-            user.assign_date = join_date
+            user.assign_date = join_date.to_s
             user.save!
           end
           it_should_behave_like 'import LeaveTime from join date'
@@ -92,7 +92,7 @@ describe LeaveTimeBuilder do
             let(:total_years)  { current_date.year - after_join_date.year + 1 }
             let(:total_months) { 12 * ( current_date.year - after_join_date.year) + (current_date.month - after_join_date.month) + 1 }
             before do
-              user.assign_date = after_join_date
+              user.assign_date = after_join_date.to_s
               user.save!
             end
 
@@ -123,7 +123,7 @@ describe LeaveTimeBuilder do
 
           context 'assign date after current date' do
             before do
-              user.assign_date = after_current_date
+              user.assign_date = after_current_date.to_s
               user.save!
             end
 
@@ -167,7 +167,7 @@ describe LeaveTimeBuilder do
         before do
           Timecop.freeze current_date
           user.join_date = join_date
-          user.assign_leave_time = 'true'
+          user.assign_leave_time = '1'
         end
         after { Timecop.return }
 
@@ -214,7 +214,7 @@ describe LeaveTimeBuilder do
 
         context 'assign date before join date' do
           before do
-            user.assign_date = before_date
+            user.assign_date = before_date.to_s
             user.save!
           end
           it_should_behave_like 'import LeaveTime from join date'
@@ -222,7 +222,7 @@ describe LeaveTimeBuilder do
 
         context 'assign date on join date' do
           before do
-            user.assign_date = join_date
+            user.assign_date = join_date.to_s
             user.save!
           end
           it_should_behave_like 'import LeaveTime from join date'
@@ -237,7 +237,7 @@ describe LeaveTimeBuilder do
             let(:total_years)  { current_date.year - after_join_date.year + 1 }
             let(:total_months) { 12 * ( current_date.year - after_join_date.year) + (current_date.month - after_join_date.month) + 1 }
             before do
-              user.assign_date = after_join_date
+              user.assign_date = after_join_date.to_s
               user.save!
             end
 
@@ -275,7 +275,7 @@ describe LeaveTimeBuilder do
 
           context 'assign date after current date' do
             before do
-              user.assign_date = after_current_date
+              user.assign_date = after_current_date.to_s
               user.save!
             end
 

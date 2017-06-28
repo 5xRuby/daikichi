@@ -82,7 +82,7 @@ class User < ApplicationRecord
   end
 
   def assign_leave_time?
-    self.assign_leave_time == 'true'
+    self.assign_leave_time == '1'
   end
 
   private
@@ -92,8 +92,8 @@ class User < ApplicationRecord
   end
 
   def parse_assign_leave_time_attr
-    return if !assign_leave_time? or self.assign_date.is_a?(Date) or self.assign_date.nil?
-    self.assign_date = Time.zone.parse(self.assign_date).to_date
+    return if !assign_leave_time? or self.assign_date.nil?
+    self.assign_date = Date.parse(self.assign_date)
   end
 
   def assign_leave_time_fields
