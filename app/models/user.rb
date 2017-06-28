@@ -92,7 +92,7 @@ class User < ApplicationRecord
   end
 
   def parse_assign_leave_time_attr
-    return if !assign_leave_time? or self.assign_date.is_a?(Date)
+    return if !assign_leave_time? or self.assign_date.is_a?(Date) or self.assign_date.nil?
     self.assign_date = Time.zone.parse(self.assign_date).to_date
   end
 
@@ -102,10 +102,8 @@ class User < ApplicationRecord
   end
 
   def auto_assign_leave_time
-    return unless valid_role?
-    if assign_leave_time?
-      leave_time_builder = LeaveTimeBuilder.new self
-      leave_time_builder.automatically_import by_assign_date: true
-    end
+    return if !assign_leave_time? or !valid_role?
+    leave_time_builder = LeaveTimeBuilder.new self
+    leave_time_builder.automatically_import by_assign_date: true
   end
 end

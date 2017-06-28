@@ -99,6 +99,24 @@ RSpec.describe User, type: :model do
         it_should_behave_like 'leave_type created with specific quota', all_roles, 'remote',        16
         it_should_behave_like 'leave_type created with specific quota', all_roles, 'fullpaid_sick', 56
         it_should_behave_like 'leave_type created with specific quota', all_roles, 'halfpaid_sick', 184
+
+        it 'should not create any LeaveTime of the user if not specified assign_leave_time and assign_date' do
+          user = create(:user, :without_assign_date)
+          expect(user.leave_times.any?).to be_falsey
+        end
+
+        it 'should create LeaveTime of the user if specified assign_leave_time and assign_date' do
+          user = create(:user, :fulltime)
+          expect(user.leave_times.any?).to be_truthy        
+        end
+
+        it 'should have error message when assign_leave_time is true while assign_date is nil' do
+          user = described_class.new(attributes_for(:user, :hr))
+          user.assign_leave_time = 'true'
+          expect(user.valid?).to be_falsey
+          expect(user.errors.keys).to include :assign_date
+          expect(user.errors[:assign_date]).to include I18n.t('activerecord.errors.models.user.attributes.assign_date.blank')
+        end
       end
     end
   end
@@ -279,6 +297,20 @@ RSpec.describe User, type: :model do
         expect(employee.is_hr?).to be_falsey
         expect(manager.is_hr?).to be_falsey
       end
+    end
+  end
+
+  describe 'assign_leave_time?' do
+    let(:user) { described_class.new(attributes_for(:user, :fulltime)) }
+
+    it 'is true if assign_leave_time is string value of "true"' do
+      user.assign_leave_time = 'true'
+      expect(user.assign_leave_time?).to be_truthy
+    end
+
+    it 'is false if assign_leave_time is string value of "false"' do
+      user.assign_leave_time = 'false'
+      expect(user.assign_leave_time?).to be_falsey
     end
   end
 end
