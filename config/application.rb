@@ -16,5 +16,9 @@ module Daikichi
     config.autoload_paths << Rails.root.join('lib')
 
     config.active_record.observers = %i(leave_application_observer)
+
+    config.after_initialize do
+      Rails.application.routes.default_url_options = { host: Settings.host }
+    end
   end
 end
