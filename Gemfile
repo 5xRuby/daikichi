@@ -29,9 +29,6 @@ gem 'jbuilder', '~> 2.0'
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 
-# Use Capistrano for deployment
-# gem 'capistrano-rails', group: :development
-
 gem 'aasm'
 gem 'active_hash'
 gem 'biz'
@@ -51,6 +48,9 @@ gem 'ransack', git: 'https://github.com/activerecord-hackery/ransack.git'
 gem 'activerecord-import'
 gem 'rails-observers', git: 'https://github.com/rails/rails-observers.git'
 gem 'pivot_table', git: 'https://github.com/edjames/pivot_table'
+gem 'crono'
+gem 'sinatra', require: nil
+gem 'daemons'
 
 group :development, :test do
   gem 'awesome_print'
@@ -66,6 +66,7 @@ group :development do
   gem 'capistrano', '~> 3.1'
   gem 'capistrano-rails', '~> 1.1'
   gem 'capistrano-upload-config'
+  gem 'capistrano-crono'
   gem 'hirb-unicode'
   gem 'listen', '~> 3.0.5'
   gem 'rack-mini-profiler', '~> 0.10.1'
