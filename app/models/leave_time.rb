@@ -52,6 +52,10 @@ class LeaveTime < ApplicationRecord
     (self.effective_date..self.expiration_date).cover? date
   end
 
+  def special_type?
+    %w(marriage bereavement official maternity).include? self.leave_type
+  end
+
   def lock_hours(hours)
     self.usable_hours -= hours
     self.locked_hours += hours
@@ -79,6 +83,16 @@ class LeaveTime < ApplicationRecord
 
   def use_hours!(hours)
     self.use_hours(hours)
+    self.save!
+  end
+
+  def direct_use_hours(hours)
+    self.usable_hours -= hours
+    self.used_hours += hours
+  end
+
+  def direct_use_hours!(hours)
+    self.direct_use_hours(hours)
     self.save!
   end
 

@@ -9,7 +9,9 @@ RSpec.describe LeaveTimeUsage, type: :model do
 
   describe 'callback' do
     context 'should lock LeaveTime usable_hours after LeaveTimeUsage created' do
-      it { is_expected.to callback(:lock_leave_time_hours).after(:create) }
+      it { is_expected.to callback(:transfer_leave_time_hours).after(:create) }
+
+      it 'directly transfer usable to used hours when LeaveTime is special type'
 
       it 'locks LeaveTime hours after LeaveTimeUsage created' do
         lt = create(:leave_time, :annual, usable_hours: 50)
