@@ -304,6 +304,10 @@ RSpec.describe LeaveTime, type: :model do
       end
     end
 
+    describe '.special_type?' do
+      it 'special_type? method'
+    end
+
     describe '.effective' do
       context 'no specific date given' do
         subject { described_class.effective }

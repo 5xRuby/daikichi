@@ -425,5 +425,11 @@ RSpec.describe LeaveApplication, type: :model do
         end
       end
     end
+
+    describe '#special_type?' do
+    end
+
+    describe '#leave_time_params' do
+    end
   end
 end

@@ -143,6 +143,7 @@ zh-TW:
       show: "檢視"
       verify: "審核"
       approve: "核准"
+      append_quota: "新增額度"
       reject: "駁回"
       statistics: "員工休假狀況"
     backend/leave_times:
@@ -198,6 +199,7 @@ zh-TW:
     backend/leave_times:
       index: "員工休假額度"
       new: "新增員工休假額度"
+      append_quota: "新增員工休假額度"
       edit: "修改員工休假"
     tools: "工具"
 
