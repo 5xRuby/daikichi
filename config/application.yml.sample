@@ -5,6 +5,7 @@ defaults: &defaults
   host: "localhost"
   api_token: 1111111111
 
+
   host: localhost
 
   devise:

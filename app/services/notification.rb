@@ -30,6 +30,7 @@ class Notification
     )
   end
 
+
   private
   def send_notification(subject:, content:, url:)
     @flow.push_to_team_inbox(
