@@ -51,6 +51,7 @@ gem 'pivot_table', git: 'https://github.com/edjames/pivot_table'
 gem 'crono'
 gem 'sinatra', require: nil
 gem 'daemons'
+gem 'flowdock'
 
 group :development, :test do
   gem 'awesome_print'
