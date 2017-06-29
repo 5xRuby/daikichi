@@ -17,10 +17,14 @@ class LeaveApplicationObserver < ActiveRecord::Observer
   def after_create(record)
 <<<<<<< HEAD
     create_leave_time_usages(record) unless record.special_type?
+<<<<<<< HEAD
 =======
     create_leave_time_usages(record)
 >>>>>>> issue #35 notification with flowdock
     Notification.new(leave_application: record).send_create_notification
+=======
+    Notification.new(leave_application: record).send_create_notification unless Rails.env.test?
+>>>>>>> fix spec
   end
 
   def before_update(record)
