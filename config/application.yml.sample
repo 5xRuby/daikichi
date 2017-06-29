@@ -3,7 +3,7 @@ defaults: &defaults
   metadata:
     title: ''
   host: "localhost"
-  api_token: ""
+  api_token: 1111111111
 
   host: localhost
 
