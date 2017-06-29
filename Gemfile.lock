@@ -96,6 +96,9 @@ GEM
     capistrano-bundler (1.2.0)
       capistrano (~> 3.1)
       sshkit (~> 1.2)
+    capistrano-crono (0.1.2)
+      capistrano (>= 3.0.0)
+      crono
     capistrano-rails (1.2.3)
       capistrano (~> 3.1)
       capistrano-bundler (~> 1.1)
@@ -115,6 +118,10 @@ GEM
       execjs
     coffee-script-source (1.12.2)
     concurrent-ruby (1.0.5)
+    crono (1.1.2)
+      activerecord (>= 4.0)
+      activesupport (>= 4.0)
+    daemons (1.2.4)
     database_rewinder (0.8.1)
     date_validator (0.9.0)
       activemodel
@@ -185,6 +192,7 @@ GEM
     momentjs-rails (2.17.1)
       railties (>= 3.1)
     multi_json (1.12.1)
+    mustermann (1.0.0)
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
     net-ssh (4.1.0)
@@ -211,6 +219,8 @@ GEM
     rack (2.0.3)
     rack-mini-profiler (0.10.2)
       rack (>= 1.2.0)
+    rack-protection (2.0.0)
+      rack
     rack-test (0.6.3)
       rack (>= 1.0)
     rails (5.0.3)
@@ -295,6 +305,11 @@ GEM
       json (>= 1.8, < 3)
       simplecov-html (~> 0.10.0)
     simplecov-html (0.10.0)
+    sinatra (2.0.0)
+      mustermann (~> 1.0)
+      rack (~> 2.0)
+      rack-protection (= 2.0.0)
+      tilt (~> 2.0)
     slop (3.6.0)
     spring (2.0.1)
       activesupport (>= 4.2)
@@ -351,11 +366,14 @@ DEPENDENCIES
   byebug
   cancancan
   capistrano (~> 3.1)
+  capistrano-crono
   capistrano-rails (~> 1.1)
   capistrano-upload-config
   cocoon
   codeclimate-test-reporter (~> 1.0.0)
   coffee-rails (~> 4.1.0)
+  crono
+  daemons
   database_rewinder
   date_validator
   devise
@@ -388,6 +406,7 @@ DEPENDENCIES
   shoulda-matchers
   simple_form
   simplecov
+  sinatra
   spring
   spring-watcher-listen (~> 2.0.0)
   timecop
@@ -398,4 +417,4 @@ DEPENDENCIES
   whenever
 
 BUNDLED WITH
-   1.15.0
+   1.15.1

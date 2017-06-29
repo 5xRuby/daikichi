@@ -30,5 +30,9 @@ Rails.application.routes.draw do
 
     resources :leave_times, only: [:index, :show]
     resources :remote, only: [:new, :create, :update, :edit]
+
+    authenticate :user, lambda { |u| u.is_manager? } do
+      mount Crono::Web, at: '/crono'
+    end
   end
 end
