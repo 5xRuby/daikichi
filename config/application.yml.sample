@@ -3,6 +3,20 @@ defaults: &defaults
   metadata:
     title: ''
 
+  host: localhost
+
+  devise:
+    mailer_sender: hi@example.com
+
+  smtp:
+    username: sample
+    password: sample
+    domain: example.com
+    address: smtp.example.com
+    port: 25
+    authentication: plain
+    enable_starttls_auto: true
+
   admin_user:
     name: '系統管理員'
     login_name: 'admin'
