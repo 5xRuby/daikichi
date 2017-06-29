@@ -144,6 +144,9 @@ GEM
     faker (1.7.3)
       i18n (~> 0.5)
     ffi (1.9.18)
+    flowdock (0.7.1)
+      httparty (~> 0.7)
+      multi_json
     globalid (0.4.0)
       activesupport (>= 4.2.0)
     haml (5.0.1)
@@ -153,6 +156,8 @@ GEM
     hirb-unicode (0.0.5)
       hirb (~> 0.5)
       unicode-display_width (~> 0.1.1)
+    httparty (0.15.5)
+      multi_xml (>= 0.5.2)
     i18n (0.8.1)
     i18n-debug (1.1.0)
       i18n (< 1)
@@ -192,6 +197,7 @@ GEM
     momentjs-rails (2.17.1)
       railties (>= 3.1)
     multi_json (1.12.1)
+    multi_xml (0.6.0)
     mustermann (1.0.0)
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
@@ -379,6 +385,7 @@ DEPENDENCIES
   devise
   factory_girl_rails
   faker
+  flowdock
   haml
   hirb-unicode
   i18n-debug

@@ -60,6 +60,11 @@ zh-TW:
           pending: '待審'
           canceled: '取消'
           all: '全部'
+        modify_actions:
+          approved: '核准'
+          rejected: '駁回'
+          canceled: '取消'
+          pending: '修改'
         leave_types:
           annual: '特別休假'
           bonus: '補充休假'

@@ -1,0 +1,6 @@
+%ul
+  %li= "假單開始時間：#{l leave_application.start_time, format: :long}"
+  %li= "假單結束時間：#{l leave_application.end_time, format: :long}"
+  %li= "時數：#{hours_to_humanize(leave_application.hours)}"
+  %li= "事由：#{leave_application.description}"
+
