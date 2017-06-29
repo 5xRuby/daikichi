@@ -25,6 +25,10 @@ RSpec.configure do |config|
     DatabaseRewinder.clean_all
   end
 
+  config.before(:each) do
+    allow_any_instance_of(Notification).to receive(:send_notification)
+  end
+
   config.after(:each) do
     DatabaseRewinder.clean
   end

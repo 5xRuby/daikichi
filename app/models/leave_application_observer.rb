@@ -16,7 +16,7 @@ class LeaveApplicationObserver < ActiveRecord::Observer
 
   def after_create(record)
     create_leave_time_usages(record) unless record.special_type?
-    Notification.new(leave_application: record).send_create_notification unless Rails.env.test?
+    Notification.new(leave_application: record).send_create_notification
   end
 
   def before_update(record)
@@ -25,7 +25,7 @@ class LeaveApplicationObserver < ActiveRecord::Observer
 
   def after_update(record)
     create_leave_time_usages(record) if record.aasm_event?(:revise) and !record.special_type?
-    Notification.new(leave_application: record).send_update_notification(record.aasm.current_event) unless Rails.env.test?
+    Notification.new(leave_application: record).send_update_notification(record.aasm.to_state)
   end
 
   private
