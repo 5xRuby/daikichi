@@ -42,7 +42,7 @@ class LeaveApplication < ApplicationRecord
     state :canceled
 
     event :approve, before: [proc { |manager| sign(manager) }] do
-      transitions to: :approved, from: :pending
+      transitions to: :approved, from: :pending, guard: :check_special_leave_application_quota
     end
 
     event :reject, before: proc { |manager| sign(manager) } do
@@ -83,6 +83,11 @@ class LeaveApplication < ApplicationRecord
     Time.current > self.start_time
   end
 
+  def check_special_leave_application_quota
+    return true unless self.special_type?
+    self.available_leave_times.pluck(:usable_hours).sum >= self.hours
+  end
+
   def aasm_event?(event)
     [event, :"#{event}!"].include? aasm.current_event
   end
@@ -95,6 +100,10 @@ class LeaveApplication < ApplicationRecord
   def leave_type?(type = :all)
     return true if type.to_sym == :all
     self.leave_type.to_sym == type.to_sym
+  end
+
+  def special_type?
+    %w(marriage bereavement official maternity).include? self.leave_type
   end
 
   def available_leave_times
@@ -110,11 +119,19 @@ class LeaveApplication < ApplicationRecord
     @interval_changed ||= self.new_record? || self.start_time_changed? || self.end_time_changed?
   end
 
+  def leave_time_params
+    {
+      user_id: self.user_id,
+      leave_type: self.leave_type,
+      effective_date: self.start_time.to_date,
+    }
+  end
+
   private
 
   def auto_calculated_minutes
     return @minutes = 0 unless start_time && end_time
-    @minutes ||= Daikichi::Config::Biz.within(start_time, end_time).in_minutes
+    @minutes = Daikichi::Config::Biz.within(start_time, end_time).in_minutes
   end
 
   def hours_should_be_positive_integer

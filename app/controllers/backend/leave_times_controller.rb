@@ -6,7 +6,17 @@ class Backend::LeaveTimesController < Backend::BaseController
     @users = User.all
   end
 
+  def append_quota
+    @current_object = collection_scope.new(leave_time_params_by_leave_application)
+    render :new
+  end
+
   private
+
+  def leave_time_params_by_leave_application
+    leave_application = LeaveApplication.find(params[:leave_application_id])
+    leave_application.leave_time_params
+  end
 
   def set_query_object
     @q = LeaveTime.ransack(search_params)

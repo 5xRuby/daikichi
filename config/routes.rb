@@ -12,7 +12,9 @@ Rails.application.routes.draw do
         get :statistics, on: :collection
       end
 
-      resources :leave_times, except: [:edit, :update, :destroy]
+      resources :leave_times, except: [:edit, :update, :destroy] do
+        post :append_quota, on: :collection
+      end
 
       resources :bonus_leave_time_logs, only: [:index, :update]
     end
