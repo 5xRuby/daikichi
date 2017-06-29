@@ -29,7 +29,7 @@ class LeaveApplication < ApplicationRecord
     )
   }
 
-  scope :personal, ->(user_id, beginning, ending, status_array = %w(pending approved)) {
+  scope :personal, ->(user_id, beginning, ending, status_array = %w[pending approved]) {
     where(status: status_array, user_id: user_id).leave_within_range(beginning, ending)
   }
 
@@ -40,9 +40,9 @@ class LeaveApplication < ApplicationRecord
 
   scope :with_leave_application_statistics, ->(year = Date.current.year, month = Date.current.month) {
     joins(:leave_hours_by_dates, :leave_times)
-      .merge(LeaveHoursByDate.where(date: Date.new(year,month,15).beginning_of_month..Date.new(year,month,15).end_of_month))
+      .merge(LeaveHoursByDate.where(date: Date.new(year, month, 15).beginning_of_month..Date.new(year, month, 15).end_of_month))
       .approved
-      .leave_within_range((Time.zone.local(year,month,1).beginning_of_month),(Time.zone.local(year,month,1).end_of_month))
+      .leave_within_range(Time.zone.local(year, month, 1).beginning_of_month, Time.zone.local(year, month, 1).end_of_month)
       .select('leave_applications.user_id, leave_times.leave_type as quota_type, sum(leave_hours_by_dates.hours) as sum')
       .preload(:user)
       .group(:user_id, 'leave_times.leave_type')
@@ -63,7 +63,7 @@ class LeaveApplication < ApplicationRecord
     end
 
     event :revise do
-      transitions to: :pending, from: [:pending, :approved]
+      transitions to: :pending, from: %i[pending approved]
     end
 
     event :cancel do
@@ -80,18 +80,6 @@ class LeaveApplication < ApplicationRecord
     Arel.sql("DATE((#{table_name}.end_time AT TIME ZONE 'UTC') AT TIME ZONE 'Asia/Taipei')")
   end
 
-  def self.leave_hours_within(beginning = Daikichi::Config::Biz.periods.after(1.month.ago.beginning_of_month).first.start_time,
-                              closing   = Daikichi::Config::Biz.periods.before(1.month.ago.end_of_month).first.end_time)
-    self.leave_within_range(beginning, closing).reduce(0) do |result, la|
-      if la.range_exceeded?(beginning, closing)
-        @valid_range = [la.start_time, beginning].max..[la.end_time, closing].min
-        result + Daikichi::Config::Biz.within(@valid_range.min, @valid_range.max).in_minutes / 60.0
-      else
-        result + la.hours
-      end
-    end
-  end
-
   def happened?
     Time.current > self.start_time
   end
@@ -103,16 +91,6 @@ class LeaveApplication < ApplicationRecord
 
   def aasm_event?(event)
     [event, :"#{event}!"].include? aasm.current_event
-  end
-
-  def range_exceeded?(beginning = Daikichi::Config::Biz.periods.after(1.month.ago.beginning_of_month).first.start_time,
-                      closing   = Daikichi::Config::Biz.periods.before(1.month.ago.end_of_month).first.end_time)
-    beginning > self.start_time || closing < self.end_time
-  end
-
-  def leave_type?(type = :all)
-    return true if type.to_sym == :all
-    self.leave_type.to_sym == type.to_sym
   end
 
   def special_type?
@@ -138,6 +116,17 @@ class LeaveApplication < ApplicationRecord
       leave_type: self.leave_type,
       effective_date: self.start_time.to_date,
     }
+  end
+
+  def self.statistics_table(month: Date.current.month, year: Date.current.year)
+    records = LeaveApplication.with_leave_application_statistics(year, month)
+    grid = PivotTable::Grid.new do |g|
+      g.source_data = records
+      g.column_name = :quota_type
+      g.row_name    = :user_name
+      g.value_name  = :sum
+    end
+    grid.build
   end
 
   private
@@ -178,31 +167,5 @@ class LeaveApplication < ApplicationRecord
 
   def order_by_sequence
     format 'array_position(Array%s, leave_type::TEXT)', Settings.leave_applications.available_quota_types.send(self.leave_type).to_s.tr('"', "'")
-  end
-
-  def self.statistics_table(month: Date.current.month, year: Date.current.year)
-    records = LeaveApplication.with_leave_application_statistics(year, month)
-    grid = PivotTable::Grid.new do |g|
-      g.source_data = records
-      g.column_name = :quota_type
-      g.row_name    = :user_name
-      g.value_name  = :sum
-    end
-    grid.build
-  end
-end
-
-class LeaveApplication::ActiveRecord_Associations_CollectionProxy
-  def leave_hours_within_month(type: 'all', year: Time.current.year, month: Time.current.month)
-    beginning = Daikichi::Config::Biz.periods.after(Time.zone.local(year, month, 1)).first.start_time
-    closing   = Daikichi::Config::Biz.periods.before(Time.zone.local(year, month, 1).end_of_month).first.end_time
-    records.select { |r| r.leave_type?(type) }.reduce(0) do |result, la|
-      if la.range_exceeded?(beginning, closing)
-        @valid_range = [la.start_time, beginning].max..[la.end_time, closing].min
-        result + Daikichi::Config::Biz.within(@valid_range.min, @valid_range.max).in_minutes / 60.0
-      else
-        result + la.hours
-      end
-    end
   end
 end
