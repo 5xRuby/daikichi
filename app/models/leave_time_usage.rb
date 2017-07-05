@@ -8,10 +8,6 @@ class LeaveTimeUsage < ApplicationRecord
   private
 
   def transfer_leave_time_hours
-    if self.reload.leave_time.special_type?
-      self.leave_time.direct_use_hours!(self.used_hours)
-    else
-      self.leave_time.lock_hours!(self.used_hours)
-    end
+      self.leave_time.reload.lock_hours!(self.used_hours)
   end
 end

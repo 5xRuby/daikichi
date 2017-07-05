@@ -7,11 +7,11 @@ class LeaveApplicationObserver < ActiveRecord::Observer
   end
 
   def before_save(record)
-    cleanup_leave_hours_by_date(record) unless record.special_type?
+    cleanup_leave_hours_by_date(record)
   end
 
   def after_save(record)
-    create_leave_hours_by_date(record) unless record.special_type?
+    create_leave_hours_by_date(record)
   end
 
   def after_create(record)
@@ -24,7 +24,7 @@ class LeaveApplicationObserver < ActiveRecord::Observer
   end
 
   def after_update(record)
-    create_leave_time_usages(record) if record.aasm_event?(:revise) and !record.special_type?
+    create_leave_time_usages(record) if record.aasm_event?(:revise)
     Notification.new(leave_application: record).send_update_notification(record.aasm.to_state)
   end
 
@@ -51,19 +51,11 @@ class LeaveApplicationObserver < ActiveRecord::Observer
   end
 
   def hours_transfer(record)
-    if record.special_type?
-      case
-      when record.aasm_event?(:approve) then create_leave_time_usages(record)
-      when record.aasm_event?(:cancel)  then revert_used_hours_to_usable_hours(record) if record.aasm.from_state == :approved
-      when record.aasm_event?(:revise)  then revert_used_hours_to_usable_hours(record) if record.aasm.from_state == :approved
-      end
-    else
-      case
-      when record.aasm_event?(:approve) then transfer_locked_hours_to_used_hours(record)
-      when record.aasm_event?(:reject)  then return_leave_time_usable_hours(record)
-      when record.aasm_event?(:cancel)  then return_leave_time_usable_hours(record)
-      when record.aasm_event?(:revise)  then return_leave_time_usable_hours(record)
-      end
+    case
+    when record.aasm_event?(:approve) then transfer_locked_hours_to_used_hours(record)
+    when record.aasm_event?(:reject)  then return_leave_time_usable_hours(record)
+    when record.aasm_event?(:cancel)  then return_leave_time_usable_hours(record)
+    when record.aasm_event?(:revise)  then return_leave_time_usable_hours(record)
     end
   end
 

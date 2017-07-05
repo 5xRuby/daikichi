@@ -95,7 +95,7 @@ class LeaveTimeUsageBuilder
 
   def append_leave_application_error_message
     @leave_application.errors.add(:hours, :leave_time_not_sufficient)
-    @leave_hours_by_date.each { |date, hours| @leave_application.errors.add(:hours, :lacking_hours, date: date.to_formatted_s('month_date'), hours: hours) }
+    @leave_hours_by_date.each { |date, hours| @leave_application.errors.add(:hours, :lacking_hours, date: date.to_formatted_s('month_date'), hours: hours) unless hours.zero? }
   end
 
   def create_leave_time_usage
