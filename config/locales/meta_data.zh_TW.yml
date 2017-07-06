@@ -29,7 +29,7 @@ zh-TW:
           personal: '事假'
           fullpaid_sick: '全薪病假'
           halfpaid_sick: '半薪病假'
-          bereavement: '喪假'
+          compassionate: '喪假'
           official: '公假'
           marriage: '婚假'
           maternity: '產假'
@@ -74,6 +74,7 @@ zh-TW:
           official: '公假'
           marriage: '婚假'
           compassionate: '喪假'
+          maternity: '產假'
         user: "員工"
         start_time: "開始時間"
         end_time: "結束時間"

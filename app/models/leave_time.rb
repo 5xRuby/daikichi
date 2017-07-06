@@ -54,7 +54,7 @@ class LeaveTime < ApplicationRecord
   end
 
   def special_type?
-    %w(marriage bereavement official maternity).include? self.leave_type
+    %w(marriage compassionate official maternity).include? self.leave_type
   end
 
   def lock_hours(hours)
@@ -146,7 +146,7 @@ class LeaveTime < ApplicationRecord
     return unless self.special_type?
     leave_applications = User.find(self.user_id).leave_applications.where(leave_type: self.leave_type)
     leave_applications.each do |la|
-      if la.leave_time_usages.empty? and la.hours <= self.usable_hours
+      if la.leave_time_usages.empty? and la.hours <= la.available_leave_times.pluck(:usable_hours).sum
         raise ActiveRecord::Rollback unless LeaveTimeUsageBuilder.new(la).build_leave_time_usages
       end
     end

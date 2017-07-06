@@ -15,7 +15,7 @@ class LeaveApplicationObserver < ActiveRecord::Observer
   end
 
   def after_create(record)
-    create_leave_time_usages(record) unless record.special_type?
+    create_leave_time_usages(record)
     Notification.new(leave_application: record).send_create_notification
   end
 
@@ -47,7 +47,7 @@ class LeaveApplicationObserver < ActiveRecord::Observer
   end
 
   def create_leave_time_usages(record)
-    raise ActiveRecord::Rollback unless LeaveTimeUsageBuilder.new(record).build_leave_time_usages
+    raise ActiveRecord::Rollback if not LeaveTimeUsageBuilder.new(record).build_leave_time_usages and not record.special_type?
   end
 
   def hours_transfer(record)
