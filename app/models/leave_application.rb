@@ -86,7 +86,7 @@ class LeaveApplication < ApplicationRecord
 
   def check_special_leave_application_quota
     return true unless self.special_type?
-    self.available_leave_times.pluck(:usable_hours).sum >= self.hours
+    self.leave_time_usages.any? or self.available_leave_times.pluck(:usable_hours).sum >= self.hours
   end
 
   def aasm_event?(event)
@@ -94,7 +94,7 @@ class LeaveApplication < ApplicationRecord
   end
 
   def special_type?
-    %w(marriage bereavement official maternity).include? self.leave_type
+    %w(marriage compassionate official maternity).include? self.leave_type
   end
 
   def available_leave_times

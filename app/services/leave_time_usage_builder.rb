@@ -27,8 +27,11 @@ class LeaveTimeUsageBuilder
         break if leave_hours_by_date_is_empty?
       end
 
-      unless_remain_leave_hours_by_date
-      create_leave_time_usage
+      if not leave_hours_by_date_is_empty?
+        rollback_with_error_message unless @leave_application.special_type?
+      else
+        create_leave_time_usage
+      end
     end
   end
 
@@ -85,7 +88,6 @@ class LeaveTimeUsageBuilder
   end
 
   def unless_remain_leave_hours_by_date
-    rollback_with_error_message unless leave_hours_by_date_is_empty?
   end
 
   def rollback_with_error_message
@@ -95,7 +97,7 @@ class LeaveTimeUsageBuilder
 
   def append_leave_application_error_message
     @leave_application.errors.add(:hours, :leave_time_not_sufficient)
-    @leave_hours_by_date.each { |date, hours| @leave_application.errors.add(:hours, :lacking_hours, date: date.to_formatted_s('month_date'), hours: hours) }
+    @leave_hours_by_date.each { |date, hours| @leave_application.errors.add(:hours, :lacking_hours, date: date.to_formatted_s('month_date'), hours: hours) unless hours.zero? }
   end
 
   def create_leave_time_usage

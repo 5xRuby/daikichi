@@ -21,7 +21,7 @@ zh-TW:
           official: '公假'
           marriage: '婚假'
           maternity: '產假'
-          bereavement: '喪假'
+          compassionate: '喪假'
           absent: '曠職'
     labels:
       q:

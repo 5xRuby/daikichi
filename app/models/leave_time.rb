@@ -9,6 +9,7 @@ class LeaveTime < ApplicationRecord
   has_many   :leave_time_usages
 
   before_validation :set_default_values
+  after_create :build_special_leave_time_usages
 
   validates :leave_type, :effective_date, :expiration_date, :quota, :usable_hours, :used_hours, :locked_hours, :user, presence: true
   validates :quota,        numericality: { only_integer: true, greater_than_or_equal_to: 0 }
@@ -53,7 +54,7 @@ class LeaveTime < ApplicationRecord
   end
 
   def special_type?
-    %w(marriage bereavement official maternity).include? self.leave_type
+    %w(marriage compassionate official maternity).include? self.leave_type
   end
 
   def lock_hours(hours)
@@ -139,5 +140,15 @@ class LeaveTime < ApplicationRecord
   def balanced_hours
     return if errors[:usable_hours].any? or errors[:used_hours].any? or errors[:locked_hours].any?
     errors.add(:quota, :unbalanced_hours) if quota != (usable_hours + used_hours + locked_hours)
+  end
+
+  def build_special_leave_time_usages
+    return unless self.special_type?
+    leave_applications = User.find(self.user_id).leave_applications.where(leave_type: self.leave_type)
+    leave_applications.each do |la|
+      if la.leave_time_usages.empty? and la.hours <= la.available_leave_times.pluck(:usable_hours).sum
+        raise ActiveRecord::Rollback unless LeaveTimeUsageBuilder.new(la).build_leave_time_usages
+      end
+    end
   end
 end
