@@ -64,7 +64,7 @@ group :development, :test do
 end
 
 group :development do
-  gem 'capistrano', '~> 3.1'
+  gem 'capistrano', '~> 3.8.1'
   gem 'capistrano-rails', '~> 1.1'
   gem 'capistrano-upload-config'
   gem 'capistrano-crono'

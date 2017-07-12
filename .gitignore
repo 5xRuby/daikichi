@@ -39,3 +39,4 @@ docker-compose.yml
 /postgres
 
 /db/fixtures/production/
+/config/*.yml

@@ -1,5 +1,5 @@
 # config valid only for current version of Capistrano
-lock '3.6.1'
+lock '3.8.1'
 
 set :application, 'daikichi'
 set :repo_url, 'https://github.com/5xruby/daikichi'
@@ -37,7 +37,7 @@ set :linked_files, %w{config/database.yml config/application.yml config/secrets.
 # set :linked_dirs, fetch(:linked_dirs, []).push('log', 'tmp/pids', 'tmp/cache', 'tmp/sockets', 'vendor/bundle', 'public/system')
 
 # Default value for default_env is {}
-set :default_env, { path: "$PATH:/usr/local/ruby23/bin:" }
+set :default_env, { path: "$PATH:/usr/local/ruby23/bin:/usr/local/ruby-2.4.1/bin:" }
 
 # Default value for keep_releases is 5
 set :keep_releases, 3
