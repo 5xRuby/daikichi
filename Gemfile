@@ -61,6 +61,7 @@ group :development, :test do
   gem 'pry-byebug'
   gem 'timecop'
   gem 'rspec-rails'
+  gem "letter_opener"
 end
 
 group :development do
