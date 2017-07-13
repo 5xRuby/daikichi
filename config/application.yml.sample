@@ -5,7 +5,8 @@ defaults: &defaults
   host: "localhost"
   api_token: 1111111111
 
-  host: localhost
+  flowdock:
+    token: 'bbbbbbbbbb'
 
   devise:
     mailer_sender: hi@example.com
