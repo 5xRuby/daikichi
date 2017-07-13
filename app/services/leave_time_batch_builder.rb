@@ -18,6 +18,7 @@ class LeaveTimeBatchBuilder
     leed_day = Time.current + JOIN_DATE_BASED_LEED_DAYS.days
     users = if @forced
               User.valid.where('(EXTRACT(MONTH FROM join_date), EXTRACT(DAY FROM join_date)) <= (:month, :date)', month: leed_day.month, date: leed_day.day)
+                        .where.not(join_date: ((Time.current - 1.year).to_date)..(Time.current))
             else
               User.valid.filter_by_join_date(reaching_join_date.month, reaching_join_date.day)
             end
