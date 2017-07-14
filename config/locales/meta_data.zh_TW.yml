@@ -15,6 +15,8 @@ zh-TW:
           intern: '實習生'
           resigned: '離職員工'
           pending: '未決'
+        assign_leave_time: '自動產生休假額度'
+        assign_date: '產生休假額度之起始日期'
         password: "密碼"
         password_confirmation: "密碼確認"
         current_password: "原密碼"
@@ -91,6 +93,10 @@ zh-TW:
         updated_at: "更新時間"
     errors:
       models:
+        user:
+          attributes:
+            assign_date:
+              blank: "請填入初始化額度之起始日期"
         leave_application:
           attributes:
             base:
@@ -197,6 +203,7 @@ zh-TW:
       index: "員工列表"
       show: "%{name}"
       new: "新增員工"
+      create: "新增員工"
       edit: "修正員工資料"
     backend/leave_applications:
       index: "審核假單"

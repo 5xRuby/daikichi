@@ -17,9 +17,9 @@ describe LeaveTimeBatchBuilder do
     after  { User.set_callback(:create, :after, :auto_assign_leave_time)  }
 
     context 'is forced' do
-      let!(:fulltime) { FactoryGirl.create(:user, :fulltime, join_date: Date.current) }
-      let!(:parttime) { FactoryGirl.create(:user, :parttime, join_date: Date.current) }
-      let!(:user)     { FactoryGirl.create(:user, join_date: Date.current) }
+      let!(:fulltime) { FactoryGirl.create(:user, :fulltime, join_date: Date.current - 1.year - 1.day) }
+      let!(:parttime) { FactoryGirl.create(:user, :parttime, join_date: Date.current - 1.year - 1.day) }
+      let!(:user)     { FactoryGirl.create(:user, join_date: Date.current - 1.year - 1.day) }
 
       before do
         described_class.new(forced: true).automatically_import

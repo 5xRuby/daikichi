@@ -46,6 +46,10 @@ FactoryGirl.define do
       # after(:create)  { User.set_callback(:create, :after, :auto_assign_leave_time)  }
     end
 
+    trait :without_assign_date do
+      before(:create) { |user| user.assign_leave_time = '0' }
+    end
+
     factory :manager_eddie, traits: [:manager] do
       name 'eddie'
     end
@@ -64,5 +68,10 @@ FactoryGirl.define do
     end
 
     factory :employee, traits: [:employee]
+
+    before(:create) do |user|
+      user.assign_leave_time = '1'
+      user.assign_date = user.join_date.to_s
+    end
   end
 end

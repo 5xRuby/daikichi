@@ -38,7 +38,8 @@ class Backend::UsersController < Backend::BaseController
     params.require(:user).permit(
       :id, :name, :email, :login_name, :role,
       :password, :password_confirmation,
-      :join_date, :leave_date
+      :join_date, :leave_date,
+      :assign_leave_time, :assign_date
     )
   end
 
