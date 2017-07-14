@@ -3,7 +3,6 @@ defaults: &defaults
   metadata:
     title: ''
   host: "localhost"
-  api_token: 1111111111
 
   flowdock:
     token: 'bbbbbbbbbb'
