@@ -40,7 +40,7 @@ class FlowdockService
     event: "activity",
     author: {
         name: "Daikichi",
-        avatar: "https://im2.ezgif.com/tmp/ezgif-2-e22c7d6918.png",
+        avatar: "http://i.imgur.com/ycz7jqg.png",
     },
     title: "5xRuby",
     external_thread_id: thread_id,
