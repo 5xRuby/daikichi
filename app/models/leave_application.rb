@@ -59,7 +59,7 @@ class LeaveApplication < ApplicationRecord
     end
 
     event :reject, before: proc { |manager| sign(manager) } do
-      transitions to: :rejected, from: :pending
+      transitions to: :rejected, from: %i[pending approved]
     end
 
     event :revise do

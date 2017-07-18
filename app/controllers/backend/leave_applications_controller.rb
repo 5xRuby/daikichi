@@ -36,7 +36,7 @@ class Backend::LeaveApplicationsController < Backend::BaseController
   end
 
   def reject
-    if current_object.pending?
+    if current_object.pending? or current_object.approved?
       current_object.reject!(current_user)
       action_success
     else
