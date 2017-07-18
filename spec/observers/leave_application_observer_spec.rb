@@ -53,7 +53,7 @@ RSpec.describe LeaveApplicationObserver do
 
   describe '.hours_update' do
     let(:quota) { 100 }
-    let!(:leave_time)       { create(:leave_time, :annual, user: user, quota: quota, usable_hours: quota, effective_date: effective_date, expiration_date: expiration_date) }
+    let!(:leave_time) { create(:leave_time, :annual, user: user, quota: quota, usable_hours: quota, effective_date: effective_date, expiration_date: expiration_date) }
     context 'before_update' do
       describe 'AASM "approve" event' do
         it 'should transfer locked_hours to used_hours' do
@@ -69,9 +69,9 @@ RSpec.describe LeaveApplicationObserver do
         end
       end
 
-      shared_examples 'return locked_hours back to used_hours' do |event, required_user|
+      shared_examples 'return locked_hours back to usable_hours' do |event, required_user|
         describe "AASM \"#{event}\" event" do
-          it "should return locked_hours back to used_hours when #{event}ed" do
+          it "should return locked_hours back to usable_hours when pending to #{event}ed" do
             leave_time_usage = leave_application.leave_time_usages.first
             leave_time.reload
             expect(leave_time_usage.leave_time).to eq leave_time
@@ -84,10 +84,29 @@ RSpec.describe LeaveApplicationObserver do
           end
         end
       end
+      
+      describe 'AASM "reject" event' do
+        it_should_behave_like 'return locked_hours back to usable_hours', :reject, true
+      
+        it 'should return used_hours back to usable_hours when approved to rejected' do
+          leave_application.reload.approve! user
+          leave_time.reload
+          expect(leave_time.usable_hours).to eq (quota - total_leave_hours)
+          expect(leave_time.used_hours).to eq total_leave_hours
+          expect(leave_time.locked_hours).to be_zero
+          leave_application.reload.reject! user
+          leave_time.reload
+          expect(leave_time.usable_hours).to eq quota
+          expect(leave_time.used_hours).to be_zero
+          expect(leave_time.locked_hours).to be_zero
+          expect(leave_application.leave_time_usages).to be_empty
+        end
+      end
 
-      it_should_behave_like 'return locked_hours back to used_hours', :reject, true
-      it_should_behave_like 'return locked_hours back to used_hours', :cancel
-
+      describe 'AASM "cancel" event' do
+        it_should_behave_like 'return locked_hours back to usable_hours', :cancel
+      end
+      
       describe 'AASM "revise" event' do
         shared_examples 'revise attribute' do |attribute, value|
           it "should successfully recreate LeaveTimeUsage when application #{attribute} changed" do
