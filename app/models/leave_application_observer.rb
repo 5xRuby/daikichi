@@ -16,7 +16,7 @@ class LeaveApplicationObserver < ActiveRecord::Observer
 
   def after_create(record)
     create_leave_time_usages(record)
-    Notification.new(leave_application: record).send_create_notification
+    FlowdockService.new(leave_application: record).send_create_notification
   end
 
   def before_update(record)
@@ -25,7 +25,7 @@ class LeaveApplicationObserver < ActiveRecord::Observer
 
   def after_update(record)
     create_leave_time_usages(record) if record.aasm_event?(:revise)
-    Notification.new(leave_application: record).send_update_notification(record.aasm.to_state)
+    FlowdockService.new(leave_application: record).send_update_notification(record.aasm.to_state)
   end
 
   private

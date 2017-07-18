@@ -26,7 +26,7 @@ RSpec.configure do |config|
   end
 
   config.before(:each) do
-    allow_any_instance_of(Notification).to receive(:send_notification)
+    allow_any_instance_of(FlowdockService).to receive(:notify)
   end
 
   config.after(:each) do
