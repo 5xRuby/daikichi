@@ -10,7 +10,7 @@
         include_blank: t('.plz_select_leave_type'), required: false,
         wrapper_html: { class: 'col-md-6' }
       = f.input :effective_true, collection: [[I18n.t('activerecord.attributes.leave_time.state.effective'), true], [I18n.t('activerecord.attributes.leave_time.state.expired'), false]],
-        selected: true, include_blank: t('.plz_select_effectiveness_state'), required: false,
+        include_blank: t('.plz_select_effectiveness_state'), required: false,
         wrapper_html: { class: 'col-md-6' }
 
       .text-right
@@ -35,7 +35,8 @@
       %th.text-right
         = sort_link(@q, :expiration_date)
   %tbody
-  - current_collection.exclude_sick.each do |quota|
+  - current_collection.each do |quota|
+    - next if quota.leave_type == "fullpaid_sick" or quota.leave_type == "halfpaid_sick"
     %tr
       %td.text-right= link_to quota.id, leave_time_path(quota.id)
       %td.text-center= LeaveTime.human_enum_value(:leave_type, quota.leave_type)
@@ -48,10 +49,12 @@
   %tfoot
     %tr
       %th.text-right{colspan: 2} Sum
-      %td.active.text-right= hours_to_humanize current_collection.exclude_sick.to_a.sum(&:quota)
-      %td.active.text-right= hours_to_humanize current_collection.exclude_sick.to_a.sum(&:locked_hours)
-      %td.active.text-right= hours_to_humanize current_collection.exclude_sick.to_a.sum(&:used_hours)
-      %td.active.text-right= hours_to_humanize current_collection.exclude_sick.to_a.sum(&:usable_hours)
+      %td.active.text-right= hours_to_humanize current_collection.to_a.sum(&:quota)
+      %td.active.text-right= hours_to_humanize current_collection.to_a.sum(&:locked_hours)
+      %td.active.text-right= hours_to_humanize current_collection.to_a.sum(&:used_hours)
+      %td.active.text-right= hours_to_humanize current_collection.to_a.sum(&:usable_hours)
 
 .text-center
   = paginate current_collection
+
+
