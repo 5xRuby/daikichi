@@ -269,6 +269,14 @@ RSpec.describe LeaveTime, type: :model do
           end
         end
       end
+    
+      describe '.exclude_sick' do
+        let!(:user) { create(:user, :employee) }
+        subject { user.leave_times.exclude_sick }
+        it 'should exclude fullpaid_sick and halfpaid_sick LeaveTime' do
+          expect(subject.where(leave_type: ['fullpaid_sick', 'halfpaid_sick'])).to be_empty
+        end
+      end
     end
 
     describe '.cover?' do
