@@ -7,7 +7,7 @@ class Ability
     case user.role
     when 'manager', 'hr'
       can :manage, :all
-    when 'employee'
+    when 'employee', 'parttime', 'intern'
       can :read, LeaveTime, user_id: user.id
       can :manage, LeaveApplication, user_id: user.id
     end
