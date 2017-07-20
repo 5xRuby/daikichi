@@ -1,8 +1,6 @@
 AllCops:
   TargetRubyVersion: 2.3
   Include:
-    - app/views/**/*.rabl
-    - ./Vagrantfile
     - ./Rakefile
     - ./config.ru
   Exclude:
@@ -10,8 +8,6 @@ AllCops:
     - db/schema.rb
     - config/**/*
     - lib/tasks/*.rake
-    - lib/nh4_auth/**/*
-    - engines/**/*
 
 Rails:
   Enabled: true
@@ -51,7 +47,7 @@ SignalException:
 
 # Prefer ' strings when you don't need string interpolation or special symbols.
 StringLiterals:
-  EnforcedStyle: double_quotes
+  EnforcedStyle: single_quotes
   SupportedStyles:
     - single_quotes
     - double_quotes
@@ -93,3 +89,19 @@ SymbolProc:
 
 MultilineMethodCallIndentation:
   EnforcedStyle: indented
+
+Layout/EmptyLineAfterMagicComment:
+  Enabled: false
+
+ConditionalAssignment:
+  Enabled: false
+
+Metrics/ModuleLength:
+  Exclude:
+    - "**/*_spec.rb"
+    - spec/factories/*
+
+Metrics/BlockLength:
+  Exclude:
+    - "**/*_spec.rb"
+    - spec/factories/*

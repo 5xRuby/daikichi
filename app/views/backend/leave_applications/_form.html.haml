@@ -1,0 +1,6 @@
+= simple_form_for current_object, url: backend_leave_application_path(current_object), method: :put do |f|
+  = f.input :comment
+  = f.button :submit, t("title.backend/leave_applications.approve"), disabled: !current_object.may_approve?, name: "approve", class: "btn btn-primary"
+  = f.button :submit, t("title.backend/leave_applications.reject"), name: "reject", class: "btn btn-danger"
+  - if current_object.special_type? and not current_object.may_approve?
+    = link_to t("title.backend/leave_applications.append_quota"), append_quota_backend_leave_times_path(leave_application_id: current_object), method: :post, class: 'btn btn-warning'

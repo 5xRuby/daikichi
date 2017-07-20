@@ -10,37 +10,81 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160714090133) do
+ActiveRecord::Schema.define(version: 20170629025755) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
+  create_table "bonus_leave_time_logs", force: :cascade do |t|
+    t.integer  "user_id"
+    t.integer  "manager_id"
+    t.datetime "authorize_date"
+    t.integer  "hours",          default: 0
+    t.text     "description"
+    t.datetime "created_at",                 null: false
+    t.datetime "updated_at",                 null: false
+  end
+
+  create_table "crono_jobs", force: :cascade do |t|
+    t.string   "job_id",            null: false
+    t.text     "log"
+    t.datetime "last_performed_at"
+    t.boolean  "healthy"
+    t.datetime "created_at",        null: false
+    t.datetime "updated_at",        null: false
+    t.index ["job_id"], name: "index_crono_jobs_on_job_id", unique: true, using: :btree
+  end
+
   create_table "leave_applications", force: :cascade do |t|
     t.integer  "user_id"
     t.string   "leave_type"
-    t.integer  "hours",       default: 0
+    t.integer  "hours",         default: 0
     t.datetime "start_time"
     t.datetime "end_time"
     t.text     "description"
-    t.string   "status",      default: "pending"
+    t.string   "status",        default: "pending"
     t.datetime "sign_date"
     t.datetime "deleted_at"
-    t.datetime "created_at",                      null: false
-    t.datetime "updated_at",                      null: false
+    t.datetime "created_at",                        null: false
+    t.datetime "updated_at",                        null: false
     t.integer  "manager_id"
+    t.text     "comment"
+    t.integer  "leave_time_id"
     t.index ["manager_id"], name: "index_leave_applications_on_manager_id", using: :btree
   end
 
+  create_table "leave_hours_by_dates", force: :cascade do |t|
+    t.integer  "leave_application_id"
+    t.date     "date"
+    t.integer  "hours"
+    t.datetime "created_at",           null: false
+    t.datetime "updated_at",           null: false
+    t.index ["leave_application_id"], name: "index_leave_hours_by_dates_on_leave_application_id", using: :btree
+  end
+
+  create_table "leave_time_usages", force: :cascade do |t|
+    t.integer  "leave_application_id"
+    t.integer  "leave_time_id"
+    t.integer  "used_hours"
+    t.datetime "created_at",           null: false
+    t.datetime "updated_at",           null: false
+    t.index ["leave_application_id"], name: "index_leave_time_usages_on_leave_application_id", using: :btree
+    t.index ["leave_time_id"], name: "index_leave_time_usages_on_leave_time_id", using: :btree
+  end
+
   create_table "leave_times", force: :cascade do |t|
-    t.integer  "user_id"
-    t.integer  "year"
+    t.integer  "user_id",                                  null: false
     t.string   "leave_type"
-    t.integer  "quota",        default: 0
-    t.integer  "usable_hours", default: 0
-    t.integer  "used_hours",   default: 0
-    t.datetime "created_at",               null: false
-    t.datetime "updated_at",               null: false
-    t.index ["year"], name: "index_leave_times_on_year", using: :btree
+    t.integer  "quota"
+    t.integer  "usable_hours"
+    t.integer  "used_hours",      default: 0
+    t.datetime "created_at",                               null: false
+    t.datetime "updated_at",                               null: false
+    t.boolean  "refilled",        default: false
+    t.date     "effective_date",  default: -> { "now()" }, null: false
+    t.date     "expiration_date", default: -> { "now()" }, null: false
+    t.text     "remark"
+    t.integer  "locked_hours"
   end
 
   create_table "users", force: :cascade do |t|
@@ -63,8 +107,10 @@ ActiveRecord::Schema.define(version: 20160714090133) do
     t.inet     "last_sign_in_ip"
     t.datetime "deleted_at"
     t.index ["deleted_at"], name: "index_users_on_deleted_at", using: :btree
-    t.index ["email"], name: "index_users_on_email", unique: true, using: :btree
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
   end
 
+  add_foreign_key "leave_hours_by_dates", "leave_applications"
+  add_foreign_key "leave_time_usages", "leave_applications"
+  add_foreign_key "leave_time_usages", "leave_times"
 end

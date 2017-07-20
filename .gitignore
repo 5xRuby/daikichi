@@ -16,6 +16,8 @@
 
 # Ignore Byebug command history file.
 /.byebug_history
+/vendor/bundle/*
+/public/assets
 
 /config/database.yml
 /config/secrets.yml
@@ -27,3 +29,14 @@
 
 # Private data
 /lib/tasks/users.yml
+/lib/tasks/leaves.yml
+/lib/tasks/bonus_leave_times.yml
+
+docker-compose.yml
+
+/coverage
+
+/postgres
+
+/db/fixtures/production/
+/config/*.yml

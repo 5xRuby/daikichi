@@ -1,0 +1,8 @@
+zh-TW:
+  views:
+    pagination:
+      first: "&laquo; 第一頁"
+      last: "最後一頁 &raquo;"
+      next: "下一頁 &rsaquo;"
+      previous: "&lsaquo; 上一頁"
+      truncate: "&hellip;"

@@ -1,10 +1,53 @@
-%table.table
-  = tr_by_object :name
-  = tr_by_object :login_name
-  = tr_by_object :email
-  = tr_by_object :role, User, current_object.role
-  = tr_by_object :join_date
-  = tr_by_object :leave_date
+.panel.panel-info
+  .panel-heading
+    %h3.panel-title= t("captions.backend/users.show", name: current_object[:name])
+    = link_to t("title.backend/users.edit"),
+    edit_backend_user_path(current_object),
+    class: "btn btn-warning"
 
-- if current_object.fulltime?
-  = render "leave_time", { leave_times: @leave_times }
+  %table.table
+    = tr_by_object :name
+    = tr_by_object :login_name
+    = tr_by_object :email
+    %tr
+      %th.col-md-3= t_attribute(:role, User)
+      %td.col-md-9= User.human_enum_value(:roles, current_object.role)
+    %tr
+      %th.col-md-3= t_attribute(:join_date, User)
+      %td.col-md-9= l current_object.join_date, format: :long
+    - if current_object.leave_date
+      %tr
+        %th.col-md-3= t_attribute(:leave_date, User)
+        %td.col-md-9= l current_object.leave_date, format: :long
+
+
+
+.panel.panel-info
+  .panel-heading
+    = link_to t("title.backend/leave_times.new"),
+    new_backend_leave_time_path(user_id: current_object.id),
+    class: "btn btn-primary"
+  %table.table
+    %thead
+      %tr
+        %th.text-right #
+        %th.text-center= t_attribute(:leave_type, LeaveTime)
+        %th.text-right= t_attribute(:quota,LeaveTime)
+        %th.text-right= t_attribute(:locked_hours,LeaveTime)
+        %th.text-right= t_attribute(:used_hours,LeaveTime)
+        %th.text-right= t_attribute(:usable_hours,LeaveTime)
+        %th.text-right= t_attribute(:effective_date,LeaveTime)
+        %th.text-right= t_attribute(:expiration_date,LeaveTime)
+    %tbody
+      - @leave_times.each do |leave_time|
+        %tr
+          %td.text-right= link_to leave_time.id, backend_leave_time_path(leave_time.id)
+          %td.text-center= LeaveTime.human_enum_value(:leave_type, leave_time.leave_type)
+          %td.text-right= hours_to_humanize leave_time.quota
+          %td.text-right= hours_to_humanize leave_time.locked_hours
+          %td.text-right= hours_to_humanize leave_time.used_hours
+          %td.text-right= hours_to_humanize leave_time.usable_hours
+          %td.text-right= l leave_time.effective_date, format: :long
+          %td.text-right= l leave_time.expiration_date, format: :long
+
+

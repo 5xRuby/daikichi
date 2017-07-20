@@ -1,0 +1,21 @@
+
+%table.table
+  %thead
+    %tr
+      - if show_leave_type
+        %th.text-center= t('title.leave_times.type')
+      - columns.each do |c|
+        %th.text-right= t_attribute c, LeaveTime
+      - if tools.present?
+        %th.tools= t("captions.tools")
+
+  %tbody
+    - leave_times.each do |lt|
+      %tr
+        - if show_leave_type
+          %th.text-center= t_value :leave_type, lt, :translate_text_value
+        - columns.each do |c|
+          %th.text-right= t_value c, lt
+        - if tools.present?
+          %td.tools= tools.call(lt)
+

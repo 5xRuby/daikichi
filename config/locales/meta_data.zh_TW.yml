@@ -2,70 +2,239 @@ zh-TW:
   activerecord:
     attributes:
       user:
-        name: '姓名'
-        login_name: '帳號'
-        email: '電子郵件'
-        role: '身份'
-        password: '密碼'
-        password_confirmation: '密碼確認'
-        current_password: '原密碼'
-        join_date: '到職日期'
-        leave_date: '離職日期'
+        name: "員工姓名"
+        login_name: "員工帳號"
+        email: "電子郵件"
+        role: "身份"
+        roles:
+          manager: '公司主管'
+          hr: '人資主管'
+          employee: '全職員工'
+          contractor: '承包商'
+          parttime: '兼職員工'
+          intern: '實習生'
+          resigned: '離職員工'
+          pending: '未決'
+        assign_leave_time: '自動產生休假額度'
+        assign_date: '產生休假額度之起始日期'
+        password: "密碼"
+        password_confirmation: "密碼確認"
+        current_password: "原密碼"
+        join_date: "到職日期"
+        leave_date: "離職日期"
       leave_time:
-        year: '年度'
-        leave_type: '假別'
-        quota: '總時數'
-        usable_hours: '可用時數'
-        used_hours: '已用時數'
+        leave_types:
+          remote: '在家上班'
+          late: '遲到'
+          absent: '曠職'
+          annual: '特休'
+          personal: '事假'
+          fullpaid_sick: '全薪病假'
+          halfpaid_sick: '半薪病假'
+          compassionate: '喪假'
+          official: '公假'
+          marriage: '婚假'
+          maternity: '產假'
+          bonus: '補休'
+          compassionate: '喪假'
+          sick: '病假'
+          unpaid: '無薪事假'
+        user: "員工"
+        name: "擁有者"
+        leave_type: "假別"
+        quota: "額度"
+        used_hours: "已用時數"
+        used_hours_if_allow: "已用時數"
+        usable_hours: "可用時數"
+        locked_hours: "圈存時數"
+        id: "#"
+        usable_hours_if_allow: "可用時數"
+        effective_date: '有效時間'
+        expiration_date: '失效時間'
+        remark: '備註'
+        state:
+          effective: 有效
+          expired: 過期
       leave_application:
-        start_time: '開始時間'
-        end_time: '結束時間'
-        hours: '時數'
-        status: '狀態'
-        leave_type: '假別'
-        description: '事由'
-        manager: '簽核主管'
-        sign_date: '簽核時間'
+        statuses:
+          approved: '核准'
+          rejected: '駁回'
+          pending: '待審'
+          canceled: '取消'
+          all: '全部'
+        modify_actions:
+          approved: '核准'
+          rejected: '駁回'
+          canceled: '取消'
+          pending: '修改'
+        leave_types:
+          annual: '特別休假'
+          bonus: '補充休假'
+          sick: '病假'
+          personal: '無薪事假'
+          remote: '遠端工作'
+          official: '公假'
+          marriage: '婚假'
+          compassionate: '喪假'
+          maternity: '產假'
+        user: "員工"
+        start_time: "開始時間"
+        end_time: "結束時間"
+        hours: "時數"
+        status: "狀態"
+        leave_type: "假別"
+        leave_time_usage_builder: "每日請假時數"
+        leave_time_usages: "使用額度"
+        description: "事由"
+        manager: "簽核主管"
+        sign_date: "簽核時間"
+        comment: "主管備註"
+        created_at: "建立時間"
+        updated_at: "更新時間"
+    errors:
+      models:
+        user:
+          attributes:
+            assign_date:
+              blank: "請填入初始化額度之起始日期"
+        leave_application:
+          attributes:
+            base:
+              overlap_application: '<a href="%{link}" target="_blank">與 %{start_time} ~ %{end_time} %{leave_type} 時段重複</a>'
+            leave_type:
+              blank: "請選擇請假種類"
+              only_take_annual_leave_year_before: "只有特休假得以於前一年提前請假"
+              no_leave_time_available: "此假別沒有可用的扣打"
+            description:
+              blank: "請簡述原因"
+            start_time:
+              should_be_earlier: "開始時間必須早於結束時間"
+              not_within_applicable_time: "距離申請時間不合規定"
+            end_time:
+              not_integer: "請假的最小單位是1小時"
+              not_enough_leave_time: "剩餘休假時間不足"
+            hours:
+              leave_time_not_sufficient: "請假額度不足，無法申請假單："
+              lacking_hours: "%{date} 缺少額度：%{hours} 小時"
+        leave_time:
+          attributes:
+            user:
+              required: 休假時數必須屬於一個員工
+            quota:
+              unbalanced_hours: 總額度必須等於可用、圈存以及已用額度之總和
+            effective_date:
+              range_should_be_positive: 截止日期應在生效日期之後
+              range_should_not_overlaps: 該類別休假額度已存在
 
-  menu_labels:
-    user: '員工管理'
-    leave_application: '請假系統'
-
-  captions:
-    tools: '工具'
-    annual_leave_time: '%{year} 年度休假使用狀況'
+  # navbar 選單標題
+  nav:
+    leave_applications: "請假系統"
+    backend: "員工管理"
+    manage: "休假管理"
 
   title:
     devise/registrations:
-      new: '註冊新帳號'
-      edit: '修改帳號資料'
+      new: "註冊新帳號"
+      edit: "修改帳號資料"
     devise/sessions:
-      new: '登入'
-      destroy: '登出'
+      new: "登入"
+      destroy: "登出"
+    backend/users:
+      index: "員工列表"
+      new: "新增員工"
+      show: "員工資料"
+      edit: "員工資料"
+    backend/users:
+      index: "員工列表"
+      new: "新增員工"
+      show: "檢視"
+      edit: "編輯"
+      destroy: "刪除"
+    backend/leave_applications:
+      index: "審核假單"
+      show: "檢視"
+      verify: "審核"
+      approve: "核准"
+      append_quota: "新增額度"
+      reject: "駁回"
+      statistics: "員工休假狀況"
+    backend/leave_times:
+      index: "員工休假額度"
+      new: "新增員工休假額度"
+      edit: "修改"
+      delete: "刪除"
+      change_type: "切換休假種類至"
+      remark: "備註"
+    leave_applications:
+      index: "查看歷年假單"
+      show: "檢視"
+      new: "新增假單"
+      create: "新增假單"
+      edit: "修改"
+      cancel: "取消"
+      new_remote: "申請 Remote"
+    leave_times:
+      index: "查看請假額度"
+      showing: "顯示"
+      all: '全部'
+      effective: '有效的'
+      type: '假別'
+
+  captions:
+    devise/registrations:
+      new: "註冊新帳號"
+      edit: "修改帳號資料"
+    devise/sessions:
+      new: "登入"
+      destroy: "登出"
+    leave_times:
+      index: "請假額度"
+    leave_applications:
+      index: "%{year} 年 所有假單"
+      show: "%{start_day} - %{end_day} %{type}假單"
+      new: "新增假單"
+      create: "新增假單"
+      edit: "編輯假單"
+    remote:
+      new: "申請 Remote"
+      create: "申請 Remote"
 
     backend/users:
-      index: '員工列表'
-      new: '新增員工'
-      show: '員工資料'
-      edit: '員工資料'
+      index: "員工列表"
+      show: "%{name}"
+      new: "新增員工"
+      create: "新增員工"
+      edit: "修正員工資料"
+    backend/leave_applications:
+      index: "審核假單"
+      verify: "審核假單"
+      statistics: "員工休假統計"
+    backend/leave_times:
+      index: "員工休假額度"
+      new: "新增員工休假額度"
+      append_quota: "新增員工休假額度"
+      edit: "修改員工休假"
+    tools: "工具"
 
   success:
-    create: '新增成功'
-    update: '修改成功'
-    destroy: '刪除成功'
+    create: "新增成功"
+    update: "修改成功"
+    destroy: "刪除成功"
+    revise: "已修改假單"
+    cancel: "已取消假單"
 
   warnings:
-    self_manage: '申請人不得自行審核'
-    not_authorized: '無操作權限'
-    restricted_function: '功能限制中'
-    no_data: '尚無資料'
-    confirm_delete: '您確定要刪除嗎？'
+    self_manage: "申請人不得自行審核"
+    not_authorized: "無操作權限"
+    restricted_function: "功能限制中"
+    no_data: "尚無資料"
+    no_change: "尚未更改資料"
+    confirm_delete: "您確定要刪除嗎？"
+    confirm_cancel: "你確定要取消嗎？"
+    not_verifiable: "已審核假單無法再次操作"
+    not_cancellable: "無法再操作已取消的假單"
+    already_happened: "無法刪除已經通過並且生效的假單"
 
   misc:
-    app_title: '五倍神社'
-    company_name: '五倍紅寶石'
-    status:
-      pending: '待審'
-      approved: '核准'
-      rejected: '駁回'
-      closed: '完成'
+    app_title: "五倍神社"
+    company_name: "五倍紅寶石"

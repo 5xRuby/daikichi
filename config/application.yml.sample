@@ -1,6 +1,23 @@
 defaults: &defaults
+  force_ssl: false
   metadata:
     title: ''
+  host: "localhost"
+
+  flowdock:
+    token: 'bbbbbbbbbb'
+
+  devise:
+    mailer_sender: hi@example.com
+
+  smtp:
+    username: sample
+    password: sample
+    domain: example.com
+    address: smtp.example.com
+    port: 25
+    authentication: plain
+    enable_starttls_auto: true
 
   admin_user:
     name: '系統管理員'
@@ -8,6 +25,141 @@ defaults: &defaults
     email: 'admin@example.com'
     role: 'admin'
     password: '12345678'
+
+  roles:
+    manager: 'manager'
+    hr: 'hr'
+    employee: 'employee'
+    contractor: 'contractor'
+    parttime: 'parttime'
+    intern: 'intern'
+    resigned: 'resigned'
+    pending: 'pending'
+
+  leave_applications:
+    statuses:
+      pending: pending
+      approved: approved
+      rejected: rejected
+      canceled: canceled
+    leave_types:
+      annual: annual
+      bonus: bonus
+      # unpaid: unpaid
+      sick: sick
+      official: official
+      marriage: marriage
+      compassionate: compassionate
+      personal: personal
+      remote: remote
+    available_quota_types:
+      annual:
+        - annual
+      bonus:
+        - bonus
+      unpaid:
+        - unpaid
+      sick:
+        - sick # Deprecated
+        - fullpaid_sick
+        - halfpaid_sick
+      official:
+        - official
+      marriage:
+        - marriage
+      compassionate:
+        - compassionate
+      # Deprecated
+      personal:
+        - bonus
+        - annual
+        - personal
+      remote:
+        - remote
+
+  leave_times:
+    quota_types:
+      annual: annual
+      bonus: bonus
+      unpaid: unpaid
+      sick: sick # Deprecated
+      fullpaid_sick: fullpaid_sick
+      halfpaid_sick: halfpaid_sick
+      official: official
+      marriage: marriage
+      compassionate: compassionate
+      remote: remote
+      personal: personal #should be deprecated
+
+  leed_days:
+    monthly: 5 # working.days
+    join_date_based: 40 # days
+
+  leave_types:
+    annual:
+      creation: join_date_based
+      quota:
+        type: seniority_based
+        maximum_seniority: 25
+        maximum_quota: 30
+        values:
+          :0:  7
+          :1:  7
+          :2:  10
+          :3:  14
+          :4:  14
+          :5:  15
+          :6:  15
+          :7:  15
+          :8:  15
+          :9:  15
+          :10: 16
+          :11: 17
+          :12: 18
+          :13: 19
+          :14: 20
+          :15: 21
+          :16: 22
+          :17: 23
+          :18: 24
+          :19: 25
+          :20: 26
+          :21: 27
+          :22: 28
+          :23: 29
+          :24: 30
+          :25: 30
+    personal:
+      creation: join_date_based
+      quota: 14 # days
+    fullpaid_sick:
+      creation: join_date_based
+      quota: 7 # days
+    halfpaid_sick:
+      creation: join_date_based
+      quota: 23
+    remote:
+      creation: monthly
+      quota: 2 # days
+    marriage:
+      creation: manually
+      quota: 8 # days
+    bereavement:
+      creation: manually
+      quota: 3
+      effective: 49 # days
+    official:
+      creation: none
+    maternity:
+      creation: none
+    bonus:
+      creation: none
+
+  backend:
+    default_leave_pool_type: bonus
+
+  misc:
+    starting_year: 2016
 
 development:
   <<: *defaults

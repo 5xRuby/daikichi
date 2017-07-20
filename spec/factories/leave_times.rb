@@ -1,22 +1,20 @@
 # frozen_string_literal: true
 FactoryGirl.define do
   factory :leave_time do
-    year { 2016 }
+    user
+    leave_type 'annual'
+    effective_date  { Time.current.beginning_of_year }
+    expiration_date { Time.current.end_of_year }
+    quota           50
+    used_hours      0
+    usable_hours    50
+    locked_hours    0
+    remark          'Test string'
 
-    factory :annual_leave_time do
-      leave_type { "annual" }
-    end
-
-    factory :sick_leave_time do
-      leave_type { "sick" }
-    end
-
-    factory :personal_leave_time do
-      leave_type { "personal" }
-    end
-
-    factory :bonus_leave_time do
-      leave_type { "bonus" }
+    Settings.leave_times.quota_types.keys.each do |type|
+      trait type.to_sym do
+        leave_type type
+      end
     end
   end
 end

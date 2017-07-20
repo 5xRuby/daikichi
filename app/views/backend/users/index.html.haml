@@ -1,28 +1,55 @@
-- if current_collection.any?
-  %table.table
-    %tr
-      %th #
-      %th= t_attribute(:name, User)
-      %th= t_attribute(:login_name, User)
-      %th= t_attribute(:email, User)
-      %th= t_attribute(:role, User)
-      %th= t_attribute(:join_date, User)
-      %th= t("captions.tools")
+%h2
+  = t("captions.backend/users.index")
+  = link_to t("title.backend/users.new"), new_backend_user_path, class: 'btn btn-primary'
 
+
+.panel.panel-default
+  .panel-heading= t('panel_header.filter_conditions')
+  .panel-body
+    = simple_form_for @q, url: url_for(action: :index), method: :get do |f|
+      = f.hidden_field :s, value: params.dig(:q, :s)
+      = f.input :login_name_cont_any, required: false,
+        include_blank: t('.plz_select_user'), label_method: :name, value_method: :name,
+        wrapper_html: { class: 'col-md-4' }, label: t('.login_name_cont_any')
+      = f.input :id_eq, collection: @users, required: false,
+        include_blank: t('.plz_select_user'), label_method: :name, value_method: :id,
+        wrapper_html: { class: 'col-md-4' }, label: t('.id_eq')
+      = f.input :role_eq, collection: User.enum_attributes_for_select(:roles), required: false,
+        include_blank: t('.plz_select_role'), wrapper_html: { class: 'col-md-4' },label: t('.role_eq')
+        
+      .text-right
+        = f.button :submit, class: 'btn-warning'
+
+%table.table.table-striped.table-bordered.table-hover
+  %thead
+    %tr.info
+      %th.text-right
+        = sort_link(@q, :id)
+      %th.text-center
+        = sort_link(@q, :name)
+      %th.text-center
+        = sort_link(@q, :login_name)
+      %th.text-center
+        = sort_link(@q, :email)
+      %th.text-center
+        = sort_link(@q, :role)
+      %th.text-right
+        = sort_link(@q, :join_date)
+      %th.text-center= t("captions.tools")
+
+  %tbody
     - current_collection.each do |user|
       %tr
-        %td= user.id
-        %td= user.name
-        %td= user.login_name
-        %td= user.email
-        %td= t_value(:role, User, user.role)
-        %td= user.join_date
-        %td 
-          = link_to "show", backend_user_path(user)
-          = link_to "edit", edit_backend_user_path(user)
-          = link_to "delete", backend_user_path(user), method: :delete, data: { confirm: t("warnings.confirm_delete") }
-
-- else
-  = no_data_alert
-
-= paginate current_collection
+        %td.text-right= user.id
+        %td.text-center= user.name
+        %td.text-center= user.login_name
+        %td.text-center= user.email
+        %td.text-center= User.human_enum_value(:role, user.role)
+        %td.text-right= l user.join_date, format: :detailed
+        %td.text-center
+          = link_to t("title.backend/users.show"),
+            backend_user_path(user),
+            class: "btn btn-primary"
+          = link_to t("title.backend/users.edit"),
+            edit_backend_user_path(user),
+            class: "btn btn-warning"

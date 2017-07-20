@@ -1,0 +1,64 @@
+%h2
+  = t("captions.backend/leave_times.index")
+  = link_to t("title.backend/leave_times.new"), new_backend_leave_time_path, class: 'btn btn-primary'
+
+.panel.panel-default
+  .panel-heading= t('panel_header.filter_conditions')
+  .panel-body
+    = simple_form_for @q, url: url_for(action: :index), method: :get do |f|
+      = f.hidden_field :s, value: params.dig(:q, :s)
+      = f.input :leave_type_eq, collection: LeaveTime.enum_attributes_for_select(:leave_types),
+        include_blank: t('.plz_select_leave_type'), required: false,
+        wrapper_html: { class: 'col-md-6' }
+      = f.input :user_id_eq, collection: @users, required: false,
+        include_blank: t('.plz_select_user'), label_method: :name, value_method: :id,
+        wrapper_html: { class: 'col-md-6' }
+      = f.input :effective_true, collection: [[I18n.t('activerecord.attributes.leave_time.state.effective'), true], [I18n.t('activerecord.attributes.leave_time.state.expired'), false]],
+        include_blank: t('.plz_select_effectiveness_state'), required: false,
+        wrapper_html: { class: 'col-md-6' }
+
+      .text-right
+        = f.button :submit, class: 'btn-warning'
+
+%table.table.table-striped.table-bordered.table-hover
+  %thead
+    %tr.info
+      %th.text-right
+        = sort_link(@q, :id, '#')
+      %th.text-center= t_attribute :user, LeaveTime
+      %th.text-center= t_attribute :leave_type, LeaveTime
+      %th.text-right
+        = sort_link(@q, :quota)
+      %th.text-right
+        = sort_link(@q, :locked_hours)
+      %th.text-right
+        = sort_link(@q, :used_hours)
+      %th.text-right
+        = sort_link(@q, :usable_hours)
+      %th.text-right
+        = sort_link(@q, :effective_date)
+      %th.text-right
+        = sort_link(@q, :expiration_date)
+  %tbody
+    - current_collection.each do |quota|
+      %tr
+        %td.text-right
+          = link_to quota.id, backend_leave_time_path(quota.id)
+        %td.text-center= quota.user.name
+        %td.text-center= LeaveTime.human_enum_value(:leave_type, quota.leave_type)
+        %td.text-right= hours_to_humanize quota.quota
+        %td.text-right= hours_to_humanize quota.locked_hours
+        %td.text-right= hours_to_humanize quota.used_hours
+        %td.text-right= hours_to_humanize quota.usable_hours
+        %td.text-right= l quota.effective_date, format: :detailed
+        %td.text-right= l quota.expiration_date, format: :detailed
+  %tfoot
+    %tr
+      %th.text-right{colspan: 3} Sum
+      %td.active.text-right= hours_to_humanize current_collection.to_a.sum(&:quota)
+      %td.active.text-right= hours_to_humanize current_collection.to_a.sum(&:locked_hours)
+      %td.active.text-right= hours_to_humanize current_collection.to_a.sum(&:used_hours)
+      %td.active.text-right= hours_to_humanize current_collection.to_a.sum(&:usable_hours)
+
+.text-center
+  = paginate current_collection

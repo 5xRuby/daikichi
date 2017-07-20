@@ -1,0 +1,40 @@
+zh-TW:
+  panel_header:
+    filter_conditions: 篩選條件
+
+  backend:
+    leave_times: &leave_times_filter_prompt
+      index:
+        plz_select_leave_type: 請選擇要篩選的休假類別
+        plz_select_user: 請選擇要篩選的使用者
+        plz_select_effectiveness_state: 所有額度
+      show: &leave_application_mapping
+        title: 額度檢視 %{id}.%{user_name} - %{leave_type} 額度
+        quota_info: 額度基本資料
+        quota_usage_info: 額度使用情形 (假單)
+        used_locked_hours: 所用圈存時數
+        used_hours: 所用已用時數
+        application_total_hours: 假單總時數
+        sum: 小計
+    leave_applications: &leave_applications_filter_prompt
+      index:
+        plz_select_leave_type: 請選擇要篩選的請假類別
+        plz_select_user: 請選擇要篩選的使用者
+        plz_select_status: 請選擇要篩選的假單狀態
+    users:
+      index:
+        plz_select_role: 請選擇要篩選的員工身份
+        plz_select_user: 請選擇要篩選的使用者
+        id_eq: 依員工姓名篩選
+        login_name_cont_any: 輸入員工帳號搜尋
+        role_eq: 依員工身份篩選
+
+  leave_times:
+    <<: *leave_times_filter_prompt
+    show:
+      <<: *leave_application_mapping
+      title: 額度檢視 %{id} - %{leave_type} 額度
+
+  leave_applications:
+    <<: *leave_applications_filter_prompt
+

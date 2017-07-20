@@ -1,0 +1,69 @@
+.panel.panel-info
+  .panel-heading
+    %h4= t( "captions.leave_applications.show", start_day: current_object.start_time.to_formatted_s(:month_date), end_day: current_object.end_time.to_formatted_s(:month_date), type: LeaveTime.human_enum_value(:leave_type, current_object.leave_type))
+
+  %table.table
+    %tr
+      %th= t_attribute(:leave_type, current_object)
+      %td= LeaveTime.human_enum_value(:leave_types, current_object.leave_type)
+
+    %tr
+      %th= t_attribute(:start_time, current_object)
+      %td= l current_object.start_time, format: :long
+
+    %tr
+      %th= t_attribute(:end_time, current_object)
+      %td= l current_object.end_time, format: :long
+
+    = tr_by_object :hours
+    %tr
+      %th= t_attribute(:leave_time_usage_builder, current_object)
+      %td
+        - current_object.leave_hours_by_dates.each do |date|
+          %li #{ l date.date, format: :detailed }：#{ date.hours } 小時
+
+    = tr_by_object :description
+
+    %tr
+      %th= t_attribute(:status, current_object)
+      %td= LeaveApplication.human_enum_value(:status, current_object.status)
+
+    %tr
+      %th= t_attribute(:sign_date, current_object)
+      %td= current_object.sign_date ? l(current_object.sign_date, format: :long) : nil
+
+    = tr_by_object :manager, :convert_user_object_to_name, :name
+    - if current_object[:comment].present?
+      = tr_by_object :comment
+
+    %tr
+      %th= t_attribute(:created_at, current_object)
+      %td= l current_object.created_at, format: :long
+
+    %tr
+      %th= t_attribute(:updated_at, current_object)
+      %td= l current_object.updated_at, format: :long
+
+
+
+.panel.panel-info
+  .panel-heading
+    %h4= t_attribute(:leave_time_usages, current_object)
+  %table.table
+    %thead
+      %tr
+        %th.text-right #
+        %th.text-center= t_attribute(:leave_type, LeaveTime)
+        %th.text-right 使用時數
+        %th.text-right= t_attribute(:quota,LeaveTime)
+        %th.text-right= t_attribute(:effective_date,LeaveTime)
+        %th.text-right= t_attribute(:expiration_date,LeaveTime)
+    %tbody
+      - current_object.leave_time_usages.each do |usage|
+        %tr
+          %td.text-right= link_to usage.leave_time_id, leave_time_path(usage.leave_time_id)
+          %td.text-center= LeaveTime.human_enum_value(:leave_type, usage.leave_time.leave_type)
+          %td.text-right= hours_to_humanize usage.used_hours
+          %td.text-right= hours_to_humanize usage.leave_time.usable_hours
+          %td.text-right= l usage.leave_time.effective_date, format: :long
+          %td.text-right= l usage.leave_time.expiration_date, format: :long
