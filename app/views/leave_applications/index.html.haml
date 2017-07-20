@@ -46,11 +46,11 @@
             = link_to t("title.leave_applications.show"),
               leave_application_path(leave),
               class: "btn btn-primary"
-            - if leave.may_revise?
+            - if leave.may_revise? and !leave.happened?
               = link_to t("title.leave_applications.edit"),
                 edit_leave_application_path(leave),
                 class: "btn btn-warning"
-            - if leave.may_cancel?
+            - if leave.may_cancel? and !leave.happened?
               = link_to t("title.leave_applications.cancel"),
                 cancel_leave_application_path(leave),
                 class: "btn btn-danger",
