@@ -27,6 +27,10 @@ GEM
   specs:
     aasm (4.12.0)
       concurrent-ruby (~> 1.0)
+    act-fluent-logger-rails (0.4.0)
+      activesupport (>= 4, < 5.2)
+      fluent-logger
+      railties (>= 4, < 5.2)
     actioncable (5.0.3)
       actionpack (= 5.0.3)
       nio4r (>= 1.2, < 3.0)
@@ -149,6 +153,8 @@ GEM
     flowdock (0.7.1)
       httparty (~> 0.7)
       multi_json
+    fluent-logger (0.7.1)
+      msgpack (>= 1.0.0, < 2)
     globalid (0.4.0)
       activesupport (>= 4.2.0)
     haml (5.0.1)
@@ -190,6 +196,11 @@ GEM
     listen (3.0.8)
       rb-fsevent (~> 0.9, >= 0.9.4)
       rb-inotify (~> 0.9, >= 0.9.7)
+    lograge (0.5.1)
+      actionpack (>= 4, < 5.2)
+      activesupport (>= 4, < 5.2)
+      railties (>= 4, < 5.2)
+    logstash-event (1.2.02)
     loofah (2.0.3)
       nokogiri (>= 1.5.9)
     mail (2.6.5)
@@ -202,6 +213,7 @@ GEM
     minitest (5.10.2)
     momentjs-rails (2.17.1)
       railties (>= 3.1)
+    msgpack (1.1.0)
     multi_json (1.12.1)
     multi_xml (0.6.0)
     mustermann (1.0.0)
@@ -370,6 +382,7 @@ PLATFORMS
 
 DEPENDENCIES
   aasm
+  act-fluent-logger-rails
   active_hash
   activerecord-import
   awesome_print
@@ -401,6 +414,8 @@ DEPENDENCIES
   kaminari
   letter_opener
   listen (~> 3.0.5)
+  lograge
+  logstash-event
   momentjs-rails
   paranoia (~> 2.2)
   pg (~> 0.18)

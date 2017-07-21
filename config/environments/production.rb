@@ -96,4 +96,8 @@ Rails.application.configure do
     authentication:       Settings.smtp.authentication,
     enable_starttls_auto: Settings.smtp.enable_starttls_auto
   }
+
+  config.logger = ActFluentLoggerRails::Logger.new
+  config.lograge.enabled = true
+  config.lograge.formatter = Lograge::Formatters::Logstash.new
 end
