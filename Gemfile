@@ -52,6 +52,9 @@ gem 'crono'
 gem 'sinatra', require: nil
 gem 'daemons'
 gem 'flowdock'
+gem 'act-fluent-logger-rails'
+gem 'lograge'
+gem 'logstash-event'
 
 group :development, :test do
   gem 'awesome_print'
