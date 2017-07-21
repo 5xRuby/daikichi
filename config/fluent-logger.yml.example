@@ -1,0 +1,17 @@
+development:
+  fluent_host:   '127.0.0.1'
+  fluent_port:   24224
+  tag:           '5xruby.daikichi'
+  messages_type: 'string'
+
+test:
+  fluent_host:   '127.0.0.1'
+  fluent_port:   24224
+  tag:           '5xruby.daikichi'
+  messages_type: 'string'
+
+production:
+  fluent_host:   '127.0.0.1'
+  fluent_port:   24224
+  tag:           '5xruby.daikichi'
+  messages_type: 'string'
