@@ -3,6 +3,11 @@
     %h4.panel-title= t("captions.backend/leave_applications.verify")
 
   %table.table
+
+    %tr
+      %th= t_attribute :user, LeaveApplication
+      %td= current_object.user_name
+
     %tr
       %th= t_attribute(:leave_type, current_object)
       %td= LeaveTime.human_enum_value(:leave_types, current_object.leave_type)
