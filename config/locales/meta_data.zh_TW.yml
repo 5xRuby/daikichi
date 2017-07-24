@@ -38,7 +38,6 @@ zh-TW:
           bonus: '補休'
           compassionate: '喪假'
           sick: '病假'
-          unpaid: '無薪事假'
         user: "員工"
         name: "擁有者"
         leave_type: "假別"
@@ -71,7 +70,7 @@ zh-TW:
           annual: '特別休假'
           bonus: '補充休假'
           sick: '病假'
-          personal: '無薪事假'
+          personal: '事假'
           remote: '遠端工作'
           official: '公假'
           marriage: '婚假'
