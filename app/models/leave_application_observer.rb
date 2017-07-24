@@ -16,7 +16,7 @@ class LeaveApplicationObserver < ActiveRecord::Observer
 
   def after_create(record)
     create_leave_time_usages(record)
-    FlowdockService.new(leave_application: record).send_create_notification
+    FlowdockService.new(leave_application: record).send_create_notification if Rails.env.production?
   end
 
   def before_update(record)
@@ -25,7 +25,7 @@ class LeaveApplicationObserver < ActiveRecord::Observer
 
   def after_update(record)
     create_leave_time_usages(record) if record.aasm_event?(:revise)
-    FlowdockService.new(leave_application: record).send_update_notification(record.aasm.to_state)
+    FlowdockService.new(leave_application: record).send_update_notification(record.aasm.to_state) if Rails.env.production?
   end
 
   private
@@ -65,12 +65,7 @@ class LeaveApplicationObserver < ActiveRecord::Observer
 
   def return_leave_time_usable_hours(record)
     record.leave_time_usages.each { |usage| revert_hours(record, usage) }
-    record.leave_time_usages.delete_all
-  end
-
-  def revert_used_hours_to_usable_hours(record)
-    record.leave_time_usages.each { |usage| usage.leave_time.unuse_hours!(usage.used_hours) }
-    record.leave_time_usages.delete_all
+    record.leave_time_usages.destroy_all
   end
 
   def revert_hours(record, usage)

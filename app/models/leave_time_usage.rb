@@ -8,6 +8,6 @@ class LeaveTimeUsage < ApplicationRecord
   private
 
   def transfer_leave_time_hours
-      self.leave_time.reload.lock_hours!(self.used_hours)
+    self.leave_time.reload.lock_hours!(self.used_hours)
   end
 end
