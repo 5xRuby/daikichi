@@ -179,6 +179,7 @@ RSpec.describe LeaveApplication, type: :model do
     it_should_behave_like 'transitions', from: :pending,  to: :approved, with_action: :approve, manager_required: true
     it_should_behave_like 'transitions', from: :pending,  to: :canceled, with_action: :cancel
     it_should_behave_like 'transitions', from: :pending,  to: :rejected, with_action: :reject,  manager_required: true
+    it_should_behave_like 'transitions', from: :approved, to: :rejected, with_action: :reject,  manager_required: true
     it_should_behave_like 'transitions', from: :pending,  to: :pending,  with_action: :revise
     it_should_behave_like 'transitions', from: :approved, to: :pending,  with_action: :revise
 
