@@ -10,7 +10,7 @@
         include_blank: t('.plz_select_leave_type'), required: false,
         wrapper_html: { class: 'col-md-6' }
       = f.input :effective_true, collection: [[I18n.t('activerecord.attributes.leave_time.state.effective'), true], [I18n.t('activerecord.attributes.leave_time.state.expired'), false]],
-        selected: true, include_blank: t('.plz_select_effectiveness_state'), required: false,
+        include_blank: t('.plz_select_effectiveness_state'), required: false,
         wrapper_html: { class: 'col-md-6' }
 
       .text-right
