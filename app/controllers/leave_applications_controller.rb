@@ -4,9 +4,9 @@ class LeaveApplicationsController < BaseController
   before_action :set_query_object
 
   def index
-    @current_collection = collection_scope.with_year(specific_year)
+    @current_collection = collection_scope.page(params[:page])
+    @current_collection = @current_collection.with_year(specific_year) unless query?  
     @current_collection = @current_collection.with_status(params[:status]) if status_selected?
-    @current_collection = @current_collection.page(params[:page])
   end
 
   def create
@@ -53,6 +53,10 @@ class LeaveApplicationsController < BaseController
     else
       @q.result.where(user_id: current_user.id).order(id: :desc).page(params[:page])
     end
+  end
+
+  def query?
+    !params[:q].nil?
   end
 
   def search_params
