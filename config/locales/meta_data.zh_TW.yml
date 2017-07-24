@@ -189,7 +189,7 @@ zh-TW:
     leave_times:
       index: "請假額度"
     leave_applications:
-      index: "%{year} 年 所有假單"
+      index: "歷年假單"
       show: "%{start_day} - %{end_day} %{type}假單"
       new: "新增假單"
       create: "新增假單"
