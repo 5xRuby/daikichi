@@ -7,7 +7,7 @@ Rails.application.routes.draw do
     namespace :backend do
       resources :users
 
-      resources :leave_applications, only: [:index, :update] do
+      resources :leave_applications, except: [:show, :destroy] do
         get :verify, on: :member
         get :statistics, on: :collection
       end

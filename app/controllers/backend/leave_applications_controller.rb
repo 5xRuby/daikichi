@@ -7,6 +7,16 @@ class Backend::LeaveApplicationsController < Backend::BaseController
     @users = User.all
   end
 
+  def create
+    @current_object = collection_scope.new(resource_params)
+    if @current_object.save
+      @current_object.approve!(current_user)
+      action_success
+    else
+      render action: :new
+    end
+  end
+
   def verify; end
 
   def update
@@ -53,7 +63,10 @@ class Backend::LeaveApplicationsController < Backend::BaseController
   end
 
   def resource_params
-    params.require(:leave_application).permit(:comment)
+    case action_name
+    when "create" then params.require(:leave_application).permit(:user_id, :leave_type, :start_time, :end_time, :description, :comment)
+    when "update" then params.require(:leave_application).permit(:comment)
+    end
   end
 
   def search_params

@@ -150,6 +150,7 @@ zh-TW:
       edit: "編輯"
       destroy: "刪除"
     backend/leave_applications:
+      new: "新增員工假單"
       index: "審核假單"
       show: "檢視"
       verify: "審核"
@@ -205,6 +206,10 @@ zh-TW:
       create: "新增員工"
       edit: "修正員工資料"
     backend/leave_applications:
+      new: "新增員工假單"
+      create: "新增員工假單"
+      new/hint: "提醒：管理員主動新增之假單狀態會直接是核准。"
+      create/hint: "提醒：管理員主動新增之假單狀態會直接是核准。"
       index: "審核假單"
       verify: "審核假單"
       statistics: "員工休假統計"
