@@ -17,8 +17,7 @@ gem 'coffee-rails', '~> 4.1.0'
 # gem 'therubyracer', platforms: :ruby
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
-# Use bootstrap3 datetimepicker library
-gem 'bootstrap3-datetimepicker-rails'
+gem 'flatpickr'
 gem 'momentjs-rails'
 # Turbolinks makes navigating your web application faster. Read more: https://github.com/turbolinks/turbolinks
 gem 'turbolinks', '~> 5.x'

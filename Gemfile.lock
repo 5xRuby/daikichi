@@ -150,6 +150,7 @@ GEM
     faker (1.7.3)
       i18n (~> 0.5)
     ffi (1.9.18)
+    flatpickr (2.6.3.0)
     flowdock (0.7.1)
       httparty (~> 0.7)
       multi_json
@@ -405,6 +406,7 @@ DEPENDENCIES
   devise
   factory_girl_rails
   faker
+  flatpickr
   flowdock
   haml
   hirb-unicode
