@@ -89,8 +89,6 @@ GEM
     bootstrap-sass (3.3.7)
       autoprefixer-rails (>= 5.2.1)
       sass (>= 3.3.4)
-    bootstrap3-datetimepicker-rails (4.17.47)
-      momentjs-rails (>= 2.8.1)
     builder (3.2.3)
     byebug (9.0.6)
     cancancan (1.16.0)
@@ -389,7 +387,6 @@ DEPENDENCIES
   awesome_print
   biz
   bootstrap-sass
-  bootstrap3-datetimepicker-rails
   byebug
   cancancan
   capistrano (~> 3.8.1)
@@ -449,4 +446,4 @@ DEPENDENCIES
   whenever
 
 BUNDLED WITH
-   1.15.1
+   1.15.3
