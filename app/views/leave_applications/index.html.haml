@@ -10,9 +10,9 @@
       = f.input :leave_type_eq, collection: LeaveApplication.enum_attributes_for_select(:leave_types),
         include_blank: t('.plz_select_leave_type'), required: false, wrapper_html: { class: 'col-md-6' }
       = f.input :end_date_gteq, wrapper_html: { class: 'date-input col-md-6' },
-        input_html: { data: { input: 'datepicker', format: 'YYYY/MM/DD' } }, required: false
+        input_html: { data: { input: 'datepicker', format: 'Y/m/d' } }, required: false
       = f.input :start_date_lteq, wrapper_html: { class: 'date-input col-md-6' },
-        input_html: { data: { input: 'datepicker', format: 'YYYY/MM/DD' } }, required: false
+        input_html: { data: { input: 'datepicker', format: 'Y/m/d' } }, required: false
 
       .text-right
         = f.button :submit, class: 'btn-warning'
@@ -62,4 +62,3 @@
 
 .paginate
   = paginate current_collection
-  
