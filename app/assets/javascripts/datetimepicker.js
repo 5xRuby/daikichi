@@ -4,6 +4,8 @@ document.addEventListener('turbolinks:load', function() {
 
     initDateTimePickers: function(elem) {
       $(elem).flatpickr({
+        defaultHour: 9,
+        defaultMinute: 30,
         enableTime: true,
         dateFormat: $(elem).data('format'),
         time_24hr: true,

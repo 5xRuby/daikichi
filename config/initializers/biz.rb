@@ -61,6 +61,7 @@ module Daikichi
         Date.new(2017,  7, 22), # 週六休假
         Date.new(2017,  7, 29), # 週六休假
         Date.new(2017,  8,  5), # 週六休假
+        Date.new(2017,  8, 12), # 週六休假
         Date.new(2017,  8, 19), # 週六休假
         Date.new(2017,  8, 26), # 週六休假
         Date.new(2017,  9,  2), # 週六休假
