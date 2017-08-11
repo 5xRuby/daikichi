@@ -6,6 +6,16 @@ class Backend::LeaveTimesController < Backend::BaseController
     @users = User.all
   end
 
+  def new
+    @current_object = LeaveTime.ransack(@search_params).result.preload(:user).new
+  end
+
+  def create
+    @current_object = LeaveTime.ransack(@search_params).result.preload(:user).new(resource_params)
+    return render action: :new unless @current_object.save
+    action_success
+  end
+
   def append_quota
     @current_object = collection_scope.new(leave_time_params_by_leave_application)
     render :new
