@@ -8,3 +8,4 @@
 //= require datepicker
 //= require datetimepicker
 //= require base
+//= require page_alert

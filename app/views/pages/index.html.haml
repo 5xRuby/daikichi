@@ -20,8 +20,6 @@
 
 = render 'alert_modal'
 
-:javascript
- var $modal = $('#page-alert-modal').modal({
-    show: true
-  });
+- content_for :js do
+  = javascript_include_tag "page_alert"
 
