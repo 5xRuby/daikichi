@@ -1,0 +1,13 @@
+#page-alert-modal.modal{"aria-hidden" => "true", "aria-labelledby" => "mainModalLabel", :role => "dialog", :tabindex => "-1"}
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %h3{:style => "display: inline-block;"} 注意
+        %button.close{"data-dismiss" => "modal", :type => "button"}
+          %span{"aria-hidden" => "true"} ×
+          %span.sr-only x
+      .modal-body
+        %p 申請 remote 或請假，麻煩主動通知 Sabrina 或老闆，以利審核進度。未審核代表未完成請假手續 ，敬請協助配合，謝謝。
+      .modal-footer
+        %button.btn{"aria-hidden" => "true", "data-dismiss" => "modal"} OK
+
