@@ -47,7 +47,7 @@ class Backend::LeaveTimesController < Backend::BaseController
   end
 
   def search_params
-    params.fetch(:q, {})&.permit(:s, :leave_type_eq, :effective_true)
+    params.fetch(:q, {})&.permit(:s, :leave_type_eq, :effective_true, :user_id_eq)
   end
 
   def url_after(action)
