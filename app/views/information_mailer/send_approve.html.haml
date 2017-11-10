@@ -1,0 +1,5 @@
+%p
+  Hello #{@leave_application.user.name},
+%p
+  Your #{@leave_application.leave_type} leave application is approved now.
+= link_to "GO check it. :)", "https://daikichi.5xruby.tw/leave_applications/#{@leave_application.id}"

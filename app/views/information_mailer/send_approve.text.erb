@@ -1,0 +1,3 @@
+Hello <%= @leave_application.user.name %>,
+Your <%= @leave_application.leave_type %> leave application is approved now.
+<%= link_to "Go check it :)", "https://daikichi.5xruby.tw/leave_applications/#{@leave_application.id}" %>

@@ -17,7 +17,7 @@ class LeaveApplicationObserver < ActiveRecord::Observer
   def after_create(record)
     create_leave_time_usages(record)
     FlowdockService.new(leave_application: record).send_create_notification if Rails.env.production?
-    InformationMailer.new_application(record).deliver_now
+    InformationMailer.new_application(record).deliver_nowi if Rails.env.production?
   end
 
   def before_update(record)
@@ -27,6 +27,7 @@ class LeaveApplicationObserver < ActiveRecord::Observer
   def after_update(record)
     create_leave_time_usages(record) if record.aasm_event?(:revise)
     FlowdockService.new(leave_application: record).send_update_notification(record.aasm.to_state) if Rails.env.production?
+    InformationMailer.send_approve(record) if record.aasm_event?(:approve)
   end
 
   private
