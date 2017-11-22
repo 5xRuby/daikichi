@@ -16,11 +16,13 @@ zh-TW:
         used_hours: 所用已用時數
         application_total_hours: 假單總時數
         sum: 小計
-    leave_applications: &leave_applications_filter_prompt
-      index:
+    leave_applications: 
+      index: &leave_applications_filter_prompt
         plz_select_leave_type: 請選擇要篩選的請假類別
         plz_select_user: 請選擇要篩選的使用者
         plz_select_status: 請選擇要篩選的假單狀態
+      statistics:
+        <<: *leave_applications_filter_prompt
     users:
       index:
         plz_select_role: 請選擇要篩選的員工身份
@@ -36,5 +38,6 @@ zh-TW:
       title: 額度檢視 %{id} - %{leave_type} 額度
 
   leave_applications:
-    <<: *leave_applications_filter_prompt
+    index:
+      <<: *leave_applications_filter_prompt
 
