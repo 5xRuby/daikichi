@@ -204,3 +204,12 @@ zh-TW:
       short: "%b%d日 %H:%M"
     pm: 下午
     humanize_working_hour: "%{days} 天 %{hours} 小時 (%{total}小時)"
+  sick: "病假假單"
+  personal: "事假假單"
+  official: "公假假單"
+  marriage: "婚假假單"
+  compassionate: "喪假假單"
+  maternity: "產假假單"
+  remote: "遠端工作申請"
+  approved: "核准"
+  rejected: "駁回"
