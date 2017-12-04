@@ -7,7 +7,7 @@ RSpec.describe LeaveApplicationObserver do
   let(:start_time)        { Time.zone.local(2017, 5, 2, 9, 30) }
   let(:end_time)          { Time.zone.local(2017, 5, 5, 10, 30) }
   let(:total_leave_hours) { Daikichi::Config::Biz.within(start_time, end_time).in_hours }
-  let(:leave_application) { create(:leave_application, :annual, user: user, start_time: start_time, end_time: end_time) }
+  let(:leave_application) { create(:leave_application, :personal, user: user, start_time: start_time, end_time: end_time) }
 
   before { User.skip_callback(:create, :after, :auto_assign_leave_time) }
   after  { User.set_callback(:create, :after, :auto_assign_leave_time)  }
@@ -24,7 +24,7 @@ RSpec.describe LeaveApplicationObserver do
       end
 
       it 'should not create LeaveTimeUsage when insufficient LeaveTime hours' do
-        la = create(:leave_application, :annual, user: user, start_time: start_time, end_time: end_time + 1.hour)
+        la = create(:leave_application, :personal, user: user, start_time: start_time, end_time: end_time + 1.hour)
         expect(la.errors.any?).to be_truthy
         expect(la.leave_time_usages.any?).to be false
         expect(leave_time.usable_hours).to eq total_leave_hours
@@ -33,7 +33,7 @@ RSpec.describe LeaveApplicationObserver do
 
     context 'after_update' do
       it 'should recreate LeaveTimeUsage only when AASM event is "revise"' do
-        la = create(:leave_application, :annual, :approved, user: user, start_time: start_time, end_time: end_time)
+        la = create(:leave_application, :personal, :approved, user: user, start_time: start_time, end_time: end_time)
         leave_time_usage = la.leave_time_usages.first
         leave_time.reload
         expect(leave_time_usage.used_hours).to eq total_leave_hours
@@ -84,10 +84,10 @@ RSpec.describe LeaveApplicationObserver do
           end
         end
       end
-      
+
       describe 'AASM "reject" event' do
         it_should_behave_like 'return locked_hours back to usable_hours', :reject, true
-      
+
         it 'should return used_hours back to usable_hours when approved to rejected' do
           leave_application.reload.approve! user
           leave_time.reload
@@ -106,7 +106,7 @@ RSpec.describe LeaveApplicationObserver do
       describe 'AASM "cancel" event' do
         it_should_behave_like 'return locked_hours back to usable_hours', :cancel
       end
-      
+
       describe 'AASM "revise" event' do
         shared_examples 'revise attribute' do |attribute, value|
           it "should successfully recreate LeaveTimeUsage when application #{attribute} changed" do
@@ -126,15 +126,15 @@ RSpec.describe LeaveApplicationObserver do
         end
 
         context 'pending application' do
-          let!(:leave_application) { create(:leave_application, :annual, user: user, start_time: start_time, end_time: end_time) }
+          let!(:leave_application) { create(:leave_application, :personal, user: user, start_time: start_time, end_time: end_time) }
           it_should_behave_like 'revise attribute', :start_time,  Time.zone.local(2017, 5, 3, 9, 30)
           it_should_behave_like 'revise attribute', :end_time,    Time.zone.local(2017, 5, 3, 12, 30)
           it_should_behave_like 'revise attribute', :description, Faker::Lorem.paragraph
         end
 
         context 'approved application' do
-          let!(:leave_application) do 
-            create(:leave_application, :annual, user: user, start_time: start_time, end_time: end_time)
+          let!(:leave_application) do
+            create(:leave_application, :personal, user: user, start_time: start_time, end_time: end_time)
             user.leave_applications.first.approve! user
             user.leave_applications.first
           end

@@ -4,7 +4,7 @@ describe LeaveTimeUsageBuilder do
   let(:user)              { create(:user) }
   let(:start_time)        { Time.zone.local(2017, 5, 4, 9, 30) }
   let(:end_time)          { Time.zone.local(2017, 5, 9, 12, 30) }
-  let(:leave_application) { create(:leave_application, :annual, user: user, start_time: start_time, end_time: end_time) }
+  let(:leave_application) { create(:leave_application, :personal, user: user, start_time: start_time, end_time: end_time) }
   let(:total_used_hours)  { Daikichi::Config::Biz.within(start_time, end_time).in_hours }
 
   before { User.skip_callback(:create, :after, :auto_assign_leave_time) }
@@ -36,7 +36,7 @@ describe LeaveTimeUsageBuilder do
       before { create(:leave_time, :annual, user: user, quota: quota, usable_hours: quota, effective_date: effective_date, expiration_date: expiration_date) }
 
       it 'should create successfully with sufficient usable hours' do
-        leave_application = create(:leave_application, :annual, user: user, start_time: Time.zone.local(2017, 5, 1, 9, 30), end_time: Time.zone.local(2017, 5, 5, 12, 30))
+        leave_application = create(:leave_application, :personal, user: user, start_time: Time.zone.local(2017, 5, 1, 9, 30), end_time: Time.zone.local(2017, 5, 5, 12, 30))
         leave_time_usage = leave_application.leave_time_usages.first
         leave_time = leave_time_usage.leave_time
         expect(leave_application.leave_time_usages.size).to eq 1
@@ -46,7 +46,7 @@ describe LeaveTimeUsageBuilder do
       end
 
       it 'should create failed with insufficient usable hours' do
-        leave_application = create(:leave_application, :annual, user: user, start_time: Time.zone.local(2017, 5, 1, 9, 30), end_time: Time.zone.local(2017, 5, 31, 12, 30))
+        leave_application = create(:leave_application, :personal, user: user, start_time: Time.zone.local(2017, 5, 1, 9, 30), end_time: Time.zone.local(2017, 5, 31, 12, 30))
         leave_time = user.leave_times.first
         expect(user.leave_applications).to be_empty
         expect(LeaveTimeUsage.where(leave_application: leave_application)).to be_empty
@@ -61,7 +61,7 @@ describe LeaveTimeUsageBuilder do
         create(:leave_time, :annual, user: user, quota: 50, usable_hours: 50, effective_date: Date.parse('2017-05-06'), expiration_date: Date.parse('2017-05-10'))
       end
 
-      subject { create(:leave_application, :annual, user: user, start_time: Time.zone.local(2017, 5, 3, 9, 30), end_time: Time.zone.local(2017, 5, 12, 12, 30)) }
+      subject { create(:leave_application, :personal, user: user, start_time: Time.zone.local(2017, 5, 3, 9, 30), end_time: Time.zone.local(2017, 5, 12, 12, 30)) }
 
       it 'should create LeaveTimeUsage successfully with sufficent hours' do
         create(:leave_time, :annual, user: user, quota: 50, usable_hours: 50, effective_date: Date.parse('2017-05-11'), expiration_date: Date.parse('2017-05-15'))
@@ -81,7 +81,7 @@ describe LeaveTimeUsageBuilder do
     context 'didn\'t completely covered LeaveApplication' do
       let(:start_time) { Time.zone.local(2017, 5, 3, 9, 30) }
       let(:end_time)   { Time.zone.local(2017, 5, 12, 12, 30) }
-      subject { create(:leave_application, :annual, user: user, start_time: start_time, end_time: end_time) }
+      subject { create(:leave_application, :personal, user: user, start_time: start_time, end_time: end_time) }
 
       shared_examples 'not covered partially' do |part, lt_params_1, lt_params_2, error_date, lack_hours|
         it "create failed with LeaveTimes not covering the #{part} of LeaveApplication" do
@@ -104,7 +104,7 @@ describe LeaveTimeUsageBuilder do
       let(:nearly_expired_date) { expiration_date - 1.day }
       let(:start_time)          { Time.zone.local(2017, 5, 3, 9, 30) }
       let(:end_time)            { Time.zone.local(2017, 5, 12, 12, 30) }
-      subject { create(:leave_application, :annual, user: user, start_time: start_time, end_time: end_time) }
+      subject { create(:leave_application, :personal, user: user, start_time: start_time, end_time: end_time) }
 
       context 'different expiration date' do
         let!(:nearly_expired_leave_time) { create(:leave_time, :annual, user: user, quota: 50, usable_hours: 50, effective_date: effective_date, expiration_date: nearly_expired_date) }
