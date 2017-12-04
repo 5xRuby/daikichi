@@ -80,7 +80,7 @@ describe LeaveTimeBuilder do
               expect(leave_times.count).to eq 1
               expect(leave_times.first.effective_date).to eq Date.parse '2017/07/14'
               expect(leave_times.first.expiration_date).to eq Date.parse '2018/05/13'
-            end 
+            end
           end
 
           it 'should build LeaveTime based on assign_date when assign_date is after current date and after this year leed day' do
@@ -89,8 +89,8 @@ describe LeaveTimeBuilder do
             user.save!
             join_date_based_leave_times(user) do |leave_times|
               expect(leave_times.count).to eq 1
-              expect(leave_times.first.effective_date).to eq Date.parse '2017/07/24'
-              expect(leave_times.first.expiration_date).to eq Date.parse '2018/07/23'
+              expect(leave_times.first.effective_date).to eq Date.parse '2017/08/13'
+              expect(leave_times.first.expiration_date).to eq Date.parse '2018/08/12'
             end
           end
 
@@ -113,8 +113,8 @@ describe LeaveTimeBuilder do
             user.save!
             join_date_based_leave_times(user) do |leave_times|
               expect(leave_times.count).to eq 1
-              expect(leave_times.first.effective_date).to eq Date.parse '2017/07/24'
-              expect(leave_times.first.expiration_date).to eq Date.parse '2018/07/23'
+              expect(leave_times.first.effective_date).to eq Date.parse '2017/08/13'
+              expect(leave_times.first.expiration_date).to eq Date.parse '2018/08/12'
             end
           end
 
@@ -124,8 +124,8 @@ describe LeaveTimeBuilder do
             user.save!
             join_date_based_leave_times(user) do |leave_times|
               expect(leave_times.count).to eq 1
-              expect(leave_times.first.effective_date).to eq Date.parse '2017/07/25'
-              expect(leave_times.first.expiration_date).to eq Date.parse '2018/07/24'
+              expect(leave_times.first.effective_date).to eq Date.parse '2017/08/14'
+              expect(leave_times.first.expiration_date).to eq Date.parse '2018/08/13'
             end
           end
         end
@@ -138,7 +138,7 @@ describe LeaveTimeBuilder do
         before_join_date = join_date - 1.month
         after_join_date_before_current_date = join_date + 1.month
         let(:after_current_date) { current_date + 1.month }
-        
+
         before do
           Timecop.freeze current_date
           user.assign_leave_time = '1'
@@ -174,7 +174,7 @@ describe LeaveTimeBuilder do
             end
           end
         end
-        
+
         it_should_behave_like 'build monthly LeaveTime', based_on: 'join_date', when: 'assign_date is before join_date', assign_date: before_join_date
         it_should_behave_like 'build monthly LeaveTime', based_on: 'join_date', when: 'assign_date is on join_date', assign_date: join_date
         it_should_behave_like 'build monthly LeaveTime', based_on: 'assign_date', when: 'assign_date is after join_date and before current_date', assign_date: after_join_date_before_current_date
@@ -271,7 +271,7 @@ describe LeaveTimeBuilder do
               expect(leave_times.count).to eq 1
               expect(leave_times.first.effective_date).to eq Date.parse '2017/07/14'
               expect(leave_times.first.expiration_date).to eq Date.parse '2018/05/13'
-            end 
+            end
           end
 
           it 'should build LeaveTime based on assign_date when assign_date is after current date and after this year leed day' do
@@ -284,8 +284,8 @@ describe LeaveTimeBuilder do
                 next
               end
               expect(leave_times.count).to eq 1
-              expect(leave_times.first.effective_date).to eq Date.parse '2017/07/24'
-              expect(leave_times.first.expiration_date).to eq Date.parse '2018/07/23'
+              expect(leave_times.first.effective_date).to eq Date.parse '2017/08/13'
+              expect(leave_times.first.expiration_date).to eq Date.parse '2018/08/12'
             end
           end
 
@@ -316,8 +316,8 @@ describe LeaveTimeBuilder do
                 next
               end
               expect(leave_times.count).to eq 1
-              expect(leave_times.first.effective_date).to eq Date.parse '2017/07/24'
-              expect(leave_times.first.expiration_date).to eq Date.parse '2018/07/23'
+              expect(leave_times.first.effective_date).to eq Date.parse '2017/08/13'
+              expect(leave_times.first.expiration_date).to eq Date.parse '2018/08/12'
             end
           end
 
@@ -331,8 +331,8 @@ describe LeaveTimeBuilder do
                 next
               end
               expect(leave_times.count).to eq 1
-              expect(leave_times.first.effective_date).to eq Date.parse '2017/07/25'
-              expect(leave_times.first.expiration_date).to eq Date.parse '2018/07/24'
+              expect(leave_times.first.effective_date).to eq Date.parse '2017/08/14'
+              expect(leave_times.first.expiration_date).to eq Date.parse '2018/08/13'
             end
           end
         end
@@ -345,7 +345,7 @@ describe LeaveTimeBuilder do
         before_join_date = join_date - 1.month
         after_join_date_before_current_date = join_date + 1.month
         let(:after_current_date) { current_date + 1.month }
-        
+
         before do
           Timecop.freeze current_date
           user.assign_leave_time = '1'
@@ -381,7 +381,7 @@ describe LeaveTimeBuilder do
             end
           end
         end
-        
+
         it_should_behave_like 'build monthly LeaveTime', based_on: 'join_date', when: 'assign_date is before join_date', assign_date: before_join_date
         it_should_behave_like 'build monthly LeaveTime', based_on: 'join_date', when: 'assign_date is on join_date', assign_date: join_date
         it_should_behave_like 'build monthly LeaveTime', based_on: 'assign_date', when: 'assign_date is after join_date and before current_date', assign_date: after_join_date_before_current_date
