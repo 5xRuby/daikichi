@@ -16,14 +16,9 @@ class LeaveTimeBatchBuilder
 
   def batch_join_date_based_import
     leed_day = Time.current + JOIN_DATE_BASED_LEED_DAYS.days
-    users = if @forced
-              User.valid.where('(EXTRACT(MONTH FROM join_date), EXTRACT(DAY FROM join_date)) <= (:month, :date)', month: leed_day.month, date: leed_day.day)
-                        .where.not(join_date: ((Time.current - 1.year).to_date)..(Time.current))
-            else
-              User.valid.filter_by_join_date(reaching_join_date.month, reaching_join_date.day)
-            end
-    return unless users.present?
-    users.find_each do |user|
+    find_user_by_forced(User.valid, leed_day)
+    return if @users.empty?
+    @users.each do |user|
       if @forced
         LeaveTimeBuilder.new(user).join_date_based_import
       else
@@ -49,5 +44,14 @@ class LeaveTimeBatchBuilder
 
   def reaching_join_date
     @reaching_join_date ||= Time.zone.today + JOIN_DATE_BASED_LEED_DAYS.days
+  end
+
+  def find_user_by_forced(valid_users, leed_day)
+    if @forced
+      @users = []
+      valid_users.where.not(join_date: (Time.current.to_date)..(Time.current)).find_each.map { |user| @users << user if user.this_year_join_anniversary - leed_day.to_date <= 60 }
+    else
+      @users = valid_users.filter_by_join_date(reaching_join_date.month, reaching_join_date.day)
+    end
   end
 end
