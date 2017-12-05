@@ -131,7 +131,7 @@ defaults: &defaults
       quota: 23
     remote:
       creation: monthly
-      quota: 2 # days
+      quota: 4 # days
     marriage:
       creation: manually
       quota: 8 # days
