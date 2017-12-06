@@ -23,4 +23,8 @@ module LeaveApplicationsHelper
       haml_tag :span, humanize_status, class: 'label label-danger'
     end
   end
+
+  def need_deduct_salary?(header)
+    header == 'personal' || header == 'halfpaid_sick'
+  end
 end
