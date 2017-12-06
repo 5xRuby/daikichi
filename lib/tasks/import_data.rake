@@ -8,6 +8,7 @@ namespace :import_data do
       user.email = Settings.admin_user.email
       user.name = Settings.admin_user.name
       user.role = Settings.admin_user.role
+      user.join_date = Settings.admin_user.join_date
       user.password = Settings.admin_user.password
       user.password_confirmation = Settings.admin_user.password
     end

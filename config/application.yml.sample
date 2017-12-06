@@ -43,57 +43,48 @@ defaults: &defaults
       rejected: rejected
       canceled: canceled
     leave_types:
-      annual: annual
-      bonus: bonus
-      # unpaid: unpaid
       sick: sick
+      personal: personal
       official: official
       marriage: marriage
       compassionate: compassionate
-      personal: personal
+      maternity: maternity
       remote: remote
     available_quota_types:
-      annual:
-        - annual
-      bonus:
-        - bonus
-      unpaid:
-        - unpaid
       sick:
-        - sick # Deprecated
         - fullpaid_sick
         - halfpaid_sick
+      personal:
+        - bonus
+        - annual
+        - personal
       official:
         - official
       marriage:
         - marriage
       compassionate:
         - compassionate
-      # Deprecated
-      personal:
-        - bonus
-        - annual
-        - personal
+      maternity:
+        - maternity
       remote:
         - remote
 
   leave_times:
     quota_types:
-      annual: annual
       bonus: bonus
-      unpaid: unpaid
-      sick: sick # Deprecated
+      annual: annual
+      personal: personal #should be deprecated
       fullpaid_sick: fullpaid_sick
       halfpaid_sick: halfpaid_sick
+      remote: remote
       official: official
       marriage: marriage
       compassionate: compassionate
-      remote: remote
-      personal: personal #should be deprecated
+      maternity: maternity
 
   leed_days:
     monthly: 5 # working.days
-    join_date_based: 40 # days
+    join_date_based: 60 # days
 
   leave_types:
     annual:
@@ -140,7 +131,7 @@ defaults: &defaults
       quota: 23
     remote:
       creation: monthly
-      quota: 2 # days
+      quota: 4 # days
     marriage:
       creation: manually
       quota: 8 # days
