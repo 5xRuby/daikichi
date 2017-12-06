@@ -4,7 +4,7 @@ class UserMailer < ApplicationMailer
 
     mail(
       to: @leave_application.user.email,
-      subject: "<請假結果通知> 你的#{I18n.t(@leave_application.leave_type)}已被#{I18n.t(@leave_application.status)}."
+      subject: "<請假結果通知> 你的#{LeaveApplication.human_enum_value(:leave_type, @leave_application.leave_type)}已被#{LeaveApplication.human_enum_value(:status, @leave_application.status)}"
     )
   end
 end
