@@ -31,7 +31,7 @@ class Backend::LeaveApplicationsController < Backend::BaseController
   end
 
   def statistics
-    @statistics = LeaveApplication.statistics_table(year: specific_year.to_i, month: specific_month.to_i)
+    @users = User.all
   end
 
   private
@@ -76,7 +76,12 @@ class Backend::LeaveApplicationsController < Backend::BaseController
   end
 
   def set_query_object
-    @q = LeaveApplication.ransack(search_params)
+
+    if action_name == "statistics"
+      @q = LeaveApplication.where(status: :approved).ransack(search_params)
+    else
+      @q = LeaveApplication.ransack(search_params)
+    end
   end
 
   def url_after(action)

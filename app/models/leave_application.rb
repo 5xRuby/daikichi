@@ -38,16 +38,6 @@ class LeaveApplication < ApplicationRecord
     leave_within_range(Time.zone.local(year).beginning_of_year, Time.zone.local(year).end_of_year)
   }
 
-  scope :with_leave_application_statistics, ->(year = Date.current.year, month = Date.current.month) {
-    joins(:leave_hours_by_dates, :leave_times)
-      .merge(LeaveHoursByDate.where(date: Date.new(year, month, 15).beginning_of_month..Date.new(year, month, 15).end_of_month))
-      .approved
-      .leave_within_range(Time.zone.local(year, month, 1).beginning_of_month, Time.zone.local(year, month, 1).end_of_month)
-      .select('leave_applications.user_id, leave_times.leave_type as quota_type, sum(leave_hours_by_dates.hours) as sum')
-      .preload(:user)
-      .group(:user_id, 'leave_times.leave_type')
-  }
-
   aasm column: :status, enum: true do
     state :pending, initial: true
     state :approved
