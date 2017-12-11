@@ -63,8 +63,8 @@ class Backend::LeaveApplicationsController < Backend::BaseController
 
   def resource_params
     case action_name
-    when "create" then params.require(:leave_application).permit(:user_id, :leave_type, :start_time, :end_time, :description, :comment)
-    when "update" then params.require(:leave_application).permit(:comment)
+    when 'create' then params.require(:leave_application).permit(:user_id, :leave_type, :start_time, :end_time, :description, :comment)
+    when 'update' then params.require(:leave_application).permit(:comment)
     end
   end
 
