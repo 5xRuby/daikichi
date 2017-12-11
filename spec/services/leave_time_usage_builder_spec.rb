@@ -18,12 +18,12 @@ describe LeaveTimeUsageBuilder do
 
     it 'returns a hash to represent leave time as hours by date' do
       builder = described_class.new leave_application
-      expect(builder.leave_hours_by_date).to eq {
+      expect(builder.leave_hours_by_date).to eq({
         Date.parse('2017-05-04') => 8,
         Date.parse('2017-05-05') => 8,
         Date.parse('2017-05-08') => 8,
         Date.parse('2017-05-09') => 3
-      }
+      })
       expect(builder.leave_hours_by_date.values.sum).to eq total_used_hours
     end
   end

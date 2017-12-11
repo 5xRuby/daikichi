@@ -44,9 +44,9 @@ RSpec.describe LeaveApplicationObserver do
         la.revise!
         leave_time_usage = la.leave_time_usages.first
         leave_time.reload
-        expect(leave_time_usage.used_hours).to eq (total_leave_hours - 1)
+        expect(leave_time_usage.used_hours).to eq(total_leave_hours - 1)
         expect(leave_time_usage.leave_time).to eq leave_time
-        expect(leave_time.locked_hours).to eq (total_leave_hours - 1)
+        expect(leave_time.locked_hours).to eq(total_leave_hours - 1)
       end
     end
   end
@@ -60,11 +60,11 @@ RSpec.describe LeaveApplicationObserver do
           leave_time_usage = leave_application.leave_time_usages.first
           leave_time.reload
           expect(leave_time_usage.leave_time).to eq leave_time
-          expect(leave_time.usable_hours).to eq (quota - total_leave_hours)
+          expect(leave_time.usable_hours).to eq(quota - total_leave_hours)
           expect(leave_time.locked_hours).to eq total_leave_hours
           leave_application.reload.approve! user
           leave_time.reload
-          expect(leave_time.usable_hours).to eq (quota - total_leave_hours)
+          expect(leave_time.usable_hours).to eq(quota - total_leave_hours)
           expect(leave_time.used_hours).to eq total_leave_hours
         end
       end
@@ -75,7 +75,7 @@ RSpec.describe LeaveApplicationObserver do
             leave_time_usage = leave_application.leave_time_usages.first
             leave_time.reload
             expect(leave_time_usage.leave_time).to eq leave_time
-            expect(leave_time.usable_hours).to eq (quota - total_leave_hours)
+            expect(leave_time.usable_hours).to eq(quota - total_leave_hours)
             expect(leave_time.locked_hours).to eq total_leave_hours
             leave_application.reload.send :"#{event}!", (required_user ? user : nil)
             leave_time.reload
@@ -91,7 +91,7 @@ RSpec.describe LeaveApplicationObserver do
         it 'should return used_hours back to usable_hours when approved to rejected' do
           leave_application.reload.approve! user
           leave_time.reload
-          expect(leave_time.usable_hours).to eq (quota - total_leave_hours)
+          expect(leave_time.usable_hours).to eq(quota - total_leave_hours)
           expect(leave_time.used_hours).to eq total_leave_hours
           expect(leave_time.locked_hours).to be_zero
           leave_application.reload.reject! user
