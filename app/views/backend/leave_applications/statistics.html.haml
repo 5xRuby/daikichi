@@ -19,26 +19,17 @@
               class: "form-control"
 
 
-- if @statistics.columns[0].present?
-  %table.table.table-striped.table-bordered.table-hover
-    %thead
-      %tr.info        
-        %th.text-center.name=  t_attribute(:name, User)
-        - @statistics.columns.each do |leave_type|
-          %th.text-right= LeaveTime.human_enum_value(:leave_type, leave_type.header)
-        %th.text-right 總計
-    
-    %tbody
-      - @statistics.rows.each do |sum|
-        %tr
-          %td.text-center.name= sum.header
-          - sum.data.each_with_index do |data, index|
-            - if data.present?
-              %td.text-right{ class: ('highlight' if need_deduct_salary?(sum.orthogonal_headers[index])) }= hours_to_humanize data.sum
-            - else
-              %td.text-right - 
-          %td.text-right= hours_to_humanize sum.total
-
-            
-- else
-  = no_data_alert
+%table.table.table-striped.table-bordered.table-hover
+  %thead
+    %tr.info        
+      %th.text-center.name=  t_attribute(:name, User)
+      - Settings.leave_times.quota_types.keys.each do |leave_type|
+        %th.text-right= t("activerecord.attributes.leave_time.leave_types.#{leave_type}")
+      %th.text-right 總計
+  %tbody
+    - User.find_each do |user|
+      %tr
+        %td.text-center.name= user.name
+        - sum_leave_hours(user.id, specific_year.to_i, specific_month.to_i).each do |key, value|
+          %td.text-right{ class: ('highlight' if need_deduct_salary?(key, value)) }= hours_to_humanize value
+        %td.text-right= hours_to_humanize sum_leave_hours(user.id, specific_year.to_i, specific_month.to_i).values.sum
