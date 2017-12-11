@@ -7,7 +7,7 @@ class DeleteLeaveApplicationLogs < ActiveRecord::Migration[5.0]
       t.integer :amount, default: 0
       t.boolean :returning?, default: false
 
-  		t.timestamps
+      t.timestamps
     end
   end
 end

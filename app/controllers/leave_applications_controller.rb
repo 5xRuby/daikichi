@@ -5,7 +5,7 @@ class LeaveApplicationsController < BaseController
 
   def index
     @current_collection = collection_scope.page(params[:page])
-    @current_collection = @current_collection.with_year(specific_year) unless query?  
+    @current_collection = @current_collection.with_year(specific_year) unless query?
     @current_collection = @current_collection.with_status(params[:status]) if status_selected?
   end
 

@@ -117,7 +117,7 @@ RSpec.describe LeaveApplicationObserver do
             leave_time_usage = leave_application.leave_time_usages.first
             leave_time.reload
             expect(leave_application.hours).to eq used_hours
-            expect(leave_application.status).to eq "pending"
+            expect(leave_application.status).to eq 'pending'
             expect(leave_time_usage.used_hours).to eq used_hours
             expect(leave_time_usage.leave_time).to eq leave_time
             expect(leave_time.usable_hours).to eq quota - used_hours

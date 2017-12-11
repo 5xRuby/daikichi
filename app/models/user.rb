@@ -34,17 +34,17 @@ class User < ApplicationRecord
 
   scope :valid, -> {
     where('join_date <= :now', now: Date.current)
-      .where.not(role: %w[pending resigned])
+      .where.not(role: %w(pending resigned))
   }
 
   scope :fulltime, -> {
-    where('role in (?)', %w[manager employee hr])
+    where('role in (?)', %w(manager employee hr))
       .valid
       .order(id: :desc)
   }
 
   scope :parttime, -> {
-    where('role in (?)', %w[contractor intern])
+    where('role in (?)', %w(contractor intern))
       .valid
       .order(id: :desc)
   }
@@ -61,7 +61,7 @@ class User < ApplicationRecord
   end
 
   def fulltime?
-    %w[manager hr employee].include?(role)
+    %w(manager hr employee).include?(role)
   end
 
   def this_year_join_anniversary

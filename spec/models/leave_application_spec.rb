@@ -84,7 +84,7 @@ RSpec.describe LeaveApplication, type: :model do
         User.skip_callback(:create, :after, :auto_assign_leave_time)
         create(:leave_time, :annual, user: user, quota: 50, usable_hours: 50, effective_date: effective_date, expiration_date: expiration_date)
       end
-      after  { User.set_callback(:create, :after, :auto_assign_leave_time)  }
+      after { User.set_callback(:create, :after, :auto_assign_leave_time) }
 
       subject { build(:leave_application, :personal, user: user, start_time: beginning, end_time: ending) }
 
