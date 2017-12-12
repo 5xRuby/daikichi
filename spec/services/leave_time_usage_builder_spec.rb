@@ -41,7 +41,7 @@ describe LeaveTimeUsageBuilder do
         leave_time = leave_time_usage.leave_time
         expect(leave_application.leave_time_usages.size).to eq 1
         expect(leave_time_usage.used_hours).to eq leave_application.hours
-        expect(leave_time.usable_hours).to eq (quota - leave_application.hours)
+        expect(leave_time.usable_hours).to eq(quota - leave_application.hours)
         expect(leave_time.locked_hours).to eq leave_application.hours
       end
 
