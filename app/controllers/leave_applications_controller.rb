@@ -62,7 +62,7 @@ class LeaveApplicationsController < BaseController
   def search_params
     @search_params = params.fetch(:q, {})&.permit(
       :s, :leave_type_eq, :status_eq, :end_date_gteq, :start_date_lteq)
-    @search_params.present? ? @search_params : @search_params.merge(status_eq: :pending)
+    @search_params.present? ? @search_params : @search_params.merge(status_present: '1')
   end
 
   def set_query_object
