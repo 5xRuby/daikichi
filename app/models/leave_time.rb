@@ -39,7 +39,7 @@ class LeaveTime < ApplicationRecord
   }
 
   scope :exclude_sick, ->{
-    where.not(leave_type: ['fullpaid_sick', 'halfpaid_sick'])
+    where.not(leave_type: %w(fullpaid_sick halfpaid_sick))
   }
 
   ransacker :effective do |parent|
