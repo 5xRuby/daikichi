@@ -49,7 +49,7 @@ class LeaveApplicationObserver < ActiveRecord::Observer
   end
 
   def create_leave_time_usages(record)
-    raise ActiveRecord::Rollback if not LeaveTimeUsageBuilder.new(record).build_leave_time_usages and not record.special_type?
+    raise ActiveRecord::Rollback if !LeaveTimeUsageBuilder.new(record).build_leave_time_usages and !record.special_type?
   end
 
   def hours_transfer(record)

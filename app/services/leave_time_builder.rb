@@ -15,19 +15,19 @@ class LeaveTimeBuilder
 
   def join_date_based_import(by_assign_date: false, prebuild: false)
     JOIN_DATE_BASED_LEAVE_TYPES.each do |leave_type, config|
-      build_join_date_based_leave_types(leave_type, config, by_assign_date, prebuild)
+      build_join_date_based_leave_types(leave_type, config, prebuild, by_assign_date)
     end
   end
 
   def monthly_import(by_assign_date: false, prebuild: false)
     MONTHLY_LEAVE_TYPES.each do |leave_type, config|
-      build_monthly_leave_types(leave_type, config, by_assign_date, prebuild)
+      build_monthly_leave_types(leave_type, config, prebuild, by_assign_date)
     end
   end
 
   private
 
-  def build_join_date_based_leave_types(leave_type, config, build_by_assign_date = false, prebuild)
+  def build_join_date_based_leave_types(leave_type, config, prebuild, build_by_assign_date = false)
     return unless user_can_have_leave_type?(@user, config)
     quota = extract_quota(config, @user, prebuild: prebuild)
     if build_by_assign_date
@@ -60,7 +60,7 @@ class LeaveTimeBuilder
     create_leave_time(leave_type, quota, date, expiration_date) if Time.zone.now.to_date + JOIN_DATE_BASED_LEED_DAY >= date or @user.join_date + 1.year >= Time.zone.now.to_date
   end
 
-  def build_monthly_leave_types(leave_type, config, build_by_assign_date = false, prebuild)
+  def build_monthly_leave_types(leave_type, config, prebuild, build_by_assign_date = false)
     quota = extract_quota(config, @user, prebuild: prebuild)
     if build_by_assign_date
       date = @user.assign_date >= @user.join_date ? @user.assign_date : @user.join_date

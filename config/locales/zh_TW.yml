@@ -204,3 +204,4 @@ zh-TW:
       short: "%b%d日 %H:%M"
     pm: 下午
     humanize_working_hour: "%{days} 天 %{hours} 小時 (%{total}小時)"
+    total_hour: "%{total} 小時"

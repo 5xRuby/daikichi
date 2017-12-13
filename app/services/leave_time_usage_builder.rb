@@ -20,14 +20,14 @@ class LeaveTimeUsageBuilder
       @available_leave_times.each do |lt|
         @leave_hours_by_date.keys.each do |date|
           break if usable_hours_is_empty?(lt)
-          next if corresponding_leave_hours_date_is_zero?(date) or not in_leave_time_inteval_range?(lt, date)
+          next if corresponding_leave_hours_date_is_zero?(date) or !in_leave_time_inteval_range?(lt, date)
           deduct_leave_hours_by_date(lt, date)
         end
         stack_leave_time_usage_record(lt)
         break if leave_hours_by_date_is_empty?
       end
 
-      if not leave_hours_by_date_is_empty?
+      if !leave_hours_by_date_is_empty?
         rollback_with_error_message unless @leave_application.special_type?
       else
         create_leave_time_usage
