@@ -16,6 +16,15 @@ class InformationMailer < ApplicationMailer
     )
   end
 
+  def cancel_application(leave_application)
+    @leave_application = leave_application
+
+    mail(
+      to: receiver_lists,
+      subject: "#{@leave_application.user.name} just canceled leave application"
+    )
+  end
+
   private
 
   def receiver_lists
