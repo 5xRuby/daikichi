@@ -48,7 +48,7 @@ class BaseController < ApplicationController
   end
 
   def set_actions
-    @actions = [:create, :update, :destroy]
+    @actions = [:create, :update, :destroy, :batch_create]
   end
 
   def action_success(url = nil)

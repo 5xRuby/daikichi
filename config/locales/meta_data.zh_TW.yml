@@ -228,6 +228,7 @@ zh-TW:
     destroy: "刪除成功"
     revise: "已修改假單"
     cancel: "已取消假單"
+    batch_create: '批次新增員工休假額度成功'
 
   warnings:
     self_manage: "申請人不得自行審核"
