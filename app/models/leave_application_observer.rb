@@ -28,6 +28,7 @@ class LeaveApplicationObserver < ActiveRecord::Observer
     create_leave_time_usages(record) if record.aasm_event?(:revise)
     FlowdockService.new(leave_application: record).send_update_notification(record.aasm.to_state) if Rails.env.production?
     UserMailer.reply_leave_applicaiton_email(record).deliver if record.aasm_event?(:approve) or record.aasm_event?(:reject)
+    InformationMailer.cancel_application(record).deliver if record.aasm_event?(:cancel) && Rails.env.production?
   end
 
   private
@@ -71,12 +72,8 @@ class LeaveApplicationObserver < ActiveRecord::Observer
   end
 
   def revert_hours(record, usage)
-    if record.aasm.from_state == :pending
-      usage.leave_time.unlock_hours!(usage.used_hours)
-    elsif record.aasm.from_state == :approved
-      usage.leave_time.unuse_hours!(usage.used_hours)
-    else
-      raise ActiveRecord::Rollback
-    end
+    return usage.leave_time.unlock_hours!(usage.used_hours) if record.aasm.from_state == :pending
+    return usage.leave_time.unuse_hours!(usage.used_hours) if record.aasm.from_state == :approved
+    raise ActiveRecord::Rollback
   end
 end
