@@ -7,11 +7,11 @@ class Backend::LeaveTimesController < Backend::BaseController
   end
 
   def new
-    @current_object = LeaveTime.ransack(@search_params).result.preload(:user).new
+    @current_object = LeaveTime.ransack(search_params).result.preload(:user).new
   end
 
   def create
-    @current_object = LeaveTime.ransack(@search_params).result.preload(:user).new(resource_params)
+    @current_object = LeaveTime.ransack(search_params).result.preload(:user).new(resource_params)
     return render action: :new unless @current_object.save
     action_success
   end
@@ -22,13 +22,13 @@ class Backend::LeaveTimesController < Backend::BaseController
   end
 
   def batch_new
-    @current_object = LeaveTime.ransack(@search_params).result.preload(:user).new
+    @current_object = LeaveTime.ransack(search_params).result.preload(:user).new
   end
 
   def batch_create
     user_ids = params[:leave_time][:user_id]
     user_ids.each do |user_id|
-      @current_object = LeaveTime.ransack(@search_params).result.preload(:user).new(batch_leave_time_params.merge(user_id: user_id))
+      @current_object = LeaveTime.ransack(search_params).result.preload(:user).new(batch_leave_time_params.merge(user_id: user_id))
       return render action: :batch_new unless @current_object.save
     end
     action_success
