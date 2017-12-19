@@ -10,7 +10,7 @@
   %h2= t("captions.backend/leave_applications.#{action_name}")
   %p= t("captions.backend/leave_applications.#{action_name}/hint")
   = simple_form_for current_object, url: url_for(action: action), method: :post do |f|
-    = f.association :user, collection: User.all, label_method: :name, value_method: :id, required: true
+    = f.association :user, collection: User.where.not(role: 'resigned'), label_method: :name, value_method: :id, required: true
     = f.error :base, error: sanitize(f.object.errors[:base].join('<br />'), tags: %w(a br), attributes: %w(href target))
     = f.input :leave_type, required: true, collection: LeaveApplication.enum_attributes_for_select(:leave_types)
     = f.input :start_time, as: :string, input_html: { data: { input: 'datetimepicker', format: 'Y/m/d H:i' } }
