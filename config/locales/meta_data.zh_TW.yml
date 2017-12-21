@@ -161,6 +161,7 @@ zh-TW:
     backend/leave_times:
       index: "員工休假額度"
       new: "新增員工休假額度"
+      batch_append_quota: "批次新增員工休假額度"
       edit: "修改"
       delete: "刪除"
       change_type: "切換休假種類至"
@@ -216,6 +217,7 @@ zh-TW:
     backend/leave_times:
       index: "員工休假額度"
       new: "新增員工休假額度"
+      batch_new: "批次新增員工休假額度"
       append_quota: "新增員工休假額度"
       edit: "修改員工休假"
     tools: "工具"
@@ -226,6 +228,7 @@ zh-TW:
     destroy: "刪除成功"
     revise: "已修改假單"
     cancel: "已取消假單"
+    batch_create: '批次新增員工休假額度成功'
 
   warnings:
     self_manage: "申請人不得自行審核"
