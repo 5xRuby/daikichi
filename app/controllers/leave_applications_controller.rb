@@ -76,7 +76,7 @@ class LeaveApplicationsController < BaseController
 
   def url_after(action)
     if @actions.include?(action)
-      url_for(action: :index, controller: controller_path, params: { status: :pending })
+      url_for(action: :index, controller: controller_path)
     else
       request.env['HTTP_REFERER']
     end
