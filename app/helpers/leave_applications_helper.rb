@@ -29,10 +29,8 @@ module LeaveApplicationsHelper
     leave_type == 'personal' || leave_type == 'halfpaid_sick'
   end
 
-  def sum_leave_hours(user_id, year, month)
+  def summary_from(summary, user_id)
     leave_types = Settings.leave_times.quota_types.keys
-    leave_times_lists = Hash[leave_types.collect{ |type| [type, 0]}]
-    total_leave_times = LeaveApplication.where(user_id: user_id).leave_within_range((Time.zone.local(year,month,1).beginning_of_month),(Time.zone.local(year,month,1).end_of_month)).includes(:leave_time_usages, :leave_times).map(&:leave_time_usages).flatten.group_by{|usage| usage.leave_time.leave_type }.map{|k,v|[k, v.map(&:used_hours).sum]}
-    leave_times_lists.update Hash[total_leave_times]
+    summary[user_id] || Hash[leave_types.collect{ |type| [type, 0]}]
   end
 end
