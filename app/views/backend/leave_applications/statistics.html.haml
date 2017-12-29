@@ -30,6 +30,6 @@
     - User.find_each do |user|
       %tr
         %td.text-center.name= user.name
-        - sum_leave_hours(user.id, specific_year.to_i, specific_month.to_i).each do |key, value|
+        - summary_from(@summary, user.id).each do |key, value|
           %td.text-right{ class: ('highlight' if need_deduct_salary?(key, value)) }= hours_for_total value
-        %td.text-right= hours_to_humanize sum_leave_hours(user.id, specific_year.to_i, specific_month.to_i).values.sum
+        %td.text-right= hours_to_humanize summary_from(@summary, user.id).values.flatten.reject{|n| !(n.is_a? Fixnum)}.sum
