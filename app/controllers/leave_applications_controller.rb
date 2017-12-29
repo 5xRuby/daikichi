@@ -5,7 +5,7 @@ class LeaveApplicationsController < BaseController
 
   def index
     @current_collection = collection_scope.page(params[:page])
-    @current_collection = Kaminari.paginate_array(@current_collection.with_year(specific_year).last(5)).page(params[:page]) unless query?
+    @current_collection = Kaminari.paginate_array(@current_collection.first(5)).page(params[:page]) unless query?
     @current_collection = @current_collection.with_status(params[:status]) if status_selected?
   end
 
@@ -76,7 +76,7 @@ class LeaveApplicationsController < BaseController
 
   def url_after(action)
     if @actions.include?(action)
-      url_for(action: :index, controller: controller_path, params: { status: :pending })
+      url_for(action: :index, controller: controller_path)
     else
       request.env['HTTP_REFERER']
     end
