@@ -4,7 +4,7 @@ require 'rails_helper'
 describe LeaveTimeSummaryService do
   describe 'summary total leave_time' do 
     let(:manager) { create(:user, :manager) }
-    let(:user) { create(:user, :employee) }
+    let(:user) { create(:user, :employee, join_date: Daikichi::Config::Biz.periods.after((Time.current.beginning_of_month.beginning_of_day)).first.start_time) }
     let(:start_time)      { Daikichi::Config::Biz.periods.after((Time.current.end_of_month.beginning_of_day)- 3.days).first.start_time   }
     let(:end_time)        { Daikichi::Config::Biz.periods.after(Time.current.next_month.beginning_of_month.beginning_of_day).first.start_time  }
     it "should include false if start_time and end_time cross the month" do 
