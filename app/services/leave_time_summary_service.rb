@@ -9,24 +9,23 @@ class LeaveTimeSummaryService
 
   def user_applications
     @user_applications ||= LeaveApplication.leave_within_range(@range.min, @range.max)
-                                           .approved
-                                           .includes(:leave_time_usages, :leave_times)
-                                           .group_by { |application| application.user_id }
+      .approved
+      .includes(:leave_time_usages, :leave_times)
+      .group_by(&:user_id)
   end
 
   def application_to_usage(applications)
     applications.map(&:leave_time_usages)
-                .flatten
-                .group_by { |usage| usage.leave_time.leave_type }
-                .map { |k, v| [k, [ not_across_month_application?(v) ,usage_in_month(v).sum]] }
-
+      .flatten
+      .group_by { |usage| usage.leave_time.leave_type }
+      .map { |k, v| [k, used_hours_in_month(v).sum] }
   end
 
   def summary
     @summary ||= Hash[
       user_applications.map do |(id, applications)|
         [
-          id, 
+          id,
           default_columns.merge(Hash[application_to_usage(applications)])
         ]
       end
@@ -36,27 +35,14 @@ class LeaveTimeSummaryService
   private
 
   def default_columns
-    Hash[@types.collect { |type| [type, 0]}]
+    Hash[@types.collect { |type| [type, 0] }]
   end
 
-  def usage_in_month(usages)
-    usages.map do |usage|
-      usage.used_hours
-    end
+  def used_hours_in_month(usages)
+    usages_in_month(usages).map(&:used_hours)
   end
 
-  def hours_in_month_of(usage)
-    ((@range.max - usage.leave_application.start_time) / 86400).floor * 8
+  def usages_in_month(usages)
+    usages.select { |usage| usage.date.between? @range.min, @range.max }
   end
-
-  def not_across_month_application?(usages)
-    usages.map(&:leave_application).each do |application|
-      return application.end_time.between?(@range.min, @range.max)
-    end
-  end
-
-  # def not_across_month_application?(application)
-  #   application.end_time.between?(@range.min, @range.max)
-  # end
-
 end

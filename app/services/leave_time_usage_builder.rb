@@ -88,9 +88,6 @@ class LeaveTimeUsageBuilder
     @leave_hours_by_date.values.all?(&:zero?)
   end
 
-  def unless_remain_leave_hours_by_date
-  end
-
   def rollback_with_error_message
     append_leave_application_error_message
     raise ActiveRecord::Rollback
@@ -103,7 +100,7 @@ class LeaveTimeUsageBuilder
 
   def create_leave_time_usage
     @leave_time_usages.each do |lt_usage|
-      @leave_application.leave_time_usages.create!(leave_time: lt_usage[:leave_time], used_hours: lt_usage[:used_hours],date: lt_usage[:date])
+      @leave_application.leave_time_usages.create!(leave_time: lt_usage[:leave_time], used_hours: lt_usage[:used_hours], date: lt_usage[:date])
     end
   end
 end

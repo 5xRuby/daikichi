@@ -87,14 +87,8 @@ module ApplicationHelper
   end
 
   def hours_for_total(hours)
-    if hours.is_a? Array
-      return '-' if hours[1].to_i.zero?
-      return '跨月' unless hours[0]
-      I18n.t('time.total_hour', total: hours[1])
-    else
-      return '-' if hours.to_i.zero?
-      I18n.t('time.total_hour', total: hours)
-    end
+    return '-' if hours.to_i.zero?
+    I18n.t('time.total_hour', total: hours)
   end
 
   def type_selector(name, label, options, default)
