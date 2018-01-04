@@ -72,6 +72,7 @@ class LeaveApplicationObserver < ActiveRecord::Observer
   end
 
   def revert_hours(record, usage)
+    usage.reload
     return usage.leave_time.unlock_hours!(usage.used_hours) if record.aasm.from_state == :pending
     return usage.leave_time.unuse_hours!(usage.used_hours) if record.aasm.from_state == :approved
     raise ActiveRecord::Rollback
