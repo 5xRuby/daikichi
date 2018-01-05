@@ -189,7 +189,7 @@ RSpec.describe LeaveApplication, type: :model do
       let(:expiration_date) { Time.zone.local(2017, 6, 30).to_date }
       let(:start_time)      { Time.zone.local(2017, 6, 1, 9, 30)   }
       let(:end_time)        { Time.zone.local(2017, 6, 5, 12, 30)  }
-      before { create(:leave_time, :annual, user: user, quota: 100, usable_hours: 100) }
+      before { create(:leave_time, :annual, user: user, quota: 100, usable_hours: 100, effective_date: effective_date, expiration_date: expiration_date) }
       it 'can transition from approved to canceled unless LeaveApplication happened already' do
         leave_application = create(:leave_application, :personal, user: user, start_time: start_time, end_time: end_time).reload
         leave_application.approve!(create(:user, :hr))

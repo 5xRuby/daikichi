@@ -38,9 +38,11 @@ describe LeaveTimeUsageBuilder do
       it 'should create successfully with sufficient usable hours' do
         leave_application = create(:leave_application, :personal, user: user, start_time: Time.zone.local(2017, 5, 1, 9, 30), end_time: Time.zone.local(2017, 5, 5, 12, 30))
         leave_time_usage = leave_application.leave_time_usages.first
+        usage_total_used_hours = leave_application.leave_time_usages.map(&:used_hours).sum
         leave_time = leave_time_usage.leave_time
-        expect(leave_application.leave_time_usages.size).to eq 1
-        expect(leave_time_usage.used_hours).to eq leave_application.hours
+        work_periods_by_date = Daikichi::Config::Biz.periods.after(leave_application.start_time).timeline.until(leave_application.end_time).to_a.group_by { |wp| wp.start_time.localtime.to_date }.count
+        expect(leave_application.leave_time_usages.size).to eq work_periods_by_date
+        expect(usage_total_used_hours).to eq leave_application.hours
         expect(leave_time.usable_hours).to eq(quota - leave_application.hours)
         expect(leave_time.locked_hours).to eq leave_application.hours
       end
@@ -65,9 +67,10 @@ describe LeaveTimeUsageBuilder do
 
       it 'should create LeaveTimeUsage successfully with sufficent hours' do
         create(:leave_time, :annual, user: user, quota: 50, usable_hours: 50, effective_date: Date.parse('2017-05-11'), expiration_date: Date.parse('2017-05-15'))
+        work_periods_by_date = Daikichi::Config::Biz.periods.after(subject.start_time).timeline.until(subject.end_time).to_a.group_by { |wp| wp.start_time.localtime.to_date }.count
         expect(subject.errors).to be_empty
         expect(user.leave_applications.size).to be 1
-        expect(subject.leave_time_usages.size).to be 3
+        expect(subject.leave_time_usages.size).to be work_periods_by_date
       end
 
       it 'should failed to create LeaveTimeUsage with insufficient hours' do
@@ -110,8 +113,9 @@ describe LeaveTimeUsageBuilder do
         let!(:nearly_expired_leave_time) { create(:leave_time, :annual, user: user, quota: 50, usable_hours: 50, effective_date: effective_date, expiration_date: nearly_expired_date) }
         let!(:leave_time)                { create(:leave_time, :annual, user: user, quota: 50, usable_hours: 50, effective_date: effective_date, expiration_date: expiration_date) }
         it 'should use LeaveTime where nearly to expired prior to other LeaveTimes' do
+          work_periods_by_date = Daikichi::Config::Biz.periods.after(subject.start_time).timeline.until(subject.end_time).to_a.group_by { |wp| wp.start_time.localtime.to_date }.count
           expect(subject.errors).to be_empty
-          expect(subject.leave_time_usages.size).to be 2
+          expect(subject.leave_time_usages.size).to be work_periods_by_date + 1
           nearly_expired_leave_time.reload
           leave_time.reload
           expect(nearly_expired_leave_time.usable_hours).to be_zero
@@ -125,8 +129,9 @@ describe LeaveTimeUsageBuilder do
         let!(:less_usable_hours_leave_time) { create(:leave_time, :annual, user: user, quota: 50, usable_hours: 49, locked_hours: 1, effective_date: effective_date, expiration_date: expiration_date) }
         let!(:leave_time)                   { create(:leave_time, :annual, user: user, quota: 50, usable_hours: 50, effective_date: effective_date, expiration_date: expiration_date) }
         it 'should use LeaveTime where less usable_hours prior to other LeaveTimes' do
+          work_periods_by_date = Daikichi::Config::Biz.periods.after(subject.start_time).timeline.until(subject.end_time).to_a.group_by { |wp| wp.start_time.localtime.to_date }.count
           expect(subject.errors).to be_empty
-          expect(subject.leave_time_usages.size).to be 2
+          expect(subject.leave_time_usages.size).to be work_periods_by_date + 1
           less_usable_hours_leave_time.reload
           leave_time.reload
           expect(less_usable_hours_leave_time.usable_hours).to be_zero
@@ -140,8 +145,9 @@ describe LeaveTimeUsageBuilder do
         let!(:nearly_expired_leave_time)    { create(:leave_time, :annual, user: user, quota: 50, usable_hours: 50, effective_date: effective_date, expiration_date: nearly_expired_date) }
         let!(:less_usable_hours_leave_time) { create(:leave_time, :annual, user: user, quota: 50, usable_hours: 49, locked_hours: 1, effective_date: effective_date, expiration_date: expiration_date) }
         it 'should use LeaveTime where nearly to expired prior to other LeaveTime with less usable_hours' do
+          work_periods_by_date = Daikichi::Config::Biz.periods.after(subject.start_time).timeline.until(subject.end_time).to_a.group_by { |wp| wp.start_time.localtime.to_date }.count
           expect(subject.errors).to be_empty
-          expect(subject.leave_time_usages.size).to be 2
+          expect(subject.leave_time_usages.size).to be work_periods_by_date + 1
           nearly_expired_leave_time.reload
           less_usable_hours_leave_time.reload
           expect(nearly_expired_leave_time.usable_hours).to be_zero
@@ -157,7 +163,8 @@ describe LeaveTimeUsageBuilder do
         it 'should use fullpaid_sick prior to halfpaid_sick' do
           halfpaid_sick = create(:leave_time, :halfpaid_sick, user: user, quota: 50, usable_hours: 50, effective_date: effective_date, expiration_date: expiration_date)
           expect(subject.errors).to be_empty
-          expect(subject.leave_time_usages.size).to eq 2
+          work_periods_by_date = Daikichi::Config::Biz.periods.after(subject.start_time).timeline.until(subject.end_time).to_a.group_by { |wp| wp.start_time.localtime.to_date }.count
+          expect(subject.leave_time_usages.size).to eq work_periods_by_date + 1
           fullpaid_sick.reload
           halfpaid_sick.reload
           expect(fullpaid_sick.usable_hours).to be_zero
@@ -169,7 +176,8 @@ describe LeaveTimeUsageBuilder do
         it 'should use fullpaid_sick prior to nearly expired halfpaid_sick' do
           nearly_expired_halfpaid_sick = create(:leave_time, :halfpaid_sick, user: user, quota: 50, usable_hours: 50, effective_date: effective_date, expiration_date: nearly_expired_date)
           expect(subject.errors).to be_empty
-          expect(subject.leave_time_usages.size).to be 2
+          work_periods_by_date = Daikichi::Config::Biz.periods.after(subject.start_time).timeline.until(subject.end_time).to_a.group_by { |wp| wp.start_time.localtime.to_date }.count
+          expect(subject.leave_time_usages.size).to be work_periods_by_date + 1
           fullpaid_sick.reload
           nearly_expired_halfpaid_sick.reload
           expect(fullpaid_sick.usable_hours).to be_zero
@@ -181,7 +189,8 @@ describe LeaveTimeUsageBuilder do
         it 'should use fullpaid_sick prior to less usable_hours halfpaid_sick' do
           less_usable_hours_halfpaid_sick = create(:leave_time, :halfpaid_sick, user: user, quota: 50, usable_hours: 49, locked_hours: 1, effective_date: effective_date, expiration_date: expiration_date)
           expect(subject.errors).to be_empty
-          expect(subject.leave_time_usages.size).to be 2
+          work_periods_by_date = Daikichi::Config::Biz.periods.after(subject.start_time).timeline.until(subject.end_time).to_a.group_by { |wp| wp.start_time.localtime.to_date }.count
+          expect(subject.leave_time_usages.size).to be work_periods_by_date + 1
           fullpaid_sick.reload
           less_usable_hours_halfpaid_sick.reload
           expect(fullpaid_sick.usable_hours).to be_zero
