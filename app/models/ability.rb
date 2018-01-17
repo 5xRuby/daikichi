@@ -10,6 +10,8 @@ class Ability
     when 'employee', 'parttime', 'intern'
       can :read, LeaveTime, user_id: user.id
       can :manage, LeaveApplication, user_id: user.id
+    when 'contractor'
+      can :manage, LeaveApplication, user_id: user.id
     end
   end
 end

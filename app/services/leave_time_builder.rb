@@ -9,6 +9,10 @@ class LeaveTimeBuilder
   end
 
   def automatically_import(by_assign_date: false)
+    if @user.role == 'contractor'
+      create_leave_time('personal', 2920, @user.join_date, @user.join_date.next_year)
+      return
+    end
     monthly_import by_assign_date: by_assign_date
     join_date_based_import by_assign_date: by_assign_date
   end
