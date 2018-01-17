@@ -16,8 +16,10 @@ document.addEventListener("turbolinks:load", function() {
     Turbolinks.visit("/backend/leave_applications?status=" + status + "&year=" + year );
   })
 
+  //員工休假統計頁
   var $statistics_year  = $("select[id=year]")
   var $statistics_month = $("select[id=month]")
+  var $statistics_role = $("select[id=role]")
 
   $statistics_year.on('change', function() {
     Turbolinks.visit("/backend/leave_applications/statistics?year=" + $statistics_year.val() + "&month=" + $statistics_month.val());
@@ -25,5 +27,9 @@ document.addEventListener("turbolinks:load", function() {
 
   $statistics_month.on('change', function() {
     Turbolinks.visit("/backend/leave_applications/statistics?year=" + $statistics_year.val() + "&month=" + $statistics_month.val());
+  });
+
+  $statistics_role.on("change", function() {
+    Turbolinks.visit("/backend/leave_applications/statistics?year=" + $statistics_year.val() + "&month=" + $statistics_month.val() + "&role=" + $statistics_role.val());
   });
 })

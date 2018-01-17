@@ -5,17 +5,23 @@
   .panel-body
     .year-mon-selector
       .row
-        .col-md-6.col-sm-6.col-xs-12
+        .col-md-4.col-sm-4.col-xs-12
           .form-group
             %label{:for=>"year"} Year
             = select_tag "year",
               options_for_select(2016 .. Time.now.year, specific_year),
               class: "form-control"
 
-        .col-md-6.col-sm-6.col-xs-12
+        .col-md-4.col-sm-4.col-xs-12
           .form-group
             %label{:for=>"month"} Month
             = select_tag "month", options_for_select(1..12, specific_month),
+              class: "form-control"
+
+        .col-md-4.col-sm-4.col-xs-12
+          .form-group
+            %label{:for=>"role"} Role
+            = select_tag "role", options_for_select(Settings.roles),
               class: "form-control"
 
 
