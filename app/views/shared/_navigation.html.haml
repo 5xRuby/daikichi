@@ -10,7 +10,7 @@
 
     #nav-collapse.collapse.navbar-collapse
       %ul.nav.navbar-nav
-        - if can? :view, LeaveApplication && !current_user.contractor?
+        - if can? :view, LeaveApplication && !current_user.try(:contractor?)
           %li.dropdown
             = dropdown_title t("nav.leave_applications")
             %ul.dropdown-menu
@@ -19,7 +19,7 @@
               %li= link_to t("title.leave_times.index"), leave_times_path
               %li= link_to t("title.leave_applications.index"), leave_applications_path
 
-        - if current_user.contractor?
+        - if current_user.try(:contractor?)
           %li.dropdown
             = dropdown_title t("nav.leave_applications")
             %ul.dropdown-menu
