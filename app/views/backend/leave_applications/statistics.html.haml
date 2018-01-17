@@ -21,7 +21,7 @@
         .col-md-4.col-sm-4.col-xs-12
           .form-group
             %label{:for=>"role"} Role
-            = select_tag "role", options_for_select(Settings.roles),
+            = select_tag "role", options_for_select(Settings.roles, params[:role]),
               class: "form-control"
 
 
