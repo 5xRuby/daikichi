@@ -1,4 +1,4 @@
-%h2= t("captions.backend/leave_applications.statistics", year: specific_year, month: specific_month)
+%h2= t("captions.backend/leave_applications.statistics", year: specific_year, month: specific_month, role: params[:role])
 
 
 .panel.panel-default
@@ -27,7 +27,7 @@
         %th.text-right= t("activerecord.attributes.leave_time.leave_types.#{leave_type}")
       %th.text-right 總計
   %tbody
-    - User.find_each do |user|
+    - User.filter_by_role(@role).find_each do |user|
       %tr
         %td.text-center.name= user.name
         - summary_from(@summary, user.id).each do |key, value|

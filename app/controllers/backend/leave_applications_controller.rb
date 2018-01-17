@@ -31,6 +31,7 @@ class Backend::LeaveApplicationsController < Backend::BaseController
   end
 
   def statistics
+    @role = params[:role] || %w(employee parttime)
     @summary = LeaveTimeSummaryService.new(
       specific_year.to_i,
       specific_month.to_i

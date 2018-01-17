@@ -54,7 +54,6 @@ class LeaveTimeUsageBuilder
       include_end_time = true if lt.cover?(@leave_hours_by_date.keys.last)
       break if include_start_time && include_end_time
     end
-
     rollback_with_error_message unless include_start_time && include_end_time
   end
 

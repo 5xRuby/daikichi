@@ -1,14 +1,15 @@
 class LeaveTimeSummaryService
-  def initialize(year, month)
+  def initialize(year, month, role = %w(employee parttime))
     @range = (
       Time.zone.local(year, month).beginning_of_month..
       Time.zone.local(year, month).end_of_month
     )
     @types = Settings.leave_times.quota_types.keys
+    @role = role
   end
 
   def user_applications
-    @user_applications ||= LeaveApplication.leave_within_range(@range.min, @range.max)
+    @user_applications ||= LeaveApplication.where(user: User.filter_by_role(@role)).leave_within_range(@range.min, @range.max)
       .approved
       .includes(:leave_time_usages, :leave_times)
       .group_by(&:user_id)
