@@ -103,4 +103,8 @@ class BaseController < ApplicationController
   def specific_month
     params[:month] || Time.current.month
   end
+
+  def specific_role
+    params[:role] || %w(employee parttime)
+  end
 end

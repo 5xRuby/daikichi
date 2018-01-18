@@ -22,11 +22,11 @@ document.addEventListener("turbolinks:load", function() {
   var $statistics_role = $("select[id=role]")
 
   $statistics_year.on('change', function() {
-    Turbolinks.visit("/backend/leave_applications/statistics?year=" + $statistics_year.val() + "&month=" + $statistics_month.val());
+    Turbolinks.visit("/backend/leave_applications/statistics?year=" + $statistics_year.val() + "&month=" + $statistics_month.val() + "&role=" + $statistics_role.val());
   });
 
   $statistics_month.on('change', function() {
-    Turbolinks.visit("/backend/leave_applications/statistics?year=" + $statistics_year.val() + "&month=" + $statistics_month.val());
+    Turbolinks.visit("/backend/leave_applications/statistics?year=" + $statistics_year.val() + "&month=" + $statistics_month.val() + "&role=" + $statistics_role.val());
   });
 
   $statistics_role.on("change", function() {
