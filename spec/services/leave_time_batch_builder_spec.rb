@@ -43,12 +43,12 @@ describe LeaveTimeBatchBuilder do
       let!(:fulltime) { FactoryGirl.create(:user, :fulltime, join_date: join_date) }
       let!(:parttime) { FactoryGirl.create(:user, :parttime, join_date: join_date) }
       let!(:user)     { FactoryGirl.create(:user, join_date: join_date - 1.day) }
+      let!(:datetime) { Time.zone.local(2017, 5, 4, 9, 30) }
 
       context 'end of working month' do
-        let(:join_date) { Daikichi::Config::Biz.time(monthly_lead_days, :days).before(Daikichi::Config::Biz.periods.before(Time.current.end_of_month).first.end_time) - 2.years + join_date_based_leed_days.days }
-
+        let(:join_date) { Daikichi::Config::Biz.time(monthly_lead_days, :days).before(Daikichi::Config::Biz.periods.before(datetime.end_of_month).first.end_time) - 2.years + join_date_based_leed_days.days }
         before do
-          Timecop.freeze(Daikichi::Config::Biz.time(monthly_lead_days, :days).before(Daikichi::Config::Biz.periods.before(Time.current.end_of_month).first.end_time))
+          Timecop.freeze(Daikichi::Config::Biz.time(monthly_lead_days, :days).before(Daikichi::Config::Biz.periods.before(datetime.end_of_month).first.end_time))
           described_class.new.automatically_import
         end
         after { Timecop.return }

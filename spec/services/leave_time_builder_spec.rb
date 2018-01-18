@@ -190,7 +190,7 @@ describe LeaveTimeBuilder do
 
     context 'partime employee' do
       context 'import join date based LeaveTime with specific assign_date' do
-        let(:user) { User.new(FactoryGirl.attributes_for(:user, :parttime)) }
+        let(:user) { User.new(FactoryGirl.attributes_for(:user, :intern)) }
         let(:current_date) { Date.parse '2017/06/14' }
 
         before do
