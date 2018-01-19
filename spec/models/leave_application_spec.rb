@@ -20,7 +20,7 @@ RSpec.describe LeaveApplication, type: :model do
   end
 
   describe 'validation' do
-    let(:params) { FactotyGirl.attributes_for(:leave_application) }
+    # let(:params) { FactoryGirl.attributes_for(:leave_application) }
     subject { described_class.new(params) }
 
     context 'has a valid factory' do
