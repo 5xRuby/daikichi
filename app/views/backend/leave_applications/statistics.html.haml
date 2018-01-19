@@ -21,7 +21,7 @@
         .col-md-4.col-sm-4.col-xs-12
           .form-group
             %label{:for=>"role"} Role
-            = select_tag "role", options_for_select(User.enum_attributes_for_select(:roles, except = [:contractor]), params[:role]),
+            = select_tag "role", options_for_select(User.enum_attributes_for_select(:roles), params[:role]),
               include_blank:true, class: "form-control"
 
 
