@@ -49,6 +49,11 @@ class User < ApplicationRecord
       .order(id: :desc)
   }
 
+  scope :filter_by_role, ->(role) {
+    where(role: role)
+      .order(id: :desc)
+  }
+
   Settings.roles.each do |key, role|
     define_method "is_#{role}?" do
       self.role.to_s == role

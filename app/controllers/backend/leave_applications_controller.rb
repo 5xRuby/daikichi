@@ -31,6 +31,11 @@ class Backend::LeaveApplicationsController < Backend::BaseController
   end
 
   def statistics
+    @summary = LeaveTimeSummaryService.new(
+      specific_year.to_i,
+      specific_month.to_i,
+      specific_role
+    ).summary
   end
 
   private

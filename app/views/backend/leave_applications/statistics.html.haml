@@ -1,22 +1,28 @@
-%h2= t("captions.backend/leave_applications.statistics", year: specific_year, month: specific_month)
+%h2= t("captions.backend/leave_applications.statistics", year: specific_year, month: specific_month, role: params[:role])
 
 
 .panel.panel-default
   .panel-body
     .year-mon-selector
       .row
-        .col-md-6.col-sm-6.col-xs-12
+        .col-md-4.col-sm-4.col-xs-12
           .form-group
             %label{:for=>"year"} Year
             = select_tag "year",
               options_for_select(2016 .. Time.now.year, specific_year),
               class: "form-control"
 
-        .col-md-6.col-sm-6.col-xs-12
+        .col-md-4.col-sm-4.col-xs-12
           .form-group
             %label{:for=>"month"} Month
             = select_tag "month", options_for_select(1..12, specific_month),
               class: "form-control"
+
+        .col-md-4.col-sm-4.col-xs-12
+          .form-group
+            %label{:for=>"role"} Role
+            = select_tag "role", options_for_select(User.enum_attributes_for_select(:roles, except = [:contractor]), params[:role]),
+              include_blank:true, class: "form-control"
 
 
 %table.table.table-striped.table-bordered.table-hover
@@ -27,9 +33,9 @@
         %th.text-right= t("activerecord.attributes.leave_time.leave_types.#{leave_type}")
       %th.text-right 總計
   %tbody
-    - User.find_each do |user|
+    - User.filter_by_role(specific_role).find_each do |user|
       %tr
         %td.text-center.name= user.name
-        - sum_leave_hours(user.id, specific_year.to_i, specific_month.to_i).each do |key, value|
+        - summary_from(@summary, user.id).each do |key, value|
           %td.text-right{ class: ('highlight' if need_deduct_salary?(key, value)) }= hours_for_total value
-        %td.text-right= hours_to_humanize sum_leave_hours(user.id, specific_year.to_i, specific_month.to_i).values.sum
+        %td.text-right= hours_to_humanize summary_from(@summary, user.id).values.sum
