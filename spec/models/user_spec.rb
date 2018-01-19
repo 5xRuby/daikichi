@@ -66,7 +66,6 @@ RSpec.describe User, type: :model do
             leave_types.each do |leave_type|
               it "should create LeaveTime with type :#{leave_type} when user is a/an #{role}" do
                 result_leave_types = create(:user, role).leave_times.pluck(:leave_type).uniq
-                debugger if role == :parttime
                 expect(result_leave_types.size).to eq leave_types.size
                 expect(result_leave_types).to include leave_type
               end
