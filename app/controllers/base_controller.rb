@@ -105,6 +105,6 @@ class BaseController < ApplicationController
   end
 
   def specific_role
-    params[:role] || %w(employee parttime)
+    params[:role].empty? ? %w(employee parttime) : params[:role]
   end
 end
