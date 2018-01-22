@@ -5,7 +5,7 @@ class LeaveApplicationsController < BaseController
 
   def index
     @current_collection = collection_scope.page(params[:page])
-    @current_collection = Kaminari.paginate_array(@current_collection.with_year(specific_year).first(5)).page(params[:page]) unless query?
+    @current_collection = Kaminari.paginate_array(@current_collection.first(5)).page(params[:page]) unless query?
     @current_collection = @current_collection.with_status(params[:status]) if status_selected?
   end
 

@@ -17,8 +17,9 @@ RSpec.describe LeaveApplicationObserver do
     context 'after_create' do
       it 'should successfully create LeaveTimeUsage on sufficient LeaveTime hours' do
         leave_time_usage = leave_application.leave_time_usages.first
+        total_used_hours = leave_application.leave_time_usages.map(&:used_hours).sum
         leave_time.reload
-        expect(leave_time_usage.used_hours).to eq total_leave_hours
+        expect(total_used_hours).to eq total_leave_hours
         expect(leave_time_usage.leave_time).to eq leave_time
         expect(leave_time.locked_hours).to eq total_leave_hours
       end
@@ -35,8 +36,9 @@ RSpec.describe LeaveApplicationObserver do
       it 'should recreate LeaveTimeUsage only when AASM event is "revise"' do
         la = create(:leave_application, :personal, :approved, user: user, start_time: start_time, end_time: end_time)
         leave_time_usage = la.leave_time_usages.first
+        total_used_hours = la.leave_time_usages.map(&:used_hours).sum
         leave_time.reload
-        expect(leave_time_usage.used_hours).to eq total_leave_hours
+        expect(total_used_hours).to eq total_leave_hours
         expect(leave_time_usage.leave_time).to eq leave_time
         expect(leave_time.used_hours).to eq total_leave_hours
 
@@ -44,7 +46,8 @@ RSpec.describe LeaveApplicationObserver do
         la.revise!
         leave_time_usage = la.leave_time_usages.first
         leave_time.reload
-        expect(leave_time_usage.used_hours).to eq(total_leave_hours - 1)
+        total_used_hours = la.leave_time_usages.map(&:used_hours).sum
+        expect(total_used_hours).to eq(total_leave_hours - 1)
         expect(leave_time_usage.leave_time).to eq leave_time
         expect(leave_time.locked_hours).to eq(total_leave_hours - 1)
       end
@@ -115,10 +118,11 @@ RSpec.describe LeaveApplicationObserver do
             leave_application.reload
             used_hours = Daikichi::Config::Biz.within(leave_application.start_time, leave_application.end_time).in_hours
             leave_time_usage = leave_application.leave_time_usages.first
+            total_used_hours = leave_application.leave_time_usages.map(&:used_hours).sum
             leave_time.reload
             expect(leave_application.hours).to eq used_hours
             expect(leave_application.status).to eq 'pending'
-            expect(leave_time_usage.used_hours).to eq used_hours
+            expect(total_used_hours).to eq used_hours
             expect(leave_time_usage.leave_time).to eq leave_time
             expect(leave_time.usable_hours).to eq quota - used_hours
             expect(leave_time.locked_hours).to eq used_hours

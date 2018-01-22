@@ -55,6 +55,7 @@
       %tr
         %th.text-right #
         %th.text-center 假別
+        %th.text-right 日期
         %th.text-right 使用時數
         %th.text-right 餘額
         %th.text-right 生效日期
@@ -64,6 +65,8 @@
         %tr
           %td.text-right= link_to usage.leave_time_id, backend_leave_time_path(usage.leave_time_id)
           %td.text-center= LeaveTime.human_enum_value(:leave_type, usage.leave_time.leave_type)
+          %td.text-right= usage.date
+
           %td.text-right= hours_to_humanize usage.used_hours
           %td.text-right= hours_to_humanize usage.leave_time.usable_hours
           %td.text-right= l usage.leave_time.effective_date, format: :detailed
