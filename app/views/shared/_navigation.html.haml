@@ -32,7 +32,7 @@
               %li= link_to t("title.backend/leave_applications.index"),
                 backend_leave_applications_path(status: :pending)
               %li= link_to t("captions.backend/leave_applications.statistics"),
-                statistics_backend_leave_applications_path(year: specific_year, month: specific_month)
+                statistics_backend_leave_applications_path(year: specific_year, month: specific_month, role: "")
               %li= link_to t("title.backend/leave_times.index"),
                 backend_leave_times_path
 
