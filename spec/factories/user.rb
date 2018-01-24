@@ -25,7 +25,7 @@ FactoryGirl.define do
     end
 
     trait :parttime do
-      role { %i(parttime intern).sample }
+      role { %i(contractor intern).sample }
     end
 
     trait :intern do
