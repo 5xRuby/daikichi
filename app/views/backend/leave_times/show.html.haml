@@ -51,7 +51,7 @@
             = link_to usage[0].id, verify_backend_leave_application_path(usage[0])
           %td.text-center= LeaveApplication.human_enum_value(:leave_type, usage[0].leave_type)
           %td.text-right= usage[0].pending? ? hours_to_humanize(usage[1].sum(&:used_hours)) : '-'
-          %td.text-right= usage[0].approved? ? hours_to_humanize(usa ge[1].sum(&:used_hours)) : '-'
+          %td.text-right= usage[0].approved? ? hours_to_humanize(usage[1].sum(&:used_hours)) : '-'
           %td.text-right= hours_to_humanize usage[0].hours
           %td.text-center
             - colored_state_label(usage[0].status)
