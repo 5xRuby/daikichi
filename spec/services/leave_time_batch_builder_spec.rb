@@ -19,6 +19,7 @@ describe LeaveTimeBatchBuilder do
     context 'is forced' do
       let!(:fulltime) { FactoryGirl.create(:user, :fulltime, join_date: Date.current - 1.year - 1.day) }
       let!(:parttime) { FactoryGirl.create(:user, :intern, join_date: Date.current - 1.year - 1.day) }
+      let!(:contractor) { FactoryGirl.create(:user, :contractor, join_date: Date.current - 1.year - 1.day) }
       let!(:user)     { FactoryGirl.create(:user, join_date: Date.current - 1.year - 1.day) }
 
       before do
@@ -26,8 +27,8 @@ describe LeaveTimeBatchBuilder do
       end
 
       it 'should run join_date_based_import and monthly import with prebuild option for all users' do
-        leave_times = LeaveTime.where(user_id: [fulltime.id, parttime.id, user.id])
-        expect(leave_times.reload.size).to eq((monthly_leave_types.size + join_date_based_leave_types.size) * 3 - seniority_based_leave_types.size)
+        leave_times = LeaveTime.where(user_id: [fulltime.id, parttime.id, user.id, contractor.id])
+        expect(leave_times.reload.size).to eq(1 + (monthly_leave_types.size + join_date_based_leave_types.size) * 3 - seniority_based_leave_types.size)
         monthly_leave_time = leave_times.find { |x| x.leave_type == monthly_leave_types.first.first }
         expect(monthly_leave_time.effective_date).to  eq Time.zone.today
         expect(monthly_leave_time.expiration_date).to eq Time.zone.today.end_of_month
@@ -42,6 +43,7 @@ describe LeaveTimeBatchBuilder do
     context 'not forced' do
       let!(:fulltime) { FactoryGirl.create(:user, :fulltime, join_date: join_date) }
       let!(:parttime) { FactoryGirl.create(:user, :intern, join_date: join_date) }
+      let!(:contractor) { FactoryGirl.create(:user, :contractor, join_date: join_date) }
       let!(:user)     { FactoryGirl.create(:user, join_date: join_date - 1.day) }
       let!(:datetime) { Time.zone.local(2017, 5, 4, 9, 30) }
 
@@ -54,8 +56,8 @@ describe LeaveTimeBatchBuilder do
         after { Timecop.return }
 
         it 'should run join date based import only for users that join_date anniversary is comming and monthly import without prebuild option for all users' do
-          leave_times = LeaveTime.where(user_id: [fulltime.id, parttime.id, user.id])
-          expect(leave_times.reload.size).to eq(monthly_leave_types.size * 3 + join_date_based_leave_types.size * 2 - seniority_based_leave_types.size)
+          leave_times = LeaveTime.where(user_id: [fulltime.id, parttime.id, user.id, contractor.id])
+          expect(leave_times.reload.size).to eq(1 + monthly_leave_types.size * 3 + join_date_based_leave_types.size * 2 - seniority_based_leave_types.size)
 
           join_date_based_leave_time = leave_times.find { |x| x.leave_type == join_date_based_leave_types.first.first }
           join_anniversary = fulltime.next_join_anniversary
@@ -77,8 +79,8 @@ describe LeaveTimeBatchBuilder do
         after { Timecop.return }
 
         it 'should run join date based import for users that join_date anniversary is comming only' do
-          leave_times = LeaveTime.where(user_id: [fulltime.id, parttime.id, user.id])
-          expect(leave_times.reload.size).to eq(join_date_based_leave_types.size * 2 - seniority_based_leave_types.size)
+          leave_times = LeaveTime.where(user_id: [fulltime.id, parttime.id, user.id, contractor.id])
+          expect(leave_times.reload.size).to eq(1 + join_date_based_leave_types.size * 2 - seniority_based_leave_types.size)
 
           join_date_based_leave_time = leave_times.find { |x| x.leave_type == join_date_based_leave_types.first.first }
           join_anniversary = fulltime.next_join_anniversary
