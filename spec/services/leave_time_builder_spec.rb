@@ -428,7 +428,7 @@ describe LeaveTimeBuilder do
     end
 
     context 'parttime employee' do
-      let(:user) { FactoryGirl.create(:user, :parttime) }
+      let(:user) { FactoryGirl.create(:user, :intern) }
 
       it 'should not get seniority_based leave_times' do
         leave_times = user.leave_times
