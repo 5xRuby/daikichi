@@ -37,7 +37,7 @@
         %th.text-center= t_attribute :status, LeaveApplication
         %th.text-center= t("captions.tools")
     %tbody
-      - current_collection.each do |leave|
+      - current_collection.order('id DESC').each do |leave|
         %tr
           %td.text-right= leave.id
           %td.text-center= t_value :user, leave, :convert_user_object_to_name, :name
