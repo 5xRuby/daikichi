@@ -33,4 +33,12 @@ module LeaveApplicationsHelper
     leave_types = Settings.leave_times.quota_types.keys
     summary[user_id] || Hash[leave_types.collect{ |type| [type, 0]}]
   end
+
+  def leave_type_dropdown_menu(action_name, user)
+    if user.role == 'contractor'
+      LeaveApplication.enum_attributes_for_select(:leave_types, except = [:remote, :sick, :maternity, :marriage, :compassionate, :official])
+    else
+      LeaveApplication.enum_attributes_for_select(:leave_types)
+    end 
+  end
 end

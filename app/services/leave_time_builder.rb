@@ -14,12 +14,14 @@ class LeaveTimeBuilder
   end
 
   def join_date_based_import(by_assign_date: false, prebuild: false)
+    return create_leave_time('personal', 2920, @user.join_date, @user.join_date.next_year) if @user.role == 'contractor'
     JOIN_DATE_BASED_LEAVE_TYPES.each do |leave_type, config|
       build_join_date_based_leave_types(leave_type, config, prebuild, by_assign_date)
     end
   end
 
   def monthly_import(by_assign_date: false, prebuild: false)
+    return if @user.role == 'contractor'
     MONTHLY_LEAVE_TYPES.each do |leave_type, config|
       build_monthly_leave_types(leave_type, config, prebuild, by_assign_date)
     end

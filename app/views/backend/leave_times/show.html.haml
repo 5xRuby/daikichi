@@ -45,18 +45,19 @@
         %th.text-right= t_attribute :start_time, LeaveApplication
         %th.text-right= t_attribute :end_time, LeaveApplication
     %tbody
-      - current_object.leave_time_usages.each do |usage|
+      - current_object.leave_time_usages.group_by(&:leave_application).each do |usage|
         %tr
           %td.text-right
-            = link_to usage.leave_application_id, verify_backend_leave_application_path(usage.leave_application_id)
-          %td.text-center= LeaveApplication.human_enum_value(:leave_type, usage.leave_application.leave_type)
-          %td.text-right= usage.leave_application.pending? ? hours_to_humanize(usage.used_hours) : '-'
-          %td.text-right= usage.leave_application.approved? ? hours_to_humanize(usage.used_hours) : '-'
-          %td.text-right= hours_to_humanize usage.leave_application.hours
+            = link_to usage[0].id, verify_backend_leave_application_path(usage[0])
+          %td.text-center= LeaveApplication.human_enum_value(:leave_type, usage[0].leave_type)
+          %td.text-right= usage[0].pending? ? hours_to_humanize(usage[1].sum(&:used_hours)) : '-'
+          %td.text-right= usage[0].approved? ? hours_to_humanize(usage[1].sum(&:used_hours)) : '-'
+          %td.text-right= hours_to_humanize usage[0].hours
           %td.text-center
-            - colored_state_label(usage.leave_application.status)
-          %td.text-right= l usage.leave_application.start_time, format: :long
-          %td.text-right= l usage.leave_application.end_time,   format: :long
+            - colored_state_label(usage[0].status)
+          %td.text-right= l usage[0].start_time, format: :long
+          %td.text-right= l usage[0].end_time,   format: :long
+
       %tr
         %th.active.text-right{colspan: 2}= t('.sum')
         %td.text-right= hours_to_humanize current_object.leave_time_usages.select { |u| u.leave_application.pending? }.sum(&:used_hours)

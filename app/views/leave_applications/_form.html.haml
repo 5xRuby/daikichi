@@ -2,10 +2,10 @@
 
 = simple_form_for current_object, url: url_for(action: action), method: method  do |f|
   = f.error :base, error: sanitize(f.object.errors[:base].join('<br />'), tags: %w(a br), attributes: %w(href target))
-  - if action_name == "edit"
-    = f.input :leave_type, required: true, collection: LeaveApplication.enum_attributes_for_select(:leave_types), disabled: true
+  - if action_name == 'edit'
+    = f.input :leave_type, required: true, collection: LeaveApplication.enum_attributes_for_select(:leave_types, except = [:remote]), disabled: true
   - else
-    = f.input :leave_type, require: true, collection: LeaveApplication.enum_attributes_for_select(:leave_types, except = [:remote])
+    = f.input :leave_type, required: true, collection: leave_type_dropdown_menu(action_name, current_user)
   = f.input :start_time, as: :string, required: true, input_html: { data: { input: 'datetimepicker', format: 'Y/m/d H:i' } }
   = f.input :end_time,   as: :string, required: true, input_html: { data: { input: 'datetimepicker', format: 'Y/m/d H:i' } }
   = f.error :hours, error: sanitize(f.object.errors[:hours].join('<br />'), tags: %w(br))

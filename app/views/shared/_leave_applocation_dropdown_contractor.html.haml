@@ -1,0 +1,5 @@
+%li.dropdown
+  = dropdown_title t("nav.leave_applications")
+  %ul.dropdown-menu
+    %li= link_to t("title.leave_applications.new"), new_leave_application_path
+    %li= link_to t("title.leave_applications.index"), leave_applications_path

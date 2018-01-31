@@ -2,6 +2,7 @@
 class LeaveApplicationsController < BaseController
   include Selectable
   before_action :set_query_object
+  after_action :auto_approve_for_contractor, only: [:create, :update], if: :contractor?
 
   def index
     @current_collection = collection_scope.page(params[:page])
@@ -80,5 +81,13 @@ class LeaveApplicationsController < BaseController
     else
       request.env['HTTP_REFERER']
     end
+  end
+
+  def auto_approve_for_contractor
+    current_object.approve!(current_user)
+  end
+
+  def contractor?
+    current_user.contractor?
   end
 end

@@ -73,7 +73,8 @@ RSpec.describe User, type: :model do
           end
         end
         it_should_behave_like 'different roles create LeaveTime with different leave_type', %i(manager hr employee fulltime), %w(annual personal fullpaid_sick halfpaid_sick remote)
-        it_should_behave_like 'different roles create LeaveTime with different leave_type', %i(intern contractor parttime),   %w(personal fullpaid_sick halfpaid_sick remote)
+        it_should_behave_like 'different roles create LeaveTime with different leave_type', %i(intern),   %w(personal fullpaid_sick halfpaid_sick remote)
+        it_should_behave_like 'different roles create LeaveTime with different leave_type', %i(contractor), %w(personal)
 
         shared_examples 'specific roles should not create any LeaveTime' do |roles|
           roles.each do |role|
