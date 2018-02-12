@@ -23,20 +23,14 @@ describe LeaveTimeSummaryService do
     end
 
     context 'different leave type' do
-      let(:sick_start_time) { Time.zone.local(2018, 1, 5, 9, 30) }
-      let(:sick_end_time) { Time.zone.local(2018, 1, 16, 18, 30) }
       let(:personal_start_time) { Time.zone.local(2018, 1, 18, 9, 30) }
       let(:personal_end_time) { Time.zone.local(2018, 1, 31, 18, 30) }
       it 'should calculate total leave times for different leave type' do
-        leave_application = create(:leave_application, :sick, user: user, start_time: sick_start_time, end_time: sick_end_time).reload
-        leave_application.approve!(manager)
         leave_application = create(:leave_application, user: user, start_time: personal_start_time, end_time: personal_end_time).reload
         leave_application.approve!(manager)
         leave_application = create(:leave_application, user: user2, start_time: personal_start_time, end_time: personal_end_time).reload
         leave_application.approve!(manager)
         summary = LeaveTimeSummaryService.new(2018, 1).summary
-        expect(summary[user.id]['fullpaid_sick']).to eq 56
-        expect(summary[user.id]['halfpaid_sick']).to eq 8
         expect(summary[user.id]['annual']).to eq 56
         expect(summary[user.id]['personal']).to eq 24
         expect(summary[user2.id]['annual']).to eq 80
@@ -49,15 +43,14 @@ describe LeaveTimeSummaryService do
       let(:end_time) { Time.zone.local(2018, 1, 29, 18, 30) }
       let(:end_time2) { Time.zone.local(2018, 2, 9, 18, 30) }
       it 'should calculate total sick leave times in specified month' do
-        leave_application = create(:leave_application, :sick, user: user, start_time: start_time, end_time: end_time).reload
+        leave_application = create(:leave_application, :halfpaid_sick, user: user, start_time: start_time, end_time: end_time).reload
         leave_application.approve!(manager)
-        leave_application = create(:leave_application, :sick, user: user, start_time: start_time2, end_time: end_time2).reload
+        leave_application = create(:leave_application, :halfpaid_sick, user: user, start_time: start_time2, end_time: end_time2).reload
         leave_application.approve!(manager)
         summary = LeaveTimeSummaryService.new(2018, 1).summary
-        expect(summary[user.id]['fullpaid_sick']).to eq 39
-        summary = LeaveTimeSummaryService.new(2018, 2).summary
-        expect(summary[user.id]['fullpaid_sick']).to eq 17
         expect(summary[user.id]['halfpaid_sick']).to eq 39
+        summary = LeaveTimeSummaryService.new(2018, 2).summary
+        expect(summary[user.id]['halfpaid_sick']).to eq 56
       end
 
       it 'should calculate total personal leave times in specified month' do
