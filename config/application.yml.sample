@@ -47,6 +47,8 @@ defaults: &defaults
       halfpaid_sick: halfpaid_sick
       personal: personal
       official: official
+      menstrual: menstrual # 生理假
+      occpational_sick: occpational_sick # 公傷病假
       marriage: marriage
       compassionate: compassionate
       maternity: maternity
@@ -70,6 +72,12 @@ defaults: &defaults
         - maternity
       remote:
         - remote
+      # 生理假
+      menstrual:
+        - menstrual
+      # 公傷病假
+      occpational_sick:
+        - occpational_sick
 
   leave_times:
     quota_types:
@@ -83,6 +91,8 @@ defaults: &defaults
       marriage: marriage
       compassionate: compassionate
       maternity: maternity
+      menstrual: menstrual # 生理假
+      occpational_sick: occpational_sick # 公傷病假
 
   leed_days:
     monthly: 5 # working.days
@@ -146,6 +156,12 @@ defaults: &defaults
     maternity:
       creation: none
     bonus:
+      creation: none
+    menstrual:
+      creation: manually
+      quota: 1
+      effective: 2 # days
+    occpational_sick:
       creation: none
 
   backend:

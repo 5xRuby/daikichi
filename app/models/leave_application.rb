@@ -94,7 +94,7 @@ class LeaveApplication < ApplicationRecord
   end
 
   def special_type?
-    %w(marriage compassionate official maternity).include? self.leave_type
+    %w(marriage compassionate official maternity occpational_sick menstrual).include? self.leave_type
   end
 
   def available_leave_times

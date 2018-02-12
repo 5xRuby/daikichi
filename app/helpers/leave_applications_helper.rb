@@ -36,9 +36,9 @@ module LeaveApplicationsHelper
 
   def leave_type_dropdown_menu(action_name, user)
     if user.role == 'contractor'
-      LeaveApplication.enum_attributes_for_select(:leave_types, except = [:remote, :sick, :maternity, :marriage, :compassionate, :official])
+      LeaveApplication.enum_attributes_for_select(:leave_types, except = [:remote, :sick, :maternity, :marriage, :compassionate, :official, :occpational_sick, :menstrual])
     else
       LeaveApplication.enum_attributes_for_select(:leave_types)
-    end 
+    end
   end
 end
