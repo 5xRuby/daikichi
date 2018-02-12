@@ -156,6 +156,50 @@ describe LeaveTimeUsageBuilder do
           expect(less_usable_hours_leave_time.locked_hours).to be 10
         end
       end
+
+      #TODO: add spec about an application which is used two or more leave_times.
+      #context 'leave_type :sick' do
+      #  let!(:fullpaid_sick) { create(:leave_time, :fullpaid_sick, user: user, quota: 50, usable_hours: 50, effective_date: effective_date, expiration_date: expiration_date) }
+      #  subject { create(:leave_application, :sick, user: user, start_time: start_time, end_time: end_time) }
+      #  it 'should use fullpaid_sick prior to halfpaid_sick' do
+      #    halfpaid_sick = create(:leave_time, :halfpaid_sick, user: user, quota: 50, usable_hours: 50, effective_date: effective_date, expiration_date: expiration_date)
+      #    expect(subject.errors).to be_empty
+      #    work_periods_by_date = Daikichi::Config::Biz.periods.after(subject.start_time).timeline.until(subject.end_time).to_a.group_by { |wp| wp.start_time.localtime.to_date }.count
+      #    expect(subject.leave_time_usages.size).to eq work_periods_by_date + 1
+      #    fullpaid_sick.reload
+      #    halfpaid_sick.reload
+      #    expect(fullpaid_sick.usable_hours).to be_zero
+      #    expect(fullpaid_sick.locked_hours).to be 50
+      #    expect(halfpaid_sick.usable_hours).to be 41
+      #    expect(halfpaid_sick.locked_hours).to be 9
+      #  end
+
+      #  it 'should use fullpaid_sick prior to nearly expired halfpaid_sick' do
+      #    nearly_expired_halfpaid_sick = create(:leave_time, :halfpaid_sick, user: user, quota: 50, usable_hours: 50, effective_date: effective_date, expiration_date: nearly_expired_date)
+      #    expect(subject.errors).to be_empty
+      #    work_periods_by_date = Daikichi::Config::Biz.periods.after(subject.start_time).timeline.until(subject.end_time).to_a.group_by { |wp| wp.start_time.localtime.to_date }.count
+      #    expect(subject.leave_time_usages.size).to be work_periods_by_date + 1
+      #    fullpaid_sick.reload
+      #    nearly_expired_halfpaid_sick.reload
+      #    expect(fullpaid_sick.usable_hours).to be_zero
+      #    expect(fullpaid_sick.locked_hours).to be 50
+      #    expect(nearly_expired_halfpaid_sick.usable_hours).to be 41
+      #    expect(nearly_expired_halfpaid_sick.locked_hours).to be 9
+      #  end
+
+      #  it 'should use fullpaid_sick prior to less usable_hours halfpaid_sick' do
+      #    less_usable_hours_halfpaid_sick = create(:leave_time, :halfpaid_sick, user: user, quota: 50, usable_hours: 49, locked_hours: 1, effective_date: effective_date, expiration_date: expiration_date)
+      #    expect(subject.errors).to be_empty
+      #    work_periods_by_date = Daikichi::Config::Biz.periods.after(subject.start_time).timeline.until(subject.end_time).to_a.group_by { |wp| wp.start_time.localtime.to_date }.count
+      #    expect(subject.leave_time_usages.size).to be work_periods_by_date + 1
+      #    fullpaid_sick.reload
+      #    less_usable_hours_halfpaid_sick.reload
+      #    expect(fullpaid_sick.usable_hours).to be_zero
+      #    expect(fullpaid_sick.locked_hours).to be 50
+      #    expect(less_usable_hours_halfpaid_sick.usable_hours).to be 40
+      #    expect(less_usable_hours_halfpaid_sick.locked_hours).to be 10
+      #  end
+      #end
     end
   end
 end
