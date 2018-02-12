@@ -70,7 +70,7 @@ describe LeaveTimeBatchBuilder do
         let(:join_date) { Date.current.end_of_month + 3.days - 2.years + join_date_based_leed_days.days }
         before do
           if (Date.current.end_of_month + 3.days - 2.years).month && (Date.current.end_of_month + 3.days - 2.years).leap?
-            Timecop.freeze(Date.current.end_of_month + 2.days)
+            Timecop.freeze(Date.current.end_of_month + 3.days)
           else
             Timecop.freeze(Date.current.end_of_month + 3.days)
           end
