@@ -54,6 +54,7 @@ gem 'flowdock'
 gem 'act-fluent-logger-rails'
 gem 'lograge'
 gem 'logstash-event'
+gem 'capybara'
 
 group :development, :test do
   gem 'awesome_print'

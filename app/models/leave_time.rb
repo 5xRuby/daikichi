@@ -38,10 +38,6 @@ class LeaveTime < ApplicationRecord
     overlaps(date.beginning_of_day, date.end_of_day)
   }
 
-  scope :exclude_sick, ->{
-    where.not(leave_type: %w(fullpaid_sick halfpaid_sick))
-  }
-
   ransacker :effective do |parent|
     Arel.sql("(select (leave_times.effective_date, leave_times.expiration_date) OVERLAPS (timestamp '#{Time.current.beginning_of_day}', timestamp '#{Time.current.end_of_day}'))")
   end
@@ -58,7 +54,7 @@ class LeaveTime < ApplicationRecord
   end
 
   def special_type?
-    %w(marriage compassionate official maternity).include? self.leave_type
+    %w(marriage compassionate official maternity occpational_sick menstrual).include? self.leave_type
   end
 
   def lock_hours(hours)
