@@ -43,7 +43,8 @@ defaults: &defaults
       rejected: rejected
       canceled: canceled
     leave_types:
-      sick: sick
+      fullpaid_sick: fullpaid_sick
+      halfpaid_sick: halfpaid_sick
       personal: personal
       official: official
       marriage: marriage
@@ -51,8 +52,9 @@ defaults: &defaults
       maternity: maternity
       remote: remote
     available_quota_types:
-      sick:
+      fullpaid_sick:
         - fullpaid_sick
+      halfpaid_sick:
         - halfpaid_sick
       personal:
         - bonus
@@ -160,4 +162,7 @@ test:
   <<: *defaults
 
 production:
+  <<: *defaults
+
+staging:
   <<: *defaults

@@ -42,14 +42,14 @@ RSpec.describe LeaveApplication, type: :model do
       leave = LeaveApplication.new(
         start_time: start_time,
         end_time: one_hour_later,
-        leave_type: 'sick'
+        leave_type: 'fullpaid_sick'
       )
       expect(leave).to be_invalid
       expect(leave.errors.messages[:description].first).to eq '請簡述原因'
     end
 
     it 'hours應為正整數' do
-      leave = LeaveApplication.new start_time: start_time, leave_type: 'sick', description: 'test'
+      leave = LeaveApplication.new start_time: start_time, leave_type: 'fullpaid_sick', description: 'test'
       leave.end_time = one_hour_ago
       expect(leave).to be_invalid
       expect(leave.errors.messages[:start_time].first).to eq '開始時間必須早於結束時間'
