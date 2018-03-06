@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 class LeaveTimeBuilder
   MONTHLY_LEAVE_TYPES = Settings.leave_types.to_a.select { |lt| lt.second['creation'] == 'monthly' }
+  WEEKLY_LEAVE_TYPES = Settings.leave_types.to_a.select { |lt| lt.second['creation'] == 'weekly' }
   JOIN_DATE_BASED_LEAVE_TYPES = Settings.leave_types.to_a.select { |lt| lt.second['creation'] == 'join_date_based' }
   JOIN_DATE_BASED_LEED_DAY = Settings.leed_days.join_date_based.day
 
@@ -11,6 +12,7 @@ class LeaveTimeBuilder
   def automatically_import(by_assign_date: false)
     monthly_import by_assign_date: by_assign_date
     join_date_based_import by_assign_date: by_assign_date
+    weekly_import
   end
 
   def join_date_based_import(by_assign_date: false, prebuild: false)
@@ -24,6 +26,14 @@ class LeaveTimeBuilder
     return if @user.role == 'contractor'
     MONTHLY_LEAVE_TYPES.each do |leave_type, config|
       build_monthly_leave_types(leave_type, config, prebuild, by_assign_date)
+    end
+  end
+
+  def weekly_import
+    return if @user.role == 'contractor' || !Time.zone.today.monday?
+    date = Time.zone.today + 4.weeks
+    WEEKLY_LEAVE_TYPES.each do |leave_type, config|
+      build_weekly_leave_types(leave_type, config, date)
     end
   end
 
@@ -76,6 +86,13 @@ class LeaveTimeBuilder
       @expiration_date = prebuild ? Time.zone.today.next_month.end_of_month : Time.zone.today.end_of_month
       create_leave_time(leave_type, quota, @effective_date, @expiration_date)
     end
+  end
+
+  def build_weekly_leave_types(leave_type, config, date)
+    quota = extract_quota(config, @user)
+    effective_date = date.beginning_of_week
+    expiration_date = date.end_of_week
+    create_leave_time(leave_type, quota, effective_date, expiration_date)
   end
 
   def create_leave_time(leave_type, quota, effective_date, expiration_date)
