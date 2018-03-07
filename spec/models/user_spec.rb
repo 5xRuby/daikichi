@@ -97,7 +97,7 @@ RSpec.describe User, type: :model do
         end
         all_roles = %i(manager hr employee intern)
         it_should_behave_like 'leave_type created with specific quota', all_roles, 'personal',      112
-        it_should_behave_like 'leave_type created with specific quota', all_roles, 'remote',        32
+        it_should_behave_like 'leave_type created with specific quota', all_roles, 'remote',        8
         it_should_behave_like 'leave_type created with specific quota', all_roles, 'fullpaid_sick', 56
         it_should_behave_like 'leave_type created with specific quota', all_roles, 'halfpaid_sick', 184
 
