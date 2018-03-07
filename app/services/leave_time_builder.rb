@@ -12,7 +12,7 @@ class LeaveTimeBuilder
   def automatically_import(by_assign_date: false)
     monthly_import by_assign_date: by_assign_date
     join_date_based_import by_assign_date: by_assign_date
-    weekly_import
+    weekly_import by_assign_date: by_assign_date
   end
 
   def join_date_based_import(by_assign_date: false, prebuild: false)
@@ -29,11 +29,13 @@ class LeaveTimeBuilder
     end
   end
 
-  def weekly_import
-    return if @user.role == 'contractor' || !Time.zone.today.monday?
+  def weekly_import(by_assign_date: false)
+    if !by_assign_date
+      return if @user.role == 'contractor' || !Time.zone.today.monday?
+    end
     date = Time.zone.today + 4.weeks
     WEEKLY_LEAVE_TYPES.each do |leave_type, config|
-      build_weekly_leave_types(leave_type, config, date)
+      build_weekly_leave_types(leave_type, config, date, by_assign_date)
     end
   end
 
@@ -88,11 +90,20 @@ class LeaveTimeBuilder
     end
   end
 
-  def build_weekly_leave_types(leave_type, config, date)
+  def build_weekly_leave_types(leave_type, config, date, build_by_assign_date)
     quota = extract_quota(config, @user)
-    effective_date = date.beginning_of_week
-    expiration_date = date.end_of_week
-    create_leave_time(leave_type, quota, effective_date, expiration_date)
+    if build_by_assign_date
+      effective_date = @user.assign_date
+      expiration_date = @user.assign_date.end_of_week
+      create_leave_time(leave_type, quota, effective_date, expiration_date)
+      create_leave_time(leave_type, quota, effective_date.beginning_of_week + 1.week, expiration_date + 1.week)
+      create_leave_time(leave_type, quota, effective_date.beginning_of_week + 2.week, expiration_date + 2.week)
+      create_leave_time(leave_type, quota, effective_date.beginning_of_week + 3.week, expiration_date + 3.week)
+    else
+      effective_date = date.beginning_of_week
+      expiration_date = date.end_of_week
+      create_leave_time(leave_type, quota, effective_date, expiration_date)
+    end
   end
 
   def create_leave_time(leave_type, quota, effective_date, expiration_date)
