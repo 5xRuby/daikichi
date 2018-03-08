@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171229103357) do
+ActiveRecord::Schema.define(version: 20180308103014) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -86,6 +86,19 @@ ActiveRecord::Schema.define(version: 20171229103357) do
     t.date     "expiration_date", default: -> { "now()" }, null: false
     t.text     "remark"
     t.integer  "locked_hours"
+  end
+
+  create_table "overtimes", force: :cascade do |t|
+    t.integer  "user_id"
+    t.integer  "hours",       default: 0
+    t.datetime "start_time"
+    t.datetime "end_time"
+    t.text     "description"
+    t.string   "status",      default: "pending"
+    t.datetime "sign_date"
+    t.datetime "deleted_at"
+    t.datetime "created_at",                      null: false
+    t.datetime "updated_at",                      null: false
   end
 
   create_table "users", force: :cascade do |t|

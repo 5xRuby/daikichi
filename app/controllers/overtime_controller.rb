@@ -3,6 +3,7 @@ class OvertimeController < BaseController
   load_and_authorize_resource class: LeaveApplication
 
   def create
+    byebug
     @current_object = collection_scope.new(resource_params)
     if @current_object.save
       action_success
@@ -14,11 +15,11 @@ class OvertimeController < BaseController
   private
 
   def collection_scope
-    current_user.leave_applications.where(leave_type: :remote)
+    current_user.overtimes
   end
 
   def resource_params
-    params.require(:remote_application).permit(
+    params.require(:overtime_application).permit(
       :start_time, :end_time, :description
     )
   end
