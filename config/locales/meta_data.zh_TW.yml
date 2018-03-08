@@ -179,6 +179,7 @@ zh-TW:
       edit: "修改"
       cancel: "取消"
       new_remote: "申請 Remote"
+      new_bonus: "申請加班補休"
     leave_times:
       index: "查看請假額度"
       showing: "顯示"
@@ -204,6 +205,9 @@ zh-TW:
     remote:
       new: "申請 Remote"
       create: "申請 Remote"
+    overtime:
+      new: "申請加班補休"
+      create: "申請加班補休"
 
     backend/users:
       index: "員工列表"
