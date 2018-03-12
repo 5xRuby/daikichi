@@ -147,7 +147,8 @@ zh-TW:
   nav:
     leave_applications: "請假系統"
     backend: "員工管理"
-    manage: "休假管理"
+    manage: "假單管理"
+    leave_times: "額度管理"
 
   title:
     devise/registrations:
@@ -184,6 +185,8 @@ zh-TW:
       delete: "刪除"
       change_type: "切換休假種類至"
       remark: "備註"
+    backend/overtime:
+      index: "審核加班補休申請"
     leave_applications:
       index: "查看歷年假單"
       show: "檢視"

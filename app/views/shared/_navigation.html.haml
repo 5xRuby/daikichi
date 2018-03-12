@@ -14,7 +14,7 @@
           = render partial: 'shared/leave_application_dropdown'
         - if current_user.try(:contractor?)
           = render partial: 'shared/leave_applocation_dropdown_contractor'
-              
+
         - if can? :manage, User
           %li.dropdown
             = dropdown_title t("nav.backend")
@@ -26,8 +26,6 @@
           %li.dropdown
             = dropdown_title t("nav.manage")
             %ul.dropdown-menu
-              %li= link_to t("title.backend/leave_times.new"), new_backend_leave_time_path
-              %li= link_to t("title.backend/leave_times.batch_append_quota"),batch_new_backend_leave_times_path
               %li= link_to t("title.backend/leave_applications.new"), new_backend_leave_application_path
               %li= link_to t("title.backend/leave_applications.index"),
                 backend_leave_applications_path(status: :pending)
@@ -35,6 +33,14 @@
                 statistics_backend_leave_applications_path(year: specific_year, month: specific_month, role: "")
               %li= link_to t("title.backend/leave_times.index"),
                 backend_leave_times_path
+
+        - if can? :manage, User
+          %li.dropdown
+            = dropdown_title t("nav.leave_times")
+            %ul.dropdown-menu
+              %li= link_to t("title.backend/leave_times.new"), new_backend_leave_time_path
+              %li= link_to t("title.backend/leave_times.batch_append_quota"),batch_new_backend_leave_times_path
+              %li= link_to t("title.backend/overtime.index"), backend_overtime_index_path
 
       %ul.nav.navbar-nav.navbar-right
         - if user_signed_in?
