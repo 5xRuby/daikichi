@@ -95,6 +95,10 @@ zh-TW:
         comment: "主管備註"
         created_at: "建立時間"
         updated_at: "更新時間"
+      overtime:
+        start_time: "開始時間"
+        end_time: "結束時間"
+        description: "加班原因"
     errors:
       models:
         user:
@@ -129,6 +133,15 @@ zh-TW:
             effective_date:
               range_should_be_positive: 截止日期應在生效日期之後
               range_should_not_overlaps: 該類別休假額度已存在
+        overtime:
+          attributes:
+            description:
+              blank: "請簡述原因"
+            start_time:
+              should_be_earlier: "開始時間必須早於結束時間"
+            end_time:
+              not_integer: "請假的最小單位是1小時"
+              not_enough_leave_time: "剩餘休假時間不足"
 
   # navbar 選單標題
   nav:

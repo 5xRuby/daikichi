@@ -1,8 +1,8 @@
 %h2= t("captions.overtime.#{action_name}")
 = simple_form_for current_object, url: url_for(action: :create), method: :post, as: :overtime_application do |f|
   = f.error :base, error: sanitize(f.object.errors[:base].join('<br />'), tags: %w(a br), attributes: %w(href target))
-  = f.input :start_time, as: :string, input_html: { data: { input: 'datetimepicker', format: 'Y/m/d H:i' } }
-  = f.input :end_time,   as: :string, input_html: { data: { input: 'datetimepicker', format: 'Y/m/d H:i' } }
+  = f.input :start_time, as: :string, input_html: { data: { input: 'datetimepicker', format: 'Y/m/d H:i' } }, required: true
+  = f.input :end_time,   as: :string, input_html: { data: { input: 'datetimepicker', format: 'Y/m/d H:i' } }, required: true
   = f.error :hours, error: sanitize(f.object.errors[:hours].join('<br />'), tags: %w(br))
   = f.input :description, required: true
   = f.button :submit, class: "submit"

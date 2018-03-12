@@ -1,9 +1,8 @@
 class OvertimeController < BaseController
   skip_load_and_authorize_resource
-  load_and_authorize_resource class: LeaveApplication
+  load_and_authorize_resource class: Overtime
 
   def create
-    byebug
     @current_object = collection_scope.new(resource_params)
     if @current_object.save
       action_success
@@ -26,7 +25,7 @@ class OvertimeController < BaseController
 
   def url_after(action)
     if @actions.include?(action)
-      url_for(controller: :leave_applications, action: :index)
+      url_for(controller: :leave_times, action: :index)
     else
       request.env['HTTP_REFERER']
     end
