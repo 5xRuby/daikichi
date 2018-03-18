@@ -31,9 +31,7 @@ class LeaveTimeBuilder
 
   def weekly_import(by_assign_date: false)
     return if @user.role == 'contractor'
-    if !by_assign_date
-      return if !Time.zone.today.monday?
-    end
+    return unless by_assign_date || Time.current.monday?
     date = Time.zone.today + 4.weeks
     WEEKLY_LEAVE_TYPES.each do |leave_type, config|
       build_weekly_leave_types(leave_type, config, date, by_assign_date)
