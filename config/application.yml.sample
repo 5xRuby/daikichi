@@ -142,8 +142,8 @@ defaults: &defaults
       creation: join_date_based
       quota: 23
     remote:
-      creation: monthly
-      quota: 4 # days
+      creation: weekly
+      quota: 1 # days
     marriage:
       creation: manually
       quota: 8 # days

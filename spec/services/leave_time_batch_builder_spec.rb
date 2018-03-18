@@ -27,16 +27,18 @@ describe LeaveTimeBatchBuilder do
       end
 
       it 'should run join_date_based_import and monthly import with prebuild option for all users' do
-        leave_times = LeaveTime.where(user_id: [fulltime.id, parttime.id, user.id, contractor.id])
-        expect(leave_times.reload.size).to eq(1 + (monthly_leave_types.size + join_date_based_leave_types.size) * 3 - seniority_based_leave_types.size)
-        monthly_leave_time = leave_times.find { |x| x.leave_type == monthly_leave_types.first.first }
-        expect(monthly_leave_time.effective_date).to  eq Time.zone.today
-        expect(monthly_leave_time.expiration_date).to eq Time.zone.today.end_of_month
+        unless monthly_leave_types.blank?
+          leave_times = LeaveTime.where(user_id: [fulltime.id, parttime.id, user.id, contractor.id])
+          expect(leave_times.reload.size).to eq(1 + (monthly_leave_types.size + join_date_based_leave_types.size) * 3 - seniority_based_leave_types.size)
+          monthly_leave_time = leave_times.find { |x| x.leave_type == monthly_leave_types.first.first }
+          expect(monthly_leave_time.effective_date).to  eq Time.zone.today
+          expect(monthly_leave_time.expiration_date).to eq Time.zone.today.end_of_month
 
-        join_date_based_leave_time = leave_times.find { |x| x.leave_type == join_date_based_leave_types.first.first }
-        join_anniversary = user.next_join_anniversary
-        expect(join_date_based_leave_time.effective_date).to  eq join_anniversary
-        expect(join_date_based_leave_time.expiration_date).to eq join_anniversary + 1.year - 1.day
+          join_date_based_leave_time = leave_times.find { |x| x.leave_type == join_date_based_leave_types.first.first }
+          join_anniversary = user.next_join_anniversary
+          expect(join_date_based_leave_time.effective_date).to  eq join_anniversary
+          expect(join_date_based_leave_time.expiration_date).to eq join_anniversary + 1.year - 1.day
+        end
       end
     end
 

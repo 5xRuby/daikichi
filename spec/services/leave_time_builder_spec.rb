@@ -2,8 +2,9 @@
 require 'rails_helper'
 
 describe LeaveTimeBuilder do
-  let(:user) { FactoryGirl.create(:user) }
+  let(:user) { FactoryGirl.create(:user, assign_date: Time.zone.today) }
   let(:monthly_leave_types) { Settings.leave_types.to_a.select { |lt| lt.second['creation'] == 'monthly' } }
+  let(:weekly_leave_types) { Settings.leave_types.to_a.select { |lt| lt.second['creation'] == 'weekly' } }
   let(:join_date_based_leave_types) { Settings.leave_types.to_a.select { |lt| lt.second['creation'] == 'join_date_based' } }
   let(:seniority_based_leave_types) do
     join_date_based_leave_types.select do |lt|
@@ -459,15 +460,17 @@ describe LeaveTimeBuilder do
       end
 
       it 'is build for the comming month' do
-        leave_times = user.leave_times.reload
-        expect(leave_times.size).to eq monthly_leave_types.size
-        leave_time = leave_times.first
-        initial_quota = monthly_leave_types.find { |lt| lt.first == leave_time.leave_type }.second['quota'] * 8
-        expect(leave_time.quota).to eq initial_quota
-        expect(leave_time.usable_hours).to eq initial_quota
-        expect(leave_time.used_hours).to eq 0
-        expect(leave_time.effective_date).to  eq Time.zone.today.next_month.beginning_of_month
-        expect(leave_time.expiration_date).to eq Time.zone.today.next_month.end_of_month
+        unless monthly_leave_types.blank?
+          leave_times = user.leave_times.reload
+          expect(leave_times.size).to eq monthly_leave_types.size
+          leave_time = leave_times.first
+          initial_quota = monthly_leave_types.find { |lt| lt.first == leave_time.leave_type }.second['quota'] * 8
+          expect(leave_time.quota).to eq initial_quota
+          expect(leave_time.usable_hours).to eq initial_quota
+          expect(leave_time.used_hours).to eq 0
+          expect(leave_time.effective_date).to  eq Time.zone.today.next_month.beginning_of_month
+          expect(leave_time.expiration_date).to eq Time.zone.today.next_month.end_of_month
+        end
       end
     end
 
@@ -477,15 +480,67 @@ describe LeaveTimeBuilder do
       end
 
       it 'is build for current month' do
+        unless monthly_leave_types.blank?
+          leave_times = user.leave_times.reload
+          expect(leave_times.size).to eq monthly_leave_types.size
+          leave_time = leave_times.first
+          initial_quota = monthly_leave_types.find { |lt| lt.first == leave_time.leave_type }.second['quota'] * 8
+          expect(leave_time.quota).to eq initial_quota
+          expect(leave_time.usable_hours).to eq initial_quota
+          expect(leave_time.used_hours).to eq 0
+          expect(leave_time.effective_date).to  eq Time.zone.today
+          expect(leave_time.expiration_date).to eq Time.zone.today.end_of_month
+        end
+      end
+    end
+  end
+
+  describe '.weekly_import' do
+    before do
+      User.skip_callback(:create, :after, :auto_assign_leave_time)
+    end
+
+    after do
+      User.set_callback(:create, :after, :auto_assign_leave_time)
+    end
+
+    it 'create new user' do
+      LeaveTimeBuilder.new(user).weekly_import(by_assign_date: true)
+      leave_times = user.leave_times.reload
+      expect(leave_times.size).to eq weekly_leave_types.size * 4
+      date = Time.zone.today
+      leave_time = leave_times.first
+      initial_quota = weekly_leave_types.find { |lt| lt.first == leave_time.leave_type }.second['quota'] * 8
+      expect(leave_time.quota).to eq initial_quota
+      expect(leave_time.usable_hours).to eq initial_quota
+      expect(leave_time.used_hours).to eq 0
+      expect(leave_time.effective_date).to  eq user.assign_date
+      expect(leave_time.expiration_date).to eq user.assign_date.end_of_week
+    end
+
+    it 'build leave time for after four weeks if today is Monday' do
+      if Time.zone.today.monday?
+        LeaveTimeBuilder.new(user).weekly_import
         leave_times = user.leave_times.reload
-        expect(leave_times.size).to eq monthly_leave_types.size
+        expect(leave_times.size).to eq weekly_leave_types.size
+        date = Time.zone.today
         leave_time = leave_times.first
-        initial_quota = monthly_leave_types.find { |lt| lt.first == leave_time.leave_type }.second['quota'] * 8
+        initial_quota = weekly_leave_types.find { |lt| lt.first == leave_time.leave_type }.second['quota'] * 8
         expect(leave_time.quota).to eq initial_quota
         expect(leave_time.usable_hours).to eq initial_quota
         expect(leave_time.used_hours).to eq 0
-        expect(leave_time.effective_date).to  eq Time.zone.today
-        expect(leave_time.expiration_date).to eq Time.zone.today.end_of_month
+        expect(leave_time.effective_date).to  eq (date + 4.week).beginning_of_week
+        expect(leave_time.expiration_date).to eq (date + 4.week).end_of_week
+      end
+    end
+
+    it 'will not build leave time for after four weeks because today is not Monday' do
+      unless Time.zone.today.monday?
+        LeaveTimeBuilder.new(user).weekly_import
+        leave_times = user.leave_times.reload
+        expect(leave_times.size).to eq 0
+        leave_time = leave_times.first
+        expect(leave_time).to eq nil
       end
     end
   end
