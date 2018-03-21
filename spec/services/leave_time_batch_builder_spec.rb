@@ -5,6 +5,7 @@ describe LeaveTimeBatchBuilder do
   let(:monthly_lead_days) { Settings.leed_days.monthly }
   let(:join_date_based_leed_days)   { Settings.leed_days.join_date_based }
   let(:monthly_leave_types)         { Settings.leave_types.to_a.select { |lt| lt.second['creation'] == 'monthly' } }
+  let(:weekly_leave_types)         { Settings.leave_types.to_a.select { |lt| lt.second['creation'] == 'weekly' } }
   let(:join_date_based_leave_types) { Settings.leave_types.to_a.select { |lt| lt.second['creation'] == 'join_date_based' } }
   let(:seniority_based_leave_types) do
      join_date_based_leave_types.select do |lt|
@@ -59,7 +60,7 @@ describe LeaveTimeBatchBuilder do
 
         it 'should run join date based import only for users that join_date anniversary is comming and monthly import without prebuild option for all users' do
           leave_times = LeaveTime.where(user_id: [fulltime.id, parttime.id, user.id, contractor.id])
-          expect(leave_times.reload.size).to eq(1 + monthly_leave_types.size * 3 + join_date_based_leave_types.size * 2 - seniority_based_leave_types.size)
+          expect(leave_times.reload.size).to eq(1 + weekly_leave_types.size * 3 + join_date_based_leave_types.size * 2 - seniority_based_leave_types.size)
 
           join_date_based_leave_time = leave_times.find { |x| x.leave_type == join_date_based_leave_types.first.first }
           join_anniversary = fulltime.next_join_anniversary

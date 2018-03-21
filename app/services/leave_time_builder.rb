@@ -29,7 +29,7 @@ class LeaveTimeBuilder
     end
   end
 
-  def weekly_import(by_assign_date: false)
+  def weekly_import(by_assign_date: false, prebuild: false)
     return if @user.role == 'contractor'
     return unless by_assign_date || Time.current.monday?
     date = Time.zone.today + 4.weeks

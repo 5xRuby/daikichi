@@ -10,6 +10,7 @@ class LeaveTimeBatchBuilder
   def automatically_import
     batch_join_date_based_import
     batch_monthly_import
+    batch_weekly_import
   end
 
   private
@@ -34,6 +35,17 @@ class LeaveTimeBatchBuilder
         LeaveTimeBuilder.new(user).monthly_import
       else
         LeaveTimeBuilder.new(user).monthly_import(prebuild: true)
+      end
+    end
+  end
+
+  def batch_weekly_import
+    return if !Time.current.monday? && !@forced
+    User.valid.find_each do |user|
+      if @forced
+        LeaveTimeBuilder.new(user).weekly_import
+      else
+        LeaveTimeBuilder.new(user).weekly_import(prebuild: true)
       end
     end
   end
