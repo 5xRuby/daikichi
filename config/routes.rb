@@ -7,13 +7,15 @@ Rails.application.routes.draw do
     namespace :backend do
       resources :users
 
-      resources :leave_applications, only: [:index, :update] do
+      resources :leave_applications, except: [:show, :destroy] do
         get :verify, on: :member
         get :statistics, on: :collection
       end
 
       resources :leave_times, except: [:edit, :update, :destroy] do
         post :append_quota, on: :collection
+        get :batch_new, on: :collection
+        post :batch_create, on: :collection
       end
 
       resources :bonus_leave_time_logs, only: [:index, :update]

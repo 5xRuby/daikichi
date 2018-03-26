@@ -7,8 +7,12 @@ FactoryGirl.define do
     start_time  { Daikichi::Config::Biz.periods.after(Time.current.beginning_of_day).first.start_time }
     end_time    { Daikichi::Config::Biz.periods.after(Time.current.beginning_of_day).first(2).second.end_time }
 
-    trait :sick do
-      leave_type 'sick'
+    trait :halfpaid_sick do
+      leave_type 'halfpaid_sick'
+    end
+
+    trait :fullpaid_sick do
+      leave_type 'fullpaid_sick'
     end
 
     trait :personal do

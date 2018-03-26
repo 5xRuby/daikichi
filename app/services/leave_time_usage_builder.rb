@@ -19,15 +19,16 @@ class LeaveTimeUsageBuilder
 
       @available_leave_times.each do |lt|
         @leave_hours_by_date.keys.each do |date|
+          hours = @leave_hours_by_date[date]
           break if usable_hours_is_empty?(lt)
-          next if corresponding_leave_hours_date_is_zero?(date) or not in_leave_time_inteval_range?(lt, date)
+          next if corresponding_leave_hours_date_is_zero?(date) or !in_leave_time_inteval_range?(lt, date)
           deduct_leave_hours_by_date(lt, date)
+          stack_leave_time_usage_record(lt, date, hours - @leave_hours_by_date[date])
         end
-        stack_leave_time_usage_record(lt)
         break if leave_hours_by_date_is_empty?
       end
 
-      if not leave_hours_by_date_is_empty?
+      if !leave_hours_by_date_is_empty?
         rollback_with_error_message unless @leave_application.special_type?
       else
         create_leave_time_usage
@@ -53,7 +54,6 @@ class LeaveTimeUsageBuilder
       include_end_time = true if lt.cover?(@leave_hours_by_date.keys.last)
       break if include_start_time && include_end_time
     end
-
     rollback_with_error_message unless include_start_time && include_end_time
   end
 
@@ -79,15 +79,12 @@ class LeaveTimeUsageBuilder
     date.between?(leave_time.effective_date, leave_time.expiration_date)
   end
 
-  def stack_leave_time_usage_record(leave_time)
-    @leave_time_usages.push(leave_time: leave_time, used_hours: leave_time.usable_hours_was - leave_time.usable_hours)
+  def stack_leave_time_usage_record(leave_time, date, used_hours)
+    @leave_time_usages.push(leave_time: leave_time, used_hours: used_hours, date: date)
   end
 
   def leave_hours_by_date_is_empty?
     @leave_hours_by_date.values.all?(&:zero?)
-  end
-
-  def unless_remain_leave_hours_by_date
   end
 
   def rollback_with_error_message
@@ -102,7 +99,7 @@ class LeaveTimeUsageBuilder
 
   def create_leave_time_usage
     @leave_time_usages.each do |lt_usage|
-      @leave_application.leave_time_usages.create!(leave_time: lt_usage[:leave_time], used_hours: lt_usage[:used_hours])
+      @leave_application.leave_time_usages.create!(leave_time: lt_usage[:leave_time], used_hours: lt_usage[:used_hours], date: lt_usage[:date])
     end
   end
 end

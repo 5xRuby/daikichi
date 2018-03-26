@@ -6,9 +6,32 @@ class Backend::LeaveTimesController < Backend::BaseController
     @users = User.all
   end
 
+  def new
+    @current_object = LeaveTime.new
+  end
+
+  def create
+    @current_object = LeaveTime.new(resource_params)
+    return render action: :new unless @current_object.save
+    action_success
+  end
+
   def append_quota
     @current_object = collection_scope.new(leave_time_params_by_leave_application)
     render :new
+  end
+
+  def batch_new
+    @current_object = LeaveTime.new
+  end
+
+  def batch_create
+    user_ids = params[:leave_time][:user_id]
+    user_ids.each do |user_id|
+      @current_object = LeaveTime.new(batch_leave_time_params.merge(user_id: user_id))
+      return render action: :batch_new unless @current_object.save
+    end
+    action_success
   end
 
   private
@@ -34,6 +57,11 @@ class Backend::LeaveTimesController < Backend::BaseController
     params.require(:leave_time).permit(
       :user_id, :leave_type, :quota, :effective_date, :expiration_date, :usable_hours, :used_hours, :remark
     )
+  end
+
+  def batch_leave_time_params
+    params.require(:leave_time).permit(
+      :leave_type, :quota, :effective_date, :expiration_date, :usable_hours, :used_hours, :remark)
   end
 
   def search_params

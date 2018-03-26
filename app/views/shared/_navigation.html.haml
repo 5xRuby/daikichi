@@ -10,14 +10,10 @@
 
     #nav-collapse.collapse.navbar-collapse
       %ul.nav.navbar-nav
-        - if can? :view, LeaveApplication
-          %li.dropdown
-            = dropdown_title t("nav.leave_applications")
-            %ul.dropdown-menu
-              %li= link_to t("title.leave_applications.new"), new_leave_application_path
-              %li= link_to t("title.leave_applications.new_remote"), new_remote_path
-              %li= link_to t("title.leave_times.index"), leave_times_path
-              %li= link_to t("title.leave_applications.index"), leave_applications_path
+        - if (can? :view, LeaveApplication) && !current_user.try(:contractor?)
+          = render partial: 'shared/leave_application_dropdown'
+        - if current_user.try(:contractor?)
+          = render partial: 'shared/leave_applocation_dropdown_contractor'
               
         - if can? :manage, User
           %li.dropdown
@@ -31,10 +27,12 @@
             = dropdown_title t("nav.manage")
             %ul.dropdown-menu
               %li= link_to t("title.backend/leave_times.new"), new_backend_leave_time_path
+              %li= link_to t("title.backend/leave_times.batch_append_quota"),batch_new_backend_leave_times_path
+              %li= link_to t("title.backend/leave_applications.new"), new_backend_leave_application_path
               %li= link_to t("title.backend/leave_applications.index"),
                 backend_leave_applications_path(status: :pending)
               %li= link_to t("captions.backend/leave_applications.statistics"),
-                statistics_backend_leave_applications_path(year: specific_year, month: specific_month)
+                statistics_backend_leave_applications_path(year: specific_year, month: specific_month, role: "")
               %li= link_to t("title.backend/leave_times.index"),
                 backend_leave_times_path
 

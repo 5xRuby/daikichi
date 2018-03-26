@@ -2,7 +2,7 @@
 class LeaveTimesController < BaseController
   STARTING_YEAR = Settings.misc.starting_year.to_i
   SHOWINGS = %i(all effective).freeze
-  DEFAULT_SHOWING = 'effective'
+  DEFAULT_SHOWING = 'effective'.freeze
   before_action :set_query_object
 
   helper_method :showing
@@ -28,6 +28,7 @@ class LeaveTimesController < BaseController
   end
 
   def search_params
-    params.fetch(:q, {})&.permit(:s, :leave_type_eq, :effective_true)
+    @search_params = params.fetch(:q, {})&.permit(:s, :leave_type_eq, :effective_true)
+    @search_params.present? ? @search_params : @search_params.merge(effective_true: true)
   end
 end

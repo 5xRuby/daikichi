@@ -73,7 +73,8 @@ RSpec.describe User, type: :model do
           end
         end
         it_should_behave_like 'different roles create LeaveTime with different leave_type', %i(manager hr employee fulltime), %w(annual personal fullpaid_sick halfpaid_sick remote)
-        it_should_behave_like 'different roles create LeaveTime with different leave_type', %i(intern contractor parttime),   %w(personal fullpaid_sick halfpaid_sick remote)
+        it_should_behave_like 'different roles create LeaveTime with different leave_type', %i(intern),   %w(personal fullpaid_sick halfpaid_sick remote)
+        it_should_behave_like 'different roles create LeaveTime with different leave_type', %i(contractor), %w(personal)
 
         shared_examples 'specific roles should not create any LeaveTime' do |roles|
           roles.each do |role|
@@ -96,7 +97,7 @@ RSpec.describe User, type: :model do
         end
         all_roles = %i(manager hr employee intern)
         it_should_behave_like 'leave_type created with specific quota', all_roles, 'personal',      112
-        it_should_behave_like 'leave_type created with specific quota', all_roles, 'remote',        16
+        it_should_behave_like 'leave_type created with specific quota', all_roles, 'remote',        8
         it_should_behave_like 'leave_type created with specific quota', all_roles, 'fullpaid_sick', 56
         it_should_behave_like 'leave_type created with specific quota', all_roles, 'halfpaid_sick', 184
 
@@ -107,7 +108,7 @@ RSpec.describe User, type: :model do
 
         it 'should create LeaveTime of the user if specified assign_leave_time and assign_date' do
           user = create(:user, :fulltime)
-          expect(user.leave_times.any?).to be_truthy        
+          expect(user.leave_times.any?).to be_truthy
         end
 
         it 'should have error message when assign_leave_time is true while assign_date is nil' do

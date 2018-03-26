@@ -48,7 +48,7 @@ class BaseController < ApplicationController
   end
 
   def set_actions
-    @actions = [:create, :update, :destroy]
+    @actions = [:create, :update, :destroy, :batch_create]
   end
 
   def action_success(url = nil)
@@ -102,5 +102,9 @@ class BaseController < ApplicationController
 
   def specific_month
     params[:month] || Time.current.month
+  end
+
+  def specific_role
+    params[:role].empty? ? %w(employee parttime) : params[:role]
   end
 end

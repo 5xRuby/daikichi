@@ -16,7 +16,7 @@
         wrapper_html: { class: 'col-md-4' }, label: t('.id_eq')
       = f.input :role_eq, collection: User.enum_attributes_for_select(:roles), required: false,
         include_blank: t('.plz_select_role'), wrapper_html: { class: 'col-md-4' },label: t('.role_eq')
-        
+
       .text-right
         = f.button :submit, class: 'btn-warning'
 
@@ -39,17 +39,20 @@
 
   %tbody
     - current_collection.each do |user|
-      %tr
-        %td.text-right= user.id
-        %td.text-center= user.name
-        %td.text-center= user.login_name
-        %td.text-center= user.email
-        %td.text-center= User.human_enum_value(:role, user.role)
-        %td.text-right= l user.join_date, format: :detailed
-        %td.text-center
-          = link_to t("title.backend/users.show"),
-            backend_user_path(user),
-            class: "btn btn-primary"
-          = link_to t("title.backend/users.edit"),
-            edit_backend_user_path(user),
-            class: "btn btn-warning"
+      - unless user.role == 'resigned'
+        %tr
+          %td.text-right= user.id
+          %td.text-center= user.name
+          %td.text-center= user.login_name
+          %td.text-center= user.email
+          %td.text-center= User.human_enum_value(:role, user.role)
+          %td.text-right= l user.join_date, format: :detailed
+          %td.text-center
+            = link_to t("title.backend/users.show"),
+              backend_user_path(user),
+              class: "btn btn-primary"
+            = link_to t("title.backend/users.edit"),
+              edit_backend_user_path(user),
+              class: "btn btn-warning"
+.paginate
+  = paginate current_collection

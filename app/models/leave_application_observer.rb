@@ -16,7 +16,8 @@ class LeaveApplicationObserver < ActiveRecord::Observer
 
   def after_create(record)
     create_leave_time_usages(record)
-    FlowdockService.new(leave_application: record).send_create_notification
+    FlowdockService.new(leave_application: record).send_create_notification if Rails.env.production?
+    InformationMailer.new_application(record).deliver if Rails.env.production?
   end
 
   def before_update(record)
@@ -25,7 +26,9 @@ class LeaveApplicationObserver < ActiveRecord::Observer
 
   def after_update(record)
     create_leave_time_usages(record) if record.aasm_event?(:revise)
-    FlowdockService.new(leave_application: record).send_update_notification(record.aasm.to_state)
+    FlowdockService.new(leave_application: record).send_update_notification(record.aasm.to_state) if Rails.env.production?
+    UserMailer.reply_leave_applicaiton_email(record).deliver if record.aasm_event?(:approve) or record.aasm_event?(:reject)
+    InformationMailer.cancel_application(record).deliver if record.aasm_event?(:cancel) && Rails.env.production?
   end
 
   private
@@ -47,7 +50,7 @@ class LeaveApplicationObserver < ActiveRecord::Observer
   end
 
   def create_leave_time_usages(record)
-    raise ActiveRecord::Rollback if not LeaveTimeUsageBuilder.new(record).build_leave_time_usages and not record.special_type?
+    raise ActiveRecord::Rollback if !LeaveTimeUsageBuilder.new(record).build_leave_time_usages and !record.special_type?
   end
 
   def hours_transfer(record)
@@ -65,21 +68,13 @@ class LeaveApplicationObserver < ActiveRecord::Observer
 
   def return_leave_time_usable_hours(record)
     record.leave_time_usages.each { |usage| revert_hours(record, usage) }
-    record.leave_time_usages.delete_all
-  end
-
-  def revert_used_hours_to_usable_hours(record)
-    record.leave_time_usages.each { |usage| usage.leave_time.unuse_hours!(usage.used_hours) }
-    record.leave_time_usages.delete_all
+    record.leave_time_usages.destroy_all
   end
 
   def revert_hours(record, usage)
-    if record.aasm.from_state == :pending
-      usage.leave_time.unlock_hours!(usage.used_hours)
-    elsif record.aasm.from_state == :approved
-      usage.leave_time.unuse_hours!(usage.used_hours)
-    else
-      raise ActiveRecord::Rollback
-    end
+    usage.reload
+    return usage.leave_time.unlock_hours!(usage.used_hours) if record.aasm.from_state == :pending
+    return usage.leave_time.unuse_hours!(usage.used_hours) if record.aasm.from_state == :approved
+    raise ActiveRecord::Rollback
   end
 end

@@ -29,7 +29,7 @@ class LeaveApplication < ApplicationRecord
     )
   }
 
-  scope :personal, ->(user_id, beginning, ending, status_array = %w[pending approved]) {
+  scope :personal, ->(user_id, beginning, ending, status_array = %w(pending approved)) {
     where(status: status_array, user_id: user_id).leave_within_range(beginning, ending)
   }
 
@@ -59,11 +59,11 @@ class LeaveApplication < ApplicationRecord
     end
 
     event :reject, before: proc { |manager| sign(manager) } do
-      transitions to: :rejected, from: :pending
+      transitions to: :rejected, from: %i(pending approved)
     end
 
     event :revise do
-      transitions to: :pending, from: %i[pending approved]
+      transitions to: :pending, from: %i(pending approved)
     end
 
     event :cancel do
@@ -94,7 +94,7 @@ class LeaveApplication < ApplicationRecord
   end
 
   def special_type?
-    %w(marriage compassionate official maternity).include? self.leave_type
+    %w(marriage compassionate official maternity occpational_sick menstrual).include? self.leave_type
   end
 
   def available_leave_times
@@ -114,7 +114,7 @@ class LeaveApplication < ApplicationRecord
     {
       user_id: self.user_id,
       leave_type: self.leave_type,
-      effective_date: self.start_time.to_date,
+      effective_date: self.start_time.to_date
     }
   end
 

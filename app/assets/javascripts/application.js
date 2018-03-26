@@ -4,6 +4,8 @@
 //= require bootstrap-sprockets
 //= require cocoon
 //= require moment
-//= require bootstrap-datetimepicker
+//= require flatpickr
+//= require datepicker
+//= require datetimepicker
 //= require base
-//= require bootstrap3-datetimepicker
+//= require page_alert

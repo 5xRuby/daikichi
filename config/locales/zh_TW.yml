@@ -2,13 +2,13 @@
 zh-TW:
   date:
     abbr_day_names:
-    - 周日
-    - 周一
-    - 周二
-    - 周三
-    - 周四
-    - 周五
-    - 周六
+    - 週日
+    - 週一
+    - 週二
+    - 週三
+    - 週四
+    - 週五
+    - 週六
     abbr_month_names:
     -
     - 1月
@@ -35,7 +35,7 @@ zh-TW:
       default: "%Y-%m-%d"
       long: "%Y年%b%d日"
       short: "%b%d日"
-      detailed: "%Y年 %m月 %d日 (%a)"
+      detailed: "%Y-%m-%d (%a)"
     month_names:
     -
     - 1月
@@ -200,7 +200,8 @@ zh-TW:
     am: 上午
     formats:
       default: "%Y年%b%d日 %A %H:%M:%S %Z"
-      long: "%Y年 %m月 %d日 (%a) %H:%M"
+      long: "%Y-%m-%d (%a) %H:%M"
       short: "%b%d日 %H:%M"
     pm: 下午
     humanize_working_hour: "%{days} 天 %{hours} 小時 (%{total}小時)"
+    total_hour: "%{total} 小時"

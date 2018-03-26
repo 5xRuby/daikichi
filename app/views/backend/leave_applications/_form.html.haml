@@ -1,6 +1,21 @@
-= simple_form_for current_object, url: backend_leave_application_path(current_object), method: :put do |f|
-  = f.input :comment
-  = f.button :submit, t("title.backend/leave_applications.approve"), disabled: !current_object.may_approve?, name: "approve", class: "btn btn-primary"
-  = f.button :submit, t("title.backend/leave_applications.reject"), name: "reject", class: "btn btn-danger"
-  - if current_object.special_type? and not current_object.may_approve?
-    = link_to t("title.backend/leave_applications.append_quota"), append_quota_backend_leave_times_path(leave_application_id: current_object), method: :post, class: 'btn btn-warning'
+- if action == :verify
+  = simple_form_for current_object, url: backend_leave_application_path(current_object), method: :put do |f|
+    = f.input :comment
+    = f.button :submit, t("title.backend/leave_applications.approve"), disabled: !current_object.may_approve?, name: "approve", class: "btn btn-primary"
+    = f.button :submit, t("title.backend/leave_applications.reject"), name: "reject", class: "btn btn-danger"
+    - if current_object.special_type? and not current_object.may_approve?
+      = link_to t("title.backend/leave_applications.append_quota"), append_quota_backend_leave_times_path(leave_application_id: current_object), method: :post, class: 'btn btn-warning'
+
+- elsif action == :create
+  %h2= t("captions.backend/leave_applications.#{action_name}")
+  %p= t("captions.backend/leave_applications.#{action_name}/hint")
+  = simple_form_for current_object, url: url_for(action: action), method: :post do |f|
+    = f.association :user, collection: User.where.not(role: 'resigned'), label_method: :name, value_method: :id, required: true
+    = f.error :base, error: sanitize(f.object.errors[:base].join('<br />'), tags: %w(a br), attributes: %w(href target))
+    = f.input :leave_type, required: true, collection: LeaveApplication.enum_attributes_for_select(:leave_types)
+    = f.input :start_time, as: :string, input_html: { data: { input: 'datetimepicker', format: 'Y/m/d H:i' } }
+    = f.input :end_time,   as: :string, input_html: { data: { input: 'datetimepicker', format: 'Y/m/d H:i' } }
+    = f.error :hours, error: sanitize(f.object.errors[:hours].join('<br />'), tags: %w(br))
+    = f.input :description, required: true
+    = f.input :comment
+    = f.button :submit, class: "submit"

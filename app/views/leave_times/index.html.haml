@@ -6,7 +6,7 @@
   .panel-body
     = simple_form_for @q, url: url_for(action: :index), method: :get do |f|
       = f.hidden_field :s, value: params.dig(:q, :s)
-      = f.input :leave_type_eq, collection: LeaveTime.enum_attributes_for_select(:leave_types, [:fullpaid_sick, :halfpaid_sick]),
+      = f.input :leave_type_eq, collection: LeaveTime.enum_attributes_for_select(:leave_types),
         include_blank: t('.plz_select_leave_type'), required: false,
         wrapper_html: { class: 'col-md-6' }
       = f.input :effective_true, collection: [[I18n.t('activerecord.attributes.leave_time.state.effective'), true], [I18n.t('activerecord.attributes.leave_time.state.expired'), false]],
@@ -36,7 +36,6 @@
         = sort_link(@q, :expiration_date)
   %tbody
   - current_collection.each do |quota|
-    - next if quota.leave_type == "fullpaid_sick" or quota.leave_type == "halfpaid_sick"
     %tr
       %td.text-right= link_to quota.id, leave_time_path(quota.id)
       %td.text-center= LeaveTime.human_enum_value(:leave_type, quota.leave_type)
@@ -56,5 +55,3 @@
 
 .text-center
   = paginate current_collection
-
-

@@ -14,11 +14,11 @@
       %td.col-md-9= User.human_enum_value(:roles, current_object.role)
     %tr
       %th.col-md-3= t_attribute(:join_date, User)
-      %td.col-md-9= l current_object.join_date, format: :long
+      %td.col-md-9= l current_object.join_date, format: :default
     - if current_object.leave_date
       %tr
         %th.col-md-3= t_attribute(:leave_date, User)
-        %td.col-md-9= l current_object.leave_date, format: :long
+        %td.col-md-9= l current_object.leave_date, format: :default
 
 
 
@@ -47,7 +47,7 @@
           %td.text-right= hours_to_humanize leave_time.locked_hours
           %td.text-right= hours_to_humanize leave_time.used_hours
           %td.text-right= hours_to_humanize leave_time.usable_hours
-          %td.text-right= l leave_time.effective_date, format: :long
-          %td.text-right= l leave_time.expiration_date, format: :long
+          %td.text-right= l leave_time.effective_date, format: :default
+          %td.text-right= l leave_time.expiration_date, format: :default
 
 

@@ -38,7 +38,8 @@ zh-TW:
           bonus: '補休'
           compassionate: '喪假'
           sick: '病假'
-          unpaid: '無薪事假'
+          menstrual: '生理假'
+          occpational_sick: '公傷病假'
         user: "員工"
         name: "擁有者"
         leave_type: "假別"
@@ -70,13 +71,16 @@ zh-TW:
         leave_types:
           annual: '特別休假'
           bonus: '補充休假'
-          sick: '病假'
-          personal: '無薪事假'
+          fullpaid_sick: '全薪病假'
+          halfpaid_sick: '半薪病假'
+          personal: '事假'
           remote: '遠端工作'
           official: '公假'
           marriage: '婚假'
           compassionate: '喪假'
           maternity: '產假'
+          menstrual: '生理假'
+          occpational_sick: '公傷病假'
         user: "員工"
         start_time: "開始時間"
         end_time: "結束時間"
@@ -151,6 +155,7 @@ zh-TW:
       edit: "編輯"
       destroy: "刪除"
     backend/leave_applications:
+      new: "新增員工假單"
       index: "審核假單"
       show: "檢視"
       verify: "審核"
@@ -161,6 +166,7 @@ zh-TW:
     backend/leave_times:
       index: "員工休假額度"
       new: "新增員工休假額度"
+      batch_append_quota: "批次新增員工休假額度"
       edit: "修改"
       delete: "刪除"
       change_type: "切換休假種類至"
@@ -190,7 +196,7 @@ zh-TW:
     leave_times:
       index: "請假額度"
     leave_applications:
-      index: "%{year} 年 所有假單"
+      index: "歷年假單"
       show: "%{start_day} - %{end_day} %{type}假單"
       new: "新增假單"
       create: "新增假單"
@@ -206,12 +212,17 @@ zh-TW:
       create: "新增員工"
       edit: "修正員工資料"
     backend/leave_applications:
+      new: "新增員工假單"
+      create: "新增員工假單"
+      new/hint: "提醒：管理員主動新增之假單狀態會直接是核准。"
+      create/hint: "提醒：管理員主動新增之假單狀態會直接是核准。"
       index: "審核假單"
       verify: "審核假單"
       statistics: "員工休假統計"
     backend/leave_times:
       index: "員工休假額度"
       new: "新增員工休假額度"
+      batch_new: "批次新增員工休假額度"
       append_quota: "新增員工休假額度"
       edit: "修改員工休假"
     tools: "工具"
@@ -222,6 +233,7 @@ zh-TW:
     destroy: "刪除成功"
     revise: "已修改假單"
     cancel: "已取消假單"
+    batch_create: '批次新增員工休假額度成功'
 
   warnings:
     self_manage: "申請人不得自行審核"

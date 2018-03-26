@@ -1,13 +1,13 @@
 %h2= t("captions.backend/leave_times.#{action_name}")
 
 = simple_form_for [:backend, current_object] do |f|
-  = f.association :user, required: true
+  = f.association :user, required: true, collection: User.where.not(role: 'resigned')
   = f.input :leave_type, required: true, collection: LeaveTime.enum_attributes_for_select(:leave_types)
   = f.input :quota
   = f.input :effective_date,  as: :string, required: true, wrapper_html: { class: 'date-input' },
-    input_html: { data: { input: 'datepicker', format: 'YYYY/MM/DD' } }
+    input_html: { data: { input: 'datepicker', format: 'Y/m/d' } }
   = f.input :expiration_date, as: :string, required: true, wrapper_html: { class: 'date-input' },
-    input_html: { data: { input: 'datepicker', format: 'YYYY/MM/DD' } }
+    input_html: { data: { input: 'datepicker', format: 'Y/m/d' } }
   = f.input :remark, as: :text
   - unless current_object.new_record?
     = f.input :usable_hours

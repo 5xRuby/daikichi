@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 class Backend::UsersController < Backend::BaseController
   before_action :set_query_object
-  before_action :set_minimum_password_length, only: %i[new edit]
+  before_action :set_minimum_password_length, only: %i(new edit)
 
   def show
     @leave_times = current_object.leave_times

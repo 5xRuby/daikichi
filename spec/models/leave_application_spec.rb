@@ -20,11 +20,11 @@ RSpec.describe LeaveApplication, type: :model do
   end
 
   describe 'validation' do
-    let(:params) { FactotyGirl.attributes_for(:leave_application) }
+    # let(:params) { FactoryGirl.attributes_for(:leave_application) }
     subject { described_class.new(params) }
 
     context 'has a valid factory' do
-      subject { build(:leave_application, :with_leave_time, :annual) }
+      subject { build(:leave_application, :with_leave_time, :personal) }
       it { expect(subject).to be_valid }
     end
 
@@ -42,14 +42,14 @@ RSpec.describe LeaveApplication, type: :model do
       leave = LeaveApplication.new(
         start_time: start_time,
         end_time: one_hour_later,
-        leave_type: 'sick'
+        leave_type: 'fullpaid_sick'
       )
       expect(leave).to be_invalid
       expect(leave.errors.messages[:description].first).to eq '請簡述原因'
     end
 
     it 'hours應為正整數' do
-      leave = LeaveApplication.new start_time: start_time, leave_type: 'sick', description: 'test'
+      leave = LeaveApplication.new start_time: start_time, leave_type: 'fullpaid_sick', description: 'test'
       leave.end_time = one_hour_ago
       expect(leave).to be_invalid
       expect(leave.errors.messages[:start_time].first).to eq '開始時間必須早於結束時間'
@@ -84,13 +84,13 @@ RSpec.describe LeaveApplication, type: :model do
         User.skip_callback(:create, :after, :auto_assign_leave_time)
         create(:leave_time, :annual, user: user, quota: 50, usable_hours: 50, effective_date: effective_date, expiration_date: expiration_date)
       end
-      after  { User.set_callback(:create, :after, :auto_assign_leave_time)  }
+      after { User.set_callback(:create, :after, :auto_assign_leave_time) }
 
-      subject { build(:leave_application, :annual, user: user, start_time: beginning, end_time: ending) }
+      subject { build(:leave_application, :personal, user: user, start_time: beginning, end_time: ending) }
 
       shared_examples 'invalid' do |overlap_section, status|
         it "should be invalid when overlaps #{overlap_section} of the #{status} leave application" do
-          la = create(:leave_application, :annual, status, user: user, start_time: start_time, end_time: end_time, description: 'test string')
+          la = create(:leave_application, :personal, status, user: user, start_time: start_time, end_time: end_time, description: 'test string')
           expect(subject.valid?).to be_falsy
           expect(subject.errors[:base]).to include I18n.t(
             'activerecord.errors.models.leave_application.attributes.base.overlap_application',
@@ -118,7 +118,7 @@ RSpec.describe LeaveApplication, type: :model do
 
       shared_examples 'valid' do |boundary, status|
         it "is valid to overlap on #{boundary} of the other #{status} application" do
-          create(:leave_application, :annual, status, user: user, start_time: start_time, end_time: end_time, description: 'test string')
+          create(:leave_application, :personal, status, user: user, start_time: start_time, end_time: end_time, description: 'test string')
           expect(subject.valid?).to be_truthy
         end
       end
@@ -179,6 +179,7 @@ RSpec.describe LeaveApplication, type: :model do
     it_should_behave_like 'transitions', from: :pending,  to: :approved, with_action: :approve, manager_required: true
     it_should_behave_like 'transitions', from: :pending,  to: :canceled, with_action: :cancel
     it_should_behave_like 'transitions', from: :pending,  to: :rejected, with_action: :reject,  manager_required: true
+    it_should_behave_like 'transitions', from: :approved, to: :rejected, with_action: :reject,  manager_required: true
     it_should_behave_like 'transitions', from: :pending,  to: :pending,  with_action: :revise
     it_should_behave_like 'transitions', from: :approved, to: :pending,  with_action: :revise
 
@@ -188,9 +189,9 @@ RSpec.describe LeaveApplication, type: :model do
       let(:expiration_date) { Time.zone.local(2017, 6, 30).to_date }
       let(:start_time)      { Time.zone.local(2017, 6, 1, 9, 30)   }
       let(:end_time)        { Time.zone.local(2017, 6, 5, 12, 30)  }
-      before { create(:leave_time, :annual, user: user, quota: 100, usable_hours: 100) }
+      before { create(:leave_time, :annual, user: user, quota: 100, usable_hours: 100, effective_date: effective_date, expiration_date: expiration_date) }
       it 'can transition from approved to canceled unless LeaveApplication happened already' do
-        leave_application = create(:leave_application, :annual, user: user, start_time: start_time, end_time: end_time).reload
+        leave_application = create(:leave_application, :personal, user: user, start_time: start_time, end_time: end_time).reload
         leave_application.approve!(create(:user, :hr))
         expect(leave_application.happened?).to be_truthy
         expect(leave_application.approved?).to be_truthy
@@ -292,10 +293,10 @@ RSpec.describe LeaveApplication, type: :model do
       let(:beginning)       { effective_date.beginning_of_day }
       let(:ending)          { expiration_date.end_of_day }
       let!(:leave_time)     { create(:leave_time, :annual, user: user, quota: 100, usable_hours: 100, effective_date: effective_date, expiration_date: expiration_date) }
-      let!(:pending)        { create(:leave_application, :annual, user: user, start_time: Time.zone.local(2017, 5, 2, 9, 30), end_time: Time.zone.local(2017, 5, 4, 12, 30)) }
-      let!(:approved)       { create(:leave_application, :annual, :approved, user: user, start_time: Time.zone.local(2017, 5, 9, 9, 30), end_time: Time.zone.local(2017, 5, 11, 12, 30)) }
-      let!(:canceled)       { create(:leave_application, :annual, :canceled, user: user, start_time: Time.zone.local(2017, 5, 16, 9, 30), end_time: Time.zone.local(2017, 5, 18, 12, 30)) }
-      let!(:rejected)       { create(:leave_application, :annual, :rejected, user: user, start_time: Time.zone.local(2017, 5, 23, 9, 30), end_time: Time.zone.local(2017, 5, 25, 12, 30)) }
+      let!(:pending)        { create(:leave_application, :personal, user: user, start_time: Time.zone.local(2017, 5, 2, 9, 30), end_time: Time.zone.local(2017, 5, 4, 12, 30)) }
+      let!(:approved)       { create(:leave_application, :personal, :approved, user: user, start_time: Time.zone.local(2017, 5, 9, 9, 30), end_time: Time.zone.local(2017, 5, 11, 12, 30)) }
+      let!(:canceled)       { create(:leave_application, :personal, :canceled, user: user, start_time: Time.zone.local(2017, 5, 16, 9, 30), end_time: Time.zone.local(2017, 5, 18, 12, 30)) }
+      let!(:rejected)       { create(:leave_application, :personal, :rejected, user: user, start_time: Time.zone.local(2017, 5, 23, 9, 30), end_time: Time.zone.local(2017, 5, 25, 12, 30)) }
 
       after { User.set_callback(:create, :after, :auto_assign_leave_time) }
 

@@ -43,57 +43,60 @@ defaults: &defaults
       rejected: rejected
       canceled: canceled
     leave_types:
-      annual: annual
-      bonus: bonus
-      # unpaid: unpaid
-      sick: sick
+      fullpaid_sick: fullpaid_sick
+      halfpaid_sick: halfpaid_sick
+      personal: personal
       official: official
+      menstrual: menstrual # 生理假
+      occpational_sick: occpational_sick # 公傷病假
       marriage: marriage
       compassionate: compassionate
-      personal: personal
+      maternity: maternity
       remote: remote
     available_quota_types:
-      annual:
-        - annual
-      bonus:
-        - bonus
-      unpaid:
-        - unpaid
-      sick:
-        - sick # Deprecated
+      fullpaid_sick:
         - fullpaid_sick
+      halfpaid_sick:
         - halfpaid_sick
+      personal:
+        - bonus
+        - annual
+        - personal
       official:
         - official
       marriage:
         - marriage
       compassionate:
         - compassionate
-      # Deprecated
-      personal:
-        - bonus
-        - annual
-        - personal
+      maternity:
+        - maternity
       remote:
         - remote
+      # 生理假
+      menstrual:
+        - menstrual
+      # 公傷病假
+      occpational_sick:
+        - occpational_sick
 
   leave_times:
     quota_types:
-      annual: annual
       bonus: bonus
-      unpaid: unpaid
-      sick: sick # Deprecated
+      annual: annual
+      personal: personal #should be deprecated
       fullpaid_sick: fullpaid_sick
       halfpaid_sick: halfpaid_sick
+      remote: remote
       official: official
       marriage: marriage
       compassionate: compassionate
-      remote: remote
-      personal: personal #should be deprecated
+      maternity: maternity
+      menstrual: menstrual # 生理假
+      occpational_sick: occpational_sick # 公傷病假
 
   leed_days:
     monthly: 5 # working.days
-    join_date_based: 40 # days
+    join_date_based: 60 # days
 
   leave_types:
     annual:
@@ -139,8 +142,8 @@ defaults: &defaults
       creation: join_date_based
       quota: 23
     remote:
-      creation: monthly
-      quota: 2 # days
+      creation: weekly
+      quota: 1 # days
     marriage:
       creation: manually
       quota: 8 # days
@@ -153,6 +156,12 @@ defaults: &defaults
     maternity:
       creation: none
     bonus:
+      creation: none
+    menstrual:
+      creation: manually
+      quota: 1
+      effective: 2 # days
+    occpational_sick:
       creation: none
 
   backend:
@@ -169,4 +178,7 @@ test:
   <<: *defaults
 
 production:
+  <<: *defaults
+
+staging:
   <<: *defaults

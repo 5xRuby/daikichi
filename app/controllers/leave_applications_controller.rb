@@ -2,11 +2,12 @@
 class LeaveApplicationsController < BaseController
   include Selectable
   before_action :set_query_object
+  after_action :auto_approve_for_contractor, only: [:create, :update], if: :contractor?
 
   def index
-    @current_collection = collection_scope.with_year(specific_year)
+    @current_collection = collection_scope.page(params[:page])
+    @current_collection = Kaminari.paginate_array(@current_collection.first(5)).page(params[:page]) unless query?
     @current_collection = @current_collection.with_status(params[:status]) if status_selected?
-    @current_collection = @current_collection.page(params[:page])
   end
 
   def create
@@ -55,10 +56,13 @@ class LeaveApplicationsController < BaseController
     end
   end
 
+  def query?
+    !params[:q].nil?
+  end
+
   def search_params
     @search_params = params.fetch(:q, {})&.permit(
       :s, :leave_type_eq, :status_eq, :end_date_gteq, :start_date_lteq)
-    @search_params.present? ? @search_params : @search_params.merge(status_eq: :pending)
   end
 
   def set_query_object
@@ -73,9 +77,17 @@ class LeaveApplicationsController < BaseController
 
   def url_after(action)
     if @actions.include?(action)
-      url_for(action: :index, controller: controller_path, params: { status: :pending })
+      url_for(action: :index, controller: controller_path)
     else
       request.env['HTTP_REFERER']
     end
+  end
+
+  def auto_approve_for_contractor
+    current_object.approve!(current_user)
+  end
+
+  def contractor?
+    current_user.contractor?
   end
 end
