@@ -21,6 +21,10 @@ zh-TW:
         plz_select_leave_type: 請選擇要篩選的請假類別
         plz_select_user: 請選擇要篩選的使用者
         plz_select_status: 請選擇要篩選的假單狀態
+    overtime:
+      index:
+        plz_select_user: 請選擇要篩選的使用者
+        plz_select_status: 請選擇要篩選的假單狀態
     users:
       index:
         plz_select_role: 請選擇要篩選的員工身份

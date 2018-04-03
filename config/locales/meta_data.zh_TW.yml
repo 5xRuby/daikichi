@@ -99,6 +99,17 @@ zh-TW:
         start_time: "開始時間"
         end_time: "結束時間"
         description: "加班原因"
+        statuses:
+          approved: '核准'
+          rejected: '駁回'
+          pending: '待審'
+          canceled: '取消'
+          all: '全部'
+        user: "員工"
+        hours: "時數"
+        status: "狀態"
+        created_at: "建立時間"
+        updated_at: "更新時間"
     errors:
       models:
         user:
@@ -189,6 +200,8 @@ zh-TW:
       index: "審核加班補休申請"
       approve: "核准"
       reject: "駁回"
+      verify: "審核"
+      show: "檢視"
     leave_applications:
       index: "查看歷年假單"
       show: "檢視"
@@ -247,6 +260,9 @@ zh-TW:
       batch_new: "批次新增員工休假額度"
       append_quota: "新增員工休假額度"
       edit: "修改員工休假"
+    backend/overtime:
+      index: "審核加班申請"
+      verify: "審核加班申請"
     tools: "工具"
 
   success:
