@@ -45,11 +45,11 @@
             - colored_state_label(leave.status)
           %td.text-center
             - if leave.pending?
-              = link_to t("title.backend/leave_applications.verify"),
-                verify_backend_leave_application_path(leave),
+              = link_to t("title.backend/overtime.verify"),
+                verify_backend_overtime_path(leave),
                 class: "btn btn-warning"
             - else
-              = link_to t("title.backend/leave_applications.show"),
+              = link_to t("title.backend/overtime.show"),
                 verify_backend_leave_application_path(leave),
                 class: "btn btn-primary"
 - else

@@ -7,6 +7,13 @@ class Backend::OvertimeController < Backend::BaseController
     @users = User.all
   end
 
+  def verify
+  end
+
+  def update
+    params[:approve] ? approve : reject
+  end
+
   private
 
   def collection_scope
@@ -25,5 +32,23 @@ class Backend::OvertimeController < Backend::BaseController
 
   def set_query_object
     @q = Overtime.ransack(search_params)
+  end
+
+  def approve
+    if current_object.pending?
+      current_object.approve!(current_user)
+      action_success
+    else
+      action_fail t('warnings.not_verifiable'), :verify
+    end
+  end
+
+  def reject
+    if current_object.pending?
+      current_object.reject!(current_user)
+      action_success
+    else
+      action_fail t('warnings.not_verifiable'), :verify
+    end
   end
 end

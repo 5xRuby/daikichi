@@ -187,6 +187,8 @@ zh-TW:
       remark: "備註"
     backend/overtime:
       index: "審核加班補休申請"
+      approve: "核准"
+      reject: "駁回"
     leave_applications:
       index: "查看歷年假單"
       show: "檢視"
