@@ -95,6 +95,21 @@ zh-TW:
         comment: "主管備註"
         created_at: "建立時間"
         updated_at: "更新時間"
+      overtime:
+        start_time: "開始時間"
+        end_time: "結束時間"
+        description: "加班原因"
+        statuses:
+          approved: '核准'
+          rejected: '駁回'
+          pending: '待審'
+          canceled: '取消'
+          all: '全部'
+        user: "員工"
+        hours: "時數"
+        status: "狀態"
+        created_at: "建立時間"
+        updated_at: "更新時間"
     errors:
       models:
         user:
@@ -129,12 +144,22 @@ zh-TW:
             effective_date:
               range_should_be_positive: 截止日期應在生效日期之後
               range_should_not_overlaps: 該類別休假額度已存在
+        overtime:
+          attributes:
+            description:
+              blank: "請簡述原因"
+            start_time:
+              should_be_earlier: "開始時間必須早於結束時間"
+            end_time:
+              not_integer: "請假的最小單位是1小時"
+              not_enough_leave_time: "剩餘休假時間不足"
 
   # navbar 選單標題
   nav:
     leave_applications: "請假系統"
     backend: "員工管理"
-    manage: "休假管理"
+    manage: "假單管理"
+    leave_times: "額度管理"
 
   title:
     devise/registrations:
@@ -171,6 +196,12 @@ zh-TW:
       delete: "刪除"
       change_type: "切換休假種類至"
       remark: "備註"
+    backend/overtime:
+      index: "審核加班補休申請"
+      approve: "核准"
+      reject: "駁回"
+      verify: "審核"
+      show: "檢視"
     leave_applications:
       index: "查看歷年假單"
       show: "檢視"
@@ -179,6 +210,7 @@ zh-TW:
       edit: "修改"
       cancel: "取消"
       new_remote: "申請 Remote"
+      new_bonus: "申請加班補休"
     leave_times:
       index: "查看請假額度"
       showing: "顯示"
@@ -204,6 +236,9 @@ zh-TW:
     remote:
       new: "申請 Remote"
       create: "申請 Remote"
+    overtime:
+      new: "申請加班補休"
+      create: "申請加班補休"
 
     backend/users:
       index: "員工列表"
@@ -225,6 +260,9 @@ zh-TW:
       batch_new: "批次新增員工休假額度"
       append_quota: "新增員工休假額度"
       edit: "修改員工休假"
+    backend/overtime:
+      index: "審核加班申請"
+      verify: "審核加班申請"
     tools: "工具"
 
   success:

@@ -1,0 +1,34 @@
+.panel.panel-info
+  .panel-heading
+    %h4.panel-title= t("captions.backend/overtime.verify")
+
+  %table.table
+
+    %tr
+      %th= t_attribute :user, Overtime
+      %td= current_object.user.name
+
+    %tr
+      %th= t_attribute(:start_time, current_object)
+      %td= l current_object.start_time, format: :long
+
+    %tr
+      %th= t_attribute(:end_time, current_object)
+      %td= l current_object.end_time, format: :long
+
+    = tr_by_object :hours
+
+    = tr_by_object :description
+
+    %tr
+      %th= t_attribute(:status, current_object)
+      %td= LeaveApplication.human_enum_value(:status, current_object.status)
+
+    %tr
+      %th= t_attribute(:created_at, current_object)
+      %td= l current_object.created_at, format: :long
+
+    %tr
+      %th= t_attribute(:updated_at, current_object)
+      %td= l current_object.updated_at, format: :long
+
