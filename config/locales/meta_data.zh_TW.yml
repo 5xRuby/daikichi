@@ -40,6 +40,7 @@ zh-TW:
           sick: '病假'
           menstrual: '生理假'
           occpational_sick: '公傷病假'
+          paid_vacation: '旅遊假'
         user: "員工"
         name: "擁有者"
         leave_type: "假別"
@@ -81,6 +82,7 @@ zh-TW:
           maternity: '產假'
           menstrual: '生理假'
           occpational_sick: '公傷病假'
+          paid_vacation: '旅遊假'
         user: "員工"
         start_time: "開始時間"
         end_time: "結束時間"

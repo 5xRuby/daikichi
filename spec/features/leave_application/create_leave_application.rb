@@ -80,11 +80,24 @@ feature "special type leave application" do
       click_button '送出'
       expect(page).to have_content '產假'
     end
+
+    scenario "paid_vacation" do
+      visit '/leave_applications/new'
+      within("form#new_leave_application") do
+        select('旅遊假', from: 'leave_application_leave_type')
+        find('[id^="leave_application_start_time"]').set("2018/02/12 09:30")
+        find('[id^="leave_application_start_time"]').set("2018/02/12 18:30")
+        fill_in('事由', with: 'paid_vacation')
+      end
+      click_button '送出'
+      expect(page).to have_content '旅遊假'
+    end
   end
 
   context "verified" do
     let!(:user) { FactoryGirl.create(:user, :manager, join_date: Date.current - 1.year - 1.day) }
     let!(:leave_application) { LeaveApplication.create(user_id: user.id, leave_type: 'maternity', start_time: Time.zone.local(Time.current.year, 8, 15, 9, 30, 0), end_time: Time.zone.local(Time.current.year, 8, 15, 18, 30, 0), description: 'test') }
+    let!(:leave_application_paid_vaca) { LeaveApplication.create(user_id: user.id, leave_type: 'paid_vacation', start_time: Time.zone.local(Time.current.year, 8, 15, 9, 30, 0), end_time: Time.zone.local(Time.current.year, 8, 15, 18, 30, 0), description: 'test') }
 
     before :each do
       visit '/users/sign_in'
@@ -93,6 +106,12 @@ feature "special type leave application" do
 
     scenario "menstrual" do
       visit "/backend/leave_applications/#{leave_application.id}/verify"
+
+      expect(page).to have_content '新增額度'
+    end
+
+    scenario "paid_vacation" do
+      visit "/backend/leave_applications/#{leave_application_vaca.id}/verify"
 
       expect(page).to have_content '新增額度'
     end

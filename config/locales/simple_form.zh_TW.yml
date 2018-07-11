@@ -23,6 +23,7 @@ zh-TW:
           maternity: '產假'
           compassionate: '喪假'
           absent: '曠職'
+          paid_vacation: '旅遊假'
     labels:
       q:
         leave_type_eq: 依額度類別篩選
