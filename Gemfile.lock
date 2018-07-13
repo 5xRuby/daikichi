@@ -115,6 +115,10 @@ GEM
       rack (>= 1.0.0)
       rack-test (>= 0.5.4)
       xpath (~> 2.0)
+    carrierwave (1.2.3)
+      activemodel (>= 4.0.0)
+      activesupport (>= 4.0.0)
+      mime-types (>= 1.16)
     chronic (0.10.2)
     clavius (1.0.2)
     cocoon (1.2.10)
@@ -404,6 +408,7 @@ DEPENDENCIES
   capistrano-rails (~> 1.1)
   capistrano-upload-config
   capybara
+  carrierwave (~> 1.2, >= 1.2.3)
   cocoon
   codeclimate-test-reporter (~> 1.0.0)
   coffee-rails (~> 4.1.0)
