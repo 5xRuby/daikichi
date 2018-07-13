@@ -21,6 +21,9 @@ zh-TW:
         plz_select_leave_type: 請選擇要篩選的請假類別
         plz_select_user: 請選擇要篩選的使用者
         plz_select_status: 請選擇要篩選的假單狀態
+    leave_applications:   
+      verify:
+        exam_attachment: 檢視附件
     users:
       index:
         plz_select_role: 請選擇要篩選的員工身份
@@ -37,4 +40,6 @@ zh-TW:
 
   leave_applications:
     <<: *leave_applications_filter_prompt
+    show:
+        exam_attachment: 檢視附件
 

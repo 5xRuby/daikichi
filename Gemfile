@@ -55,6 +55,7 @@ gem 'act-fluent-logger-rails'
 gem 'lograge'
 gem 'logstash-event'
 gem 'capybara'
+gem 'carrierwave', '~> 1.2', '>= 1.2.3'
 
 group :development, :test do
   gem 'awesome_print'
