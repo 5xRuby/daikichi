@@ -53,6 +53,7 @@ defaults: &defaults
       compassionate: compassionate
       maternity: maternity
       remote: remote
+      paid_vacation: paid_vacation
     available_quota_types:
       fullpaid_sick:
         - fullpaid_sick
@@ -78,6 +79,9 @@ defaults: &defaults
       # 公傷病假
       occpational_sick:
         - occpational_sick
+      # 旅遊假
+      paid_vacation:
+        - paid_vacation
 
   leave_times:
     quota_types:
@@ -93,6 +97,7 @@ defaults: &defaults
       maternity: maternity
       menstrual: menstrual # 生理假
       occpational_sick: occpational_sick # 公傷病假
+      paid_vacation: paid_vacation
 
   leed_days:
     monthly: 5 # working.days

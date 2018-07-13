@@ -13,7 +13,14 @@ class Backend::LeaveTimesController < Backend::BaseController
   def create
     @current_object = LeaveTime.new(resource_params)
     return render action: :new unless @current_object.save
-    action_success
+    
+    if request.env['HTTP_REFERER'].include?('leave_application_id')
+      verify_id = request.env['HTTP_REFERER'].partition('=').last
+      action_success(verify_backend_leave_application_path(verify_id))
+    else
+      action_success
+    end
+
   end
 
   def append_quota
