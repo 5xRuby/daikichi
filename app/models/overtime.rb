@@ -3,6 +3,8 @@ class Overtime < ApplicationRecord
   include AASM
   include SignatureConcern
 
+  enum status:     Settings.leave_applications.statuses
+
   belongs_to :user
   belongs_to :manager, class_name: 'User', foreign_key: 'manager_id'
 
@@ -12,6 +14,9 @@ class Overtime < ApplicationRecord
 
   before_validation :assign_hours
 
+  scope :personal, ->(user_id, beginning, ending, status_array = %w(pending approved)) {
+    where(status: status_array, user_id: user_id) }
+
   private
 
   def assign_hours
@@ -19,7 +24,7 @@ class Overtime < ApplicationRecord
   end
 
   def overlapped?
-    overlapped_records = Overtime.where(" end_time >= ? AND start_time <= ? ", start_time, end_time)
+    overlapped_records = Overtime.personal(user_id, start_time, end_time).where("end_time > ? AND start_time < ? ", start_time, end_time)
     if overlapped_records.any?
       url = Rails.application.routes.url_helpers
       overlapped_records.each do |record|

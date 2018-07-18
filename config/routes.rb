@@ -32,6 +32,8 @@ Rails.application.routes.draw do
       end
     end
 
+    resources :overtimes
+
     resources :leave_times, only: [:index, :show]
     resources :remote, only: [:new, :create, :update, :edit]
 
