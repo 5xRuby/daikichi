@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171229103357) do
+ActiveRecord::Schema.define(version: 20180717055826) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -50,6 +50,7 @@ ActiveRecord::Schema.define(version: 20171229103357) do
     t.integer  "manager_id"
     t.text     "comment"
     t.integer  "leave_time_id"
+    t.string   "attachment"
     t.index ["manager_id"], name: "index_leave_applications_on_manager_id", using: :btree
   end
 
@@ -88,6 +89,23 @@ ActiveRecord::Schema.define(version: 20171229103357) do
     t.integer  "locked_hours"
   end
 
+  create_table "overtimes", force: :cascade do |t|
+    t.integer  "user_id"
+    t.integer  "hours",       default: 0
+    t.datetime "start_time"
+    t.datetime "end_time"
+    t.text     "description"
+    t.string   "status",      default: "pending"
+    t.datetime "sign_date"
+    t.datetime "deleted_at"
+    t.text     "comment"
+    t.datetime "created_at",                      null: false
+    t.datetime "updated_at",                      null: false
+    t.integer  "manager_id"
+    t.index ["manager_id"], name: "index_overtimes_on_manager_id", using: :btree
+    t.index ["user_id"], name: "index_overtimes_on_user_id", using: :btree
+  end
+
   create_table "users", force: :cascade do |t|
     t.string   "name",                   default: "",        null: false
     t.string   "login_name",                                 null: false
@@ -114,4 +132,5 @@ ActiveRecord::Schema.define(version: 20171229103357) do
   add_foreign_key "leave_hours_by_dates", "leave_applications"
   add_foreign_key "leave_time_usages", "leave_applications"
   add_foreign_key "leave_time_usages", "leave_times"
+  add_foreign_key "overtimes", "users"
 end

@@ -97,6 +97,17 @@ zh-TW:
         comment: "主管備註"
         created_at: "建立時間"
         updated_at: "更新時間"
+      overtime:
+        start_time: "開始時間"
+        end_time: "結束時間"
+        hours: "時數"
+        status: "狀態"
+        description: "事由"
+        manager: "簽核主管"
+        sign_date: "簽核時間"
+        comment: "主管備註"
+        created_at: "建立時間"
+        updated_at: "更新時間"
     errors:
       models:
         user:
@@ -131,6 +142,19 @@ zh-TW:
             effective_date:
               range_should_be_positive: 截止日期應在生效日期之後
               range_should_not_overlaps: 該類別休假額度已存在
+        overtime:
+          attributes:
+            base:
+              time_range_overlapped: '<a href="%{link}" target="_blank">與 %{start_time} ~ %{end_time} 時段重複</a>'
+            start_time:
+              blank: "請填寫開始時間"
+              should_be_earlier: "開始時間必須早於結束時間"
+            end_time:
+              blank: "請填寫結束時間"
+              not_integer: "申請加班補修的最小單位是1小時"
+            description:
+              blank: "請簡述原因"
+
 
   # navbar 選單標題
   nav:
