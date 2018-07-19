@@ -108,6 +108,11 @@ zh-TW:
         comment: "主管備註"
         created_at: "建立時間"
         updated_at: "更新時間"
+        statuses:
+          approved: '核准'
+          rejected: '駁回'
+          pending: '待審'
+          canceled: '取消'
     errors:
       models:
         user:
@@ -151,7 +156,7 @@ zh-TW:
               should_be_earlier: "開始時間必須早於結束時間"
             end_time:
               blank: "請填寫結束時間"
-              not_integer: "申請加班補修的最小單位是1小時"
+              not_integer: "申請加班補休的最小單位是1小時"
             description:
               blank: "請簡述原因"
 
@@ -211,7 +216,12 @@ zh-TW:
       all: '全部'
       effective: '有效的'
       type: '假別'
-
+    overtimes:
+      index: "查看加班補休"
+      new: "申請加班補休"
+      show: "檢視"
+      edit: "修改"
+      cancel: "取消"
   captions:
     devise/registrations:
       new: "註冊新帳號"
@@ -230,6 +240,12 @@ zh-TW:
     remote:
       new: "申請 Remote"
       create: "申請 Remote"
+    overtimes:
+      index: "歷年加班申請"
+      show: "%{start_time} - %{end_time} 加班申請"
+      new: "新增加班申請"
+      create: "新增加班申請"
+      edit: "編輯加班申請"
 
     backend/users:
       index: "員工列表"

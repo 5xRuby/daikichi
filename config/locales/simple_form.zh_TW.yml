@@ -32,5 +32,7 @@ zh-TW:
         status_eq: 依狀態篩選
         end_date_gteq: 查詢起始區間
         start_date_lteq: 查詢結束區間
+        end_time_lteq: 查詢結束區間
+        start_time_gteq: 查詢起始區間
     error_notification:
       default_message: "Please review the problems below:"
