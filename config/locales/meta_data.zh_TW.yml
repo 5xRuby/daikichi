@@ -270,8 +270,8 @@ zh-TW:
     confirm_delete: "您確定要刪除嗎？"
     confirm_cancel: "你確定要取消嗎？"
     not_verifiable: "已審核假單無法再次操作"
-    not_cancellable: "無法再操作已取消的假單"
-    already_happened: "無法刪除已經通過並且生效的假單"
+    not_cancellable: "無法再操作已取消的申請"
+    already_happened: "無法刪除已經通過並且生效的申請"
 
   misc:
     app_title: "五倍神社"

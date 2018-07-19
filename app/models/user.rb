@@ -2,6 +2,7 @@
 class User < ApplicationRecord
   acts_as_paranoid
   has_many :leave_times
+  has_many :overtimes
   has_many :leave_applications, -> { order(id: :desc) }
   has_many :bonus_leave_time_logs, -> { order(id: :desc) }
   attr_accessor :assign_leave_time, :assign_date

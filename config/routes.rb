@@ -32,7 +32,11 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :overtimes
+    resources :overtimes, except: :destroy do
+      member do
+        put "cancel"
+      end
+    end
 
     resources :leave_times, only: [:index, :show]
     resources :remote, only: [:new, :create, :update, :edit]
