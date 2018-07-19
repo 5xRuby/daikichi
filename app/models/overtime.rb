@@ -17,6 +17,34 @@ class Overtime < ApplicationRecord
   scope :personal, ->(user_id, beginning, ending, status_array = %w(pending approved)) {
     where(status: status_array, user_id: user_id) }
 
+  aasm column: :status, enum: true do
+    state :pending, initial: true
+    state :approved
+    state :rejected
+    state :canceled
+
+    event :approve, before: [proc { |manager| sign(manager) }] do
+      transitions to: :approved, from: :pending
+    end
+
+    event :reject, before: proc { |manager| sign(manager) } do
+      transitions to: :rejected, from: %i(pending approved)
+    end
+
+    event :revise do
+      transitions to: :pending, from: %i(pending approved)
+    end
+
+    event :cancel do
+      transitions to: :canceled, from: :pending
+      transitions to: :canceled, from: :approved, unless: :happened?
+    end
+  end  
+
+  def happened?
+    Time.current > self.start_time
+  end
+
   private
 
   def assign_hours
@@ -24,7 +52,7 @@ class Overtime < ApplicationRecord
   end
 
   def overlapped?
-    overlapped_records = Overtime.personal(user_id, start_time, end_time).where("end_time > ? AND start_time < ? ", start_time, end_time)
+    overlapped_records = Overtime.personal(user_id, start_time, end_time).where("end_time > ? AND start_time < ? AND id != ?", start_time, end_time, id)
     if overlapped_records.any?
       url = Rails.application.routes.url_helpers
       overlapped_records.each do |record|
