@@ -202,6 +202,13 @@ zh-TW:
       delete: "刪除"
       change_type: "切換休假種類至"
       remark: "備註"
+    backend/overtimes:
+      index: "員工補休申請"
+      show: "檢視"
+      verify: "審核"
+      approve: "核准"
+      reject: "駁回"
+      append_quota: "新增額度"
     leave_applications:
       index: "查看歷年假單"
       show: "檢視"
@@ -267,6 +274,8 @@ zh-TW:
       batch_new: "批次新增員工休假額度"
       append_quota: "新增員工休假額度"
       edit: "修改員工休假"
+    backend/overtimes:
+      index: "員工補休申請"
     tools: "工具"
 
   success:
