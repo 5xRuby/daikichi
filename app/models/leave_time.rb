@@ -5,6 +5,7 @@ class LeaveTime < ApplicationRecord
   enum leave_type: Settings.leave_times.quota_types
 
   belongs_to :user
+  belongs_to :overtime
   has_many   :leave_applications, through: :leave_time_usages
   has_many   :leave_time_usages
 

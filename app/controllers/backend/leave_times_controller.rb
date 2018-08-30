@@ -13,10 +13,11 @@ class Backend::LeaveTimesController < Backend::BaseController
   def create
     @current_object = LeaveTime.new(resource_params)
     return render action: :new unless @current_object.save
-    
-    if request.env['HTTP_REFERER'].include?('leave_application_id')
-      verify_id = request.env['HTTP_REFERER'].partition('=').last
-      action_success(verify_backend_leave_application_path(verify_id))
+
+    referer = request.env['HTTP_REFERER']
+    if referer.include?('_id')
+      verify_id = referer.partition('=').last
+      redirection_path(referer, verify_id)
     else
       action_success
     end
@@ -43,9 +44,19 @@ class Backend::LeaveTimesController < Backend::BaseController
 
   private
 
+  def redirection_path(referer, verify_id)
+    if referer.include?('leave_application')
+      action_success(verify_backend_leave_application_path(verify_id))
+    elsif referer.include?('overtime')
+      action_success(verify_backend_overtime_path(verify_id))
+    end
+  end
+
   def leave_time_params_by_leave_application
-    leave_application = LeaveApplication.find(params[:leave_application_id])
-    leave_application.leave_time_params
+    if params[:leave_application_id]
+      leave_application = LeaveApplication.find(params[:leave_application_id])
+      leave_application.leave_time_params
+    end
   end
 
   def set_query_object

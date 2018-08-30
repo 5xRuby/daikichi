@@ -24,6 +24,7 @@ zh-TW:
           compassionate: '喪假'
           absent: '曠職'
           paid_vacation: '旅遊假'
+          bonus: '補休'
     labels:
       q:
         leave_type_eq: 依額度類別篩選

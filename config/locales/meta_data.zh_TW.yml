@@ -41,6 +41,7 @@ zh-TW:
           menstrual: '生理假'
           occpational_sick: '公傷病假'
           paid_vacation: '旅遊假'
+          bonus: '補休'
         user: "員工"
         name: "擁有者"
         leave_type: "假別"
@@ -83,6 +84,7 @@ zh-TW:
           menstrual: '生理假'
           occpational_sick: '公傷病假'
           paid_vacation: '旅遊假'
+          bonus: '補休'
         user: "員工"
         start_time: "開始時間"
         end_time: "結束時間"
@@ -98,6 +100,7 @@ zh-TW:
         created_at: "建立時間"
         updated_at: "更新時間"
       overtime:
+        user: "員工姓名"
         start_time: "開始時間"
         end_time: "結束時間"
         hours: "時數"
@@ -203,7 +206,7 @@ zh-TW:
       change_type: "切換休假種類至"
       remark: "備註"
     backend/overtimes:
-      index: "員工補休申請"
+      index: "審核員工補休"
       show: "檢視"
       verify: "審核"
       approve: "核准"
@@ -275,7 +278,7 @@ zh-TW:
       append_quota: "新增員工休假額度"
       edit: "修改員工休假"
     backend/overtimes:
-      index: "員工補休申請"
+      index: "審核員工補休"
     tools: "工具"
 
   success:
@@ -285,6 +288,7 @@ zh-TW:
     revise: "已修改假單"
     cancel: "已取消假單"
     batch_create: '批次新增員工休假額度成功'
+    create_leave_time: '新增補休時數成功'
 
   warnings:
     self_manage: "申請人不得自行審核"

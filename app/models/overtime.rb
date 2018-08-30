@@ -3,19 +3,19 @@ class Overtime < ApplicationRecord
   include AASM
   include SignatureConcern
 
-  enum status:     Settings.leave_applications.statuses
+  enum status: Settings.leave_applications.statuses
 
   belongs_to :user
   belongs_to :manager, class_name: 'User', foreign_key: 'manager_id'
 
+  has_many :leave_times
+  accepts_nested_attributes_for :leave_times
+
   validates :description, :start_time, :end_time, presence: true
   validate :hours_should_be_positive_integer
-  validate :overlapped?
+  validate :time_overlapped
 
   before_validation :assign_hours
-
-  scope :personal, ->(user_id, beginning, ending, status_array = %w(pending approved)) {
-    where(status: status_array, user_id: user_id) }
 
   aasm column: :status, enum: true do
     state :pending, initial: true
@@ -29,6 +29,7 @@ class Overtime < ApplicationRecord
 
     event :reject, before: proc { |manager| sign(manager) } do
       transitions to: :rejected, from: %i(pending approved)
+      after_commit :delete_leave_times
     end
 
     event :revise do
@@ -37,12 +38,18 @@ class Overtime < ApplicationRecord
 
     event :cancel do
       transitions to: :canceled, from: :pending
-      transitions to: :canceled, from: :approved, unless: :happened?
+      transitions to: :canceled, from: :approved
     end
-  end  
+  end
 
-  def happened?
-    Time.current > self.start_time
+  def leave_time_params
+    {
+      user_id: self.user_id,
+      leave_type: 'bonus',
+      quota: self.hours,
+      effective_date: self.start_time.to_date,
+      expiration_date: self.start_time.to_date.end_of_year
+    }
   end
 
   private
@@ -51,8 +58,11 @@ class Overtime < ApplicationRecord
     self.hours = ((end_time - start_time) / 3600).to_i if start_time && end_time
   end
 
-  def overlapped?
-    overlapped_records = Overtime.personal(user_id, start_time, end_time).where("end_time > ? AND start_time < ? AND id != ?", start_time, end_time, id)
+  def time_overlapped
+    return unless start_time && end_time
+
+    overlapped_records = Overtime.where('user_id = ? AND start_time <= ? AND end_time >= ?', user_id , end_time - 1.second, start_time + 1.second).where.not(id: self.id)
+    
     if overlapped_records.any?
       url = Rails.application.routes.url_helpers
       overlapped_records.each do |record|
@@ -73,4 +83,7 @@ class Overtime < ApplicationRecord
     errors.add(:start_time, :should_be_earlier) unless end_time > start_time
   end
 
+  def delete_leave_times
+    self.leave_times.delete_all if leave_times.any?
+  end
 end

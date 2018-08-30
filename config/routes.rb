@@ -21,7 +21,8 @@ Rails.application.routes.draw do
       resources :bonus_leave_time_logs, only: [:index, :update]
 
       resources :overtimes, except: [:show, :destroy] do
-        get :verify, on: :member
+        get :verify, :add_leave_time, on: :member
+        put :create_leave_time, on: :member
       end
     end
 
