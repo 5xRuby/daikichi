@@ -42,11 +42,11 @@
             = link_to t("title.overtimes.show"),
               overtime_path(ot),
               class: "btn btn-primary"
-            - if ot.may_revise? and !ot.happened?
+            - if ot.may_revise?
               = link_to t("title.overtimes.edit"),
                 edit_overtime_path(ot),
                 class: "btn btn-warning"
-            - if ot.may_cancel? and !ot.happened?
+            - if ot.may_cancel?
               = link_to t("title.overtimes.cancel"),
                 cancel_overtime_path(ot),
                 class: "btn btn-danger",

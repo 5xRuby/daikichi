@@ -46,11 +46,11 @@
           %td.text-center
             - if ot.pending?
               = link_to t("title.backend/overtimes.verify"),
-                verify_overtime_path(ot),
+                verify_backend_overtime_path(ot),
                 class: "btn btn-warning"
             - else
               = link_to t("title.backend/overtimes.show"),
-                verify_overtime_path(ot),
+                verify_backend_overtime_path(ot),
                 class: "btn btn-primary"
 - else
   = no_data_alert
