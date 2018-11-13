@@ -2,6 +2,7 @@
 
 = simple_form_for current_object do |f|
   = f.error :base, error: sanitize(f.object.errors[:base].join('<br />'), tags: %w(a br), attributes: %w(href target))
+  = f.input :compensatory_type, collection: Overtime.enum_attributes_for_select(:compensatory_types)
   = f.input :start_time, as: :string, required: true, input_html: { data: { input: 'datetimepicker', format: 'Y/m/d H:i' } }
   = f.input :end_time,   as: :string, required: true, input_html: { data: { input: 'datetimepicker', format: 'Y/m/d H:i' } }
   = f.error :hours, error: sanitize(f.object.errors[:hours].join('<br />'), tags: %w(br))

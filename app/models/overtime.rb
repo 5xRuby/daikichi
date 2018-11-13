@@ -4,6 +4,7 @@ class Overtime < ApplicationRecord
   include SignatureConcern
 
   enum status: Settings.leave_applications.statuses
+  enum compensatory_type: {leave: 0, pay: 1}
 
   belongs_to :user
   belongs_to :manager, class_name: 'User', foreign_key: 'manager_id'
@@ -11,7 +12,7 @@ class Overtime < ApplicationRecord
   has_many :leave_times
   accepts_nested_attributes_for :leave_times
 
-  validates :description, :start_time, :end_time, presence: true
+  validates :description, :start_time, :end_time, :compensatory_type, presence: true
   validate :hours_should_be_positive_integer
   validate :time_overlapped
 

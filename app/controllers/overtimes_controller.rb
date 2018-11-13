@@ -52,7 +52,7 @@ class OvertimesController < BaseController
 
   def resource_params
     params.require(:overtime).permit(
-      :start_time, :end_time, :description
+      :start_time, :end_time, :description, :compensatory_type
     )
   end
 

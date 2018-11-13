@@ -116,6 +116,10 @@ zh-TW:
           rejected: '駁回'
           pending: '待審'
           canceled: '取消'
+        compensatory_type: '補休類別'
+        compensatory_types:
+          leave: '補休'
+          pay: '加班費'
     errors:
       models:
         user:
