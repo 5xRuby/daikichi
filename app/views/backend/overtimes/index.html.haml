@@ -5,6 +5,8 @@
   .panel-body
     = simple_form_for @q, url: url_for(action: :index), method: :get do |f|
       = f.hidden_field :s, value: params.dig(:q, :s)
+      = f.input :compensatory_type_eq, collection: Overtime.enum_attributes_for_select(:compensatory_types),
+        include_blank: t('.plz_select_compensatory_type'), required: false, wrapper_html: { class: 'col-xs-12' }
       = f.input :status_eq, collection: Overtime.enum_attributes_for_select(:statuses),
         include_blank: t('.plz_select_status'), required: false, wrapper_html: { class: 'col-md-6' }
       = f.input :user_id_eq, collection: @users, required: false,
@@ -24,6 +26,8 @@
       %tr.info
         %th.text-right
           = sort_link(@q, :id, '#')
+        %th.text-center
+          = sort_link(@q, :compensatory_type)
         %th.text-center= t_attribute :user, Overtime
         %th.text-right
           = sort_link(@q, :start_time)
@@ -37,6 +41,7 @@
       - current_collection.each do |ot|
         %tr
           %td.text-right= ot.id
+          %td.text-center= Overtime.human_enum_value(:compensatory_type, ot.compensatory_type)
           %td.text-center= ot.user.name
           %td.text-right= l ot.start_time, format: :long
           %td.text-right= l ot.end_time, format: :long

@@ -31,6 +31,7 @@ zh-TW:
     overtimes: &overtimes_filter_prompt
       index:
         plz_select_status: 請選擇申請狀態
+        plz_select_compensatory_type: 請選擇補休類別
         plz_select_user: 請選擇要篩選的使用者
 
   leave_times:
