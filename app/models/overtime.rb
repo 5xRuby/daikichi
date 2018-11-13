@@ -11,6 +11,7 @@ class Overtime < ApplicationRecord
 
   has_many :leave_times
   accepts_nested_attributes_for :leave_times
+  has_one :overtime_pay
 
   validates :description, :start_time, :end_time, :compensatory_type, presence: true
   validate :hours_should_be_positive_integer
