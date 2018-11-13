@@ -1,7 +1,5 @@
-- if action == :verify
-  = simple_form_for current_object, url: backend_overtime_path(current_object), method: :put do |f|
-    = f.input :comment
-    = f.button :submit, t("title.backend/leave_applications.approve"), disabled: !current_object.may_approve?, name: "approve", class: "btn btn-primary"
-    = f.button :submit, t("title.backend/leave_applications.reject"), name: "reject", class: "btn btn-danger"
-    - if current_object.may_approve?
-      = link_to t("title.backend/leave_applications.append_quota"), add_leave_time_backend_overtime_path, class: 'btn btn-warning'
+= simple_form_for current_object, url: backend_overtime_path(current_object), method: :put do |f|
+  = f.input :comment
+  = f.button :submit, t("title.backend/overtimes.approve"), disabled: !current_object.may_approve?, name: "approve", class: "btn btn-primary"
+  = f.button :submit, t("title.backend/overtimes.reject"), name: "reject", class: "btn btn-danger"
+  = render_append_hours_options

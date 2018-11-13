@@ -31,16 +31,15 @@ class Overtime < ApplicationRecord
 
     event :reject, before: proc { |manager| sign(manager) } do
       transitions to: :rejected, from: %i(pending approved)
-      after_commit :delete_leave_times
+      after_commit :delete_associated_records
     end
 
     event :revise do
-      transitions to: :pending, from: %i(pending approved)
+      transitions to: :pending, from: %i(pending)
     end
 
-    event :cancel do
-      transitions to: :canceled, from: :pending
-      transitions to: :canceled, from: :approved
+    event :cancel, after_commit: :delete_associated_records do
+      transitions to: :canceled, from: %i(pending approved)
     end
   end
 
@@ -85,7 +84,8 @@ class Overtime < ApplicationRecord
     errors.add(:start_time, :should_be_earlier) unless end_time > start_time
   end
 
-  def delete_leave_times
-    self.leave_times.delete_all if leave_times.any?
+  def delete_associated_records
+    return leave_times.delete_all if leave_times.any? && self.leave?
+    overtime_pay.delete if overtime_pay.present?
   end
 end

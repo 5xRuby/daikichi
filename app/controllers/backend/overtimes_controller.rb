@@ -35,6 +35,21 @@ class Backend::OvertimesController < Backend::BaseController
     end
   end
 
+  def add_compensatory_pay
+    @overtime_pay = OvertimePay.new
+  end
+
+  def create_compensatory_pay
+    params[:overtime_pay][:user_id] = current_object.user.id
+    params[:overtime_pay][:overtime_id] = params[:id]
+    @overtime_pay = OvertimePay.new(resource_params)
+    if @overtime_pay.save(resource_params)
+      action_success(verify_backend_overtime_path(current_object))
+    else
+      render :add_overtime_pay
+    end
+  end
+
   private
 
   def resource_params
@@ -42,6 +57,7 @@ class Backend::OvertimesController < Backend::BaseController
     when 'create' then params.require(:overtime).permit(:user_id, :hours, :start_time, :end_time, :description)
     when 'update' then params.require(:overtime).permit(:comment)
     when 'create_leave_time' then params.require(:leave_time).permit(:user_id, :overtime_id, :leave_type, :quota, :effective_date, :expiration_date, :remark)
+    when 'create_compensatory_pay' then params.require(:overtime_pay).permit(:user_id, :overtime_id, :hour, :remark)
     end
   end
 

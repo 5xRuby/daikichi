@@ -216,6 +216,7 @@ zh-TW:
       approve: "核准"
       reject: "駁回"
       append_quota: "新增額度"
+      append_overtime_pay: "新增加班費"
     leave_applications:
       index: "查看歷年假單"
       show: "檢視"
@@ -293,6 +294,7 @@ zh-TW:
     cancel: "已取消假單"
     batch_create: '批次新增員工休假額度成功'
     create_leave_time: '新增補休時數成功'
+    create_compensatory_pay: '新增加班費時數成功'
 
   warnings:
     self_manage: "申請人不得自行審核"
