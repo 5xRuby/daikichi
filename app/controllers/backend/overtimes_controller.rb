@@ -54,6 +54,11 @@ class Backend::OvertimesController < Backend::BaseController
     search_params = params.fetch(:q, {})&.permit(:year_eq, :month_eq)
     @q = Overtime.where(compensatory_type: 'pay', status: :approved).ransack(search_params)
     @summary = @q.result
+
+    respond_to do |format|
+      format.html
+      format.csv { send_data @summary.to_csv }
+    end
   end
 
   private

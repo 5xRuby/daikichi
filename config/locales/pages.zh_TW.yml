@@ -41,6 +41,7 @@ zh-TW:
         start_time: 開始時間
         end_time: 結束時間
         hour: 時數
+        download_csv: 匯出 CSV
 
   leave_times:
     <<: *leave_times_filter_prompt

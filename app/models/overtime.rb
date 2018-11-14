@@ -61,6 +61,24 @@ class Overtime < ApplicationRecord
     Arel.sql('extract(month from created_at)')
   end
 
+  def self.to_csv
+    header_attributes = %w(編號 姓名 開始時間 結束時間 時數)
+    
+    CSV.generate(headers: true, encoding: 'utf-8') do |csv|
+      csv << header_attributes
+      
+      all.each do |ot|
+        csv << [
+                ot.id, 
+                ot.user.name, 
+                ot.start_time.strftime("%Y-%m-%d (%a) %H:%M"), 
+                ot.end_time.strftime("%Y-%m-%d (%a) %H:%M"), 
+                ot.overtime_pay.hour
+              ]
+      end
+    end
+  end
+
   private
 
   def assign_hours
