@@ -36,5 +36,7 @@ zh-TW:
         end_time_lteq: 查詢結束區間
         start_time_gteq: 查詢起始區間
         compensatory_type_eq: 查詢補休類別
+        year_eq: 查詢年份
+        month_eq: 查詢月份
     error_notification:
       default_message: "Please review the problems below:"

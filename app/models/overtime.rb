@@ -53,6 +53,14 @@ class Overtime < ApplicationRecord
     }
   end
 
+  ransacker :year do
+    Arel.sql('extract(year from created_at)')
+  end
+
+  ransacker :month do
+    Arel.sql('extract(month from created_at)')
+  end
+
   private
 
   def assign_hours

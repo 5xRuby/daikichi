@@ -284,6 +284,7 @@ zh-TW:
       edit: "修改員工休假"
     backend/overtimes:
       index: "審核員工補休"
+      statistics: "員工加班費統計"
     tools: "工具"
 
   success:

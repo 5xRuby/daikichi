@@ -1,6 +1,6 @@
 class Backend::OvertimesController < Backend::BaseController
 
-  before_action :set_query_object
+  before_action :set_query_object, except: :statistics
 
   def index
     @users = User.all
@@ -48,6 +48,12 @@ class Backend::OvertimesController < Backend::BaseController
     else
       render :add_overtime_pay
     end
+  end
+
+  def statistics
+    search_params = params.fetch(:q, {})&.permit(:year_eq, :month_eq)
+    @q = Overtime.where(compensatory_type: 'pay', status: :approved).ransack(search_params)
+    @summary = @q.result
   end
 
   private
