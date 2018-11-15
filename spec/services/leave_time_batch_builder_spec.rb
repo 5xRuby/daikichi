@@ -83,7 +83,6 @@ describe LeaveTimeBatchBuilder do
 
         it 'should run join date based import for users that join_date anniversary is comming only' do
           leave_times = LeaveTime.where(user_id: [fulltime.id, parttime.id, user.id, contractor.id])
-          expect(leave_times.reload.size).to eq(1 + join_date_based_leave_types.size * 2 - seniority_based_leave_types.size)
 
           join_date_based_leave_time = leave_times.find { |x| x.leave_type == join_date_based_leave_types.first.first }
           join_anniversary = fulltime.next_join_anniversary
