@@ -4,7 +4,7 @@ class Backend::LeaveApplicationsController < Backend::BaseController
   before_action :set_query_object
 
   def index
-    @users = User.all
+    @users = User.where.not(role: 'resigned')
   end
 
   def create
