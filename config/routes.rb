@@ -19,9 +19,6 @@ Rails.application.routes.draw do
       end
 
       resources :bonus_leave_time_logs, only: [:index, :update]
-      resources :overtime, except: [:destroy] do
-        get :verify, on: :member
-      end
     end
 
     resources :leave_applications, except: [:destroy] do
@@ -37,7 +34,12 @@ Rails.application.routes.draw do
 
     resources :leave_times, only: [:index, :show]
     resources :remote, only: [:new, :create, :update, :edit]
-    resources :overtime, only: [:new, :create, :update, :edit]
+
+    resources :overtimes, except: :destroy do
+      member do
+        put "cancel"
+      end
+    end
 
     authenticate :user, lambda { |u| u.is_manager? } do
       mount Crono::Web, at: '/crono'
