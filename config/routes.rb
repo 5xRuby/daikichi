@@ -18,6 +18,12 @@ Rails.application.routes.draw do
         post :batch_create, on: :collection
       end
 
+      resources :overtimes, except: [:show, :destroy] do
+        get :verify, :add_leave_time, :add_compensatory_pay, on: :member
+        put :create_leave_time, :create_compensatory_pay, on: :member
+        get :statistics, on: :collection
+      end
+
       resources :bonus_leave_time_logs, only: [:index, :update]
     end
 
