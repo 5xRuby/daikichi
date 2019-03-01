@@ -83,6 +83,16 @@ defaults: &defaults
       paid_vacation:
         - paid_vacation
 
+  overtimes:
+    statuses:
+      pending: pending
+      approved: approved
+      rejected: rejected
+      canceled: canceled
+    compensatory_types:
+      - leave #補休
+      - pay #加班費
+
   leave_times:
     quota_types:
       bonus: bonus
