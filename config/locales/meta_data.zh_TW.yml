@@ -121,6 +121,10 @@ zh-TW:
         compensatory_types:
           leave: '補休'
           pay: '加班費'
+      overtime_pay:
+        user: "員工姓名"
+        hour: "時數"
+        remark: "備註"
     errors:
       models:
         user:
@@ -286,6 +290,7 @@ zh-TW:
       edit: "修改員工休假"
     backend/overtimes:
       index: "審核員工補休"
+      verify: "審核補休"
       statistics: "員工加班費統計"
     tools: "工具"
 

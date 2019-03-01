@@ -1,0 +1,29 @@
+%h2= t("captions.backend/overtimes.statistics")
+
+.panel.panel-default
+  .panel-heading= t('panel_header.filter_conditions')
+  .panel-body
+    = simple_form_for @q, url: url_for(action: :statistics), method: :get do |f|
+      = f.input :year_eq, collection: (2016..Time.now.year).to_a.reverse,
+        include_blank: t('.plz_select_year'), required: false, wrapper_html: { class: 'col-md-6' }
+      = f.input :month_eq, collection: 1..12,
+        include_blank: t('.plz_select_month'), required: false, wrapper_html: { class: 'col-md-6' }
+      .text-right
+        = f.button :submit, class: 'btn-warning'
+
+%table.table.table-striped.table-bordered.table-hover
+  %thead
+    %tr
+      %td.text-center= t('.application_id')
+      %td.text-center= t('.user_name')
+      %td.text-center= t('.start_time')
+      %td.text-center= t('.end_time')
+      %td.text-center= t('.hour')
+  %tbody
+    - @summary.each do |ot|
+      %tr
+        %td.text-center.name= ot.id
+        %td.text-center= ot.user.name
+        %td.text-center= l ot.start_time, format: :short
+        %td.text-center= l ot.end_time, format: :short
+        %td.text-center= ot.overtime_pay.hour
