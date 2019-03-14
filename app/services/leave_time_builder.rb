@@ -70,6 +70,7 @@ class LeaveTimeBuilder
       date = expiration_date + 1.day
       expiration_date = date.next_year - 1.day
     end
+    create_leave_time(leave_type, quota, date, expiration_date) if Time.zone.now.to_date + JOIN_DATE_BASED_LEED_DAY >= date
   end
 
   def build_monthly_leave_types(leave_type, config, prebuild, build_by_assign_date = false)
