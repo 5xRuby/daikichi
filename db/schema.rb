@@ -112,7 +112,7 @@ ActiveRecord::Schema.define(version: 20190301131040) do
     t.integer  "manager_id"
     t.datetime "sign_date"
     t.datetime "deleted_at"
-    t.text     "commnent"
+    t.text     "comment"
     t.integer  "compensatory_type", default: 0
     t.index ["compensatory_type"], name: "index_overtimes_on_compensatory_type", using: :btree
     t.index ["manager_id"], name: "index_overtimes_on_manager_id", using: :btree
