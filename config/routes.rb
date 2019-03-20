@@ -20,7 +20,7 @@ Rails.application.routes.draw do
 
       resources :overtimes, except: [:show, :destroy] do
         get :verify, :add_leave_time, :add_compensatory_pay, on: :member
-        put :create_leave_time, :create_compensatory_pay, on: :member
+        post :create_leave_time, :create_compensatory_pay, on: :member
         get :statistics, on: :collection
       end
 

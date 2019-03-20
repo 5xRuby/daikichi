@@ -1,5 +1,4 @@
-= simple_form_for @leave_time, url: create_leave_time_backend_overtime_path, method: :put do |f|
-	-# =	f.association :user, collection: User.where.not(role: 'resigned')
+= simple_form_for @leave_time, url: create_leave_time_backend_overtime_path, method: :post do |f|
 	= f.input :user, input_html: {value: current_object.user.name}, disabled: true
 	=	f.input :leave_type, collection: LeaveTime.enum_attributes_for_select(:leave_types)
 	=	f.input :quota, input_html: {value: current_object.hours}
