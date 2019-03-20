@@ -5,7 +5,7 @@ class User < ApplicationRecord
   has_many :leave_applications, -> { order(id: :desc) }
   has_many :overtimes, -> { order(id: :desc) }
   has_many :bonus_leave_time_logs, -> { order(id: :desc) }
-  has_one :overtime_pay
+  has_many :overtime_pays
   
   attr_accessor :assign_leave_time, :assign_date
 
