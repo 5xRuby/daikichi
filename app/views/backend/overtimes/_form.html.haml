@@ -1,5 +1,5 @@
 = simple_form_for current_object, url: backend_overtime_path(current_object), method: :put do |f|
   = f.input :comment
-  = f.button :submit, t("title.backend/overtimes.approve"), disabled: !current_object.may_approve?, name: "approve", class: "btn btn-primary"
+  = f.button :submit, t("title.backend/overtimes.approve"), disabled: overtime_submit_disabled?, name: "approve", class: "btn btn-primary"
   = f.button :submit, t("title.backend/overtimes.reject"), name: "reject", class: "btn btn-danger"
   = render_append_hours_options
