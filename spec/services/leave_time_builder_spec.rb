@@ -32,10 +32,10 @@ describe LeaveTimeBuilder do
         end
 
         context 'join date before current date a year' do
-          let(:join_date) { current_date - 1.year - 1.month }
-          let(:before_join_date) { join_date - 1.month }
-          let(:after_join_date_before_current_date) { join_date + 1.month }
-          let(:after_current_date) { current_date + 1.month }
+          let(:join_date) { 13.months.ago }
+          let(:before_join_date) { 14.months.ago }
+          let(:after_join_date_before_current_date) { 12.months.ago }
+          let(:after_current_date) { 1.month.since }
           before { user.join_date = join_date }
 
           it 'should build LeaveTime based on join_date when assign_date is before join_date without prebuild settings' do
@@ -106,27 +106,38 @@ describe LeaveTimeBuilder do
         end
 
         context 'join date before current date within a year' do
-          let(:join_date) { current_date - 1.year }
+          let(:join_date) { 30.days.ago }
+          let(:before_join_date) { 31.days.ago }
+          let(:after_join_date_before_current_date) { 29.days.ago }
+          before { user.join_date = join_date }
 
-          it 'should build LeaveTime based on assign_date when assign_date is after current date and after this year leed day' do
-            user.join_date = current_date + join_date_based_leed_day - 1.year
-            user.assign_date = (current_date + join_date_based_leed_day).to_s
+          it 'should build LeaveTime based on join_date when assign_date is before join_date without prebuild settings' do
+            user.assign_date = before_join_date.to_s
             user.save!
             join_date_based_leave_times(user) do |leave_times|
               expect(leave_times.count).to eq 1
-              expect(leave_times.first.effective_date).to eq Date.parse '2017/08/13'
-              expect(leave_times.first.expiration_date).to eq Date.parse '2018/08/12'
+              expect(leave_times.first.effective_date).to eq Date.parse '2017/05/15'
+              expect(leave_times.first.expiration_date).to eq Date.parse '2018/05/14'
             end
           end
 
-          it 'should build LeaveTime based on assign_date when assign_date is after current date and before this year leed day' do
-            user.join_date = current_date + join_date_based_leed_day - 1.year + 1.day
-            user.assign_date = (current_date + join_date_based_leed_day + 1.day).to_s
+          it 'should build LeaveTime based on join_date when assign_date is on join_date without prebuild settings' do
+            user.assign_date = join_date.to_s
             user.save!
             join_date_based_leave_times(user) do |leave_times|
               expect(leave_times.count).to eq 1
-              expect(leave_times.first.effective_date).to eq Date.parse '2017/08/14'
-              expect(leave_times.first.expiration_date).to eq Date.parse '2018/08/13'
+              expect(leave_times.first.effective_date).to eq Date.parse '2017/05/15'
+              expect(leave_times.first.expiration_date).to eq Date.parse '2018/05/14'
+            end
+          end
+
+          it 'should build LeaveTime based on assign_date when assign_date is after join_date and before current date without prebuild settings' do
+            user.assign_date = after_join_date_before_current_date.to_s
+            user.save!
+            join_date_based_leave_times(user) do |leave_times|
+              expect(leave_times.count).to eq 1
+              expect(leave_times.first.effective_date).to eq Date.parse '2017/05/16'
+              expect(leave_times.first.expiration_date).to eq Date.parse '2018/05/14'
             end
           end
         end
@@ -135,10 +146,10 @@ describe LeaveTimeBuilder do
       context 'import monthly LeaveTime with specific assign_date' do
         let(:user) { User.new(FactoryGirl.attributes_for(:user, :fulltime)) }
         let(:current_date) { Date.parse '2017/06/14' }
-        join_date = Date.parse('2017/06/14') - 1.year - 1.month
-        before_join_date = join_date - 1.month
-        after_join_date_before_current_date = join_date + 1.month
-        let(:after_current_date) { current_date + 1.month }
+        join_date = 13.months.ago
+        before_join_date = 14.months.ago
+        after_join_date_before_current_date = 12.months.ago
+        let(:after_current_date) { 1.month.since }
 
         before do
           Timecop.freeze current_date
@@ -207,10 +218,10 @@ describe LeaveTimeBuilder do
         end
 
         context 'join date before current date a year' do
-          let(:join_date) { current_date - 1.year - 1.month }
-          let(:before_join_date) { join_date - 1.month }
-          let(:after_join_date_before_current_date) { join_date + 1.month }
-          let(:after_current_date) { current_date + 1.month }
+          let(:join_date) { 13.months.ago }
+          let(:before_join_date) { 14.months.ago }
+          let(:after_join_date_before_current_date) { 12.months.ago }
+          let(:after_current_date) { 1.month.since }
           before { user.join_date = join_date }
 
           it 'should build LeaveTime based on join_date when assign_date is before join_date without prebuild settings' do
@@ -305,11 +316,13 @@ describe LeaveTimeBuilder do
         end
 
         context 'join date before current date within a year' do
-          let(:join_date) { current_date - 1.year }
+          let(:join_date) { 30.days.ago }
+          let(:before_join_date) { 31.days.ago }
+          let(:after_join_date_before_current_date) { 29.days.ago }
+          before { user.join_date = join_date }
 
-          it 'should build LeaveTime based on assign_date when assign_date is after current date and after this year leed day' do
-            user.join_date = current_date + join_date_based_leed_day - 1.year
-            user.assign_date = (current_date + join_date_based_leed_day).to_s
+          it 'should build LeaveTime based on join_date when assign_date is before join_date without prebuild settings' do
+            user.assign_date = before_join_date.to_s
             user.save!
             join_date_based_leave_times(user) do |leave_times, leave_type|
               if seniority_based_leave_types.map(&:first).include?(leave_type)
@@ -317,14 +330,13 @@ describe LeaveTimeBuilder do
                 next
               end
               expect(leave_times.count).to eq 1
-              expect(leave_times.first.effective_date).to eq Date.parse '2017/08/13'
-              expect(leave_times.first.expiration_date).to eq Date.parse '2018/08/12'
+              expect(leave_times.first.effective_date).to eq Date.parse '2017/05/15'
+              expect(leave_times.first.expiration_date).to eq Date.parse '2018/05/14'
             end
           end
 
-          it 'should build LeaveTime based on assign_date when assign_date is after current date and before this year leed day' do
-            user.join_date = current_date + join_date_based_leed_day - 1.year + 1.day
-            user.assign_date = (current_date + join_date_based_leed_day + 1.day).to_s
+          it 'should build LeaveTime based on join_date when assign_date is on join_date without prebuild settings' do
+            user.assign_date = join_date.to_s
             user.save!
             join_date_based_leave_times(user) do |leave_times, leave_type|
               if seniority_based_leave_types.map(&:first).include?(leave_type)
@@ -332,8 +344,22 @@ describe LeaveTimeBuilder do
                 next
               end
               expect(leave_times.count).to eq 1
-              expect(leave_times.first.effective_date).to eq Date.parse '2017/08/14'
-              expect(leave_times.first.expiration_date).to eq Date.parse '2018/08/13'
+              expect(leave_times.first.effective_date).to eq Date.parse '2017/05/15'
+              expect(leave_times.first.expiration_date).to eq Date.parse '2018/05/14'
+            end
+          end
+
+          it 'should build LeaveTime based on assign_date when assign_date is after join_date and before current date without prebuild settings' do
+            user.assign_date = after_join_date_before_current_date.to_s
+            user.save!
+            join_date_based_leave_times(user) do |leave_times, leave_type|
+              if seniority_based_leave_types.map(&:first).include?(leave_type)
+                expect(leave_times.any?).to be_falsey
+                next
+              end
+              expect(leave_times.count).to eq 1
+              expect(leave_times.first.effective_date).to eq Date.parse '2017/05/16'
+              expect(leave_times.first.expiration_date).to eq Date.parse '2018/05/14'
             end
           end
         end
@@ -342,10 +368,10 @@ describe LeaveTimeBuilder do
       context 'import monthly LeaveTime with specific assign_date' do
         let(:user) { User.new(FactoryGirl.attributes_for(:user, :fulltime)) }
         let(:current_date) { Date.parse '2017/06/14' }
-        join_date = Date.parse('2017/06/14') - 1.year - 1.month
-        before_join_date = join_date - 1.month
-        after_join_date_before_current_date = join_date + 1.month
-        let(:after_current_date) { current_date + 1.month }
+        join_date = 13.months.ago
+        before_join_date = 14.months.ago
+        after_join_date_before_current_date = 12.months.ago
+        let(:after_current_date) { 1.month.since }
 
         before do
           Timecop.freeze current_date
