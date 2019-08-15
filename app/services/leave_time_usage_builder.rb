@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class LeaveTimeUsageBuilder
   def initialize(leave_application)
     @leave_application = leave_application

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class LeaveTimeSummaryService
   def initialize(year, month, role = %w(employee parttime))
     @range = (

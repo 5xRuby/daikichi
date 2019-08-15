@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'rails_helper'
 RSpec.describe LeaveApplication, type: :model do
   let(:first_year_employee) { create(:first_year_employee) }

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module LeaveApplicationsHelper
   def time_object_by_hour_min(hour, min)
     Time.zone.now.change(hour: hour, min: min)
@@ -25,7 +26,7 @@ module LeaveApplicationsHelper
   end
 
   def need_deduct_salary?(leave_type, leave_time)
-    return if leave_time == 0
+    return if leave_time.zero?
     leave_type == 'personal' || leave_type == 'halfpaid_sick'
   end
 

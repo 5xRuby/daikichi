@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class InformationMailer < ApplicationMailer
   ADMIN_EMAIL_LISTS = [
     'hi@5xruby.tw'

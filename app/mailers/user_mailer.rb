@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class UserMailer < ApplicationMailer
   def reply_leave_applicaiton_email(leave_application)
     @leave_application = leave_application

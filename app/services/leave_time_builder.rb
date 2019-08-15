@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class LeaveTimeBuilder
   MONTHLY_LEAVE_TYPES = Settings.leave_types.to_a.select { |lt| lt.second['creation'] == 'monthly' }
   WEEKLY_LEAVE_TYPES = Settings.leave_types.to_a.select { |lt| lt.second['creation'] == 'weekly' }

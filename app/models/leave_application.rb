@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class LeaveApplication < ApplicationRecord
   include AASM
   include SignatureConcern

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class Overtime < ApplicationRecord
   include AASM
   include SignatureConcern
@@ -16,6 +17,7 @@ class Overtime < ApplicationRecord
   validate :time_overlapped
 
   before_validation :assign_hours
+  enum status: Settings.leave_applications.statuses
 
   aasm column: :status, enum: true do
     state :pending, initial: true

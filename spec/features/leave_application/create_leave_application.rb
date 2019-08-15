@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 feature 'special type leave application' do
@@ -120,8 +122,8 @@ feature 'special type leave application' do
   private
 
   def login(email, password)
-    fill_in "員工帳號", with: email
-    fill_in "密碼", with: password
+    fill_in '員工帳號', with: email
+    fill_in '密碼', with: password
     click_button "送出"
   end
 end

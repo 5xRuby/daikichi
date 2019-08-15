@@ -6,8 +6,13 @@ AllCops:
   Exclude:
     - bin/**/*
     - db/schema.rb
+    - db/migrate/*
     - config/**/*
     - lib/tasks/*.rake
+    - Gemfile
+    - Rakefile
+    - Capfile
+    - spec/**/* # FIXME
 
 Rails:
   Enabled: true
@@ -102,3 +107,12 @@ Metrics/BlockLength:
   Exclude:
     - "**/*_spec.rb"
     - spec/factories/*
+
+Style/PercentLiteralDelimiters:
+  Enabled: false
+
+Style/SymbolArray:
+  Enabled: false
+
+Style/EmptyMethod:
+  Enabled: false
