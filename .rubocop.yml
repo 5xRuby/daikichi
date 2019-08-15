@@ -90,9 +90,6 @@ SymbolProc:
 MultilineMethodCallIndentation:
   EnforcedStyle: indented
 
-Layout/EmptyLineAfterMagicComment:
-  Enabled: false
-
 ConditionalAssignment:
   Enabled: false
 

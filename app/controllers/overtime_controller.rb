@@ -31,4 +31,3 @@ class OvertimeController < BaseController
     end
   end
 end
-

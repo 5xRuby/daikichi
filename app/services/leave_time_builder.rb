@@ -96,8 +96,8 @@ class LeaveTimeBuilder
       expiration_date = @user.assign_date.end_of_week
       create_leave_time(leave_type, quota, effective_date, expiration_date)
       create_leave_time(leave_type, quota, effective_date.beginning_of_week + 1.week, expiration_date + 1.week)
-      create_leave_time(leave_type, quota, effective_date.beginning_of_week + 2.week, expiration_date + 2.week)
-      create_leave_time(leave_type, quota, effective_date.beginning_of_week + 3.week, expiration_date + 3.week)
+      create_leave_time(leave_type, quota, effective_date.beginning_of_week + 2.weeks, expiration_date + 2.weeks)
+      create_leave_time(leave_type, quota, effective_date.beginning_of_week + 3.weeks, expiration_date + 3.weeks)
     else
       effective_date = date.beginning_of_week
       expiration_date = date.end_of_week

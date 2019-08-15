@@ -30,6 +30,7 @@ class Overtime < ApplicationRecord
       transitions to: :canceled, from: :approved, unless: :happened?
     end
   end
+
   private
 
   def happened?
