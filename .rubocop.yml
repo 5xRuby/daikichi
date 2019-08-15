@@ -1,5 +1,7 @@
+require: rubocop-performance
+
 AllCops:
-  TargetRubyVersion: 2.3
+  TargetRubyVersion: 2.6.3
   Exclude:
     - bin/**/*
     - db/schema.rb
@@ -8,7 +10,6 @@ AllCops:
     - lib/tasks/*.rake
     - ./Gemfile
     - ./Capfile
-    - spec/**/* # FIXME
 
 Rails:
   Enabled: true
@@ -73,9 +74,6 @@ UnusedMethodArgument:
 MultilineOperationIndentation:
   Enabled: false
 
-AbcSize:
-  Max: 20
-
 CyclomaticComplexity:
   Max: 30
 
@@ -94,17 +92,34 @@ MultilineMethodCallIndentation:
 ConditionalAssignment:
   Enabled: false
 
+# TODO: 以下是要重構才有救的所以先關掉
+Metrics/AbcSize:
+  Max: 20
+  Exclude:
+    - "spec/**/*"
+    - "app/services/*"
+
+Metrics/ClassLength:
+  Exclude:
+    - "spec/**/*"
+    - "app/services/*"
+
 Metrics/ModuleLength:
   Exclude:
-    - "**/*_spec.rb"
-    - spec/factories/*
+    - "spec/**/*"
+    - "app/services/*"
 
 Metrics/BlockLength:
   Exclude:
-    - "**/*_spec.rb"
-    - spec/factories/*
+    - "spec/**/*"
+    - "app/services/*"
 
-# TODO: 以下都是為了升級先 disable 的規則
+Metrics/PerceivedComplexity:
+  Exclude:
+    - "spec/**/*"
+    - "app/services/*"
+
+# TODO: 以下都是為了升級 rubocop 先 disable 的規則
 Style/PercentLiteralDelimiters:
   Enabled: false
 

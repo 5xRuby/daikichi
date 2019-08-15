@@ -34,9 +34,7 @@ FactoryBot.define do
 
     trait :approved do
       before(:create) do |la|
-        create(:leave_time, la.leave_type.to_sym, user: la.user, quota: 56, usable_hours: 56,
-                                                  effective_date:  la.start_time - 50.days,
-                                                  expiration_date: la.start_time + 1.year)
+        create(:leave_time, la.leave_type.to_sym, user: la.user, quota: 56, usable_hours: 56, effective_date: la.start_time - 50.days, expiration_date: la.start_time + 1.year)
       end
 
       after(:create) do |la|
@@ -65,14 +63,10 @@ FactoryBot.define do
 
     trait :with_leave_time do
       before(:create) do |la|
-        create(:leave_time, la.leave_type.to_sym, user: la.user, quota: 56, usable_hours: 56,
-                                                  effective_date:  la.start_time - 50.days,
-                                                  expiration_date: la.start_time + 1.year)
+        create(:leave_time, la.leave_type.to_sym, user: la.user, quota: 56, usable_hours: 56, effective_date: la.start_time - 50.days, expiration_date: la.start_time + 1.year)
       end
       after(:stub) do |la|
-        create(:leave_time, la.leave_type.to_sym, user: la.user, quota: 56, usable_hours: 56,
-                                                  effective_date:  la.start_time - 50.days,
-                                                  expiration_date: la.start_time + 1.year)
+        create(:leave_time, la.leave_type.to_sym, user: la.user, quota: 56, usable_hours: 56, effective_date: la.start_time - 50.days, expiration_date: la.start_time + 1.year)
       end
     end
   end

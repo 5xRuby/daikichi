@@ -487,7 +487,7 @@ describe LeaveTimeBuilder do
       end
 
       it 'is build for the comming month' do
-        unless monthly_leave_types.blank?
+        if monthly_leave_types.present?
           leave_times = user.leave_times.reload
           expect(leave_times.size).to eq monthly_leave_types.size
           leave_time = leave_times.first
@@ -507,7 +507,7 @@ describe LeaveTimeBuilder do
       end
 
       it 'is build for current month' do
-        unless monthly_leave_types.blank?
+        if monthly_leave_types.present?
           leave_times = user.leave_times.reload
           expect(leave_times.size).to eq monthly_leave_types.size
           leave_time = leave_times.first
