@@ -129,6 +129,7 @@ class LeaveTime < ApplicationRecord
   def positive_range
     return if self.errors[:effective_date].any? || self.errors[:expiration_date].any?
     return if expiration_date >= effective_date
+
     errors.add(:effective_date, :range_should_be_positive)
   end
 
@@ -140,11 +141,13 @@ class LeaveTime < ApplicationRecord
 
   def balanced_hours
     return if errors[:usable_hours].any? or errors[:used_hours].any? or errors[:locked_hours].any?
+
     errors.add(:quota, :unbalanced_hours) if quota != (usable_hours + used_hours + locked_hours)
   end
 
   def build_special_leave_time_usages
     return unless self.special_type?
+
     leave_applications = User.find(self.user_id).leave_applications.where(leave_type: self.leave_type)
     leave_applications.each do |la|
       if la.leave_time_usages.empty? and la.hours <= la.available_leave_times.pluck(:usable_hours).sum

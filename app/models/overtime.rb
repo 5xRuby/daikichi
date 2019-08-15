@@ -41,6 +41,7 @@ class Overtime < ApplicationRecord
 
   def auto_calculated_minutes
     return @minutes = 0 unless start_time && end_time
+
     @minutes = Daikichi::Config::Biz.within(start_time, end_time).in_minutes
   end
 
@@ -50,6 +51,7 @@ class Overtime < ApplicationRecord
 
   def hours_should_be_positive_integer
     return if self.errors[:start_time].any? or self.errors[:end_time].any?
+
     errors.add(:end_time, :not_integer) if (@minutes % 60).nonzero? || !self.hours.positive?
     errors.add(:start_time, :should_be_earlier) unless self.end_time > self.start_time
   end

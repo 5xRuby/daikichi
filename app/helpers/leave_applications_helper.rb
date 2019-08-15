@@ -27,7 +27,8 @@ module LeaveApplicationsHelper
 
   def need_deduct_salary?(leave_type, leave_time)
     return if leave_time.zero?
-    leave_type == 'personal' || leave_type == 'halfpaid_sick'
+
+    %w(personal halfpaid_sick).include? leave_type
   end
 
   def summary_from(summary, user_id)

@@ -3,9 +3,9 @@
 class User < ApplicationRecord
   acts_as_paranoid
   has_many :leave_times
-  has_many :leave_applications, -> { order(id: :desc) }
-  has_many :overtimes, -> { order(id: :desc) }
-  has_many :bonus_leave_time_logs, -> { order(id: :desc) }
+  has_many :leave_applications, -> { order(id: :desc) }, inverse_of: :user
+  has_many :overtimes, -> { order(id: :desc) }, inverse_of: :user
+  has_many :bonus_leave_time_logs, -> { order(id: :desc) }, inverse_of: :user
   attr_accessor :assign_leave_time, :assign_date
 
   before_validation :parse_assign_leave_time_attr
@@ -64,6 +64,7 @@ class User < ApplicationRecord
 
   def seniority(time = Date.current)
     return 0 if !fulltime? || join_date >= Date.current
+
     @seniority ||= (join_date.nil? ? 0 : (time - join_date).to_i / 365)
   end
 
@@ -100,16 +101,19 @@ class User < ApplicationRecord
 
   def parse_assign_leave_time_attr
     return if !assign_leave_time? or self.assign_date.blank?
+
     self.assign_date = Date.parse(self.assign_date)
   end
 
   def assign_leave_time_fields
     return unless assign_leave_time?
+
     errors.add(:assign_date, :blank) if assign_date.blank?
   end
 
   def auto_assign_leave_time
     return if !assign_leave_time? or !valid_role?
+
     leave_time_builder = LeaveTimeBuilder.new self
     leave_time_builder.automatically_import by_assign_date: true
   end

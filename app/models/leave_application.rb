@@ -13,7 +13,7 @@ class LeaveApplication < ApplicationRecord
   paginates_per 15
 
   belongs_to :user
-  belongs_to :manager, class_name: 'User', foreign_key: 'manager_id'
+  belongs_to :manager, class_name: 'User', foreign_key: 'manager_id', inverse_of: :leave_applications
   has_many   :leave_time_usages
   has_many   :leave_times, through: :leave_time_usages
   has_many   :leave_hours_by_dates, dependent: :delete_all
@@ -87,6 +87,7 @@ class LeaveApplication < ApplicationRecord
 
   def check_special_leave_application_quota
     return true unless self.special_type?
+
     self.leave_time_usages.any? or self.available_leave_times.pluck(:usable_hours).sum >= self.hours
   end
 
@@ -134,19 +135,23 @@ class LeaveApplication < ApplicationRecord
 
   def auto_calculated_minutes
     return @minutes = 0 unless start_time && end_time
+
     @minutes = Daikichi::Config::Biz.within(start_time, end_time).in_minutes
   end
 
   def hours_should_be_positive_integer
     return if self.errors[:start_time].any? or self.errors[:end_time].any?
+
     errors.add(:end_time, :not_integer) if (@minutes % 60).nonzero? || !self.hours.positive?
     errors.add(:start_time, :should_be_earlier) unless self.end_time > self.start_time
   end
 
   def should_not_overlaps_other_applications
     return if self.errors[:start_time].any? or self.errors[:end_time].any?
+
     overlapped = LeaveApplication.personal(user_id, start_time, end_time).where.not(id: self.id)
     return unless overlapped.any?
+
     overlap_application_error_messages(overlapped)
   end
 
