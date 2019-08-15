@@ -13,8 +13,8 @@ class LeaveApplication < ApplicationRecord
 
   belongs_to :user
   belongs_to :manager, class_name: 'User', foreign_key: 'manager_id'
-  has_many   :leave_times, through: :leave_time_usages
   has_many   :leave_time_usages
+  has_many   :leave_times, through: :leave_time_usages
   has_many   :leave_hours_by_dates, dependent: :delete_all
 
   validates :leave_type, :description, :start_time, :end_time, presence: true
@@ -166,6 +166,7 @@ class LeaveApplication < ApplicationRecord
   end
 
   def order_by_sequence
-    format 'array_position(Array%s, leave_type::TEXT)', Settings.leave_applications.available_quota_types.send(self.leave_type).to_s.tr('"', "'")
+    leavetype = Settings.leave_applications.available_quota_types.send(self.leave_type)
+    Arel.sql "array_position(Array['#{leavetype}'], leave_type::TEXT)"
   end
 end

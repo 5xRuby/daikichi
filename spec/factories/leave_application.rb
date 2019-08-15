@@ -3,7 +3,7 @@ FactoryGirl.define do
   factory :leave_application do
     user
     leave_type  'personal'
-    description { Faker::Lorem.characters(30) }
+    description { Faker::Lorem.characters(number: 30) }
     start_time  { Daikichi::Config::Biz.periods.after(Time.current.beginning_of_day).first.start_time }
     end_time    { Daikichi::Config::Biz.periods.after(Time.current.beginning_of_day).first(2).second.end_time }
 
