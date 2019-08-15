@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Overtime < ApplicationRecord
   include AASM
 
@@ -5,7 +7,7 @@ class Overtime < ApplicationRecord
   validates :description, :start_time, :end_time, presence: true
   validate :hours_should_be_positive_integer
   before_validation :assign_hours
-  enum status:     Settings.leave_applications.statuses
+  enum status: Settings.leave_applications.statuses
 
   aasm column: :status, enum: true do
     state :pending, initial: true
@@ -54,9 +56,9 @@ class Overtime < ApplicationRecord
 
   def create_leave_time
     if Date.today.month > 10
-      LeaveTime.create(leave_type: 'bonus', quota: hours, usable_hours: hours, used_hours: 0, locked_hours: 0, user_id: user_id, effective_date: Date.today, expiration_date: Date.today.end_of_year + 3.months, remark: "申請加班補休核准")
+      LeaveTime.create(leave_type: 'bonus', quota: hours, usable_hours: hours, used_hours: 0, locked_hours: 0, user_id: user_id, effective_date: Date.today, expiration_date: Date.today.end_of_year + 3.months, remark: '申請加班補休核准')
     else
-      LeaveTime.create(leave_type: 'bonus', quota: hours, usable_hours: hours, used_hours: 0, locked_hours: 0, user_id: user_id, effective_date: Date.today, expiration_date: Date.today.end_of_year, remark: "申請加班補休核准")
+      LeaveTime.create(leave_type: 'bonus', quota: hours, usable_hours: hours, used_hours: 0, locked_hours: 0, user_id: user_id, effective_date: Date.today, expiration_date: Date.today.end_of_year, remark: '申請加班補休核准')
     end
   end
 end

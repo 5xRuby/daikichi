@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class BaseController < ApplicationController
   before_action :set_actions
   helper_method :current_collection, :current_object

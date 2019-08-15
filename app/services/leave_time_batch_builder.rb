@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class LeaveTimeBatchBuilder
   MONTHLY_LEED_DAYS         = Settings.leed_days.monthly
   JOIN_DATE_BASED_LEED_DAYS = Settings.leed_days.join_date_based

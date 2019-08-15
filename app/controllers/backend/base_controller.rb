@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class Backend::BaseController < ::BaseController
   before_action :authenticate_hr!
 

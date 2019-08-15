@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class Backend::LeaveTimesController < Backend::BaseController
   before_action :set_query_object
 

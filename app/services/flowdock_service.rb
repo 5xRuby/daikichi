@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class FlowdockService
   include ActiveModel::Model
   include Rails.application.routes.url_helpers

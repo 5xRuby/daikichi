@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module ApplicationHelper
   # show 才會用到 tr_by_object，將 object 寫在最後面，可以在呼叫 tr_by_object 時省略不寫
   def tr_by_object(attribute, conversion = nil, key = nil, object = current_object)

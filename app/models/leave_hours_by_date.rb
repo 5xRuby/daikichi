@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class LeaveHoursByDate < ApplicationRecord
   belongs_to :leave_application
 

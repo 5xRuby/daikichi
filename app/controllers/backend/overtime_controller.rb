@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class Backend::OvertimeController < Backend::BaseController
   include Selectable
   before_action :set_query_object

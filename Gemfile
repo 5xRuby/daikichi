@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 source 'https://rubygems.org'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
@@ -73,10 +74,10 @@ group :development do
   gem 'capistrano-rails'
   gem 'capistrano-upload-config'
   gem 'capistrano-crono'
-  gem 'hirb-unicode'
+# gem 'hirb-unicode'
   gem 'listen'
   gem 'rack-mini-profiler', '~> 0.10.1'
-  gem 'rubocop'
+  gem 'rubocop', '0.49.1'
   gem 'spring'
   gem 'spring-watcher-listen'
   gem 'web-console', '3.7.0'

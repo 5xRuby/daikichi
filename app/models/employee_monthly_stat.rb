@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class EmployeeMonthlyStat
   def self.total_leave_times_hours(year, month)
     range_start = Time.zone.now.change(year: year, month: month, day: 1, hour: 0)

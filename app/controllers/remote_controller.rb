@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class RemoteController < BaseController
   skip_load_and_authorize_resource
   load_and_authorize_resource class: LeaveApplication

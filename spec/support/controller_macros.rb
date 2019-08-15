@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module ControllerMacros
   def login_user(user = FactoryBot.create(:user))
     before(:each) do
