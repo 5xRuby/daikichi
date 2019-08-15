@@ -1,5 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :overtime do
-    
   end
 end

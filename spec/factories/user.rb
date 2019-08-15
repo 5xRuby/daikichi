@@ -1,27 +1,27 @@
 # frozen_string_literal: true
-FactoryGirl.define do
+FactoryBot.define do
   factory :user do
     name { Faker::Name.name }
     login_name { Faker::Internet.user_name }
     email { Faker::Internet.safe_email }
     password { Faker::Internet.password }
     join_date { Time.zone.today }
-    role 'employee'
+    role { 'employee' }
 
     trait :fulltime do
       role { %i(manager hr employee).sample }
     end
 
     trait :manager do
-      role 'manager'
+      role { 'manager' }
     end
 
     trait :hr do
-      role 'hr'
+      role { 'hr' }
     end
 
     trait :employee do
-      role 'employee'
+      role { 'employee' }
     end
 
     trait :parttime do
@@ -29,19 +29,19 @@ FactoryGirl.define do
     end
 
     trait :intern do
-      role 'intern'
+      role { 'intern' }
     end
 
     trait :contractor do
-      role 'contractor'
+      role { 'contractor' }
     end
 
     trait :pending do
-      role 'pending'
+      role { 'pending' }
     end
 
     trait :resigned do
-      role 'resigned'
+      role { 'resigned' }
       # before(:create) { User.skip_callback(:create, :after, :auto_assign_leave_time) }
       # after(:create)  { User.set_callback(:create, :after, :auto_assign_leave_time)  }
     end
@@ -51,7 +51,7 @@ FactoryGirl.define do
     end
 
     factory :manager_eddie, traits: [:manager] do
-      name 'eddie'
+      name { 'eddie' }
     end
 
     # base year is as same as the year of time when the code is running
