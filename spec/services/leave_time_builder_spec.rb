@@ -534,7 +534,6 @@ describe LeaveTimeBuilder do
       LeaveTimeBuilder.new(user).weekly_import(by_assign_date: true)
       leave_times = user.leave_times.reload
       expect(leave_times.size).to eq weekly_leave_types.size * 4
-      date = Time.zone.today
       leave_time = leave_times.first
       initial_quota = weekly_leave_types.find { |lt| lt.first == leave_time.leave_type }.second['quota'] * 8
       expect(leave_time.quota).to eq initial_quota
@@ -555,8 +554,8 @@ describe LeaveTimeBuilder do
         expect(leave_time.quota).to eq initial_quota
         expect(leave_time.usable_hours).to eq initial_quota
         expect(leave_time.used_hours).to eq 0
-        expect(leave_time.effective_date).to  eq (date + 4.week).beginning_of_week
-        expect(leave_time.expiration_date).to eq (date + 4.week).end_of_week
+        expect(leave_time.effective_date).to eq(date + 4.weeks).beginning_of_week
+        expect(leave_time.expiration_date).to eq(date + 4.weeks).end_of_week
       end
     end
 

@@ -31,7 +31,7 @@ module LeaveApplicationsHelper
 
   def summary_from(summary, user_id)
     leave_types = Settings.leave_times.quota_types.keys
-    summary[user_id] || Hash[leave_types.collect{ |type| [type, 0]}]
+    summary[user_id] || Hash[leave_types.collect { |type| [type, 0] }]
   end
 
   def leave_type_dropdown_menu(action_name, user)

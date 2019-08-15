@@ -40,6 +40,8 @@ class Overtime < ApplicationRecord
     end
   end
 
+  private
+
   def leave_time_params
     {
       user_id: self.user_id,

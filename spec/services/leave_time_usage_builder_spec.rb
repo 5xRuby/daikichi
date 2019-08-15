@@ -18,12 +18,12 @@ describe LeaveTimeUsageBuilder do
 
     it 'returns a hash to represent leave time as hours by date' do
       builder = described_class.new leave_application
-      expect(builder.leave_hours_by_date).to eq({
+      expect(builder.leave_hours_by_date).to eq(
         Date.parse('2017-05-04') => 8,
         Date.parse('2017-05-05') => 8,
         Date.parse('2017-05-08') => 8,
         Date.parse('2017-05-09') => 3
-      })
+      )
       expect(builder.leave_hours_by_date.values.sum).to eq total_used_hours
     end
   end
@@ -157,8 +157,8 @@ describe LeaveTimeUsageBuilder do
         end
       end
 
-      #TODO: add spec about an application which is used two or more leave_times.
-      #context 'leave_type :sick' do
+      # TODO: add spec about an application which is used two or more leave_times.
+      # context 'leave_type :sick' do
       #  let!(:fullpaid_sick) { create(:leave_time, :fullpaid_sick, user: user, quota: 50, usable_hours: 50, effective_date: effective_date, expiration_date: expiration_date) }
       #  subject { create(:leave_application, :sick, user: user, start_time: start_time, end_time: end_time) }
       #  it 'should use fullpaid_sick prior to halfpaid_sick' do
@@ -199,7 +199,7 @@ describe LeaveTimeUsageBuilder do
       #    expect(less_usable_hours_halfpaid_sick.usable_hours).to be 40
       #    expect(less_usable_hours_halfpaid_sick.locked_hours).to be 10
       #  end
-      #end
+      # end
     end
   end
 end
