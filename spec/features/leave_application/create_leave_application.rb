@@ -2,7 +2,7 @@ require 'rails_helper'
 
 feature "special type leave application" do
   context "created" do
-    let!(:user) { FactoryGirl.create(:user, :fulltime, join_date: Date.current - 1.year - 1.day) }
+    let!(:user) { FactoryBot.create(:user, :fulltime, join_date: Date.current - 1.year - 1.day) }
 
     before :each do
       visit '/users/sign_in'
@@ -95,7 +95,7 @@ feature "special type leave application" do
   end
 
   context "verified" do
-    let!(:user) { FactoryGirl.create(:user, :manager, join_date: Date.current - 1.year - 1.day) }
+    let!(:user) { FactoryBot.create(:user, :manager, join_date: Date.current - 1.year - 1.day) }
     let!(:leave_application) { LeaveApplication.create(user_id: user.id, leave_type: 'maternity', start_time: Time.zone.local(Time.current.year, 8, 15, 9, 30, 0), end_time: Time.zone.local(Time.current.year, 8, 15, 18, 30, 0), description: 'test') }
     let!(:leave_application_paid_vaca) { LeaveApplication.create(user_id: user.id, leave_type: 'paid_vacation', start_time: Time.zone.local(Time.current.year, 8, 15, 9, 30, 0), end_time: Time.zone.local(Time.current.year, 8, 15, 18, 30, 0), description: 'test') }
 

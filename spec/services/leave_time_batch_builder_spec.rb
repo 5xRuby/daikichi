@@ -18,10 +18,10 @@ describe LeaveTimeBatchBuilder do
     after  { User.set_callback(:create, :after, :auto_assign_leave_time)  }
 
     context 'is forced' do
-      let!(:fulltime) { FactoryGirl.create(:user, :fulltime, join_date: Date.current - 1.year - 1.day) }
-      let!(:parttime) { FactoryGirl.create(:user, :intern, join_date: Date.current - 1.year - 1.day) }
-      let!(:contractor) { FactoryGirl.create(:user, :contractor, join_date: Date.current - 1.year - 1.day) }
-      let!(:user)     { FactoryGirl.create(:user, join_date: Date.current - 1.year - 1.day) }
+      let!(:fulltime) { FactoryBot.create(:user, :fulltime, join_date: Date.current - 1.year - 1.day) }
+      let!(:parttime) { FactoryBot.create(:user, :intern, join_date: Date.current - 1.year - 1.day) }
+      let!(:contractor) { FactoryBot.create(:user, :contractor, join_date: Date.current - 1.year - 1.day) }
+      let!(:user)     { FactoryBot.create(:user, join_date: Date.current - 1.year - 1.day) }
 
       before do
         described_class.new(forced: true).automatically_import
@@ -44,10 +44,10 @@ describe LeaveTimeBatchBuilder do
     end
 
     context 'not forced' do
-      let!(:fulltime) { FactoryGirl.create(:user, :fulltime, join_date: join_date) }
-      let!(:parttime) { FactoryGirl.create(:user, :intern, join_date: join_date) }
-      let!(:contractor) { FactoryGirl.create(:user, :contractor, join_date: join_date) }
-      let!(:user)     { FactoryGirl.create(:user, join_date: join_date - 1.day) }
+      let!(:fulltime) { FactoryBot.create(:user, :fulltime, join_date: join_date) }
+      let!(:parttime) { FactoryBot.create(:user, :intern, join_date: join_date) }
+      let!(:contractor) { FactoryBot.create(:user, :contractor, join_date: join_date) }
+      let!(:user)     { FactoryBot.create(:user, join_date: join_date - 1.day) }
       let!(:datetime) { Time.zone.local(2017, 5, 4, 9, 30) }
 
       context 'end of working month' do

@@ -1,34 +1,34 @@
 # frozen_string_literal: true
-FactoryGirl.define do
+FactoryBot.define do
   factory :leave_application do
     user
-    leave_type  'personal'
+    leave_type  { 'personal' }
     description { Faker::Lorem.characters(number: 30) }
     start_time  { Daikichi::Config::Biz.periods.after(Time.current.beginning_of_day).first.start_time }
     end_time    { Daikichi::Config::Biz.periods.after(Time.current.beginning_of_day).first(2).second.end_time }
 
     trait :halfpaid_sick do
-      leave_type 'halfpaid_sick'
+      leave_type { 'halfpaid_sick' }
     end
 
     trait :fullpaid_sick do
-      leave_type 'fullpaid_sick'
+      leave_type { 'fullpaid_sick' }
     end
 
     trait :personal do
-      leave_type 'personal'
+      leave_type { 'personal' }
     end
 
     trait :bonus do
-      leave_type 'bonus'
+      leave_type { 'bonus' }
     end
 
     trait :annual do
-      leave_type 'annual'
+      leave_type { 'annual' }
     end
 
     trait :pending do
-      status 'pending'
+      status { 'pending' }
     end
 
     trait :approved do
@@ -44,12 +44,12 @@ FactoryGirl.define do
     end
 
     trait :rejected do
-      status 'rejected'
+      status { 'rejected' }
       association :manager, factory: [:user, :manager]
     end
 
     trait :canceled do
-      status 'canceled'
+      status { 'canceled' }
     end
 
     trait :happened do

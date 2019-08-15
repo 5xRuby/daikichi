@@ -61,7 +61,7 @@ gem 'carrierwave', '~> 1.2', '>= 1.2.3'
 group :development, :test do
   gem 'awesome_print'
   gem 'byebug', platform: :mri
-  gem 'factory_girl_rails'
+  gem 'factory_bot_rails'
   gem 'faker'
   gem 'pry-byebug'
   gem 'timecop'

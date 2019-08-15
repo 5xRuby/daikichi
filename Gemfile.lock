@@ -160,10 +160,10 @@ GEM
     docile (1.1.5)
     erubi (1.8.0)
     execjs (2.7.0)
-    factory_girl (4.9.0)
+    factory_bot (4.11.1)
       activesupport (>= 3.0.0)
-    factory_girl_rails (4.9.0)
-      factory_girl (~> 4.9.0)
+    factory_bot_rails (4.11.1)
+      factory_bot (~> 4.11.1)
       railties (>= 3.0.0)
     faker (2.1.2)
       i18n (>= 0.8)
@@ -441,7 +441,7 @@ DEPENDENCIES
   database_rewinder
   date_validator
   devise
-  factory_girl_rails
+  factory_bot_rails
   faker
   flatpickr
   flowdock
