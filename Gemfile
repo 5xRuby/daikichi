@@ -2,7 +2,8 @@
 source 'https://rubygems.org'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '>= 5.0.0.rc1', '< 5.1'
+gem 'rails', '5.2.3'
+gem 'bootsnap'
 # Use postgresql as the database for Active Record
 gem 'pg', '~> 0.18'
 # Use Puma as the app server
@@ -12,7 +13,7 @@ gem 'sass-rails', '~> 5.0'
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier', '>= 1.3.0'
 # Use CoffeeScript for .coffee assets and views
-gem 'coffee-rails', '~> 4.1.0'
+gem 'coffee-rails'
 # See https://github.com/rails/execjs#readme for more supported runtimes
 # gem 'therubyracer', platforms: :ruby
 # Use jquery as the JavaScript library
@@ -69,27 +70,27 @@ group :development, :test do
 end
 
 group :development do
-  gem 'capistrano', '~> 3.8.1'
-  gem 'capistrano-rails', '~> 1.1'
+  gem 'capistrano'
+  gem 'capistrano-rails'
   gem 'capistrano-upload-config'
   gem 'capistrano-crono'
   gem 'hirb-unicode'
-  gem 'listen', '~> 3.0.5'
+  gem 'listen'
   gem 'rack-mini-profiler', '~> 0.10.1'
   gem 'rubocop'
   gem 'spring'
-  gem 'spring-watcher-listen', '~> 2.0.0'
-  gem 'web-console'
+  gem 'spring-watcher-listen'
+  gem 'web-console', '3.7.0'
   gem 'i18n-debug'
 end
 
 group :test do
-  gem 'codeclimate-test-reporter', '~> 1.0.0'
+  gem 'codeclimate-test-reporter', '~> 1.0.9'
   gem 'database_rewinder'
   gem 'rails-controller-testing'
   gem 'shoulda-matchers'
   gem 'shoulda-callback-matchers'
-  gem 'simplecov'
+  gem 'simplecov', '<= 0.13'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
