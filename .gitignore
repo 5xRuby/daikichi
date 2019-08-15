@@ -24,7 +24,6 @@
 /config/application.yml
 
 # Personal settings
-/.irbrc
 /.powenv
 
 # Private data
