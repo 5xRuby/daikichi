@@ -24,6 +24,7 @@ class FlowdockService
 
   def send_update_notification(event)
     return if event.blank?
+
     executer = %i(canceled pending).include?(event) ? leave_application.user : leave_application.manager
     notify(
       subject: "#{executer.name} #{LeaveApplication.human_enum_value(:modify_actions, event)}了一筆 #{leave_application.user.name} 的 #{LeaveApplication.human_enum_value(:leave_type, leave_application.leave_type)} 假單",

@@ -1,17 +1,13 @@
 AllCops:
   TargetRubyVersion: 2.3
-  Include:
-    - ./Rakefile
-    - ./config.ru
   Exclude:
     - bin/**/*
     - db/schema.rb
     - db/migrate/*
     - config/**/*
     - lib/tasks/*.rake
-    - Gemfile
-    - Rakefile
-    - Capfile
+    - ./Gemfile
+    - ./Capfile
     - spec/**/* # FIXME
 
 Rails:
@@ -108,6 +104,7 @@ Metrics/BlockLength:
     - "**/*_spec.rb"
     - spec/factories/*
 
+# TODO: 以下都是為了升級先 disable 的規則
 Style/PercentLiteralDelimiters:
   Enabled: false
 
@@ -115,4 +112,10 @@ Style/SymbolArray:
   Enabled: false
 
 Style/EmptyMethod:
+  Enabled: false
+
+Rails/Presence:
+  Enabled: false
+
+Naming/MemoizedInstanceVariableName:
   Enabled: false

@@ -17,6 +17,12 @@ class Backend::UsersController < Backend::BaseController
     super
   end
 
+  def new
+  end
+
+  def edit
+  end
+
   private
 
   def set_query_object

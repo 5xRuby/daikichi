@@ -88,11 +88,13 @@ module ApplicationHelper
 
   def hours_to_humanize(hours)
     return '-' if hours.to_i.zero?
+
     I18n.t('time.humanize_working_hour', days: hours.to_i / 8, hours: hours % 8, total: hours)
   end
 
   def hours_for_total(hours)
     return '-' if hours.to_i.zero?
+
     I18n.t('time.total_hour', total: hours)
   end
 

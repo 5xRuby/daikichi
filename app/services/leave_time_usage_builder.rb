@@ -23,6 +23,7 @@ class LeaveTimeUsageBuilder
           hours = @leave_hours_by_date[date]
           break if usable_hours_is_empty?(lt)
           next if corresponding_leave_hours_date_is_zero?(date) or !in_leave_time_inteval_range?(lt, date)
+
           deduct_leave_hours_by_date(lt, date)
           stack_leave_time_usage_record(lt, date, hours - @leave_hours_by_date[date])
         end

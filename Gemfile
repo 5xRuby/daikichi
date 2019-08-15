@@ -78,7 +78,7 @@ group :development do
 # gem 'hirb-unicode'
   gem 'listen'
   gem 'rack-mini-profiler', '~> 0.10.1'
-  gem 'rubocop', '0.49.1'
+  gem 'rubocop', '0.59.2'
   gem 'spring'
   gem 'spring-watcher-listen'
   gem 'web-console', '3.7.0'

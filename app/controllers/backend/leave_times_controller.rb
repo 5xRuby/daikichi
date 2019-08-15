@@ -68,7 +68,8 @@ class Backend::LeaveTimesController < Backend::BaseController
 
   def batch_leave_time_params
     params.require(:leave_time).permit(
-      :leave_type, :quota, :effective_date, :expiration_date, :usable_hours, :used_hours, :remark)
+      :leave_type, :quota, :effective_date, :expiration_date, :usable_hours, :used_hours, :remark
+    )
   end
 
   def search_params
