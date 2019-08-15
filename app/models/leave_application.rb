@@ -164,8 +164,8 @@ class LeaveApplication < ApplicationRecord
           'activerecord.errors.models.leave_application.attributes.base.overlap_application',
           leave_type: LeaveApplication.human_enum_value(:leave_type, la.leave_type),
           start_time: la.start_time.to_formatted_s(:month_date),
-          end_time:   la.end_time.to_formatted_s(:month_date),
-          link:       url.leave_application_path(id: la.id)
+          end_time: la.end_time.to_formatted_s(:month_date),
+          link: url.leave_application_path(id: la.id)
         )
       )
     end

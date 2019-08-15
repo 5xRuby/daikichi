@@ -29,7 +29,7 @@ describe LeaveTimeBatchBuilder do
       end
 
       it 'should run join_date_based_import and monthly import with prebuild option for all users' do
-        unless monthly_leave_types.blank?
+        if monthly_leave_types.present?
           leave_times = LeaveTime.where(user_id: [fulltime.id, parttime.id, user.id, contractor.id])
           expect(leave_times.reload.size).to eq(1 + (monthly_leave_types.size + join_date_based_leave_types.size) * 3 - seniority_based_leave_types.size)
           monthly_leave_time = leave_times.find { |x| x.leave_type == monthly_leave_types.first.first }

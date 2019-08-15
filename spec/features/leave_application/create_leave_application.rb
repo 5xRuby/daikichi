@@ -96,7 +96,7 @@ feature 'special type leave application' do
     end
   end
 
-  context "verified" do
+  context 'verified' do
     let!(:user) { FactoryBot.create(:user, :manager, join_date: Date.current - 1.year - 1.day) }
     let!(:leave_application) { LeaveApplication.create(user_id: user.id, leave_type: 'maternity', start_time: Time.zone.local(Time.current.year, 8, 15, 9, 30, 0), end_time: Time.zone.local(Time.current.year, 8, 15, 18, 30, 0), description: 'test') }
     let!(:leave_application_paid_vaca) { LeaveApplication.create(user_id: user.id, leave_type: 'paid_vacation', start_time: Time.zone.local(Time.current.year, 8, 15, 9, 30, 0), end_time: Time.zone.local(Time.current.year, 8, 15, 18, 30, 0), description: 'test') }
@@ -124,6 +124,6 @@ feature 'special type leave application' do
   def login(email, password)
     fill_in '員工帳號', with: email
     fill_in '密碼', with: password
-    click_button "送出"
+    click_button '送出'
   end
 end
