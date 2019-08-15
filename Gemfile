@@ -74,7 +74,6 @@ group :development do
   gem 'capistrano-rails'
   gem 'capistrano-upload-config'
   gem 'capistrano-crono'
-# gem 'hirb-unicode'
   gem 'listen'
   gem 'rack-mini-profiler', '~> 0.10.1'
   gem 'rubocop', '0.69.0'

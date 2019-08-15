@@ -57,10 +57,10 @@ class Overtime < ApplicationRecord
   end
 
   def create_leave_time
-    if Date.today.month > 10
-      LeaveTime.create(leave_type: 'bonus', quota: hours, usable_hours: hours, used_hours: 0, locked_hours: 0, user_id: user_id, effective_date: Date.today, expiration_date: Date.today.end_of_year + 3.months, remark: '申請加班補休核准')
+    if Time.zone.today.month > 10
+      LeaveTime.create(leave_type: 'bonus', quota: hours, usable_hours: hours, used_hours: 0, locked_hours: 0, user_id: user_id, effective_date: Time.zone.today, expiration_date: Time.zone.today.end_of_year + 3.months, remark: '申請加班補休核准')
     else
-      LeaveTime.create(leave_type: 'bonus', quota: hours, usable_hours: hours, used_hours: 0, locked_hours: 0, user_id: user_id, effective_date: Date.today, expiration_date: Date.today.end_of_year, remark: '申請加班補休核准')
+      LeaveTime.create(leave_type: 'bonus', quota: hours, usable_hours: hours, used_hours: 0, locked_hours: 0, user_id: user_id, effective_date: Time.zone.today, expiration_date: Time.zone.today.end_of_year, remark: '申請加班補休核准')
     end
   end
 end

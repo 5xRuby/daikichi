@@ -88,10 +88,10 @@ describe LeaveTimeUsageBuilder do
       let(:end_time)   { Time.zone.local(2017, 5, 12, 12, 30) }
       subject { create(:leave_application, :personal, user: user, start_time: start_time, end_time: end_time) }
 
-      shared_examples 'not covered partially' do |part, lt_params_1, lt_params_2, error_date, lack_hours|
+      shared_examples 'not covered partially' do |part, lt_params1, lt_params2, error_date, lack_hours|
         it "create failed with LeaveTimes not covering the #{part} of LeaveApplication" do
-          create(:leave_time, :annual, user: user, quota: 50, usable_hours: 50, effective_date: Date.parse(lt_params_1[:effective_date]), expiration_date: Date.parse(lt_params_1[:expiration_date]))
-          create(:leave_time, :annual, user: user, quota: 50, usable_hours: 50, effective_date: Date.parse(lt_params_2[:effective_date]), expiration_date: Date.parse(lt_params_2[:expiration_date]))
+          create(:leave_time, :annual, user: user, quota: 50, usable_hours: 50, effective_date: Date.parse(lt_params1[:effective_date]), expiration_date: Date.parse(lt_params1[:expiration_date]))
+          create(:leave_time, :annual, user: user, quota: 50, usable_hours: 50, effective_date: Date.parse(lt_params2[:effective_date]), expiration_date: Date.parse(lt_params2[:expiration_date]))
           expect(subject.errors).not_to be_empty
           expect(subject.errors[:hours]).to include(I18n.t('activerecord.errors.models.leave_application.attributes.hours.lacking_hours', date: Date.parse(error_date), hours: lack_hours))
           expect(user.leave_applications).to be_empty

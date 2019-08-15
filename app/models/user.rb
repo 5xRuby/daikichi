@@ -2,7 +2,7 @@
 
 class User < ApplicationRecord
   acts_as_paranoid
-  has_many :leave_times
+  has_many :leave_times, dependent: :delete_all
   has_many :leave_applications, -> { order(id: :desc) }, inverse_of: :user
   has_many :overtimes, -> { order(id: :desc) }, inverse_of: :user
   has_many :bonus_leave_time_logs, -> { order(id: :desc) }, inverse_of: :user

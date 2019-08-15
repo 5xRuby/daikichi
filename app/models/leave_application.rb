@@ -14,7 +14,7 @@ class LeaveApplication < ApplicationRecord
 
   belongs_to :user
   belongs_to :manager, class_name: 'User', foreign_key: 'manager_id', inverse_of: :leave_applications
-  has_many   :leave_time_usages
+  has_many   :leave_time_usages, dependent: :delete_all
   has_many   :leave_times, through: :leave_time_usages
   has_many   :leave_hours_by_dates, dependent: :delete_all
 

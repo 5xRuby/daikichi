@@ -20,7 +20,7 @@ RSpec.describe User, type: :model do
       end
 
       it 'can get options for select' do
-        expect(described_class.enum_attributes_for_select(:roles)).to eq I18n.t('activerecord.attributes.user.roles').map { |key, val| [val, key.to_s] }
+        expect(described_class.enum_attributes_for_select(:roles)).to eq(I18n.t('activerecord.attributes.user.roles').map { |key, val| [val, key.to_s] })
       end
 
       it 'can get humanize enum value' do
