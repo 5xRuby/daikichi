@@ -47,6 +47,10 @@
       %th= t_attribute(:updated_at, current_object)
       %td= l current_object.updated_at, format: :long
 
+    %tr
+      %th= t_attribute(:attachment, current_object)
+      %td= link_to_attachment(current_object.attachment.url)
+
 .panel.panel-info
   .panel-heading
     %h4.panel-title= t_attribute(:leave_time_usages, current_object)

@@ -41,4 +41,9 @@ module LeaveApplicationsHelper
       LeaveApplication.enum_attributes_for_select(:leave_types)
     end
   end
+
+  def link_to_attachment(attachment)
+    link_to t('.exam_attachment'), current_object.attachment.url, target: :_blank if attachment
+  end
+
 end
