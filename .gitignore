@@ -18,7 +18,6 @@
 /.byebug_history
 /vendor/bundle/*
 /public/assets
-/public/uploads
 
 /config/database.yml
 /config/secrets.yml

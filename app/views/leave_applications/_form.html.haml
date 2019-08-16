@@ -10,5 +10,4 @@
   = f.input :end_time,   as: :string, required: true, input_html: { data: { input: 'datetimepicker', format: 'Y/m/d H:i' } }
   = f.error :hours, error: sanitize(f.object.errors[:hours].join('<br />'), tags: %w(br))
   = f.input :description, required: true
-  = f.input :attachment, label: t('activerecord.attributes.leave_application.attachment') + (current_object.attachment.url ? ': ' + File.basename(current_object.attachment.url) : '')
   = f.button :submit, class: "submit"

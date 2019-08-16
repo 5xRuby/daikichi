@@ -97,7 +97,6 @@ zh-TW:
         comment: "主管備註"
         created_at: "建立時間"
         updated_at: "更新時間"
-        attachment: "附件"
     errors:
       models:
         user:

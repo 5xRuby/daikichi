@@ -44,10 +44,6 @@
       %th= t_attribute(:updated_at, current_object)
       %td= l current_object.updated_at, format: :long
 
-    %tr
-      %th= t_attribute(:attachment, current_object)
-      %td= link_to_attachment(current_object.attachment.url)       
-
 - unless current_user.contractor?
   .panel.panel-info
     .panel-heading

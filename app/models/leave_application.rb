@@ -3,8 +3,6 @@ class LeaveApplication < ApplicationRecord
   include AASM
   include SignatureConcern
 
-  mount_uploader :attachment, AttachmentUploader
-
   delegate :name, to: :user, prefix: true
 
   enum status:     Settings.leave_applications.statuses

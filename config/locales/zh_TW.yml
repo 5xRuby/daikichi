@@ -132,7 +132,6 @@ zh-TW:
         one: 字數錯誤 (必須是一個字)
         other: 字數錯誤 (必須是 %{count} 個字)
       other_than: 不可以是 %{count} 個字
-      max_size_error: 檔案最大16mb
     template:
       body: 以下欄位發生問題：
       header:
