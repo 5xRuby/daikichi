@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180713072337) do
+ActiveRecord::Schema.define(version: 20171229103357) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -50,7 +50,6 @@ ActiveRecord::Schema.define(version: 20180713072337) do
     t.integer  "manager_id"
     t.text     "comment"
     t.integer  "leave_time_id"
-    t.string   "attachment"
     t.index ["manager_id"], name: "index_leave_applications_on_manager_id", using: :btree
   end
 
