@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class LeaveApplicationObserver < ActiveRecord::Observer
   observe LeaveApplication
 
@@ -43,6 +44,7 @@ class LeaveApplicationObserver < ActiveRecord::Observer
 
   def create_leave_hours_by_date(record)
     return unless record.interval_changed?
+
     leave_hours_by_dates = LeaveTimeUsageBuilder.new(record).leave_hours_by_date.map do |date|
       record.leave_hours_by_dates.build(date: date.first, hours: date.second)
     end
@@ -75,6 +77,7 @@ class LeaveApplicationObserver < ActiveRecord::Observer
     usage.reload
     return usage.leave_time.unlock_hours!(usage.used_hours) if record.aasm.from_state == :pending
     return usage.leave_time.unuse_hours!(usage.used_hours) if record.aasm.from_state == :approved
+
     raise ActiveRecord::Rollback
   end
 end

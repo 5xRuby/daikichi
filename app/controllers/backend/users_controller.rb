@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class Backend::UsersController < Backend::BaseController
   before_action :set_query_object
   before_action :set_minimum_password_length, only: %i(new edit)
@@ -14,6 +15,12 @@ class Backend::UsersController < Backend::BaseController
     end
 
     super
+  end
+
+  def new
+  end
+
+  def edit
   end
 
   private

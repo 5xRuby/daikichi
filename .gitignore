@@ -6,7 +6,6 @@
 
 # Ignore bundler config.
 /.bundle
-/.ruby-version
 
 # Ignore all logfiles and tempfiles.
 /log/*
@@ -25,7 +24,6 @@
 /config/application.yml
 
 # Personal settings
-/.irbrc
 /.powenv
 
 # Private data

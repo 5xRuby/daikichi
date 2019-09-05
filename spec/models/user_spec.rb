@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe User, type: :model do
@@ -19,7 +20,7 @@ RSpec.describe User, type: :model do
       end
 
       it 'can get options for select' do
-        expect(described_class.enum_attributes_for_select(:roles)).to eq I18n.t('activerecord.attributes.user.roles').map { |key, val| [val, key.to_s] }
+        expect(described_class.enum_attributes_for_select(:roles)).to eq(I18n.t('activerecord.attributes.user.roles').map { |key, val| [val, key.to_s] })
       end
 
       it 'can get humanize enum value' do
@@ -88,7 +89,7 @@ RSpec.describe User, type: :model do
         shared_examples 'leave_type created with specific quota' do |roles, leave_type, quota|
           roles.each do |role|
             it "should have leave_type of \"#{leave_type}\" with quota of #{quota} in roles: #{roles.join ', '}" do
-              leave_time = create(:user, role).leave_times.find_by_leave_type(leave_type)
+              leave_time = create(:user, role).leave_times.find_by(leave_type: leave_type)
               expect(leave_time).not_to be_nil
               expect(leave_time.quota).to be quota
               expect(leave_time.usable_hours).to be quota

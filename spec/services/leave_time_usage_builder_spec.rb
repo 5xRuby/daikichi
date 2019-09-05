@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 describe LeaveTimeUsageBuilder do
@@ -18,12 +20,12 @@ describe LeaveTimeUsageBuilder do
 
     it 'returns a hash to represent leave time as hours by date' do
       builder = described_class.new leave_application
-      expect(builder.leave_hours_by_date).to eq({
+      expect(builder.leave_hours_by_date).to eq(
         Date.parse('2017-05-04') => 8,
         Date.parse('2017-05-05') => 8,
         Date.parse('2017-05-08') => 8,
         Date.parse('2017-05-09') => 3
-      })
+      )
       expect(builder.leave_hours_by_date.values.sum).to eq total_used_hours
     end
   end
@@ -86,10 +88,10 @@ describe LeaveTimeUsageBuilder do
       let(:end_time)   { Time.zone.local(2017, 5, 12, 12, 30) }
       subject { create(:leave_application, :personal, user: user, start_time: start_time, end_time: end_time) }
 
-      shared_examples 'not covered partially' do |part, lt_params_1, lt_params_2, error_date, lack_hours|
+      shared_examples 'not covered partially' do |part, lt_params1, lt_params2, error_date, lack_hours|
         it "create failed with LeaveTimes not covering the #{part} of LeaveApplication" do
-          create(:leave_time, :annual, user: user, quota: 50, usable_hours: 50, effective_date: Date.parse(lt_params_1[:effective_date]), expiration_date: Date.parse(lt_params_1[:expiration_date]))
-          create(:leave_time, :annual, user: user, quota: 50, usable_hours: 50, effective_date: Date.parse(lt_params_2[:effective_date]), expiration_date: Date.parse(lt_params_2[:expiration_date]))
+          create(:leave_time, :annual, user: user, quota: 50, usable_hours: 50, effective_date: Date.parse(lt_params1[:effective_date]), expiration_date: Date.parse(lt_params1[:expiration_date]))
+          create(:leave_time, :annual, user: user, quota: 50, usable_hours: 50, effective_date: Date.parse(lt_params2[:effective_date]), expiration_date: Date.parse(lt_params2[:expiration_date]))
           expect(subject.errors).not_to be_empty
           expect(subject.errors[:hours]).to include(I18n.t('activerecord.errors.models.leave_application.attributes.hours.lacking_hours', date: Date.parse(error_date), hours: lack_hours))
           expect(user.leave_applications).to be_empty
@@ -157,8 +159,8 @@ describe LeaveTimeUsageBuilder do
         end
       end
 
-      #TODO: add spec about an application which is used two or more leave_times.
-      #context 'leave_type :sick' do
+      # TODO: add spec about an application which is used two or more leave_times.
+      # context 'leave_type :sick' do
       #  let!(:fullpaid_sick) { create(:leave_time, :fullpaid_sick, user: user, quota: 50, usable_hours: 50, effective_date: effective_date, expiration_date: expiration_date) }
       #  subject { create(:leave_application, :sick, user: user, start_time: start_time, end_time: end_time) }
       #  it 'should use fullpaid_sick prior to halfpaid_sick' do
@@ -199,7 +201,7 @@ describe LeaveTimeUsageBuilder do
       #    expect(less_usable_hours_halfpaid_sick.usable_hours).to be 40
       #    expect(less_usable_hours_halfpaid_sick.locked_hours).to be 10
       #  end
-      #end
+      # end
     end
   end
 end

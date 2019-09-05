@@ -1,10 +1,11 @@
 # frozen_string_literal: true
+
 require 'rails_helper'
 RSpec.describe Backend::LeaveTimesController, type: :controller do
   describe 'POST #batch_create' do
     before do
       sign_in create(:manager_eddie)
-      5.times { FactoryGirl.create(:user) }
+      5.times { FactoryBot.create(:user) }
     end
     it 'add leave time to each users' do
       expect do

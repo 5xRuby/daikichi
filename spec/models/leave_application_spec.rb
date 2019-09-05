@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'rails_helper'
 RSpec.describe LeaveApplication, type: :model do
   let(:first_year_employee) { create(:first_year_employee) }
@@ -20,7 +21,7 @@ RSpec.describe LeaveApplication, type: :model do
   end
 
   describe 'validation' do
-    # let(:params) { FactoryGirl.attributes_for(:leave_application) }
+    # let(:params) { FactoryBot.attributes_for(:leave_application) }
     subject { described_class.new(params) }
 
     context 'has a valid factory' do
@@ -62,9 +63,11 @@ RSpec.describe LeaveApplication, type: :model do
     describe 'hours_should_be_positive_integer' do
       context 'minimum unit' do
         let(:params) do
-          attributes_for(:leave_application,
-                         start_time: Time.zone.local(2017, 1, 3, 10, 0),
-                         end_time:   Time.zone.local(2017, 1, 3, 10, 59))
+          attributes_for(
+            :leave_application,
+            start_time: Time.zone.local(2017, 1, 3, 10, 0),
+            end_time: Time.zone.local(2017, 1, 3, 10, 59)
+          )
         end
         it 'is an hour' do
           expect(subject).to be_invalid
@@ -74,11 +77,11 @@ RSpec.describe LeaveApplication, type: :model do
     end
 
     describe 'application should not overlaps other pending or approved applications under same user scope' do
-      let(:user)            { create(:user, :hr) }
-      let(:effective_date)  { Time.zone.local(2017, 5, 1).to_date }
+      let(:user) { create(:user, :hr) }
+      let(:effective_date) { Time.zone.local(2017, 5, 1).to_date }
       let(:expiration_date) { Time.zone.local(2017, 5, 31).to_date }
-      let(:start_time)      { Time.zone.local(2017, 5, 9, 12, 30) }
-      let(:end_time)        { Time.zone.local(2017, 5, 11, 14, 30) }
+      let(:start_time) { Time.zone.local(2017, 5, 9, 12, 30) }
+      let(:end_time) { Time.zone.local(2017, 5, 11, 14, 30) }
 
       before do
         User.skip_callback(:create, :after, :auto_assign_leave_time)
@@ -96,22 +99,22 @@ RSpec.describe LeaveApplication, type: :model do
             'activerecord.errors.models.leave_application.attributes.base.overlap_application',
             leave_type: described_class.human_enum_value(:leave_type, la.leave_type),
             start_time: la.start_time.to_formatted_s(:month_date),
-            end_time:   la.end_time.to_formatted_s(:month_date),
-            link:       Rails.application.routes.url_helpers.leave_application_path(id: la.id)
+            end_time: la.end_time.to_formatted_s(:month_date),
+            link: Rails.application.routes.url_helpers.leave_application_path(id: la.id)
           )
         end
       end
 
       context 'overlaps other applications\' start_time' do
         let(:beginning) { start_time - 1.day }
-        let(:ending)    { start_time + 1.hour }
+        let(:ending) { start_time + 1.hour }
         it_should_behave_like 'invalid', 'after start_time', :pending
         it_should_behave_like 'invalid', 'after start_time', :approved
       end
 
       context 'overlaps other applications\' end_time' do
         let(:beginning) { end_time - 1.hour }
-        let(:ending)    { end_time + 1.day }
+        let(:ending) { end_time + 1.day }
         it_should_behave_like 'invalid', 'before end_time', :pending
         it_should_behave_like 'invalid', 'before end_time', :approved
       end
@@ -201,8 +204,8 @@ RSpec.describe LeaveApplication, type: :model do
   end
 
   describe 'scope' do
-    let(:beginning)  { Daikichi::Config::Biz.periods.after(1.month.ago.beginning_of_month).first.start_time }
-    let(:closing)    { Daikichi::Config::Biz.periods.before(1.month.ago.end_of_month).first.end_time }
+    let(:beginning) { Daikichi::Config::Biz.periods.after(1.month.ago.beginning_of_month).first.start_time }
+    let(:closing) { Daikichi::Config::Biz.periods.before(1.month.ago.end_of_month).first.end_time }
     describe '.leave_within_range' do
       let(:start_time) { Daikichi::Config::Biz.time(3, :days).after(beginning) }
       let(:end_time)   { Daikichi::Config::Biz.time(5, :days).after(beginning) }
@@ -211,7 +214,7 @@ RSpec.describe LeaveApplication, type: :model do
         create(
           :leave_application, :with_leave_time,
           start_time: start_time,
-          end_time:   end_time
+          end_time: end_time
         )
       end
 
@@ -223,7 +226,7 @@ RSpec.describe LeaveApplication, type: :model do
 
       context 'LeaveApplication overlaps specific range' do
         let(:start_time) { Daikichi::Config::Biz.time(1, :day).before(beginning) }
-        let(:end_time)   { Daikichi::Config::Biz.time(1, :day).after(beginning) }
+        let(:end_time) { Daikichi::Config::Biz.time(1, :day).after(beginning) }
 
         it 'should be included in returned results' do
           expect(subject).to include(leave_application)

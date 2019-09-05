@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class InformationMailerPreview < ActionMailer::Preview
   def new_application
     test_leave_application = LeaveApplication.last

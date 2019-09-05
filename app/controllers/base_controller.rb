@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class BaseController < ApplicationController
   before_action :set_actions
   helper_method :current_collection, :current_object
@@ -19,6 +20,7 @@ class BaseController < ApplicationController
   def create
     @current_object = collection_scope.new(resource_params)
     return render action: :new unless @current_object.save
+
     action_success
   end
 
@@ -69,6 +71,7 @@ class BaseController < ApplicationController
 
   def check_permission(object_owner)
     return if current_employee == object_owner
+
     flash[:alert] = t('warnings.not_authorized')
     redirect_to root_path
   end

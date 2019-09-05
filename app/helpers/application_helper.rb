@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module ApplicationHelper
   # show 才會用到 tr_by_object，將 object 寫在最後面，可以在呼叫 tr_by_object 時省略不寫
   def tr_by_object(attribute, conversion = nil, key = nil, object = current_object)
@@ -87,11 +88,13 @@ module ApplicationHelper
 
   def hours_to_humanize(hours)
     return '-' if hours.to_i.zero?
+
     I18n.t('time.humanize_working_hour', days: hours.to_i / 8, hours: hours % 8, total: hours)
   end
 
   def hours_for_total(hours)
     return '-' if hours.to_i.zero?
+
     I18n.t('time.total_hour', total: hours)
   end
 

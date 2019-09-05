@@ -1,8 +1,9 @@
 # frozen_string_literal: true
+
 require 'rails_helper'
 
 describe LeaveTimeBuilder do
-  let(:user) { FactoryGirl.create(:user, assign_date: Time.zone.today) }
+  let(:user) { FactoryBot.create(:user, assign_date: Time.zone.today) }
   let(:monthly_leave_types) { Settings.leave_types.to_a.select { |lt| lt.second['creation'] == 'monthly' } }
   let(:weekly_leave_types) { Settings.leave_types.to_a.select { |lt| lt.second['creation'] == 'weekly' } }
   let(:join_date_based_leave_types) { Settings.leave_types.to_a.select { |lt| lt.second['creation'] == 'join_date_based' } }
@@ -16,7 +17,7 @@ describe LeaveTimeBuilder do
   describe '.automatically_import' do
     context 'fulltime employee' do
       context 'import join date based LeaveTime with specific assign_date' do
-        let(:user) { User.new(FactoryGirl.attributes_for(:user, :fulltime)) }
+        let(:user) { User.new(FactoryBot.attributes_for(:user, :fulltime)) }
         let(:current_date) { Date.parse '2017/06/14' }
 
         before do
@@ -144,7 +145,7 @@ describe LeaveTimeBuilder do
       end
 
       context 'import monthly LeaveTime with specific assign_date' do
-        let(:user) { User.new(FactoryGirl.attributes_for(:user, :fulltime)) }
+        let(:user) { User.new(FactoryBot.attributes_for(:user, :fulltime)) }
         let(:current_date) { Date.parse '2017/06/14' }
         join_date = 13.months.ago
         before_join_date = 14.months.ago
@@ -202,7 +203,7 @@ describe LeaveTimeBuilder do
 
     context 'partime employee' do
       context 'import join date based LeaveTime with specific assign_date' do
-        let(:user) { User.new(FactoryGirl.attributes_for(:user, :intern)) }
+        let(:user) { User.new(FactoryBot.attributes_for(:user, :intern)) }
         let(:current_date) { Date.parse '2017/06/14' }
 
         before do
@@ -366,7 +367,7 @@ describe LeaveTimeBuilder do
       end
 
       context 'import monthly LeaveTime with specific assign_date' do
-        let(:user) { User.new(FactoryGirl.attributes_for(:user, :fulltime)) }
+        let(:user) { User.new(FactoryBot.attributes_for(:user, :fulltime)) }
         let(:current_date) { Date.parse '2017/06/14' }
         join_date = 13.months.ago
         before_join_date = 14.months.ago
@@ -434,7 +435,7 @@ describe LeaveTimeBuilder do
     end
 
     context 'fulltime employee' do
-      let!(:user) { FactoryGirl.create(:user, :fulltime) }
+      let!(:user) { FactoryBot.create(:user, :fulltime) }
 
       it 'should get seniority_based leave_times' do
         leave_times = user.leave_times
@@ -455,7 +456,7 @@ describe LeaveTimeBuilder do
     end
 
     context 'parttime employee' do
-      let(:user) { FactoryGirl.create(:user, :intern) }
+      let(:user) { FactoryBot.create(:user, :intern) }
 
       it 'should not get seniority_based leave_times' do
         leave_times = user.leave_times
@@ -486,7 +487,7 @@ describe LeaveTimeBuilder do
       end
 
       it 'is build for the comming month' do
-        unless monthly_leave_types.blank?
+        if monthly_leave_types.present?
           leave_times = user.leave_times.reload
           expect(leave_times.size).to eq monthly_leave_types.size
           leave_time = leave_times.first
@@ -506,7 +507,7 @@ describe LeaveTimeBuilder do
       end
 
       it 'is build for current month' do
-        unless monthly_leave_types.blank?
+        if monthly_leave_types.present?
           leave_times = user.leave_times.reload
           expect(leave_times.size).to eq monthly_leave_types.size
           leave_time = leave_times.first
@@ -534,7 +535,6 @@ describe LeaveTimeBuilder do
       LeaveTimeBuilder.new(user).weekly_import(by_assign_date: true)
       leave_times = user.leave_times.reload
       expect(leave_times.size).to eq weekly_leave_types.size * 4
-      date = Time.zone.today
       leave_time = leave_times.first
       initial_quota = weekly_leave_types.find { |lt| lt.first == leave_time.leave_type }.second['quota'] * 8
       expect(leave_time.quota).to eq initial_quota
@@ -555,8 +555,8 @@ describe LeaveTimeBuilder do
         expect(leave_time.quota).to eq initial_quota
         expect(leave_time.usable_hours).to eq initial_quota
         expect(leave_time.used_hours).to eq 0
-        expect(leave_time.effective_date).to  eq (date + 4.week).beginning_of_week
-        expect(leave_time.expiration_date).to eq (date + 4.week).end_of_week
+        expect(leave_time.effective_date).to eq(date + 4.weeks).beginning_of_week
+        expect(leave_time.expiration_date).to eq(date + 4.weeks).end_of_week
       end
     end
 

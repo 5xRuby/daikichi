@@ -19,13 +19,6 @@ defaults: &defaults
     authentication: plain
     enable_starttls_auto: true
 
-  admin_user:
-    name: '系統管理員'
-    login_name: 'admin'
-    email: 'admin@example.com'
-    role: 'admin'
-    password: '12345678'
-
   roles:
     manager: 'manager'
     hr: 'hr'

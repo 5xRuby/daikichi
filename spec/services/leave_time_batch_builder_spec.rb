@@ -1,11 +1,12 @@
 # frozen_string_literal: true
+
 require 'rails_helper'
 
 describe LeaveTimeBatchBuilder do
   let(:monthly_lead_days) { Settings.leed_days.monthly }
-  let(:join_date_based_leed_days)   { Settings.leed_days.join_date_based }
-  let(:monthly_leave_types)         { Settings.leave_types.to_a.select { |lt| lt.second['creation'] == 'monthly' } }
-  let(:weekly_leave_types)         { Settings.leave_types.to_a.select { |lt| lt.second['creation'] == 'weekly' } }
+  let(:join_date_based_leed_days) { Settings.leed_days.join_date_based }
+  let(:monthly_leave_types) { Settings.leave_types.to_a.select { |lt| lt.second['creation'] == 'monthly' } }
+  let(:weekly_leave_types) { Settings.leave_types.to_a.select { |lt| lt.second['creation'] == 'weekly' } }
   let(:join_date_based_leave_types) { Settings.leave_types.to_a.select { |lt| lt.second['creation'] == 'join_date_based' } }
   let(:seniority_based_leave_types) do
      join_date_based_leave_types.select do |lt|
@@ -18,17 +19,17 @@ describe LeaveTimeBatchBuilder do
     after  { User.set_callback(:create, :after, :auto_assign_leave_time)  }
 
     context 'is forced' do
-      let!(:fulltime) { FactoryGirl.create(:user, :fulltime, join_date: Date.current - 1.year - 1.day) }
-      let!(:parttime) { FactoryGirl.create(:user, :intern, join_date: Date.current - 1.year - 1.day) }
-      let!(:contractor) { FactoryGirl.create(:user, :contractor, join_date: Date.current - 1.year - 1.day) }
-      let!(:user)     { FactoryGirl.create(:user, join_date: Date.current - 1.year - 1.day) }
+      let!(:fulltime) { FactoryBot.create(:user, :fulltime, join_date: Date.current - 1.year - 1.day) }
+      let!(:parttime) { FactoryBot.create(:user, :intern, join_date: Date.current - 1.year - 1.day) }
+      let!(:contractor) { FactoryBot.create(:user, :contractor, join_date: Date.current - 1.year - 1.day) }
+      let!(:user) { FactoryBot.create(:user, join_date: Date.current - 1.year - 1.day) }
 
       before do
         described_class.new(forced: true).automatically_import
       end
 
       it 'should run join_date_based_import and monthly import with prebuild option for all users' do
-        unless monthly_leave_types.blank?
+        if monthly_leave_types.present?
           leave_times = LeaveTime.where(user_id: [fulltime.id, parttime.id, user.id, contractor.id])
           expect(leave_times.reload.size).to eq(1 + (monthly_leave_types.size + join_date_based_leave_types.size) * 3 - seniority_based_leave_types.size)
           monthly_leave_time = leave_times.find { |x| x.leave_type == monthly_leave_types.first.first }
@@ -44,10 +45,10 @@ describe LeaveTimeBatchBuilder do
     end
 
     context 'not forced' do
-      let!(:fulltime) { FactoryGirl.create(:user, :fulltime, join_date: join_date) }
-      let!(:parttime) { FactoryGirl.create(:user, :intern, join_date: join_date) }
-      let!(:contractor) { FactoryGirl.create(:user, :contractor, join_date: join_date) }
-      let!(:user)     { FactoryGirl.create(:user, join_date: join_date - 1.day) }
+      let!(:fulltime) { FactoryBot.create(:user, :fulltime, join_date: join_date) }
+      let!(:parttime) { FactoryBot.create(:user, :intern, join_date: join_date) }
+      let!(:contractor) { FactoryBot.create(:user, :contractor, join_date: join_date) }
+      let!(:user) { FactoryBot.create(:user, join_date: join_date - 1.day) }
       let!(:datetime) { Time.zone.local(2017, 5, 4, 9, 30) }
 
       context 'end of working month' do

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe LeaveTime, type: :model do
@@ -30,9 +31,11 @@ RSpec.describe LeaveTime, type: :model do
 
       context 'expiration_date earlier than effective_date' do
         let(:params) do
-          attributes_for(:leave_time,
-                         effective_date:  Time.current.strftime('%Y-%m-%d'),
-                         expiration_date:  1.day.ago .strftime('%Y-%m-%d'))
+          attributes_for(
+            :leave_time,
+            effective_date: Time.current.strftime('%Y-%m-%d'),
+            expiration_date: 1.day.ago .strftime('%Y-%m-%d')
+          )
         end
         it 'is invalid' do
           expect(subject.valid?).to be_falsey

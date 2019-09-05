@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class LeaveApplicationsController < BaseController
   include Selectable
   before_action :set_query_object

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class Backend::LeaveTimesController < Backend::BaseController
   before_action :set_query_object
 
@@ -13,14 +14,13 @@ class Backend::LeaveTimesController < Backend::BaseController
   def create
     @current_object = LeaveTime.new(resource_params)
     return render action: :new unless @current_object.save
-    
+
     if request.env['HTTP_REFERER'].include?('leave_application_id')
       verify_id = request.env['HTTP_REFERER'].partition('=').last
       action_success(verify_backend_leave_application_path(verify_id))
     else
       action_success
     end
-
   end
 
   def append_quota
@@ -68,7 +68,8 @@ class Backend::LeaveTimesController < Backend::BaseController
 
   def batch_leave_time_params
     params.require(:leave_time).permit(
-      :leave_type, :quota, :effective_date, :expiration_date, :usable_hours, :used_hours, :remark)
+      :leave_type, :quota, :effective_date, :expiration_date, :usable_hours, :used_hours, :remark
+    )
   end
 
   def search_params

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class LeaveTimeBatchBuilder
   MONTHLY_LEED_DAYS         = Settings.leed_days.monthly
   JOIN_DATE_BASED_LEED_DAYS = Settings.leed_days.join_date_based
@@ -19,6 +20,7 @@ class LeaveTimeBatchBuilder
     leed_day = Time.current + JOIN_DATE_BASED_LEED_DAYS.days
     find_user_by_forced(User.valid, leed_day)
     return if @users.empty?
+
     @users.each do |user|
       if @forced
         LeaveTimeBuilder.new(user).join_date_based_import
@@ -30,6 +32,7 @@ class LeaveTimeBatchBuilder
 
   def batch_monthly_import
     return if !end_of_working_month? && !@forced
+
     User.valid.find_each do |user|
       if @forced
         LeaveTimeBuilder.new(user).monthly_import
@@ -41,6 +44,7 @@ class LeaveTimeBatchBuilder
 
   def batch_weekly_import
     return if !Time.current.monday? && !@forced
+
     User.valid.find_each do |user|
       if @forced
         LeaveTimeBuilder.new(user).weekly_import
