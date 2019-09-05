@@ -1,0 +1,10 @@
+= simple_form_for @leave_time, url: create_leave_time_backend_overtime_path, method: :post do |f|
+	= f.input :user, input_html: {value: current_object.user.name}, disabled: true
+	=	f.input :leave_type, collection: LeaveTime.enum_attributes_for_select(:leave_types)
+	=	f.input :quota, input_html: {value: current_object.hours}
+	=	f.input :effective_date,  as: :string, required: true, wrapper_html: { class: 'date-input' },
+			input_html: { data: { input: 'datepicker', format: 'Y/m/d' }, value: Date.today }
+	=	f.input :expiration_date, as: :string, required: true, wrapper_html: { class: 'date-input' },
+			input_html: { data: { input: 'datepicker', format: 'Y/m/d' }, value: Date.today.end_of_year }
+	=	f.input :remark, as: :text
+	=	f.button :submit

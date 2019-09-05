@@ -24,6 +24,7 @@ zh-TW:
           compassionate: '喪假'
           absent: '曠職'
           paid_vacation: '旅遊假'
+          bonus: '補休'
     labels:
       q:
         leave_type_eq: 依額度類別篩選
@@ -31,8 +32,11 @@ zh-TW:
         effective_true: 依有效與否篩選
         status_eq: 依狀態篩選
         end_date_gteq: 查詢起始區間
-        end_time_gteq: 查詢起始區間
-        start_time_lteq: 查詢結束區間
         start_date_lteq: 查詢結束區間
+        end_time_lteq: 查詢結束區間
+        start_time_gteq: 查詢起始區間
+        compensatory_type_eq: 查詢補休類別
+        year_eq: 查詢年份
+        month_eq: 查詢月份
     error_notification:
       default_message: "Please review the problems below:"

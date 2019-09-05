@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180713072337) do
+ActiveRecord::Schema.define(version: 20190301131040) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -89,15 +89,34 @@ ActiveRecord::Schema.define(version: 20180713072337) do
     t.integer  "locked_hours"
   end
 
+  create_table "overtime_pays", force: :cascade do |t|
+    t.integer  "overtime_id"
+    t.integer  "user_id"
+    t.integer  "hour",        null: false
+    t.text     "remark"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+    t.index ["overtime_id"], name: "index_overtime_pays_on_overtime_id", using: :btree
+    t.index ["user_id"], name: "index_overtime_pays_on_user_id", using: :btree
+  end
+
   create_table "overtimes", force: :cascade do |t|
     t.integer  "user_id"
-    t.integer  "hours",       default: 0
+    t.integer  "hours",             default: 0
     t.datetime "start_time"
     t.datetime "end_time"
     t.text     "description"
-    t.string   "status",      default: "pending"
-    t.datetime "created_at",                      null: false
-    t.datetime "updated_at",                      null: false
+    t.string   "status",            default: "pending"
+    t.datetime "created_at",                            null: false
+    t.datetime "updated_at",                            null: false
+    t.integer  "manager_id"
+    t.datetime "sign_date"
+    t.datetime "deleted_at"
+    t.text     "comment"
+    t.integer  "compensatory_type", default: 0
+    t.index ["compensatory_type"], name: "index_overtimes_on_compensatory_type", using: :btree
+    t.index ["manager_id"], name: "index_overtimes_on_manager_id", using: :btree
+    t.index ["user_id"], name: "index_overtimes_on_user_id", using: :btree
   end
 
   create_table "users", force: :cascade do |t|
@@ -126,4 +145,6 @@ ActiveRecord::Schema.define(version: 20180713072337) do
   add_foreign_key "leave_hours_by_dates", "leave_applications"
   add_foreign_key "leave_time_usages", "leave_applications"
   add_foreign_key "leave_time_usages", "leave_times"
+  add_foreign_key "overtime_pays", "overtimes"
+  add_foreign_key "overtime_pays", "users"
 end

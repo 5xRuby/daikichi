@@ -1,6 +1,6 @@
 .panel.panel-info
   .panel-heading
-    %h4.panel-title= t("captions.backend/overtime.verify")
+    %h4.panel-title= t("captions.backend/overtimes.verify")
 
   %table.table
 
@@ -22,7 +22,13 @@
 
     %tr
       %th= t_attribute(:status, current_object)
-      %td= LeaveApplication.human_enum_value(:status, current_object.status)
+      %td= Overtime.human_enum_value(:status, current_object.status)
+
+    %tr
+      %th= t_attribute(:sign_date, current_object)
+      %td= current_object.sign_date ? l(current_object.sign_date, format: :long) : nil
+
+    = tr_by_object :manager, :convert_user_object_to_name, :name
 
     %tr
       %th= t_attribute(:created_at, current_object)

@@ -1,0 +1,5 @@
+= simple_form_for @overtime_pay, url: create_compensatory_pay_backend_overtime_path, method: :post do |f|
+	= f.input :user, input_html: {value: current_object.user.name}, disabled: true
+	=	f.input :hour, input_html: {value: current_object.hours}
+	=	f.input :remark, as: :text
+	=	f.button :submit

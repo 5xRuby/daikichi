@@ -1,0 +1,37 @@
+.panel.panel-info
+  .panel-heading
+    %h4= t( "captions.overtimes.show", start_time: current_object.start_time.to_formatted_s(:month_date), end_time: current_object.end_time.to_formatted_s(:month_date))
+
+  %table.table
+
+    %tr
+      %th= t_attribute(:start_time, current_object)
+      %td= l current_object.start_time, format: :long
+
+    %tr
+      %th= t_attribute(:end_time, current_object)
+      %td= l current_object.end_time, format: :long
+
+    = tr_by_object :hours
+
+    = tr_by_object :description
+
+    %tr
+      %th= t_attribute(:status, current_object)
+      %td= Overtime.human_enum_value(:status, current_object.status)
+
+    %tr
+      %th= t_attribute(:sign_date, current_object)
+      %td= current_object.sign_date ? l(current_object.sign_date, format: :long) : nil
+
+    = tr_by_object :manager, :convert_user_object_to_name, :name
+    - if current_object[:comment].present?
+      = tr_by_object :comment
+
+    %tr
+      %th= t_attribute(:created_at, current_object)
+      %td= l current_object.created_at, format: :long
+
+    %tr
+      %th= t_attribute(:updated_at, current_object)
+      %td= l current_object.updated_at, format: :long

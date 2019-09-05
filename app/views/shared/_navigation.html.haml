@@ -29,8 +29,11 @@
               %li= link_to t("title.backend/leave_applications.new"), new_backend_leave_application_path
               %li= link_to t("title.backend/leave_applications.index"),
                 backend_leave_applications_path(status: :pending)
+              %li= link_to t("title.backend/overtimes.index"),
+                backend_overtimes_path(status: :pending)
               %li= link_to t("captions.backend/leave_applications.statistics"),
                 statistics_backend_leave_applications_path(year: specific_year, month: specific_month, role: "")
+              %li= link_to t("captions.backend/overtimes.statistics"), statistics_backend_overtimes_path
               %li= link_to t("title.backend/leave_times.index"),
                 backend_leave_times_path
 
@@ -40,7 +43,6 @@
             %ul.dropdown-menu
               %li= link_to t("title.backend/leave_times.new"), new_backend_leave_time_path
               %li= link_to t("title.backend/leave_times.batch_append_quota"),batch_new_backend_leave_times_path
-              %li= link_to t("title.backend/overtime.index"), backend_overtime_index_path
 
       %ul.nav.navbar-nav.navbar-right
         - if user_signed_in?

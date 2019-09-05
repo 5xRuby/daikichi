@@ -41,6 +41,7 @@ zh-TW:
           menstrual: '生理假'
           occpational_sick: '公傷病假'
           paid_vacation: '旅遊假'
+          bonus: '補休'
         user: "員工"
         name: "擁有者"
         leave_type: "假別"
@@ -83,6 +84,7 @@ zh-TW:
           menstrual: '生理假'
           occpational_sick: '公傷病假'
           paid_vacation: '旅遊假'
+          bonus: '補休'
         user: "員工"
         start_time: "開始時間"
         end_time: "結束時間"
@@ -98,6 +100,31 @@ zh-TW:
         created_at: "建立時間"
         updated_at: "更新時間"
         attachment: "附件"
+      overtime:
+        user: "員工姓名"
+        start_time: "開始時間"
+        end_time: "結束時間"
+        hours: "時數"
+        status: "狀態"
+        description: "事由"
+        manager: "簽核主管"
+        sign_date: "簽核時間"
+        comment: "主管備註"
+        created_at: "建立時間"
+        updated_at: "更新時間"
+        statuses:
+          approved: '核准'
+          rejected: '駁回'
+          pending: '待審'
+          canceled: '取消'
+        compensatory_type: '補休類別'
+        compensatory_types:
+          leave: '補休'
+          pay: '加班費'
+      overtime_pay:
+        user: "員工姓名"
+        hour: "時數"
+        remark: "備註"
     errors:
       models:
         user:
@@ -134,13 +161,17 @@ zh-TW:
               range_should_not_overlaps: 該類別休假額度已存在
         overtime:
           attributes:
-            description:
-              blank: "請簡述原因"
+            base:
+              time_range_overlapped: '<a href="%{link}" target="_blank">與 %{start_time} ~ %{end_time} 時段重複</a>'
             start_time:
+              blank: "請填寫開始時間"
               should_be_earlier: "開始時間必須早於結束時間"
             end_time:
-              not_integer: "請假的最小單位是1小時"
-              not_enough_leave_time: "剩餘休假時間不足"
+              blank: "請填寫結束時間"
+              not_integer: "申請加班補休的最小單位是1小時"
+            description:
+              blank: "請簡述原因"
+
 
   # navbar 選單標題
   nav:
@@ -184,12 +215,14 @@ zh-TW:
       delete: "刪除"
       change_type: "切換休假種類至"
       remark: "備註"
-    backend/overtime:
-      index: "審核加班補休申請"
+    backend/overtimes:
+      index: "審核員工補休"
+      show: "檢視"
+      verify: "審核"
       approve: "核准"
       reject: "駁回"
-      verify: "審核"
-      show: "檢視"
+      append_quota: "新增額度"
+      append_overtime_pay: "新增加班費"
     leave_applications:
       index: "查看歷年假單"
       show: "檢視"
@@ -198,14 +231,18 @@ zh-TW:
       edit: "修改"
       cancel: "取消"
       new_remote: "申請 Remote"
-      new_bonus: "申請加班補休"
     leave_times:
       index: "查看請假額度"
       showing: "顯示"
       all: '全部'
       effective: '有效的'
       type: '假別'
-
+    overtimes:
+      index: "查看加班補休"
+      new: "申請加班補休"
+      show: "檢視"
+      edit: "修改"
+      cancel: "取消"
   captions:
     devise/registrations:
       new: "註冊新帳號"
@@ -224,9 +261,12 @@ zh-TW:
     remote:
       new: "申請 Remote"
       create: "申請 Remote"
-    overtime:
-      new: "申請加班補休"
-      create: "申請加班補休"
+    overtimes:
+      index: "歷年加班申請"
+      show: "%{start_time} - %{end_time} 加班申請"
+      new: "新增加班申請"
+      create: "新增加班申請"
+      edit: "編輯加班申請"
 
     backend/users:
       index: "員工列表"
@@ -248,9 +288,10 @@ zh-TW:
       batch_new: "批次新增員工休假額度"
       append_quota: "新增員工休假額度"
       edit: "修改員工休假"
-    backend/overtime:
-      index: "審核加班申請"
-      verify: "審核加班申請"
+    backend/overtimes:
+      index: "審核員工補休"
+      verify: "審核補休"
+      statistics: "員工加班費統計"
     tools: "工具"
 
   success:
@@ -260,6 +301,8 @@ zh-TW:
     revise: "已修改假單"
     cancel: "已取消假單"
     batch_create: '批次新增員工休假額度成功'
+    create_leave_time: '新增補休時數成功'
+    create_compensatory_pay: '新增加班費時數成功'
 
   warnings:
     self_manage: "申請人不得自行審核"
@@ -270,8 +313,8 @@ zh-TW:
     confirm_delete: "您確定要刪除嗎？"
     confirm_cancel: "你確定要取消嗎？"
     not_verifiable: "已審核假單無法再次操作"
-    not_cancellable: "無法再操作已取消的假單"
-    already_happened: "無法刪除已經通過並且生效的假單"
+    not_cancellable: "無法再操作已取消的申請"
+    already_happened: "無法刪除已經通過並且生效的申請"
 
   misc:
     app_title: "五倍神社"

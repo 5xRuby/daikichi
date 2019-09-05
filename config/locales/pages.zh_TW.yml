@@ -31,6 +31,19 @@ zh-TW:
         id_eq: 依員工姓名篩選
         login_name_cont_any: 輸入員工帳號搜尋
         role_eq: 依員工身份篩選
+    overtimes: &overtimes_filter_prompt
+      index:
+        plz_select_status: 請選擇申請狀態
+        plz_select_compensatory_type: 請選擇補休類別
+        plz_select_user: 請選擇要篩選的使用者
+      statistics:
+        plz_select_year: 請選擇查詢年份
+        plz_select_month: 請選擇查詢月份
+        application_id: 編號
+        user_name: 員工姓名
+        start_time: 開始時間
+        end_time: 結束時間
+        hour: 時數
 
   leave_times:
     <<: *leave_times_filter_prompt
@@ -43,3 +56,5 @@ zh-TW:
     show:
         exam_attachment: 檢視附件
 
+  overtimes:
+    <<: *overtimes_filter_prompt
