@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 class OvertimesController < BaseController
   include Selectable
 
   def index
     @q = current_user.overtimes.order(created_at: :desc).ransack(search_params)
     @current_collection = @q.result.page(params[:page])
-    @current_collection = Kaminari.paginate_array(@current_collection.first(5)).page(params[:page]) unless params[:q].present?
+    @current_collection = Kaminari.paginate_array(@current_collection.first(5)).page(params[:page]) if params[:q].blank?
   end
 
   def new

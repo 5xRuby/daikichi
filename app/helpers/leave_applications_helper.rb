@@ -45,7 +45,6 @@ module LeaveApplicationsHelper
   end
 
   def link_to_attachment(attachment)
-    link_to t('.exam_attachment'), current_object.attachment.url, target: :_blank if attachment
+    link_to t('.exam_attachment'), current_object.attachment.url, target: :_blank, rel: 'noopener' if attachment
   end
-
 end

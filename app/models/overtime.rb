@@ -41,8 +41,6 @@ class Overtime < ApplicationRecord
     end
   end
 
-  private
-
   def leave_time_params
     {
       user_id: self.user_id,
@@ -65,19 +63,23 @@ class Overtime < ApplicationRecord
 
   def assign_hours
     return unless start_time && end_time
-    self.hours = ((end_time - start_time) / 3600).to_i 
+
+    self.hours = ((end_time - start_time) / 3600).to_i
   end
 
   def hours_should_be_positive_integer
     return if errors.any?
+
     errors.add(:end_time, :not_integer) unless ((end_time - start_time).to_i % 3600).zero?
     errors.add(:start_time, :should_be_earlier) unless end_time > start_time
   end
 
   def time_overlapped
     return if errors.any?
-    overlapped_records = Overtime.where('(start_time, end_time) OVERLAPS (?, ?)', start_time , end_time).where.not(id: self.id)
+
+    overlapped_records = Overtime.where('(start_time, end_time) OVERLAPS (?, ?)', start_time, end_time).where.not(id: self.id)
     return unless overlapped_records.any?
+
     time_overlapped_errors(overlapped_records)
   end
 
@@ -85,13 +87,16 @@ class Overtime < ApplicationRecord
     url = Rails.application.routes.url_helpers
     records.each do |record|
       next if record.rejected? || record.canceled?
-      errors.add(:base,
-                 I18n.t(
-                   'activerecord.errors.models.overtime.attributes.base.time_range_overlapped',
-                   start_time: record.start_time.to_formatted_s(:month_date),
-                   end_time:   record.end_time.to_formatted_s(:month_date),
-                   link:       url.overtime_path(id: record.id))
-                )
+
+      errors.add(
+        :base,
+        I18n.t(
+          'activerecord.errors.models.overtime.attributes.base.time_range_overlapped',
+          start_time: record.start_time.to_formatted_s(:month_date),
+          end_time: record.end_time.to_formatted_s(:month_date),
+          link: url.overtime_path(id: record.id)
+        )
+      )
     end
   end
 end

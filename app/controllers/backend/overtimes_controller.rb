@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class Backend::OvertimesController < Backend::BaseController
   before_action :set_query_object, except: :statistics
 
@@ -6,7 +7,7 @@ class Backend::OvertimesController < Backend::BaseController
     @users = User.all
   end
 
-  def verify;end
+  def verify; end
 
   def update
     if current_object.update(resource_params)
