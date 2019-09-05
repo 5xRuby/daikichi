@@ -17,7 +17,6 @@ class Overtime < ApplicationRecord
   validate :time_overlapped
 
   before_validation :assign_hours
-  enum status: Settings.leave_applications.statuses
 
   aasm column: :status, enum: true do
     state :pending, initial: true
