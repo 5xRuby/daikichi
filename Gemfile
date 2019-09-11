@@ -71,8 +71,8 @@ group :development, :test do
 end
 
 group :development do
-  gem 'capistrano'
-  gem 'capistrano-rails'
+  gem 'capistrano', '~> 3.11.0'
+  gem 'capistrano-rails', '~> 1.4.0'
   gem 'capistrano-upload-config'
   gem 'capistrano-crono'
   gem 'listen'
