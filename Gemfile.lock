@@ -427,9 +427,9 @@ DEPENDENCIES
   bootstrap-sass
   byebug
   cancancan
-  capistrano
+  capistrano (~> 3.11.0)
   capistrano-crono
-  capistrano-rails
+  capistrano-rails (~> 1.4.0)
   capistrano-upload-config
   capybara
   carrierwave (~> 1.2, >= 1.2.3)
