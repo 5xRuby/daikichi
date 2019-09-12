@@ -38,7 +38,7 @@ set :linked_dirs, fetch(:linked_dirs, []).push('log', 'tmp/pids', 'tmp/cache', '
 
 
 # Default value for default_env is {}
-set :default_env, { path: "$PATH:/usr/local/ruby23/bin:/usr/local/ruby-2.4.1/bin:" }
+set :default_env, { path: "$PATH:/usr/local/ruby26/bin" }
 
 # Default value for keep_releases is 5
 set :keep_releases, 3
