@@ -77,7 +77,9 @@ class Overtime < ApplicationRecord
   def time_overlapped
     return if errors.any?
 
-    overlapped_records = Overtime.where('(start_time, end_time) OVERLAPS (?, ?)', start_time, end_time).where.not(id: self.id)
+    overlapped_records = self.class.ransack(user_id_eq: user_id, id_not_eq: id).result
+                                   .where('(start_time, end_time) OVERLAPS (?, ?)', start_time, end_time)
+
     return unless overlapped_records.any?
 
     time_overlapped_errors(overlapped_records)
