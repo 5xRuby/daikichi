@@ -76,7 +76,5 @@
           %td.text-right= l usage.leave_time.effective_date, format: :detailed
           %td.text-right= l usage.leave_time.expiration_date, format: :detailed
 
-= console
-
 - if current_object.pending? or current_object.approved?
   = render "form", action: :verify
