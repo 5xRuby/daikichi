@@ -133,6 +133,11 @@ class LeaveApplication < ApplicationRecord
     grid.build
   end
 
+  def rebuild_leave_time_usages!
+    leave_time_usages.delete_all
+    LeaveTimeUsageBuilder.new(self).build_leave_time_usages
+  end
+
   private
 
   def auto_calculated_minutes
@@ -175,6 +180,6 @@ class LeaveApplication < ApplicationRecord
 
   def order_by_sequence
     leavetype = Settings.leave_applications.available_quota_types.send(self.leave_type)
-    Arel.sql "array_position(Array['#{leavetype}'], leave_type::TEXT)"
+    Arel.sql "array_position(Array['#{leavetype.join("','")}'], leave_type::TEXT)"
   end
 end

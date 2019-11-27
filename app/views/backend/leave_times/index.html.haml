@@ -10,9 +10,8 @@
       = f.input :leave_type_eq, collection: LeaveTime.enum_attributes_for_select(:leave_types),
         include_blank: t('.plz_select_leave_type'), required: false,
         wrapper_html: { class: 'col-md-6' }
-      = f.input :user_id_eq, collection: @users, required: false,
-        include_blank: t('.plz_select_user'), label_method: :name, value_method: :id,
-        wrapper_html: { class: 'col-md-6' }
+      = f.input :user_id_eq, collection: options_for_user_select, label_method: :first, value_method: :second, required: false,
+        include_blank: t('.plz_select_user'), wrapper_html: { class: 'col-md-6' }
       = f.input :effective_true, collection: [[I18n.t('activerecord.attributes.leave_time.state.effective'), true], [I18n.t('activerecord.attributes.leave_time.state.expired'), false]],
         include_blank: t('.plz_select_effectiveness_state'), required: false,
         wrapper_html: { class: 'col-md-6' }

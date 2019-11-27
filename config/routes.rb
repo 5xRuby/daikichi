@@ -4,6 +4,10 @@ Rails.application.routes.draw do
 
     root "pages#index"
 
+    if Rails.application.config.enable_sign_in_as
+      get 'login_as', to: "sessions#login_as"
+    end
+
     namespace :backend do
       resources :users
 
@@ -47,8 +51,5 @@ Rails.application.routes.draw do
       end
     end
 
-    authenticate :user, lambda { |u| u.is_manager? } do
-      mount Crono::Web, at: '/crono'
-    end
   end
 end

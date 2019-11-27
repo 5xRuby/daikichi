@@ -4,7 +4,6 @@ class Backend::LeaveTimesController < Backend::BaseController
   before_action :set_query_object
 
   def index
-    @users = User.where.not(role: 'resigned')
   end
 
   def new

@@ -432,7 +432,6 @@ DEPENDENCIES
   cocoon
   codeclimate-test-reporter (~> 1.0.9)
   coffee-rails
-  crono
   daemons
   database_rewinder
   date_validator
