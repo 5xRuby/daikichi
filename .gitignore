@@ -39,3 +39,4 @@ docker-compose.yml
 
 /db/fixtures/production/
 /config/*.yml
+Procfile

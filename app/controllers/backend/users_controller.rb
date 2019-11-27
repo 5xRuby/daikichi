@@ -18,6 +18,7 @@ class Backend::UsersController < Backend::BaseController
   end
 
   def new
+    @current_object = User.new
   end
 
   def edit
