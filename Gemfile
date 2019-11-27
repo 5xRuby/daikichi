@@ -49,7 +49,6 @@ gem 'ransack', git: 'https://github.com/activerecord-hackery/ransack.git'
 gem 'activerecord-import'
 gem 'rails-observers', git: 'https://github.com/rails/rails-observers.git'
 gem 'pivot_table', git: 'https://github.com/edjames/pivot_table'
-gem 'crono'
 gem 'sinatra', require: nil
 gem 'daemons'
 gem 'flowdock'

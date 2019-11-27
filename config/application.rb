@@ -15,6 +15,8 @@ module Daikichi
     config.i18n.default_locale = 'zh-TW'
     config.autoload_paths << Rails.root.join('lib')
 
+    config.enable_sign_in_as = (Rails.env != 'production' && ENV['ENABLE_LOGIN_AS'].to_i == 1)
+
     config.active_record.observers = %i(leave_application_observer)
 
     config.after_initialize do
