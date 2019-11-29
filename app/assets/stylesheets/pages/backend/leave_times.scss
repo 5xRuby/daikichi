@@ -1,10 +1,12 @@
-.table {
-  .name, .hours, .tools {
-    width: 25%;
-    text-align: center;
+body[data-controller-path="backend/leave_times"]{
+  .table {
+    .name, .hours, .tools {
+      width: 25%;
+      text-align: center;
+    }
   }
-}
 
-.checkbox-inline:first-child {
-  margin-left: 10px;
+  .checkbox-inline:first-child {
+    margin-left: 10px;
+  }
 }

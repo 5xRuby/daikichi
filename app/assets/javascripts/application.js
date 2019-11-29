@@ -9,3 +9,4 @@
 //= require datetimepicker
 //= require base
 //= require page_alert
+//= require_tree ./pages

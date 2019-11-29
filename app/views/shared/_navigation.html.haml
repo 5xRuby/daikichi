@@ -30,7 +30,7 @@
               %li= link_to t("title.backend/leave_applications.index"),
                 backend_leave_applications_path(status: :pending)
               %li= link_to t("title.backend/overtimes.index"),
-                backend_overtimes_path(status: :pending)
+                backend_overtimes_path(q: {status_eq: :pending})
               %li= link_to t("captions.backend/leave_applications.statistics"),
                 statistics_backend_leave_applications_path(year: specific_year, month: specific_month, role: "")
               %li= link_to t("captions.backend/overtimes.statistics"), statistics_backend_overtimes_path

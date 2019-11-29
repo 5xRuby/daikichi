@@ -1,24 +1,26 @@
-.container {
-  .table {
-    margin-bottom: 0;
+body[data-controller-path="leave_applications"]{
+  .container {
+    .table {
+      margin-bottom: 0;
 
-    .type, .hours, .status {
-      width: 11%;
-      text-align: center;
-    }
-    .date {
-      width: 20%;
-      text-align: center;
-    }
-    .tools {
-      width: 27%;
-      text-align: center;
+      .type, .hours, .status {
+        width: 11%;
+        text-align: center;
+      }
+      .date {
+        width: 20%;
+        text-align: center;
+      }
+      .tools {
+        width: 27%;
+        text-align: center;
+      }
     }
   }
-}
 
-#myModal {
-  .modal-body {
-    white-space: pre;
+  #myModal {
+    .modal-body {
+      white-space: pre;
+    }
   }
 }
