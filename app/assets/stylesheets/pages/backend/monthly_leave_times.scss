@@ -1,11 +1,13 @@
-.table {
-  .name {
-    text-align: center;
-    width: 12%;
-  }
+body[data-controller-path="backend/monthly_leave_times"]{
+  .table {
+    .name {
+      text-align: center;
+      width: 12%;
+    }
 
-  .hours {
-    text-align: center;
-    width: 22%;
+    .hours {
+      text-align: center;
+      width: 22%;
+    }
   }
 }

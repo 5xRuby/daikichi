@@ -3,11 +3,11 @@
   %head
     %title= page_title
     = csrf_meta_tags
-    = stylesheet_link_tag "application", "pages/#{controller_path}", "data-turbolinks-track": "reload", media: "all"
-    = javascript_include_tag "application", "pages/#{controller_path}", "data-turbolinks-track": "reload"
+    = stylesheet_link_tag "application", "data-turbolinks-track": "reload", media: "all"
+    = javascript_include_tag "application", "data-turbolinks-track": "reload"
     = yield :additional_script
 
-  %body
+  %body{data: {controller_path: controller_path, action_name: action_name}}
     #nav
       = render "shared/navigation"
     #wrap

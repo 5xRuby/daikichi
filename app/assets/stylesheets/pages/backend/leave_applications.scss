@@ -1,3 +1,6 @@
-.highlight{
-  color: red;
+body[data-controller-path="backend/leave_applications"]{
+  .highlight{
+    color: red;
+  }
 }
+
