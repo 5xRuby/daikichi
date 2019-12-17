@@ -11,9 +11,11 @@ class LeaveTimeBuilder
   end
 
   def automatically_import(by_assign_date: false)
-    monthly_import by_assign_date: by_assign_date
-    join_date_based_import by_assign_date: by_assign_date
-    weekly_import by_assign_date: by_assign_date
+    ApplicationRecord.transaction do
+      monthly_import by_assign_date: by_assign_date
+      join_date_based_import by_assign_date: by_assign_date
+      weekly_import by_assign_date: by_assign_date
+    end
   end
 
   def join_date_based_import(by_assign_date: false, prebuild: false)
@@ -42,7 +44,7 @@ class LeaveTimeBuilder
     end
   end
 
-  private
+#  private
 
   def build_join_date_based_leave_types(leave_type, config, prebuild, build_by_assign_date = false)
     return unless user_can_have_leave_type?(@user, config)
@@ -51,7 +53,7 @@ class LeaveTimeBuilder
     if build_by_assign_date
       join_date_based_by_assign_date(leave_type, quota)
     else
-      join_anniversary = @user.next_join_anniversary
+      join_anniversary = @user.next_join_anniversary_for_leave_time_type(leave_type)
       expiration_date = join_anniversary.next_year - 1.day
       create_leave_time(leave_type, quota, join_anniversary, expiration_date)
     end
