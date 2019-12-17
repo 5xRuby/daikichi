@@ -77,7 +77,6 @@ class User < ApplicationRecord
     @this_year_join_anniversary ||= Time.zone.local(Date.current.year, join_date.month, join_date.day).to_date
   end
 
-  #
   def next_join_anniversary_for_leave_time_type(leave_time_type = 'annual')
     lt_scope = self.leave_times.where(leave_type: leave_time_type).effective
     if !lt_scope.empty? && this_year_join_anniversary < Time.current.to_date

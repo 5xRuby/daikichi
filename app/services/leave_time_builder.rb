@@ -53,7 +53,6 @@ class LeaveTimeBuilder
     if build_by_assign_date
       join_date_based_by_assign_date(leave_type, quota)
     else
-      p leave_type
       join_anniversary = @user.next_join_anniversary_for_leave_time_type(leave_type)
       expiration_date = join_anniversary.next_year - 1.day
       create_leave_time(leave_type, quota, join_anniversary, expiration_date)
