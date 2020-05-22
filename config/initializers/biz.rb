@@ -1,7 +1,5 @@
 module Daikichi
   class Config
-    HOLIDAY_API = "https://data.ntpc.gov.tw/api/v1/rest/datastore/382000000A-000077-002"
-    
     Biz = ::Biz.configure do |config|
       config.hours = {
         mon: {'09:30' => '12:30', '13:30' => '18:30'},
@@ -11,9 +9,7 @@ module Daikichi
         fri: {'09:30' => '12:30', '13:30' => '18:30'}
       }
 
-      response = HTTParty.get(HOLIDAY_API)
-
-      config.holidays = response.parsed_response["result"]["records"].map { |record| Date.parse(record["date"]) }
+      config.holidays = YAML.safe_load(File.read("lib/tasks/holidays.yml"), permitted_classes: [Date]) if File.exist?("lib/tasks/holidays.yml")
 
       config.time_zone = 'Asia/Taipei'
     end
