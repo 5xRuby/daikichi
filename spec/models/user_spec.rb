@@ -202,7 +202,20 @@ RSpec.describe User, type: :model do
 
       context 'joined less than a year' do
         let(:join_date) { Date.current - 1.year + 1.day }
-        it { expect(subject).to eq 0 }
+        it 'without runnian' do
+          Timecop.travel(2020, 2, 28) do
+            expect(subject).to eq 0
+          end
+        end
+      end
+
+      context 'joined less than a year' do
+        let(:join_date) { Date.current - 1.year + 2.day }
+        it 'with runnian' do
+          Timecop.travel(2020, 2, 29) do
+            expect(subject).to eq 0
+          end
+        end
       end
 
       context 'on first joined anniversary' do
