@@ -201,7 +201,7 @@ RSpec.describe User, type: :model do
       let(:user) { build(:user, :fulltime, join_date: join_date) }
 
       context 'joined less than a year' do
-        let(:join_date) { Date.current - 1.year + 1.day }
+        let(:join_date) { Date.current - 1.year + 2.day }
         it { expect(subject).to eq 0 }
       end
 
