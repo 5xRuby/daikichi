@@ -8,18 +8,18 @@
 # Installation
 
 ```
-$ git clone git@github.com:5xruby/daikichi.git  
+$ git clone git@github.com:5xruby/daikichi.git
 $ cd daikichi
 
 # generate key with rake secret
-$ cp config/secrets.yml.sample config/secrets.yml  
+$ cp config/secrets.yml.sample config/secrets.yml
 
-$ cp config/application.yml.sample config/application.yml  
+$ cp config/application.yml.sample config/application.yml
 $ cp config/database.yml.sample config/database.yml
 
-$ bundle install  
-$ bundle exec rake db:create  
-$ bundle exec rake db:migrate  
+$ bundle install
+$ bundle exec rake db:create
+$ bundle exec rake db:migrate
 ```
 
 # Optional
@@ -51,6 +51,12 @@ $ rake import_data:users
 
 ```
 $ rake leave_time:init
+```
+
+## populate Holiday data
+
+```
+$ rake holiday:build
 ```
 
 ## customization
