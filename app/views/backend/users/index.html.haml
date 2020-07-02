@@ -39,20 +39,19 @@
 
   %tbody
     - current_collection.each do |user|
-      - unless user.role == 'resigned'
-        %tr
-          %td.text-right= user.id
-          %td.text-center= user.name
-          %td.text-center= user.login_name
-          %td.text-center= user.email
-          %td.text-center= User.human_enum_value(:role, user.role)
-          %td.text-right= l user.join_date, format: :detailed
-          %td.text-center
-            = link_to t("title.backend/users.show"),
-              backend_user_path(user),
-              class: "btn btn-primary"
-            = link_to t("title.backend/users.edit"),
-              edit_backend_user_path(user),
-              class: "btn btn-warning"
+      %tr
+        %td.text-right= user.id
+        %td.text-center= user.name
+        %td.text-center= user.login_name
+        %td.text-center= user.email
+        %td.text-center= User.human_enum_value(:role, user.role)
+        %td.text-right= l user.join_date, format: :detailed
+        %td.text-center
+          = link_to t("title.backend/users.show"),
+            backend_user_path(user),
+            class: "btn btn-primary"
+          = link_to t("title.backend/users.edit"),
+            edit_backend_user_path(user),
+            class: "btn btn-warning"
 .paginate
   = paginate current_collection
