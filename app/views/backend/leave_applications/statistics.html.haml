@@ -33,7 +33,7 @@
         %th.text-right= t("activerecord.attributes.leave_time.leave_types.#{leave_type}")
       %th.text-right 總計
   %tbody
-    - User.filter_by_role(specific_role).find_each do |user|
+    - @users.each do |user|
       %tr
         %td.text-center.name= user.name
         - summary_from(@summary, user.id).each do |key, value|
