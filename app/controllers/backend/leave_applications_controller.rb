@@ -32,10 +32,16 @@ class Backend::LeaveApplicationsController < Backend::BaseController
   end
 
   def statistics
+    usernames = params.dig(:usernames).to_s.split(',')
+    if usernames.empty?
+      @users = User.filter_by_role(%w[employee parttime])
+    else
+      @users = User.where(login_name: usernames)
+    end
     @summary = LeaveTimeSummaryService.new(
       specific_year.to_i,
       specific_month.to_i,
-      specific_role
+      @users
     ).summary
   end
 
