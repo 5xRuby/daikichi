@@ -9,6 +9,11 @@ defaults: &defaults
 
   devise:
     mailer_sender: hi@example.com
+    keycloak:
+      issuer: sample.com
+      client_id: sample
+      secret_key: sample
+      redirect_uri: sample.com
 
   smtp:
     username: sample

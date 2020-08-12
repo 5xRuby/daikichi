@@ -22,9 +22,10 @@ class User < ApplicationRecord
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
+  # devise :database_authenticatable, :registerable,
   devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :trackable, :validatable
-
+         :recoverable, :rememberable, :trackable, :validatable,
+         :omniauthable, omniauth_providers: [:keycloak]
   enum role: Settings.roles
   # %i(manager hr employee contractor intern resigned pending)
 
@@ -101,6 +102,10 @@ class User < ApplicationRecord
 
   def assign_leave_time?
     self.assign_leave_time == '1'
+  end
+
+  def self.from_omniauth(auth)
+    user = User.find_by(email: auth.info.email)
   end
 
   private

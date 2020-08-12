@@ -1,6 +1,12 @@
 Rails.application.routes.draw do
+  devise_for :users, only: :omniauth_callbacks, controllers: { omniauth_callbacks: 'users/omniauth_callbacks' }
+
   scope "(:locale)", locale: /en/ do
-    devise_for :users, controllers: { registrations: "users/registrations" }
+    devise_for :users, skip: [:sessions, :omniauth_callbacks], controllers: { registrations: "users/registrations" }
+    as :user do
+      post "/sign_in" => "devise/sessions#create", :as => :user_session
+      delete "/sign_out" => "devise/sessions#destroy", :as => :destroy_user_session
+    end
 
     root "pages#index"
 
