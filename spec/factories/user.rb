@@ -5,7 +5,7 @@ FactoryBot.define do
     name { Faker::Name.name }
     login_name { Faker::Internet.user_name }
     email { Faker::Internet.safe_email }
-    password { Faker::Internet.password }
+    # password { Faker::Internet.password }
     join_date { Time.zone.today }
     role { 'employee' }
 

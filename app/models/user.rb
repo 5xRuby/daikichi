@@ -103,7 +103,7 @@ class User < ApplicationRecord
   end
 
   def self.from_omniauth(auth)
-    user = User.find_by(email: auth.info.email)
+    user = User.find_by(login_name: auth.info.nickname)
   end
 
   private
