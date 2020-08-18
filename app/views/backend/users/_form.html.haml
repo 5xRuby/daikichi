@@ -9,14 +9,5 @@
   = f.input :leave_date, as: :string, wrapper_html: { class: 'date-input' },
     input_html: { data: { input: 'datepicker', format: 'Y/m/d' } }
 
-  - if %w(new create).include? action_name
-    = f.input :assign_leave_time, as: :boolean
-    = f.input :assign_date, wrapper_html: { class: 'date-input' },
-      input_html: { data: { input: 'datepicker', format: 'Y/m/d' } }
-    = f.input :password, required: true, hint: ("密碼長度須 #{@minimum_password_length} 字以上" if @minimum_password_length)
-    = f.input :password_confirmation, required: true
-  - else
-    = f.input :password, required: false, hint: ("欲修改密碼才需要填寫, 密碼長度須 #{@minimum_password_length} 字以上" if @minimum_password_length)
-    = f.input :password_confirmation, required: false
   = f.input :role, collection: User.enum_attributes_for_select(:roles), include_blank: false
   = f.button :submit

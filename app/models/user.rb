@@ -21,9 +21,8 @@ class User < ApplicationRecord
   validate  :assign_leave_time_fields
 
   # Include default devise modules. Others available are:
-  # :confirmable, :lockable, :timeoutable and :omniauthable
-  devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :trackable, :validatable
+  # :database_authenticatable, :registerable, :confirmable, :lockable, :timeoutable
+  devise :omniauthable, omniauth_providers: [:keycloak]
 
   enum role: Settings.roles
   # %i(manager hr employee contractor intern resigned pending)
@@ -101,6 +100,10 @@ class User < ApplicationRecord
 
   def assign_leave_time?
     self.assign_leave_time == '1'
+  end
+
+  def self.from_omniauth(auth)
+    user = User.find_by(login_name: auth.info.nickname)
   end
 
   private

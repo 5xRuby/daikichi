@@ -49,8 +49,7 @@
           %li.dropdown
             = dropdown_title current_user.login_name
             %ul.dropdown-menu
-              %li= link_to t("title.devise/registrations.edit"), edit_user_registration_path
               %li= link_to t("title.devise/sessions.destroy"),
                 destroy_user_session_path, method: :delete
         - else
-          %li= link_to t("title.devise/sessions.new"), new_user_session_path
+          %li= link_to t("title.devise/sessions.new"), user_keycloak_omniauth_authorize_path, data: { turbolinks: false }
