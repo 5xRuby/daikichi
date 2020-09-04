@@ -24,6 +24,12 @@ defaults: &defaults
     authentication: plain
     enable_starttls_auto: true
 
+  mailer:
+    default_from: 'HR <hi@example.com>'
+    admin_mails:
+      - hi@example.com
+
+
   roles:
     manager: 'manager'
     hr: 'hr'
