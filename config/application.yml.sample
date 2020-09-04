@@ -10,10 +10,11 @@ defaults: &defaults
   devise:
     mailer_sender: hi@example.com
     keycloak:
-      issuer: sample.com
+      issuer: https://example.com/auth/realms/master
       client_id: sample
       secret_key: sample
-      redirect_uri: sample.com
+      # TODO: Do not configure it manually
+      redirect_uri: https://app.example.com/users/auth/keycloak/callback
 
   smtp:
     username: sample

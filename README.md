@@ -22,6 +22,12 @@ $ bundle exec rake db:create
 $ bundle exec rake db:migrate
 ```
 
+# Keycloak Configure
+
+1. Create an `Client` in Keycloak
+2. Set `Access Type` to `Cofidential` to prevent public access
+3. Copy `token` from `Credentials` tab as `secret_key`
+
 # Optional
 
 
