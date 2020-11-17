@@ -84,10 +84,10 @@ RSpec.describe LeaveApplication, type: :model do
       let(:end_time) { Time.zone.local(2017, 5, 11, 14, 30) }
 
       before do
-        User.skip_callback(:create, :after, :auto_assign_leave_time)
+        User.skip_callback(:save, :after, :auto_assign_leave_time)
         create(:leave_time, :annual, user: user, quota: 50, usable_hours: 50, effective_date: effective_date, expiration_date: expiration_date)
       end
-      after { User.set_callback(:create, :after, :auto_assign_leave_time) }
+      after { User.set_callback(:save, :after, :auto_assign_leave_time) }
 
       subject { build(:leave_application, :personal, user: user, start_time: beginning, end_time: ending) }
 
@@ -288,7 +288,7 @@ RSpec.describe LeaveApplication, type: :model do
 
     describe '.personal' do
       let(:user) do
-        User.skip_callback(:create, :after, :auto_assign_leave_time)
+        User.skip_callback(:save, :after, :auto_assign_leave_time)
         create(:user, :hr)
       end
       let(:effective_date)  { Time.zone.local(2017, 5, 1).to_date }
@@ -301,7 +301,7 @@ RSpec.describe LeaveApplication, type: :model do
       let!(:canceled)       { create(:leave_application, :personal, :canceled, user: user, start_time: Time.zone.local(2017, 5, 16, 9, 30), end_time: Time.zone.local(2017, 5, 18, 12, 30)) }
       let!(:rejected)       { create(:leave_application, :personal, :rejected, user: user, start_time: Time.zone.local(2017, 5, 23, 9, 30), end_time: Time.zone.local(2017, 5, 25, 12, 30)) }
 
-      after { User.set_callback(:create, :after, :auto_assign_leave_time) }
+      after { User.set_callback(:save, :after, :auto_assign_leave_time) }
 
       context 'default behaviour' do
         it 'should include only pending or approved applications' do

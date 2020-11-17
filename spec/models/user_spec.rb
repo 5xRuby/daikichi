@@ -60,7 +60,7 @@ RSpec.describe User, type: :model do
   describe '#callback' do
     context 'after_create' do
       describe '.auto_assign_leave_time' do
-        it { is_expected.to callback(:auto_assign_leave_time).after(:create) }
+        it { is_expected.to callback(:auto_assign_leave_time).after(:save) }
 
         shared_examples 'different roles create LeaveTime with different leave_type' do |roles, leave_types|
           roles.each do |role|
@@ -210,7 +210,7 @@ RSpec.describe User, type: :model do
       end
 
       context 'joined less than a year' do
-        let(:join_date) { Date.current - 1.year + 2.day }
+        let(:join_date) { Date.current - 1.year + 2.days }
         it 'with runnian' do
           Timecop.travel(2020, 2, 29) do
             expect(subject).to eq 0

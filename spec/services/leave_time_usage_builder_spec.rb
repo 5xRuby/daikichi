@@ -9,8 +9,8 @@ describe LeaveTimeUsageBuilder do
   let(:leave_application) { create(:leave_application, :personal, user: user, start_time: start_time, end_time: end_time) }
   let(:total_used_hours)  { Daikichi::Config::Biz.within(start_time, end_time).in_hours }
 
-  before { User.skip_callback(:create, :after, :auto_assign_leave_time) }
-  after  { User.set_callback(:create, :after, :auto_assign_leave_time)  }
+  before { User.skip_callback(:save, :after, :auto_assign_leave_time) }
+  after  { User.set_callback(:save, :after, :auto_assign_leave_time)  }
 
   describe '.leave_hours_by_date' do
     let(:effective_date)    { Date.parse('2017-05-01') }

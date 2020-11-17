@@ -10,7 +10,7 @@ class User < ApplicationRecord
   attr_accessor :assign_leave_time, :assign_date
 
   before_validation :parse_assign_leave_time_attr
-  after_create :auto_assign_leave_time
+  after_save :auto_assign_leave_time, if: :assign_leave_time?
 
   validates :name,       presence: true
   validates :login_name, presence: true,
@@ -125,7 +125,8 @@ class User < ApplicationRecord
   end
 
   def auto_assign_leave_time
-    return if !assign_leave_time? or !valid_role?
+    return unless valid_role?
+    return unless assign_date.is_a?(Date)
 
     leave_time_builder = LeaveTimeBuilder.new self
     leave_time_builder.automatically_import by_assign_date: true

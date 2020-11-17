@@ -15,8 +15,8 @@ describe LeaveTimeBatchBuilder do
    end
 
   describe 'automatically_import' do
-    before { User.skip_callback(:create, :after, :auto_assign_leave_time) }
-    after  { User.set_callback(:create, :after, :auto_assign_leave_time)  }
+    before { User.skip_callback(:save, :after, :auto_assign_leave_time) }
+    after  { User.set_callback(:save, :after, :auto_assign_leave_time)  }
 
     context 'is forced' do
       let!(:fulltime) { FactoryBot.create(:user, :fulltime, join_date: Date.current - 1.year - 1.day) }
@@ -51,7 +51,7 @@ describe LeaveTimeBatchBuilder do
       let!(:user) { FactoryBot.create(:user, join_date: join_date - 1.day) }
       let!(:datetime) { Time.zone.local(2017, 5, 4, 9, 30) }
 
-      #context 'end of working month' do
+      # context 'end of working month' do
       #  let(:join_date) { Daikichi::Config::Biz.time(monthly_lead_days, :days).before(Daikichi::Config::Biz.periods.before(datetime.end_of_month).first.end_time) - 2.years + join_date_based_leed_days.days }
       #  before do
       #    Timecop.freeze(Daikichi::Config::Biz.time(monthly_lead_days, :days).before(Daikichi::Config::Biz.periods.before(datetime.end_of_month).first.end_time))
@@ -68,7 +68,7 @@ describe LeaveTimeBatchBuilder do
       #    expect(join_date_based_leave_time.effective_date).to  eq join_anniversary
       #    expect(join_date_based_leave_time.expiration_date).to eq(join_anniversary + 1.year - 1.day)
       #  end
-      #end
+      # end
 
       # context 'not end of working month' do
       #   let(:join_date) { Date.current.end_of_month + 3.days - 2.years + join_date_based_leed_days.days }
