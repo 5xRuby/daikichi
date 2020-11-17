@@ -426,12 +426,12 @@ describe LeaveTimeBuilder do
 
   describe '.join_date_based_import' do
     before do
-      User.skip_callback(:create, :after, :auto_assign_leave_time)
+      User.skip_callback(:save, :after, :auto_assign_leave_time)
       LeaveTimeBuilder.new(user).join_date_based_import
     end
 
     after do
-      User.set_callback(:create, :after, :auto_assign_leave_time)
+      User.set_callback(:save, :after, :auto_assign_leave_time)
     end
 
     context 'fulltime employee' do
@@ -474,11 +474,11 @@ describe LeaveTimeBuilder do
 
   describe '.monthly_import' do
     before do
-      User.skip_callback(:create, :after, :auto_assign_leave_time)
+      User.skip_callback(:save, :after, :auto_assign_leave_time)
     end
 
     after do
-      User.set_callback(:create, :after, :auto_assign_leave_time)
+      User.set_callback(:save, :after, :auto_assign_leave_time)
     end
 
     context 'prebuild' do
@@ -524,11 +524,11 @@ describe LeaveTimeBuilder do
 
   describe '.weekly_import' do
     before do
-      User.skip_callback(:create, :after, :auto_assign_leave_time)
+      User.skip_callback(:save, :after, :auto_assign_leave_time)
     end
 
     after do
-      User.set_callback(:create, :after, :auto_assign_leave_time)
+      User.set_callback(:save, :after, :auto_assign_leave_time)
     end
 
     it 'create new user' do

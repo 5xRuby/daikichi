@@ -10,8 +10,8 @@ RSpec.describe LeaveApplicationObserver do
   let(:total_leave_hours) { Daikichi::Config::Biz.within(start_time, end_time).in_hours }
   let(:leave_application) { create(:leave_application, :personal, user: user, start_time: start_time, end_time: end_time) }
 
-  before { User.skip_callback(:create, :after, :auto_assign_leave_time) }
-  after  { User.set_callback(:create, :after, :auto_assign_leave_time)  }
+  before { User.skip_callback(:save, :after, :auto_assign_leave_time) }
+  after  { User.set_callback(:save, :after, :auto_assign_leave_time)  }
 
   describe '.create_leave_time_usages' do
     let!(:leave_time) { create(:leave_time, :annual, user: user, quota: total_leave_hours, usable_hours: total_leave_hours, effective_date: effective_date, expiration_date: expiration_date) }
