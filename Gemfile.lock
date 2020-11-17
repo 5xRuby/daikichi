@@ -90,6 +90,7 @@ GEM
       execjs
     awesome_print (1.8.0)
     bcrypt (3.1.13)
+    bcrypt_pbkdf (1.0.1)
     bindata (2.4.8)
     bindex (0.8.1)
     biz (1.8.2)
@@ -161,6 +162,7 @@ GEM
       warden (~> 1.2.3)
     diff-lcs (1.3)
     docile (1.1.5)
+    ed25519 (1.2.4)
     erubi (1.9.0)
     execjs (2.7.0)
     factory_bot (4.11.1)
@@ -463,6 +465,7 @@ DEPENDENCIES
   active_hash
   activerecord-import
   awesome_print
+  bcrypt_pbkdf
   biz
   bootsnap
   bootstrap-sass
@@ -481,6 +484,7 @@ DEPENDENCIES
   database_rewinder
   date_validator
   devise
+  ed25519
   factory_bot_rails
   faker
   flatpickr

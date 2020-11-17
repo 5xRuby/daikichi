@@ -85,6 +85,9 @@ group :development do
   gem 'web-console', '3.7.0'
   gem 'i18n-debug'
   gem 'foreman'
+
+  gem 'ed25519'
+  gem 'bcrypt_pbkdf'
 end
 
 group :test do
