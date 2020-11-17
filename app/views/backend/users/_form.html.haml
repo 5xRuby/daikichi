@@ -8,6 +8,10 @@
     input_html: { data: { input: 'datepicker', format: 'Y/m/d' } }
   = f.input :leave_date, as: :string, wrapper_html: { class: 'date-input' },
     input_html: { data: { input: 'datepicker', format: 'Y/m/d' } }
+  - if %w[new create].include? action_name
+    = f.input :assign_leave_time, as: :boolean
+    = f.input :assign_date, wrapper_html: { class: 'date-input' },
+      input_html: { data: { input: 'datepicker', format: 'Y/m/d' } }
 
   = f.input :role, collection: User.enum_attributes_for_select(:roles), include_blank: false
   = f.button :submit
