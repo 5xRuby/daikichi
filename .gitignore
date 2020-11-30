@@ -41,3 +41,6 @@ docker-compose.yml
 /db/fixtures/production/
 /config/*.yml
 Procfile
+
+# Ignore master key for decrypting credentials and more.
+/config/master.key
