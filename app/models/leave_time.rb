@@ -148,7 +148,7 @@ class LeaveTime < ApplicationRecord
   def build_special_leave_time_usages
     return unless self.special_type?
 
-    leave_applications = User.find(self.user_id).leave_applications.where(leave_type: self.leave_type)
+    leave_applications = User.find(self.user_id).leave_applications.where(leave_type: self.leave_type).pending
     leave_applications.each do |la|
       if la.leave_time_usages.empty? and la.hours <= la.available_leave_times.pluck(:usable_hours).sum
         raise ActiveRecord::Rollback unless LeaveTimeUsageBuilder.new(la).build_leave_time_usages
