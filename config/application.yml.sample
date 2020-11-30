@@ -190,6 +190,9 @@ defaults: &defaults
   misc:
     starting_year: 2016
 
+  sentry:
+    dsn:
+
 development:
   <<: *defaults
   neat_setting: 800
