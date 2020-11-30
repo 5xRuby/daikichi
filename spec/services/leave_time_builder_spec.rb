@@ -555,8 +555,8 @@ describe LeaveTimeBuilder do
         expect(leave_time.quota).to eq initial_quota
         expect(leave_time.usable_hours).to eq initial_quota
         expect(leave_time.used_hours).to eq 0
-        expect(leave_time.effective_date).to eq(date + 4.weeks).beginning_of_week
-        expect(leave_time.expiration_date).to eq(date + 4.weeks).end_of_week
+        expect(leave_time.effective_date).to eq((date + 4.weeks).beginning_of_week)
+        expect(leave_time.expiration_date).to eq((date + 4.weeks).end_of_week)
       end
     end
 
