@@ -27,6 +27,7 @@ defaults: &defaults
 
   mailer:
     default_from: 'HR <hi@example.com>'
+    url_host: 'https://example.com'
     admin_mails:
       - hi@example.com
 
