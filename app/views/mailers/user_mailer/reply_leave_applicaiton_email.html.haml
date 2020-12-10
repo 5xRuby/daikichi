@@ -2,4 +2,4 @@
   嗨 #{@leave_application.user.name},
 %p
   你 #{l @leave_application.start_time, format: :long} 的 #{LeaveApplication.human_enum_value(:leave_type, @leave_application.leave_type)} 已經被 #{LeaveApplication.human_enum_value(:status, @leave_application.status)} 囉！
-= link_to "點此連結查看詳情", "https://daikichi.5xruby.tw/leave_applications/#{@leave_application.id}"
+= link_to "點此連結查看詳情", leave_application_url(nil, @leave_application)

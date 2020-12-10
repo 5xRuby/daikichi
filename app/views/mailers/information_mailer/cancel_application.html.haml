@@ -4,4 +4,4 @@
   just canceled a #{@leave_application.leave_type} leave application.
 %p
   It's start_time is #{@leave_application.start_time} and end_time is #{@leave_application.end_time}.
-= link_to "Go check it. :)", "https://daikichi.5xruby.tw/backend/leave_applications/#{@leave_application.id}/verify"
+= link_to "Go check it. :)", verify_backend_leave_application_url(nil, @leave_application)
