@@ -245,7 +245,9 @@ GEM
     mime-types (3.2.2)
       mime-types-data (~> 3.2015)
     mime-types-data (3.2019.0331)
-    mimemagic (0.3.5)
+    mimemagic (0.3.10)
+      nokogiri (~> 1)
+      rake
     mini_mime (1.0.2)
     mini_portile2 (2.4.0)
     minitest (5.14.2)
@@ -293,7 +295,8 @@ GEM
       byebug (~> 11.0)
       pry (~> 0.10)
     public_suffix (4.0.6)
-    puma (3.12.6)
+    puma (4.3.8)
+      nio4r (~> 2.0)
     rack (2.2.3)
     rack-mini-profiler (0.10.7)
       rack (>= 1.2.0)
@@ -511,7 +514,7 @@ DEPENDENCIES
   pg (~> 0.18)
   pivot_table!
   pry-byebug
-  puma (~> 3.12)
+  puma (~> 4.3)
   rack-mini-profiler (~> 0.10.1)
   rails (~> 5.2.4)
   rails-controller-testing
