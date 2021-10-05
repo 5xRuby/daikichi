@@ -58,7 +58,7 @@ gem 'act-fluent-logger-rails'
 gem 'lograge'
 gem 'logstash-event'
 gem 'capybara'
-gem 'carrierwave', '~> 1.2', '>= 1.2.3'
+gem 'carrierwave', '~> 1.3'
 gem 'sentry-raven'
 
 group :development, :test do
