@@ -11,7 +11,12 @@ class FlowdockService
     @flow_token_client = Flowdock::Client.new(flow_token: Settings.flowdock.token)
   end
 
+  def notification_enabled?
+    @notification_enabled ||= Settings.flowdock.enabled
+  end
+
   def send_create_notification
+    return unless notification_enabled?
     notify(
       subject: "#{leave_application.user.name} 新增了一筆 #{LeaveApplication.human_enum_value(:leave_type, leave_application.leave_type)} 假單",
       content: (LeaveApplicationsController.render partial: 'leave_applications/notification', locals: { leave_application: leave_application }),
@@ -23,7 +28,7 @@ class FlowdockService
   end
 
   def send_update_notification(event)
-    return if event.blank?
+    return if event.blank? || !notification_enabled?
 
     executer = %i(canceled pending).include?(event) ? leave_application.user : leave_application.manager
     notify(
