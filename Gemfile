@@ -3,7 +3,7 @@
 source 'https://rubygems.org'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 5.2'
+gem 'rails', '5.2.8.1'
 gem 'bootsnap'
 # Use postgresql as the database for Active Record
 gem 'pg', '~> 0.18'
@@ -30,7 +30,7 @@ gem 'jbuilder', '~> 2.0'
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 
-gem 'aasm'
+gem 'aasm', '~> 4'
 gem 'active_hash'
 gem 'biz'
 gem 'bootstrap-sass'
@@ -47,17 +47,17 @@ gem 'seed-fu'
 gem 'settingslogic'
 gem 'simple_form'
 gem 'whenever', require: false
-gem 'ransack', git: 'https://github.com/activerecord-hackery/ransack.git'
+gem 'ransack', '~> 2'
 gem 'activerecord-import'
-gem 'rails-observers', git: 'https://github.com/rails/rails-observers.git'
-gem 'pivot_table', git: 'https://github.com/edjames/pivot_table'
+gem 'rails-observers'
+gem 'pivot_table'
 gem 'sinatra', require: nil
 gem 'daemons'
 gem 'flowdock'
 gem 'act-fluent-logger-rails'
 gem 'lograge'
 gem 'logstash-event'
-gem 'capybara'
+gem 'capybara', '~> 3.28'
 gem 'carrierwave', '~> 1.2', '>= 1.2.3'
 gem 'sentry-raven'
 
@@ -76,7 +76,6 @@ group :development do
   gem 'capistrano', '~> 3.11.0'
   gem 'capistrano-rails', '~> 1.4.0'
   gem 'capistrano-upload-config'
-  gem 'capistrano-crono'
   gem 'listen'
   gem 'rack-mini-profiler', '~> 0.10.1'
   gem 'rubocop', '0.69.0'
