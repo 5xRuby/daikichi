@@ -1,40 +1,50 @@
-#!/usr/bin/env bash
-set -e
+#!/usr/bin/env ruby
+# frozen_string_literal: true
 
-# Wait PostgreSQL ready
-until pg_isready -h "$DB_HOST" -U "$_DB_USER" -t 1; do
-  >&2 echo "Postgres is unavailable - sleeping"
-  sleep 1
-done
+require 'timeout'
+require 'bundler/setup'
+require 'pg'
 
-# Start Rails Application
-setup() {
-  bundle install --path $BUNDLE_PATH
-  bundle exec rake docker:setup
-}
+def ensure_connection
+  puts 'Check database connection...'
+  Timeout.timeout(30) do
+    PG.connect(ENV['DATABASE_URL'])
+    sleep 1
+  end
+rescue Timeout::Error
+  puts 'Unable connect database'
+  exit 1
+end
 
-migrate() {
-  bundle exec rake db:migrate
-}
+def run_migrate
+  system('bundle exec rake db:migrate')
+end
 
-prepare_assets() {
-  bundle exec rake assets:precompile
-}
+def run_seed
+  system('bundle exec rake db:seed')
+end
 
-case ${1} in
-  start)
+def run_server
+  run_migrate unless ENV['AUTO_MIGRATION'].nil?
+  exec("bundle exec rails server #{ARGV.join(' ')}")
+end
 
-    setup
-    migrate
-    prepare_assets
+def run_console
+  exec("bundle exec rails console #{ARGV.join(' ')}")
+end
 
-    puma -C /etc/puma.rb
-    ;;
-  rake)
-    shift
-    bundle exec rake $@
-    ;;
-  *)
-    exec "$@"
-    ;;
-esac
+def run_cron
+  exec("crond -f #{ARGV.join(' ')}")
+end
+
+command = ARGV.shift
+
+case command
+when 'server', 'seed', 'console', 'sidekiq', 'migrate', 'rake', 'rails', 'cron'
+  # ensure_connection
+  return send("run_#{command}") if respond_to?("run_#{command}", true)
+
+  exec("bundle exec #{command} #{ARGV.join(' ')}")
+else
+  exec("#{command} #{ARGV.join(' ')}")
+end
