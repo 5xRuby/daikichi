@@ -37,15 +37,15 @@ gem 'bootstrap-sass'
 gem 'cancancan'
 gem 'cocoon'
 gem 'date_validator'
-gem 'devise'
-gem 'omniauth'
-gem 'omniauth_openid_connect'
+gem 'devise', '~> 4'
+gem 'omniauth', '~> 2'
+gem 'omniauth_openid_connect', '~> 0.7'
 gem 'haml'
-gem 'kaminari'
+gem 'kaminari','~> 1.2'
 gem 'paranoia', '~> 2.2'
 gem 'seed-fu'
 gem 'settingslogic'
-gem 'simple_form'
+gem 'simple_form', '~> 5.3'
 gem 'whenever', require: false
 gem 'ransack', '~> 2'
 gem 'activerecord-import'
@@ -59,23 +59,21 @@ gem 'lograge'
 gem 'logstash-event'
 gem 'capybara', '~> 3.28'
 gem 'carrierwave', '~> 1.2', '>= 1.2.3'
-gem 'sentry-raven'
+gem 'airbrake', '~> 13.0'
 
 group :development, :test do
   gem 'awesome_print'
   gem 'byebug', platform: :mri
-  gem 'factory_bot_rails'
-  gem 'faker'
+  gem 'factory_bot_rails', '~> 4'
+  gem 'faker', '~> 2'
   gem 'pry-byebug'
   gem 'timecop'
   gem 'rspec-rails'
   gem "letter_opener"
+  gem 'dotenv-rails', '~> 2'
 end
 
 group :development do
-  gem 'capistrano', '~> 3.11.0'
-  gem 'capistrano-rails', '~> 1.4.0'
-  gem 'capistrano-upload-config'
   gem 'listen'
   gem 'rack-mini-profiler', '~> 0.10.1'
   gem 'rubocop', '0.69.0'
@@ -84,8 +82,6 @@ group :development do
   gem 'spring-watcher-listen'
   gem 'web-console', '3.7.0'
   gem 'i18n-debug'
-  gem 'foreman'
-
   gem 'ed25519'
   gem 'bcrypt_pbkdf'
 end
