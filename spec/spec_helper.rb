@@ -27,10 +27,6 @@ RSpec.configure do |config|
     DatabaseRewinder.clean_all
   end
 
-  config.before(:each) do
-    allow_any_instance_of(FlowdockService).to receive(:notify)
-  end
-
   config.after(:each) do
     DatabaseRewinder.clean
   end
