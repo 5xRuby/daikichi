@@ -220,6 +220,8 @@ GEM
     minitest (5.22.1)
     momentjs-rails (2.29.4.1)
       railties (>= 3.1)
+    moonrope-client (1.0.5)
+      json
     msgpack (1.7.2)
     mustermann (3.0.0)
       ruby2_keywords (~> 0.0.1)
@@ -265,6 +267,10 @@ GEM
       racc
     pg (0.21.0)
     pivot_table (1.0.0)
+    postal-rails (1.0.1)
+      postal-ruby (>= 0.0.2, < 2.0)
+    postal-ruby (1.0.1)
+      moonrope-client (>= 1.0.2, < 1.1)
     pry (0.13.1)
       coderay (~> 1.1)
       method_source (~> 1.0)
@@ -493,6 +499,7 @@ DEPENDENCIES
   paranoia (~> 2.2)
   pg (~> 0.18)
   pivot_table
+  postal-rails (~> 1.0)
   pry-byebug
   puma (~> 5.0)
   rack-mini-profiler (~> 0.10.1)
