@@ -61,4 +61,5 @@ Rails.application.configure do
   #  authentication:       Settings.smtp.authentication,
   #  enable_starttls_auto: Settings.smtp.enable_starttls_auto
   # }
+  config.active_job.queue_adapter = :async
 end

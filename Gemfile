@@ -6,7 +6,7 @@ source 'https://rubygems.org'
 gem 'rails', '5.2.8.1'
 gem 'bootsnap'
 # Use postgresql as the database for Active Record
-gem 'pg', '~> 0.18'
+gem 'pg', '~> 1.5.0'
 # Use Puma as the app server
 gem 'puma', '~> 5.0'
 # Use SCSS for stylesheets
@@ -99,3 +99,5 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 gem "postal-rails", "~> 1.0"
 
 gem "good_job", "~> 2.99"
+
+gem "openbox", "~> 0.5.1"
