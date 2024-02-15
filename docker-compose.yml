@@ -1,0 +1,42 @@
+version: '3'
+
+x-app: &app
+  image: registry.5xruby.com/5xruby/daikichi:latest
+  volumes:
+    - ./config/application.yml:/src/app/config/application.yml
+    - ./config/application.yml.env:/src/app/config/application.yml.env
+  depends_on:
+    - db
+  environment:
+    - DATABASE_URL=postgresql://$POSTGRES_USER:$POSTGRES_PASSWORD@db/$POSTGRES_DB
+    - RAILS_SERVE_STATIC_FILES=true
+    - PORT=80
+    - WEB_CONCURRENCY=3
+    - APPLICATION_HOSTNAME
+    - ERRBIT_HOST=https://errbit.5xruby.dev
+    - ERRBIT_PROJECT_KEY=35fb9fdf2e5947fead722fcb1abfb7ee
+    - ERRBIT_ENV=production
+    - RAILS_MASTER_KEY
+    - POSTAL_HOST
+    - POSTAL_KEY
+services:
+  db:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_DB
+    volumes:
+      - ./postgres:/var/lib/postgresql/data
+  web:
+    <<: *app
+    ports:
+      - 80:80
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.errbit.rule=Host(`$APPLICATION_HOSTNAME`)"
+      - "traefik.http.routers.errbit.entrypoints=web"
+  cron:
+    <<: *app
+    user: root
+    command: cron
