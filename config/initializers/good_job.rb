@@ -17,6 +17,7 @@ Rails.application.configure do
       class: 'ImportJob'
     }
   }
+  config.active_job.queue_adapter = :good_job
 end
 
 ActiveSupport.on_load(:good_job_application_controller) do
