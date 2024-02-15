@@ -1,5 +1,5 @@
 ARG APP_ROOT=/src/app
-ARG RUBY_VERSION=2.6.10
+ARG RUBY_VERSION=2.7.8
 
 FROM ruby:${RUBY_VERSION}-alpine AS gem
 ARG APP_ROOT
@@ -66,5 +66,5 @@ RUN bundle exec rake assets:precompile
 
 EXPOSE 3000
 HEALTHCHECK CMD curl -f http://localhost:3000/status || exit 1
-ENTRYPOINT ["bin/entrypoint"]
+ENTRYPOINT ["bin/openbox"]
 CMD ["server"]

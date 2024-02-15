@@ -258,6 +258,9 @@ GEM
     omniauth_openid_connect (0.7.1)
       omniauth (>= 1.9, < 3)
       openid_connect (~> 2.2)
+    openbox (0.5.1)
+      dotenv
+      thor (~> 1.0)
     openid_connect (2.3.0)
       activemodel
       attr_required (>= 1.0.0)
@@ -278,7 +281,7 @@ GEM
     parser (3.3.0.5)
       ast (~> 2.4.1)
       racc
-    pg (0.21.0)
+    pg (1.5.4)
     pivot_table (1.0.0)
     postal-rails (1.0.1)
       postal-ruby (>= 0.0.2, < 2.0)
@@ -469,7 +472,9 @@ GEM
 
 PLATFORMS
   x86_64-darwin-21
+  x86_64-darwin-22
   x86_64-linux
+  x86_64-linux-musl
 
 DEPENDENCIES
   aasm (~> 4)
@@ -511,8 +516,9 @@ DEPENDENCIES
   momentjs-rails
   omniauth (< 2.0)
   omniauth_openid_connect (~> 0.7)
+  openbox (~> 0.5.1)
   paranoia (~> 2.2)
-  pg (~> 0.18)
+  pg (~> 1.5.0)
   pivot_table
   postal-rails (~> 1.0)
   pry-byebug
