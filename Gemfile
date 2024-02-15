@@ -46,7 +46,6 @@ gem 'paranoia', '~> 2.2'
 gem 'seed-fu'
 gem 'settingslogic'
 gem 'simple_form', '~> 5.3'
-gem 'whenever', require: false
 gem 'ransack', '~> 2.0'
 gem 'activerecord-import'
 gem 'rails-observers'
@@ -98,3 +97,5 @@ end
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 gem "postal-rails", "~> 1.0"
+
+gem "good_job", "~> 2.99"

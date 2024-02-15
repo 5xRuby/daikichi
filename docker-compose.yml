@@ -17,6 +17,7 @@ x-app: &app
     - ERRBIT_PROJECT_KEY=35fb9fdf2e5947fead722fcb1abfb7ee
     - ERRBIT_ENV=production
     - RAILS_MASTER_KEY
+    - RAILS_MAX_THREADS
     - POSTAL_HOST
     - POSTAL_KEY
 services:
@@ -36,7 +37,3 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.errbit.rule=Host(`$APPLICATION_HOSTNAME`)"
       - "traefik.http.routers.errbit.entrypoints=web"
-  cron:
-    <<: *app
-    user: root
-    command: cron
