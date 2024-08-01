@@ -72,7 +72,7 @@ class Backend::OvertimesController < Backend::BaseController
 
   def search_params
     @search_params = params.fetch(:q, {})&.permit(
-      :s, :status_eq, :end_time_lteq, :start_time_gteq, :compensatory_type_eq)
+      :s, :status_eq, :end_time_lteq, :start_time_gteq, :compensatory_type_eq, :user_id_eq)
   end
 
   def collection_scope
