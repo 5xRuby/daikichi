@@ -1,12 +1,14 @@
 Rails.application.routes.draw do
   mount GoodJob::Engine => 'good_job'
-  devise_for :users, only: :omniauth_callbacks, controllers: { omniauth_callbacks: "users/omniauth_callbacks" }
-  devise_scope :user do
-    delete "user/sign_out", to: "devise/sessions#destroy", as: :destroy_user_session
-  end
+  #devise_for :users, only: :omniauth_callbacks, controllers: { omniauth_callbacks: "users/omniauth_callbacks" }
+  devise_for :users, controllers: { registrations: "users/registrations" }
+  #devise_scope :user do
+  #  delete "user/sign_out", to: "devise/sessions#destroy", as: :destroy_user_session
+  #end
 
   scope "(:locale)", locale: /en/ do
-    devise_for :users, skip: :omniauth_callbacks
+    #devise_for :users, skip: :omniauth_callbacks
+    
 
     root "pages#index"
 

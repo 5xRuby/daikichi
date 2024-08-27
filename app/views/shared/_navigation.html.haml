@@ -52,4 +52,4 @@
               %li= link_to t("title.devise/sessions.destroy"),
                 destroy_user_session_path, method: :delete
         - else
-          %li= link_to t("title.devise/sessions.new"), user_keycloak_omniauth_authorize_path, data: { turbolinks: false }
+          %li= link_to t("title.devise/sessions.new"), new_user_session_path, data: { turbolinks: false }

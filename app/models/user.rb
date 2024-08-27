@@ -22,7 +22,8 @@ class User < ApplicationRecord
 
   # Include default devise modules. Others available are:
   # :database_authenticatable, :registerable, :confirmable, :lockable, :timeoutable
-  devise :omniauthable, omniauth_providers: [:keycloak]
+  #devise :omniauthable, omniauth_providers: [:keycloak]
+  devise :database_authenticatable, :registerable, :recoverable, :rememberable, :trackable, :validatable
 
   enum role: Settings.roles
   # %i(manager hr employee contractor intern resigned pending)
